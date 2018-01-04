@@ -37,7 +37,9 @@ The following instructions will also work on any other Debian based Linux distri
 
         `unzip overseer.zip` 
 
-        **Note:** Make sure that your working directory is where you want the oversee files to reside. 
+	This will extract a directory named overseer that will contain all the files for the application. 
+	
+        **Note:** Make sure that your working directory is where you want the overseer directory to reside. 
 
 	1. ##### (Option 2) Transferring Files From a PC
         Download the archive for latest version from the [Releases Page](https://github.com/michaelfdeberry/overseer/releases) and extract the files locally. 
