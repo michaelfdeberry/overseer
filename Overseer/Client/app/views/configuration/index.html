@@ -1,0 +1,76 @@
+﻿<div>    
+    <md-card flex-gt-sm="50" flex-offset-gt-sm="25">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline" translate="generalSettings"></span>
+            </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+            <form name="settingsForm" ng-disabled="self.loading">
+                <md-input-container class="md-block">
+                    <label translate="pollInterval"></label>
+                    <md-select ng-model="ctrl.settings.interval" required title="{{ 'pollIntervalTitle' | translate }}">
+                        <md-option ng-repeat="interval in ctrl.intervals" ng-value="interval">{{ interval / 1000 }} {{ 'seconds' | translate }}</md-option>
+                    </md-select>
+                </md-input-container> 
+                <md-input-container class="md-block">
+                    <label translate="localPort"></label>
+                    <input ng-model="ctrl.settings.localPort" title="{{ 'localPortTitle' | translate }}" />
+                </md-input-container>
+                <md-input-container class="md-block">
+                    <md-switch class="md-primary" ng-model="ctrl.settings.hideDisabledPrinters" title="{{ 'hideUnmonitoredTitle' | translate }}">
+                        <span translate="hideUnmonitored"></span>
+                    </md-switch>
+                </md-input-container>
+            </form>
+        </md-card-content>
+        <md-card-actions layout="row" layout-align="end center">
+            <md-button class="" ng-click="ctrl.revertSettings()" ng-disabled="settingsForm.$pristine">
+                <span translate="cancel"></span>
+            </md-button>
+            <md-button class="md-primary" ng-click="ctrl.updateSettings()" ng-disabled="settingsForm.$pristine || settingsForm.$invalid">
+                <span translate="save"></span>
+            </md-button>
+        </md-card-actions>
+    </md-card>
+    <md-card flex-gt-sm="50" flex-offset-gt-sm="25">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline" translate="Printers"></span>
+            </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+            <table class="printers-table">
+                <thead>
+                    <tr>
+                        <th translate="name"></th>
+                        <th translate="printerType"></th>
+                        <th></th>
+                        <th>
+                            <md-button href="/#!/configuration/add">
+                                <i class="fa fa-plus"></i>
+                                <span translate="add"></span>
+                            </md-button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="printer in ctrl.printers">
+                        <td ng-bind="printer.name"></td>
+                        <td ng-bind="printer.printerType"></td>
+                        <td>
+                            <i ng-if="printer.disabled" class="fa fa-exclamation-triangle" title="{{ 'monitoringDisabled' | translate }}"></i>                                
+                            <i ng-if="!printer.disabled" class="fa fa-check" title="{{ 'monitoringEnabled' | translate }}"></i>                                
+                        </td>
+                        <td>
+                            <md-button href="/#!/configuration/edit/{{printer.id}}">
+                                <i class="fa fa-edit"></i>
+                                <span translate="edit"></span>
+                            </md-button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </md-card-content>
+    </md-card>
+</div>

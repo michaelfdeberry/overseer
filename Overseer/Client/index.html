@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" ng-app="overseer">
+<head>
+    <base href="/">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width">
+    <title>Overseer</title>
+    <link href="/css/angular-material.min.css" rel="stylesheet"/>
+    <link href="/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="/css/nprogress.css" rel="stylesheet"/>
+    <link href="/overseer.css?rev=6f57699bfeb0da038acc04919aad45b6" rel="stylesheet"/>
+</head>
+<body>
+<div ng-cloak ng-controller="appCtrl as app">
+    <md-content>
+        <md-toolbar id="header" md-scroll-shrink="true" class="header">
+            <div class="md-toolbar-tools">
+                <a flex href="/#!/">
+                    <h2>Overseer</h2>
+                </a>
+                <md-button href="/#!/configuration" class="md-icon-button action-button">
+                    <i class="fa fa-gear"></i>
+                </md-button>
+            </div>
+        </md-toolbar>
+    </md-content>
+    <div id="view-container" ng-view>
+    </div>
+</div>
+<script src="/scripts/angular.min.js"></script>
+<script src="/scripts/angular-route.min.js"></script>
+<script src="/scripts/angular-animate.min.js"></script>
+<script src="/scripts/angular-aria.min.js"></script>
+<script src="/scripts/angular-messages.min.js"></script>
+<script src="/scripts/angular-material.min.js"></script>
+<script src="/scripts/angular-translate.min.js"></script>
+<script src="/scripts/lodash.min.js"></script>
+<script src="/scripts/jquery.min.js"></script>
+<script src="/scripts/jquery.signalR.min.js"></script>
+<script src="/scripts/nprogress.js"></script>
+<script src="/push/hubs"></script>
+<script src="/overseer.js?rev=5d089e54596976e0cff7b794a0a2b1f3"></script>
+</body>
+</html>

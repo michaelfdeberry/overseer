@@ -1,0 +1,18 @@
+﻿<div>
+    <md-input-container class="md-block">
+        <label translate="url"></label>
+        <input ng-model="ctrl.model.config.url" required />
+    </md-input-container>
+    <md-input-container class="md-block">
+        <label translate="apiKey"></label>
+        <input ng-model="ctrl.model.config.apiKey" required />
+    </md-input-container>
+    <md-input-container class="md-block" ng-if="ctrl.model.id">
+        <label translate="profile"></label>
+        <md-select ng-model="ctrl.model.config.profile" ng-model-options="{trackBy: '$value.id'}" required title="{{ 'profileTitle' | translate }}">
+            <md-option ng-repeat="profile in ctrl.model.config.availableProfiles" ng-value="profile">
+                {{ profile.name }}
+            </md-option>
+        </md-select>
+    </md-input-container>
+</div>
