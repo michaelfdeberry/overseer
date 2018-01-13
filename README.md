@@ -31,16 +31,18 @@ The following instructions will also work on any other Debian based Linux distri
     
         Download the archive for the latest version using wget
 
-        `wget https://github.com/PLACEHOLDERURL`
+        `wget https://github.com/michaelfdeberry/overseer/releases/download/v0.0.1/overseer.zip`
 
         Extract the archive
 
-        `unzip PLACEHOLDER.zip` 
+        `unzip overseer.zip` 
 
-        **Note:** Make sure that your working directory is where you want the oversee files to reside. 
+	This will extract a directory named overseer that will contain all the files for the application. 
+	
+        **Note:** Make sure that your working directory is where you want the overseer directory to reside. 
 
 	1. ##### (Option 2) Transferring Files From a PC
-        Download the archive for latest version from the [Release Page](PlaceHolder) and extract the files locally. 
+        Download the archive for latest version from the [Releases Page](https://github.com/michaelfdeberry/overseer/releases) and extract the files locally. 
 
         To transfer files from you PC to the host device using SFTP. Applications such as [WinSCP](https://winscp.net/) or [Cyberduck](https://cyberduck.io/) can be used for this task. 
 
@@ -83,7 +85,7 @@ The following instructions will also work on any other Debian based Linux distri
 
 ### Windows 
 
-Download the latest version from [Release Page](PlaceHolder) 
+Download the latest version from [Releases Page](https://github.com/michaelfdeberry/overseer/releases) 
 
 Right click on the executable and click "Run as Administrator". While the application is running Overseer will be available on port 9000 of the local machine. 
 
