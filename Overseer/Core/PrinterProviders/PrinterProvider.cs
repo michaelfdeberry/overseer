@@ -55,7 +55,7 @@ namespace Overseer.Core.PrinterProviders
                 //if the stopwatch isn't running or if the timeout period is exceeded try to get the status
                 var status = await GetPrinterStatusImpl(cancellationToken);
 
-                //if the status was retrieve successfully result the exception cound and stop the stopwatch
+                //if the status was retrieve successfully reset the exception count and stop the stopwatch
                 _exceptionCount = 0;
                 _stopwatch.Stop();
 
