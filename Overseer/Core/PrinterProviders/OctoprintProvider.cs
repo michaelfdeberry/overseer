@@ -88,8 +88,9 @@ namespace Overseer.Core.PrinterProviders
                               profiles.Profiles.Values.First(x => x.Current);
 
                 config.HeatedBed = profile.HeatedBed;
-                config.WebCamUrl = new Uri(config.Url).GetLocalUrl(settings.Webcam.StreamUrl);
-                config.SnapshotUrl = new Uri(config.Url).GetLocalUrl(settings.Webcam.SnapshotUrl);
+                
+                config.WebCamUrl = new Uri(config.Url).GetUrl(settings.Webcam.StreamUrl);
+                config.SnapshotUrl = new Uri(config.Url).GetUrl(settings.Webcam.SnapshotUrl);
                 config.Tools = Enumerable.Range(0, profile.Extruder.Count).Select(index => $"tool{index}").ToList();
                 config.Profile = new OctoprintProfile {Id = profile.Id, Name = profile.Name};
                 config.AvailableProfiles = profiles.Profiles.Values
@@ -134,7 +135,7 @@ namespace Overseer.Core.PrinterProviders
 
         static string NormalizeOctoprintUrl(OctoprintConfig config)
         {
-            return new Uri(config.Url).GetLocalUrl("/api");
+            return new Uri(config.Url).GetUrl("/api");
         }
     }
 }

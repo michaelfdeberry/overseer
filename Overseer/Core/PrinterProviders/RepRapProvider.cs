@@ -20,7 +20,7 @@ namespace Overseer.Core.PrinterProviders
         {
             PrinterId = printer.Id;
             var config = (RepRapConfig) printer.Config;
-            config.Url = new Uri(config.Url).GetLocalUrl();
+            config.Url = new Uri(config.Url).GetUrl();
 
             _url = config.Url;
         }
@@ -70,7 +70,7 @@ namespace Overseer.Core.PrinterProviders
         public override async Task LoadConfiguration(Printer printer)
         {
             var config = (RepRapConfig)printer.Config;
-            _url = new Uri(config.Url).GetLocalUrl();
+            _url = new Uri(config.Url).GetUrl();
 
             using (var httpClient = new HttpClient())
             {

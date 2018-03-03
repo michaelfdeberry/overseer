@@ -11,9 +11,15 @@ namespace Overseer.Core
 {
     public static class Utilities
     {
-        public static string GetLocalUrl(this Uri uri, string localPath = "")
+        public static string GetUrl(this Uri uri, string refPath = "")
         {
-            return string.Concat(uri.Scheme, "://", uri.Authority, localPath);
+            //if the reference path is an absolute url use the absolute url. 
+            if (Uri.TryCreate(refPath, UriKind.Absolute, out var refUri))
+            {
+                return refUri.ToString();
+            }
+            
+            return string.Concat(uri.Scheme, "://", uri.Authority, refPath);
         }
 
         public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
@@ -23,7 +29,7 @@ namespace Overseer.Core
 
         public static float Round(this float value, int places = 0)
         {
-            return (float) Math.Round(value, places);
+            return (float)Math.Round(value, places);
         }
 
         public static HttpStatusCode Ok(this NancyModule module, Action action)
@@ -59,7 +65,7 @@ namespace Overseer.Core
         public static async Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken)
         {
             var tcs = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(s => ((TaskCompletionSource<bool>) s).TrySetResult(true), tcs))
+            using (cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), tcs))
             {
                 if (task != await Task.WhenAny(task, tcs.Task))
                     throw new OperationCanceledException(cancellationToken);
