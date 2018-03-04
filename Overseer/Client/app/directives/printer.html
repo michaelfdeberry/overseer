@@ -1,5 +1,5 @@
 ﻿<div class="printer" ng-class="{ zoomed: printerCtrl.zoom }">
-    <div class="webcam" ng-if="printerCtrl.model.config.webCamUrl" ng-click="printerCtrl.toggleZoom()" style="background-image: url('{{printerCtrl.model.config.webCamUrl}}&cb={{printerCtrl.cacheBuster}}');" />
+    <div class="webcam" ng-if="printerCtrl.model.config.webCamUrl" ng-click="printerCtrl.toggleZoom()" style="background-image: url('{{printerCtrl.webcamUrl}}');" />
     <div class="content">
         <md-progress-linear md-mode="determinate" value="{{ printerCtrl.status.progress }}" title="{{ printerCtrl.status.progress | number : 1 }}%"></md-progress-linear>
         <div class="status">

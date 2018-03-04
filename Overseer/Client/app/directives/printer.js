@@ -50,6 +50,12 @@
                             get: function() {
                                 return !self.connecting && self.model.disabled;
                             }
+                        },
+                        webcamUrl: {
+                            get: function() {
+                                var url = self.model.config.webCamUrl;
+                                return  url + (url.indexOf("?") >= 0 ? "&" : "?") + "cb=" + self.cacheBuster;
+                            }
                         }
                     });
 
