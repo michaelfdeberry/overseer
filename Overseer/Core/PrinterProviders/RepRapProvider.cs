@@ -20,57 +20,17 @@ namespace Overseer.Core.PrinterProviders
         {
             PrinterId = printer.Id;
             var config = (RepRapConfig) printer.Config;
-            config.Url = new Uri(config.Url).GetUrl();
+            config.Url = new Uri(config.Url).ProcessUrl();
 
             _url = config.Url;
         }
 
         public override int PrinterId { get; }
 
-        public override Task SetToolTemperature(string toolName, int targetTemperature)
-        {
-            return ExecuteGcode($"G10 P{toolName.Last()} S{targetTemperature}");
-        }
-
-        public override Task SetBedTemperature(int targetTemperature)
-        {
-            return ExecuteGcode($"M140 S{targetTemperature}");
-        }
-
-        public override Task SetFlowRate(string toolName, int percentage)
-        {
-            return ExecuteGcode($"M221 D{toolName.Last()} S{percentage}");
-        }
-
-        public override Task SetFeedRate(int percentage)
-        {
-            return ExecuteGcode($"M220 S{percentage}");
-        }
-
-        public override Task SetFanSpeed(int percentage)
-        {
-            return ExecuteGcode($"M106 S{percentage / 100}");
-        }
-
-        public override Task PausePrint()
-        {
-            return ExecuteGcode("M25");
-        }
-
-        public override Task ResumePrint()
-        {
-            return ExecuteGcode("M24");
-        }
-
-        public override Task CancelPrint()
-        {
-            return ExecuteGcode("M0");
-        }
-
         public override async Task LoadConfiguration(Printer printer)
         {
             var config = (RepRapConfig)printer.Config;
-            _url = new Uri(config.Url).GetUrl();
+            _url = new Uri(config.Url).ProcessUrl();
 
             using (var httpClient = new HttpClient())
             {
@@ -84,7 +44,7 @@ namespace Overseer.Core.PrinterProviders
             }
         }
 
-        async Task ExecuteGcode(string command)
+        protected override async Task ExecuteGcode(string command)
         {
             try
             {
@@ -100,7 +60,7 @@ namespace Overseer.Core.PrinterProviders
             }
         }
 
-        protected override async Task<PrinterStatus> GetPrinterStatusImpl(CancellationToken cancellationToken)
+        protected override async Task<PrinterStatus> AcquireStatus(CancellationToken cancellationToken)
         {
             var status = new PrinterStatus { PrinterId = PrinterId };
             using (var httpClient = new HttpClient())

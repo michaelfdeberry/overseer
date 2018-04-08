@@ -3,8 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
-using Octoprint;
+using Newtonsoft.Json.Linq;
 using Overseer.Core.Models;
+using RestSharp;
 
 namespace Overseer.Core.PrinterProviders
 {
@@ -12,8 +13,6 @@ namespace Overseer.Core.PrinterProviders
     {
         static readonly ILog Log = LogManager.GetLogger(typeof(OctoprintProvider));
         string _apiKey;
-        OctoprintApi _octoprint;
-
         string _url;
 
         public OctoprintProvider(Printer printer)
@@ -23,119 +22,173 @@ namespace Overseer.Core.PrinterProviders
 
             _url = NormalizeOctoprintUrl(config);
             _apiKey = config.ApiKey;
-
-            _octoprint = new OctoprintApi(_url, _apiKey);
         }
 
         public override int PrinterId { get; }
 
-        public override Task SetToolTemperature(string toolName, int targetTemperature)
-        {
-            return _octoprint.PrinterOperations.SetToolTarget(toolName, targetTemperature);
-        }
-
-        public override Task SetBedTemperature(int targetTemperature)
-        {
-            return _octoprint.PrinterOperations.SetBedTarget(targetTemperature);
-        }
-
-        public override Task SetFlowRate(string toolName, int percentage)
-        {
-            return _octoprint.PrinterOperations.Flowrate(toolName, percentage);
-        }
-
-        public override Task SetFeedRate(int percentage)
-        {
-            return _octoprint.PrinterOperations.Feedrate(percentage);
-        }
-
-        public override Task SetFanSpeed(int percentage)
-        {
-            var speed = (int) (255 * (percentage / 100f));
-            return _octoprint.PrinterOperations.SendCommand($"M106 S{speed}");
-        }
-
+        /// <summary>
+        /// This uses the Octoprint API to pause the print,
+        /// this is needed because the Gcode command only works
+        /// when printing from SD, where as when printing from 
+        /// Octoprint the commands are streamed to the printer.
+        /// </summary>
         public override Task PausePrint()
         {
-            return _octoprint.JobOperations.Pause();
+            return Execute("job", Method.POST, new { command = "pause", action = "pause" });
         }
 
+        /// <summary>
+        /// This uses the Octoprint API to resume the print,
+        /// this is needed because the Gcode command only works
+        /// when printing from SD, where as when printing from 
+        /// Octoprint the commands are streamed to the printer.
+        /// </summary>
         public override Task ResumePrint()
         {
-            return _octoprint.JobOperations.Resume();
+            return Execute("job", Method.POST, new { command = "pause", action = "resume" });
         }
 
+        /// <summary>
+        /// This uses the Octoprint API to cancel the print,
+        /// this is needed because the Gcode command only works
+        /// when printing from SD, where as when printing from 
+        /// Octoprint the commands are streamed to the printer.
+        /// </summary>
         public override Task CancelPrint()
         {
-            return _octoprint.JobOperations.Cancel();
+            return Execute("job", Method.POST, new { command = "cancel" });
+        }
+
+        protected override Task ExecuteGcode(string command)
+        {
+            return Execute("printer/command", Method.POST, new { command });
         }
 
         public override async Task LoadConfiguration(Printer printer)
         {
             try
             {
-                var config = (OctoprintConfig) printer.Config;
-                if (_url != NormalizeOctoprintUrl(config) || _apiKey != config.ApiKey)
-                {
-                    _url = config.Url;
-                    _apiKey = config.ApiKey;
-                    _octoprint = new OctoprintApi(_url, _apiKey);
-                }
+                var config = (OctoprintConfig)printer.Config;
+                _url = NormalizeOctoprintUrl(config);
+                _apiKey = config.ApiKey;
 
-                var settings = await _octoprint.Settings.GetSettings();
-                var profiles = await _octoprint.PrinterProfileOperations.GetPrinterProfiles();
-                var profile = profiles.Profiles.Values.FirstOrDefault(x => x.Name == config.Profile?.Name) ??
-                              profiles.Profiles.Values.First(x => x.Current);
+                var settings = await Execute("settings", Method.GET);
+                config.WebCamUrl = new Uri(config.Url).ProcessUrl((string)settings["webcam"]["streamUrl"]);
+                config.SnapshotUrl = new Uri(config.Url).ProcessUrl((string)settings["webcam"]["snapshotUrl"]);
 
-                config.HeatedBed = profile.HeatedBed;
-                
-                config.WebCamUrl = new Uri(config.Url).GetUrl(settings.Webcam.StreamUrl);
-                config.SnapshotUrl = new Uri(config.Url).GetUrl(settings.Webcam.SnapshotUrl);
-                config.Tools = Enumerable.Range(0, profile.Extruder.Count).Select(index => $"tool{index}").ToList();
-                config.Profile = new OctoprintProfile {Id = profile.Id, Name = profile.Name};
-                config.AvailableProfiles = profiles.Profiles.Values
-                    .Select(x => new OctoprintProfile {Id = x.Id, Name = x.Name})
+                var printerProfiles = await Execute("printerprofiles", Method.GET);
+                var octoprintProfiles = printerProfiles["profiles"]
+                    .Value<JObject>()
+                    .Properties()
+                    .Where(p => p.Value.Type == JTokenType.Object)
+                    .Select(p => p.Value.ToObject<JObject>())
                     .ToList();
+
+                foreach (var octoprintProfile in octoprintProfiles)
+                {
+                    var profile = new OctoprintProfile
+                    {
+                        Id = (string)octoprintProfile["id"],
+                        Name = (string)octoprintProfile["name"]
+                    };
+
+                    if ((bool)octoprintProfile["current"])
+                    {
+                        config.Profile = profile;
+                        config.HeatedBed = (bool)octoprintProfile["heatedBed"];
+                        config.Tools = Enumerable.Range(0, (int)octoprintProfile["extruder"]["count"]).Select(index => $"tool{index}").ToList();
+                    }
+                    
+                    config.AvailableProfiles.Add(profile);
+                }
             }
             catch (Exception ex)
             {
                 Log.Error("Load Configuration Failure", ex);
+                throw;
             }
         }
 
-        protected override async Task<PrinterStatus> GetPrinterStatusImpl(CancellationToken cancellationToken)
+        protected override async Task<PrinterStatus> AcquireStatus(CancellationToken cancellationToken)
         {
+            var stateResponse = await Execute("printer", Method.GET, cancellationToken);
             var status = new PrinterStatus { PrinterId = PrinterId };
-            var stateResponse = await _octoprint.PrinterOperations.GetPrinterState().WithCancellation(cancellationToken);            
-            var flags = stateResponse.State.Flags;
 
-            if (flags.Printing || flags.Paused)
+            status.Temperatures = stateResponse["temperature"]
+                .Value<JObject>()
+                .Properties()
+                .Where(p => p.Value.Type == JTokenType.Object)
+                .ToDictionary(p => p.Name, p =>
+                {
+                    var temp = p.Value.ToObject<JToken>();
+                    return new TemperatureStatus
+                    {
+                        Name = p.Name,
+                        Actual = (float)temp["actual"],
+                        Target = (float)temp["target"]
+                    };
+                });
+
+            var flags = stateResponse["state"]["flags"];
+            if ((bool)flags["printing"] || (bool)flags["paused"])
             {
-                status.State = flags.Paused ? PrinterState.Paused : PrinterState.Printing;
+                status.State = (bool)flags["paused"] ? PrinterState.Paused : PrinterState.Printing;
 
-                var jobStatus = await _octoprint.JobOperations.GetJobStatus();
-                status.ElapsedPrintTime = jobStatus.Progress.PrintTime ?? 0;
-                status.EstimatedTimeRemaining = jobStatus.Progress.PrintTimeLeft ?? 0;
-                status.Progress = jobStatus.Progress.Completion ?? 0;
+                var jobStatus = await Execute("job", Method.GET, cancellationToken);
+                status.ElapsedPrintTime = (int?)jobStatus["progress"]["printTime"] ?? 0;
+                status.EstimatedTimeRemaining = (int?)jobStatus["progress"]["printTimeLeft"] ?? 0;
+                status.Progress = (float?)jobStatus["progress"]["completion"] ?? 0;
             }
             else
             {
                 status.State = PrinterState.Idle;
             }
 
-            status.Temperatures = stateResponse.Temperature.ToDictionary(kvp => kvp.Key, kvp => new TemperatureStatus
-            {
-                Name = kvp.Key,
-                Actual = kvp.Value.Actual,
-                Target = kvp.Value.Target
-            });
-
             return status;
         }
 
-        static string NormalizeOctoprintUrl(OctoprintConfig config)
+        string NormalizeOctoprintUrl(OctoprintConfig config)
         {
-            return new Uri(config.Url).GetUrl("/api");
+            return new Uri(config.Url).ProcessUrl("/api");
+        }
+
+        async Task<JObject> Execute(string resource, Method method, CancellationToken cancellation, object body = null)
+        {
+            return HandleResult(await CreateClient().ExecuteTaskAsync(CreateRequest(resource, method, body), cancellation));
+        }
+
+        async Task<JObject> Execute(string resource, Method method, object body = null)
+        {
+            return HandleResult(await CreateClient().ExecuteTaskAsync(CreateRequest(resource, method, body)));
+        }
+
+        JObject HandleResult(IRestResponse response)
+        {
+            if (response.ErrorException != null || (int)response.StatusCode >= 400)
+                throw new Exception(response.Content);
+
+            if (string.IsNullOrWhiteSpace(response.Content)) return null;
+            if (!response.ContentType.Contains("json")) return null;
+
+            return JObject.Parse(response.Content);
+        }
+
+        RestClient CreateClient()
+        {
+            var client = new RestClient { BaseUrl = new Uri(_url) };            
+            client.AddDefaultHeader("X-Api-Key", _apiKey);
+
+            return client;
+        }
+
+        RestRequest CreateRequest(string resource, Method method, object body = null)
+        {
+            var request = new RestRequest(resource, method);
+
+            if (body != null)
+                request.AddJsonBody(body);
+
+            return request;
         }
     }
 }

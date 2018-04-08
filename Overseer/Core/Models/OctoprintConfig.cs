@@ -43,6 +43,6 @@ namespace Overseer.Core.Models
         /// <summary>
         /// The profiles available for this instance
         /// </summary>
-        public List<OctoprintProfile> AvailableProfiles { get; set; }
+        public List<OctoprintProfile> AvailableProfiles { get; set; } = new List<OctoprintProfile>();
     }
 }

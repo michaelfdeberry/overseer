@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using log4net;
+﻿using log4net;
 using Microsoft.AspNet.SignalR;
 using Overseer.Core;
+using System.Threading.Tasks;
 
 namespace Overseer.Hubs
 {
@@ -18,14 +17,11 @@ namespace Overseer.Hubs
             _monitoringService = monitoringService; 
         }
         
-        /// <summary>
-        ///     This is require else the on connected/disconnected methods won't be invoked.
-        /// </summary>
         public async Task StartMonitoring()
         {
             if (++_connections == 1)
             {
-                Log.Info("A client is connected starting monitoring...");                
+                Log.Info("A client is connected initiating monitoring...");                
                 await _monitoringService.StartMonitoring();
             }
         }
@@ -34,7 +30,7 @@ namespace Overseer.Hubs
         {
             if (--_connections <= 0)
             {
-                Log.Info("No clients connected stopping monitoring...");
+                Log.Info("No clients connected suspending monitoring...");
 
                 _monitoringService.StopMonitoring();
                 _connections = 0;

@@ -1,9 +1,8 @@
-﻿using System;
+﻿using LiteDB;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using LiteDB;
-using Overseer.Core.Models;
 
 namespace Overseer.Core.Data
 {

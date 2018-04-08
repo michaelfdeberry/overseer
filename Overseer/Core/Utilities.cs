@@ -1,25 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Nancy;
 using Overseer.Core.Data;
 using Overseer.Core.Models;
+using HttpStatusCode = Nancy.HttpStatusCode;
 
 namespace Overseer.Core
 {
     public static class Utilities
     {
-        public static string GetUrl(this Uri uri, string refPath = "")
+        public static string ProcessUrl(this Uri uri, string refPath = "")
         {
-            //if the reference path is an absolute url use the absolute url. 
             if (Uri.TryCreate(refPath, UriKind.Absolute, out var refUri))
             {
+                //if the host is a loopback ip address assume it's local to base uri and construct a new url
+                //with the public host
+                if (IPAddress.TryParse(refUri.Host, out var ip) && IPAddress.IsLoopback(ip))
+                {
+                    var port = string.Empty;
+                    if (!refUri.IsDefaultPort)
+                    {
+                        port = $":{refUri.Port}";
+                    }
+
+                    return $"{uri.Scheme}://{uri.Host}{port}{refUri.PathAndQuery}";
+                }
+
+                //if the reference path is an absolute url use the absolute url. 
                 return refUri.ToString();
             }
             
-            return string.Concat(uri.Scheme, "://", uri.Authority, refPath);
+            //else construct a new url with the reference path
+            return $"{uri.Scheme}://{uri.Authority}{refPath}";
         }
 
         public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)

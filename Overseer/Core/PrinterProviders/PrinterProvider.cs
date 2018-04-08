@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
@@ -13,6 +14,7 @@ namespace Overseer.Core.PrinterProviders
 
         //if there are 5 consecutive errors 
         const int MaxExceptionCount = 5;
+
         //reduce the update interval to every 2 minutes
         const int ExceptionTimeout = 2;
 
@@ -22,26 +24,53 @@ namespace Overseer.Core.PrinterProviders
 
         public abstract int PrinterId { get; }
 
-        public abstract Task SetToolTemperature(string toolName, int targetTemperature);
+        public virtual Task SetToolTemperature(string toolName, int targetTemperature)
+        {
+            return ExecuteGcode($"M104 T{GetToolIndex(toolName)} S{targetTemperature}");
+        }
 
-        public abstract Task SetBedTemperature(int targetTemperature);
+        public virtual Task SetBedTemperature(int targetTemperature)
+        {
+            return ExecuteGcode($"M140 S{targetTemperature}");
+        }
 
-        public abstract Task SetFlowRate(string toolName, int percentage);
+        public virtual Task SetFlowRate(string toolName, int percentage)
+        {
+            return ExecuteGcode($"M221 D{GetToolIndex(toolName)} S{percentage}");
+        }
 
-        public abstract Task SetFeedRate(int percentage);
+        public virtual Task SetFeedRate(int percentage)
+        {
+            return ExecuteGcode($"M220 S{percentage}");
+        }
 
-        public abstract Task SetFanSpeed(int percentage);
+        public virtual Task SetFanSpeed(int percentage)
+        {
+            var speed = (int)(255 * (percentage / 100f));
+            return ExecuteGcode($"M106 S{speed}");
+        }
 
-        public abstract Task PausePrint();
+        public virtual Task PausePrint()
+        {
+            return ExecuteGcode("M25");
+        }
 
-        public abstract Task ResumePrint();
+        public virtual Task ResumePrint()
+        {
+            return ExecuteGcode("M24");
+        }
 
-        public abstract Task CancelPrint();
-
+        public virtual Task CancelPrint()
+        {
+            return ExecuteGcode("M0");
+        }
+        
         public abstract Task LoadConfiguration(Printer printer);
 
-        protected abstract Task<PrinterStatus> GetPrinterStatusImpl(CancellationToken cancellationToken);
+        protected abstract Task ExecuteGcode(string command);
 
+        protected abstract Task<PrinterStatus> AcquireStatus(CancellationToken cancellationToken);
+        
         public async Task<PrinterStatus> GetPrinterStatus(CancellationToken cancellationToken)
         {
             //if the stopwatch is running and it's in the timeout period just return an offline status
@@ -53,7 +82,7 @@ namespace Overseer.Core.PrinterProviders
             try
             {
                 //if the stopwatch isn't running or if the timeout period is exceeded try to get the status
-                var status = await GetPrinterStatusImpl(cancellationToken);
+                var status = await AcquireStatus(cancellationToken);
 
                 //if the status was retrieve successfully reset the exception count and stop the stopwatch
                 _exceptionCount = 0;
@@ -75,6 +104,11 @@ namespace Overseer.Core.PrinterProviders
 
                 return new PrinterStatus { PrinterId = PrinterId };
             }
+        }
+
+        static string GetToolIndex(string toolName)
+        {
+            return string.Join(string.Empty, toolName.Select(char.IsDigit));
         }
     }
 }
