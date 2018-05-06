@@ -12,21 +12,14 @@
         };
 
         self.getConfiguration = function() {
-            return $http.get(endpoint + "/configuration").then(function(configuration) {
-                cache.printers = configuration.data.printers;
-                cache.settings = configuration.data.settings;
-                cache.users = configuration.data.users;
+            return $http.get(endpoint + "/configuration").then(function(result) {
+                angular.forEach(result.data.printers, function (printer) {
+                    cache.printers[printer.id] = printer;
+                });
 
-                return configuration.data;
-            });
-        };
+                cache.settings = result.data.settings;
+                cache.users = result.data.users;
 
-        self.getPrinter = function(printerId) {
-            if (cache.printers[printerId]) {
-                return $q.resolve(cache.printers[printerId]);
-            }
-            
-            return $http.get(endpoint + "/" + printerId).then(function(result) {                 
                 return result.data;
             });
         };
@@ -46,6 +39,16 @@
                     cache.printers[printer.id] = printer;
                 });
 
+                return result.data;
+            });
+        };
+
+        self.getPrinter = function(printerId) {
+            if (cache.printers[printerId]) {
+                return $q.resolve(cache.printers[printerId]);
+            }
+            
+            return $http.get(endpoint + "/" + printerId).then(function(result) {                 
                 return result.data;
             });
         };
