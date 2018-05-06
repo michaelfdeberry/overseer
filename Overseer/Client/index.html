@@ -8,7 +8,7 @@
     <link href="/css/angular-material.min.css" rel="stylesheet"/>
     <link href="/css/font-awesome.min.css" rel="stylesheet"/>
     <link href="/css/nprogress.css" rel="stylesheet"/>
-    <link href="/overseer.css?rev=6f57699bfeb0da038acc04919aad45b6" rel="stylesheet"/>
+    <link href="/overseer.css?rev=96858cf1bd6c85dfdc529b5e7bacee85" rel="stylesheet"/>
 </head>
 <body>
 <div ng-cloak ng-controller="appCtrl as app">
@@ -18,9 +18,32 @@
                 <a flex href="/#!/">
                     <h2>Overseer</h2>
                 </a>
-                <md-button href="/#!/configuration" class="md-icon-button action-button">
+                <md-button ng-show="!app.showMenu" href="/#!/configuration" class="md-icon-button action-button">
                     <i class="fa fa-gear"></i>
                 </md-button>
+                <md-menu ng-show="app.showMenu" md-position-mode="target-right bottom">
+                    <md-button class="md-icon-button action-button" ng-click="$mdMenu.open($event)">
+                        <i class="fa fa-bars"></i>
+                    </md-button>
+                    <md-menu-content width="4">
+                        <md-menu-item>
+                            <md-button href="/#!/configuration" ng-click="app.close()">
+                                <div layout="row" flex>
+                                    <p flex>{{ 'settings' | translate }}</p>
+                                    <i class="fa fa-gear" style="margin: auto 3px auto 0;"></i>
+                                </div>                                
+                            </md-button>
+                        </md-menu-item> 
+                        <md-menu-item>
+                            <md-button ng-click="app.logout()">
+                                <div layout="row" flex>
+                                    <p flex>{{ 'logout' | translate }}</p>
+                                    <i class="fa fa-sign-out" style="margin: auto 3px auto 0;"></i>
+                                </div>
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
             </div>
         </md-toolbar>
     </md-content>
@@ -39,6 +62,6 @@
 <script src="/scripts/jquery.signalR.min.js"></script>
 <script src="/scripts/nprogress.js"></script>
 <script src="/push/hubs"></script>
-<script src="/overseer.js?rev=2edd1cff3779bd06a24a1512a7b1d93c"></script>
+<script src="/overseer.js?rev=68406773b75c2c4d95d170121d8b352a"></script>
 </body>
 </html>

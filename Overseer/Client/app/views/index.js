@@ -13,7 +13,7 @@
             settings: configuration.getSettings()
         }).then(function(results) {
             self.loading = false;
-            self.settings = results.settings;            
+            self.settings = results.settings;
             self.printers = self.settings.hideDisabledPrinters ? _.filter(results.printers, { disabled: false }) : results.printers;
         });        
     }

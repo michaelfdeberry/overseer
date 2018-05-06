@@ -8,6 +8,8 @@ namespace Overseer.Modules
         public ControlModule(ControlManager controlManager)
             : base("services/control")
         {
+            this.RequiresAuthentication();
+
             Get["/{id:int}/pause", true] = async (p, ct) => await this.Ok(() => controlManager.Pause(p.id));
 
             Get["/{id:int}/resume", true] = async (p, ct) => await this.Ok(() => controlManager.Resume(p.id));

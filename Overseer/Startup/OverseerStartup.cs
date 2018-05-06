@@ -20,7 +20,7 @@ namespace Overseer.Startup
         const string ClientPath = "../Overseer/Client";        
         const string EndPointFormatter = "http://localhost:{0}";
 #else 
-        //When build in release mode use the files in the output folder and dynamic host
+        //When built in release mode use the files in the output folder and dynamic host
         const string ClientPath = "./Client";
         const string EndPointFormatter = "http://*:{0}";
 #endif
@@ -51,7 +51,7 @@ namespace Overseer.Startup
                     EnableJavaScriptProxies = true,
                     EnableJSONP = false
                 });
-
+                
                 app.UseNancy(new NancyOptions { Bootstrapper = new OverseerBootstrapper(context) });
             });
 

@@ -19,14 +19,29 @@ angular.module("overseer")
                     controller: "configurationController",
                     controllerAs: "ctrl"
                 })
-                .when("/configuration/add", {
+                .when("/configuration/printers/add", {
                     templateUrl: "views/configuration/add.html",
                     controller: "addPrinterController",
                     controllerAs: "ctrl"
                 })
-                .when("/configuration/edit/:id", {
+                .when("/configuration/printers/edit/:id", {
                     templateUrl: "views/configuration/edit.html",
                     controller: "editPrinterController",
+                    controllerAs: "ctrl"
+                })
+                .when("/configuration/users/add", {
+                    templateUrl: "views/configuration/addUser.html",
+                    controller: "addUserController",
+                    controllerAs: "ctrl"
+                })
+                .when("/configuration/users/edit/:id", {
+                    templateUrl: "views/configuration/editUser.html",
+                    controller: "editUserController",
+                    controllerAs: "ctrl"
+                })
+                .when("/login", {
+                    templateUrl: "views/login.html",
+                    controller: "loginController",
                     controllerAs: "ctrl"
                 })
                 .otherwise("/");
@@ -69,15 +84,19 @@ angular.module("overseer")
 
             $mdThemingProvider.theme("default")
                 .primaryPalette("overseerPalette", { default: "500" })
+                .accentPalette("overseerPalette", { default: "800" })
                 .dark();
 
-            $httpProvider.interceptors.push([function () {
+
+            $mdThemingProvider.enableBrowserColor();
+
+            $httpProvider.interceptors.push(["$q", "$location", function ($q, $location) {
                 var activeRequest = 0;
                 var timeout;
 
                 function startLoader() {
                     if (activeRequest === 0) {
-                        NProgress.start(); 
+                        NProgress.start();
 
                         timeout = setTimeout(function () {
                             activeRequest = 0;
@@ -95,36 +114,89 @@ angular.module("overseer")
                         }
 
                         activeRequest = 0;
-                        NProgress.done(); 
+                        NProgress.done();
                     }
-                } 
+                }
 
                 return {
                     request: function (config) {
-                        startLoader();                         
+                        startLoader();
+                        
+                        if (window.localStorage.activeUser) {
+                            var user = JSON.parse(window.localStorage.activeUser);
+                            config.headers.Authorization = "Bearer " + user.token;
+                        }
+                    
                         return config;
                     },
                     response: function (response) {
-                        stopLoader();                        
+                        stopLoader();
                         return response;
                     },
                     responseError: function (response) {
                         stopLoader();
-                        return response;
+
+                        //redirect to login if unauthorized status code is returned
+                        if (response.status === 401 || response.status === 403) {
+                            delete window.localStorage.activeUser;
+                            $location.path("/login");
+                        }
+
+                        return $q.reject(response);
                     }
                 };
             }]);
         }
     ])
-    .controller("appCtrl", ["$rootScope", function ($rootScope) {
+    .controller("appCtrl", ["$rootScope", "$location", "authentication", function ($rootScope, $location, authentication) {
         "use strict";
 
-        $.connection.statusHub.client.statusUpdate = function (status) { 
+        var self = this;
+        var monitoringEnabled;
+
+        Object.defineProperties(self, {
+            showMenu: {
+                get: function() {
+                    return authentication.authToken;
+                }
+            }
+        });
+
+        self.logout = function() {
+            authentication.logout();
+            $location.path("/login");
+        };
+        
+        $.connection.hub.url = "/push";
+        $.connection.statusHub.client.statusUpdate = function (status) {
             $rootScope.$broadcast("$StatusUpdate$", status);
         };
 
-        $.connection.hub.url = "/push";
-        $.connection.hub.start().done(function () {
-            $.connection.statusHub.server.startMonitoring();
+        $rootScope.$watch(function () { return authentication.authToken; }, function(current, previous) {
+            if (current) {
+                //a user logged in or the page loaded with a logged in user
+                subscribeToStatusUpdates();
+            } else if (previous) {
+                //a user logged out, or a request returned a 401 or 403
+                unsubscribeFromStatusUpdates();
+            }
         });
+        
+        function unsubscribeFromStatusUpdates() {
+            if (!$.connection.hub) return;
+
+            monitoringEnabled = false;
+            $.connection.hub.stop();
+        }
+
+        function subscribeToStatusUpdates() {
+            if (monitoringEnabled) return;
+
+            $.connection.hub.start().done(function () {
+                var token = authentication.activeUser ? authentication.activeUser.token : "";
+                $.connection.statusHub.server.startMonitoring(token).then(function(enabled) {
+                    monitoringEnabled = enabled;
+                });
+            });
+        }
     }]);

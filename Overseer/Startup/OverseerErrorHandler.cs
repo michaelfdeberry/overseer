@@ -2,6 +2,7 @@
 using Nancy;
 using Nancy.ErrorHandling;
 using Nancy.Extensions;
+using Nancy.Responses;
 
 namespace Overseer.Startup
 {
@@ -18,7 +19,18 @@ namespace Overseer.Startup
         {
             var exception = context.GetException();
             if (exception != null)
+            {
                 Log.Error("Server Error", exception);
+
+                if (exception.InnerException != null)
+                {
+                    var error = exception.InnerException.Message;                    
+                    context.Response = new JsonResponse(new { error }, new DefaultJsonSerializer())
+                    {
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+                }                
+            }    
         }
     }
 }

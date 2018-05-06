@@ -11,7 +11,9 @@
         
         Object.defineProperty(self, "configTemplateUrl", {
             get: function() {
-                return "view/configuration/" + self.model.printerType + ".html";
+                if (!self.model.printerType) return;
+
+                return "views/configuration/" + self.model.printerType + ".html";
             }
         });
 
@@ -23,10 +25,6 @@
                 self.loading = false;
                 $location.path("/configuration");
             });
-        };
-
-        self.getConfigTemplateUrl = function() {
-            return "views/configuration/" + self.model.printerType + ".html";
         };
     }
 ]);

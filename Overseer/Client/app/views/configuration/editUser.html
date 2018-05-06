@@ -1,0 +1,35 @@
+﻿<form name="ctrl.addForm" novalidate>
+    <md-card flex-gt-sm="50" flex-offset-gt-sm="25">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline">
+                    {{ 'editing' | translate }} {{ 'user' | translate }} '{{ ctrl.user.username }}'
+                </span>
+            </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+            <md-input-container ng-if="ctrl.error">
+                <div class="error" ng-bind="ctrl.error"></div>
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label translate="passwordEdit"></label>
+                <input type="password" ng-model="ctrl.user.password" min="8" required />
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label translate="confirmPassword"></label>
+                <input type="password" ng-model="ctrl.user.passwordMatch" match="ctrl.user.password" required />
+            </md-input-container>
+
+        </md-card-content>
+        <md-card-actions layout="row" layout-align="end center">
+            <div flex>
+                <md-button flex class="md-raised md-warn md-hue-2" ng-click="ctrl.deleteUser()">
+                    <span translate="delete"></span>
+                </md-button>
+                <md-button ng-if="ctrl.user.isLoggedIn" ng-click="ctrl.logout()" translate="logout"></md-button>
+            </div>
+            <md-button href="/#!/configuration" translate="cancel"></md-button>
+            <md-button type="submit" class="md-primary" ng-click="ctrl.changePassword()" ng-disabled="ctrl.addForm.$pristine || ctrl.addForm.$invalid || ctrl.loading" translate="save"></md-button>
+        </md-card-actions>
+    </md-card>
+</form>

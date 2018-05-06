@@ -41,7 +41,7 @@ namespace Overseer.Core
             if (_timer.Enabled) return;
 
             _timer.Start();
-            Log.Info("Monitoring Started.");
+            Log.Info("Monitoring initiated.");
             
             //prime the statuses so that there is information available immediately 
             await GetStatuses();
@@ -52,7 +52,7 @@ namespace Overseer.Core
             if (!_timer.Enabled) return;
 
             _timer.Stop();
-            Log.Info("Monitoring stopped.");
+            Log.Info("Monitoring suspended.");
         }
 
         public void Update(ApplicationSettings settings)
@@ -72,7 +72,6 @@ namespace Overseer.Core
                 var status = task.Result.OrderByDescending(x => x.State).ToDictionary(x => x.PrinterId);
                 if (!status.Any()) return;
 
-                Log.Info("New Status Update!");
                 StatusUpdate?.Invoke(this, new StatusUpdateEventArgs(status));
                 GlobalHost.ConnectionManager.GetHubContext<StatusHub>().Clients.All.StatusUpdate(status);
             });

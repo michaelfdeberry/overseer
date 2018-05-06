@@ -1,4 +1,4 @@
-﻿<div>
+﻿<form name="editForm" novalidate>
     <md-card flex-gt-sm="50" flex-offset-gt-sm="25">
         <md-card-title>
             <md-card-title-text>
@@ -6,19 +6,28 @@
             </md-card-title-text>
         </md-card-title>
         <md-card-content>
-            <form name="editForm">
-                <md-input-container class="md-block">
-                    <label translate="name"></label>
-                    <input ng-model="ctrl.model.name" required />
-                </md-input-container>
-                
-                <ng-include src="ctrl.configTemplateUrl"></ng-include> 
-                <md-input-container class="md-block">                    
-                    <md-switch class="md-primary" ng-model="ctrl.model.disabled" title="{{ 'disableMonitoringTitle' | translate }}">
-                        <span translate="disableMonitoring"></span>
-                    </md-switch>
-                </md-input-container>
-            </form>
+            <md-input-container class="md-block">
+                <label translate="name"></label>
+                <input ng-model="ctrl.model.name" required />
+            </md-input-container>
+
+            <md-input-container class="md-block">
+                <label translate="webcamUrl"></label>
+                <input ng-model="ctrl.model.config.webCamUrl" required />
+            </md-input-container>
+
+            <md-input-container class="md-block">
+                <label translate="snapshotUrl"></label>
+                <input ng-model="ctrl.model.config.snapshotUrl" required />
+            </md-input-container>
+
+            <ng-include src="ctrl.configTemplateUrl"></ng-include>
+
+            <md-input-container class="md-block">
+                <md-switch class="md-primary" ng-model="ctrl.model.disabled" title="{{ 'disableMonitoringTitle' | translate }}">
+                    <span translate="disableMonitoring"></span>
+                </md-switch>
+            </md-input-container>
         </md-card-content>
         <md-card-actions layout="row" layout-align="end center">
             <div flex>
@@ -27,9 +36,9 @@
                 </md-button>
             </div>
             <md-button href="/#!/configuration"><span translate="cancel"></span></md-button>
-            <md-button class="md-primary" ng-click="ctrl.updatePrinter()" ng-disabled="editForm.$pristine || editForm.$invalid">
+            <md-button type="submit" class="md-primary" ng-click="ctrl.updatePrinter()" ng-disabled="editForm.$pristine || editForm.$invalid">
                 <span translate="save"></span>
             </md-button>
         </md-card-actions>
-    </md-card> 
-</div>
+    </md-card>
+</form>

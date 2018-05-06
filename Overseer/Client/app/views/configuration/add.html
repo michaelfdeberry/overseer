@@ -1,30 +1,29 @@
-﻿<div>
+﻿
+<form name="ctrl.addForm" class="form-vertical" novalidate>
     <md-card flex-gt-sm="50" flex-offset-gt-sm="25">
         <md-card-title>
             <md-card-title-text>
                 <span class="md-headline" translate="addPrinter"></span>
             </md-card-title-text>
         </md-card-title>
-        <md-card-content> 
-            <form name="ctrl.addForm" class="form-vertical" novalidate>
-                <md-input-container class="md-block">
-                    <label translate="printerType"></label>
-                    <md-select ng-model="ctrl.model.printerType" ng-disabled="ctrl.printerTypes.length === 1" required>
-                        <md-option ng-repeat="type in ctrl.printerTypes" value="{{type}}">
-                            {{ type | translate }}
-                        </md-option>
-                    </md-select>
-                </md-input-container>
-                <md-input-container class="md-block" ng-if="ctrl.model.printerType">
-                    <label translate="name"></label>
-                    <input ng-model="ctrl.model.name" required />
-                </md-input-container>
-                <ng-include src="ctrl.getConfigTemplateUrl()"></ng-include>
-            </form>
+        <md-card-content>
+            <md-input-container class="md-block">
+                <label translate="printerType"></label>
+                <md-select ng-model="ctrl.model.printerType" ng-disabled="ctrl.printerTypes.length === 1" required>
+                    <md-option ng-repeat="type in ctrl.printerTypes" value="{{type}}">
+                        {{ type | translate }}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container class="md-block" ng-if="ctrl.model.printerType">
+                <label translate="name"></label>
+                <input ng-model="ctrl.model.name" required />
+            </md-input-container>
+            <ng-include ng-if="ctrl.configTemplateUrl" src="ctrl.configTemplateUrl"></ng-include>
         </md-card-content>
         <md-card-actions layout="row" layout-align="end center">
-            <md-button href="/#!/configuration">Cancel</md-button>
-            <md-button class="md-primary" ng-click="ctrl.addPrinter()" ng-disabled="ctrl.addForm.$pristine || ctrl.addForm.$invalid">Save</md-button>
+            <md-button href="/#!/configuration" translate="cancel"></md-button>
+            <md-button type="submit" class="md-primary" ng-click="ctrl.addPrinter()" ng-disabled="ctrl.addForm.$pristine || ctrl.addForm.$invalid" translate="save"></md-button>
         </md-card-actions>
     </md-card>
-</div>
+</form>

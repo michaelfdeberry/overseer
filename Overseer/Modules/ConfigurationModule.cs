@@ -11,6 +11,8 @@ namespace Overseer.Modules
         public ConfigurationModule(ConfigurationManager configurationManager)
             : base("services/config")
         {
+            this.RequiresAuthentication();
+
             Get["/"] = p => configurationManager.GetPrinters();
 
             Get["/{id:int}"] = p => configurationManager.GetPrinter(p.id);
@@ -19,11 +21,35 @@ namespace Overseer.Modules
 
             Post["/", true] = async (p, ct) => await configurationManager.UpdatePrinter(this.Bind<Printer>());
 
-            Delete["/{id:int}"] = p => this.Ok((Action) (() => configurationManager.DeletePrinter(p.id)));
+            Delete["/{id:int}"] = p => this.Ok((Action)(() => configurationManager.DeletePrinter(p.id)));
 
             Get["/settings"] = p => configurationManager.GetApplicationSettings();
 
-            Post["/settings", true] = async (p, ct) => await configurationManager.UpdateApplicationSettings(this.Bind<ApplicationSettings>());
+            Post["/settings"] = p => configurationManager.UpdateApplicationSettings(this.Bind<ApplicationSettings>());
+
+            Get["/users"] = p => configurationManager.GetUsers();
+
+            Get["/configuration"] = p => new
+            {
+                Printers = configurationManager.GetPrinters(),
+                Users = configurationManager.GetUsers(),
+                Settings = configurationManager.GetApplicationSettings()
+            };
+
+            Put["/users"] = p =>
+            {
+                var model = this.Bind<UserAuthentication>();
+                return configurationManager.CreateUser(model.Username, model.Password);
+            };
+
+            Post["/users"] = p => //change password
+            {
+                var model = this.Bind<UserAuthentication>();
+                configurationManager.DeleteUser(model.Id);
+                return configurationManager.CreateUser(model.Username, model.Password);
+            };
+
+            Delete["/users/{id:int}"] = p => this.Ok((Action)(() => configurationManager.DeleteUser(p.id)));
         }
     }
 }

@@ -14,6 +14,7 @@ md-toolbar.md-hue-2:not(.md-menu-toolbar) {
     }
 
     .action-button {
+        &,
         &.md-icon-button {
             font-size: 26px;
         }
@@ -22,6 +23,7 @@ md-toolbar.md-hue-2:not(.md-menu-toolbar) {
     }
 }
 
+.user-table,
 .printers-table {
     width: 100%;
     border-collapse: collapse;
@@ -38,7 +40,7 @@ md-toolbar.md-hue-2:not(.md-menu-toolbar) {
             padding-left: 20px;
 
             &:nth-child(3) {
-                width: 100px;
+                text-align: center;
             }
 
             &:last-child {
@@ -54,6 +56,11 @@ md-toolbar.md-hue-2:not(.md-menu-toolbar) {
 
         &:last-child > td {
             border: none;
+        }
+
+        &.empty-row td {            
+            text-align: center;
+            padding: 10px 0;
         }
     }
 }
@@ -128,4 +135,24 @@ md-progress-linear {
             font-weight: #fff;
         }
     }
+}
+
+.error {
+    color: $error;
+}
+
+.configuration {
+    .actions {
+        .md-button {
+            margin: 0 4px;
+        }
+    }
+}
+
+md-input-container .md-errors-spacer {
+    min-height: 0;
+}
+
+md-switch {
+    margin: 0 0 10px;
 }

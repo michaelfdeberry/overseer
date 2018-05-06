@@ -11,6 +11,16 @@
             printers: {}
         };
 
+        self.getConfiguration = function() {
+            return $http.get(endpoint + "/configuration").then(function(configuration) {
+                cache.printers = configuration.data.printers;
+                cache.settings = configuration.data.settings;
+                cache.users = configuration.data.users;
+
+                return configuration.data;
+            });
+        };
+
         self.getPrinter = function(printerId) {
             if (cache.printers[printerId]) {
                 return $q.resolve(cache.printers[printerId]);
@@ -75,6 +85,64 @@
             return $http.post(endpoint + "/settings", settings).then(function(result) {
                 cache.settings = result.data;
                 return result.data;
+            });
+        };
+
+        self.getUsers = function() {
+            if (cache.users) {
+                $q.resolve(cache.users);
+            }
+
+            return $http.get(endpoint + "/users").then(function(result) {
+                cache.users = result.data;
+                return result.data;
+            });
+        };
+
+        function handleUserError(e) {
+            if (e.status === 400 && e.data && e.data.error) {
+                return $q.reject(e.data.error);
+            } else {
+                return $q.reject("An Unknown Error Occurred");
+            }
+        }
+
+        self.addUser = function(user) {
+            return $http.put(endpoint + "/users", user).then(function(result) {
+                cache.users.push(result.data);
+                return result.data;
+            }, handleUserError);
+        };
+
+        self.changeUserPassword = function(user) {
+            return $http.post(endpoint + "/users", user).then(function(result) {               
+                return result.data;
+            }, handleUserError);
+        };
+
+        self.removeUser = function(userId) {
+            return $http.delete(endpoint + "/users/" + userId).then(function() {
+                var users = [];
+                angular.forEach(cache.users, function(u) {
+                    if (u.id !== userId) {
+                        users.push(u);
+                    }
+                });
+
+                cache.users = users;
+            });
+        };
+
+        self.logoutUser = function (userId) {
+            return $http.post(endpoint + "/logout/" + userId).then(function(result) {
+                var user = result.data;
+                for (var i = 0; i < cache.users.length; i++) {
+                    var u = cache.users[i];
+                    if (u.id === user.id) {
+                        angular.copy(user, u);
+                        return u;
+                    }
+                }
             });
         };
     }

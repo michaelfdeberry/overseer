@@ -3,8 +3,9 @@
     "$location",
     "$routeParams",
     "$mdDialog",
+    "$translate",
     "configuration",
-    function ($scope, $location, $routeParams, $mdDialog, configurationService) {
+    function ($scope, $location, $routeParams, $mdDialog, $translate, configurationService) {
         "use strict";
 
         var self = this;
@@ -26,10 +27,10 @@
 
         self.deletePrinter = function() {
             var confirm = $mdDialog.confirm()
-                .title("Delete Printer")
-                .textContent("Are you sure you want remove this printer?")
-                .ok("Yes")
-                .cancel("No");
+                .title($translate.instant("warning"))
+                .textContent($translate.instant("deletePrinterPrompt"))
+                .ok($translate.instant("yes"))
+                .cancel($translate.instant("no"));
 
             $mdDialog.show(confirm).then(function () {
                 configurationService.deletePrinter(self.model).then(function () {

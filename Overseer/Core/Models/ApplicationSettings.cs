@@ -10,18 +10,28 @@ namespace Overseer.Core.Models
         public int Id { get; set; }
 
         /// <summary>
-        ///     How often the app will poll the printer for information
+        /// How often the app will poll the printer for information
         /// </summary>
         public int Interval { get; set; } = DefaultInterval;
 
         /// <summary>
-        ///     THe port that the application will be accessible on
+        /// The port that the application will be accessible on
         /// </summary>
         public int LocalPort { get; set; } = DefaultPort;
 
         /// <summary>
-        ///     If true disabled printers won't be visible on the monitoring screen
+        /// If true disabled printers won't be visible on the monitoring screen
         /// </summary>
         public bool HideDisabledPrinters { get; set; }
+
+        /// <summary>
+        /// Specifies if the application should require user authentication
+        /// </summary>
+        public bool RequiresUserAuthentication { get; set; }
+
+        /// <summary>
+        /// How long, in days, an authenticated user will remain logged in
+        /// </summary>
+        public int? AuthenticationLifetime { get; set; }
     }
 }

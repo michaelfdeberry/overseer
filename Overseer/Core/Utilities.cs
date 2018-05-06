@@ -48,18 +48,6 @@ namespace Overseer.Core
             return (float)Math.Round(value, places);
         }
 
-        public static HttpStatusCode Ok(this NancyModule module, Action action)
-        {
-            action.Invoke();
-            return HttpStatusCode.OK;
-        }
-
-        public static async Task<HttpStatusCode> Ok(this NancyModule module, Func<Task> asyncFunc)
-        {
-            await asyncFunc.Invoke();
-            return HttpStatusCode.OK;
-        }
-
         public static ApplicationSettings GetApplicationSettings(this IDataContext context)
         {
             var repository = context.GetRepository<ApplicationSettings>();

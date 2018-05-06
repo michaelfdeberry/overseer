@@ -1,0 +1,27 @@
+﻿<form name="loginForm" ng-disabled="ctrl.loading" novalidate>
+    <md-card flex-gt-sm="50" flex-offset-gt-sm="25">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline" translate="login"></span>
+            </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+            <md-input-container ng-if="ctrl.error">
+                <div class="error" ng-bind="ctrl.error"></div>
+            </md-input-container>            
+            <md-input-container class="md-block">
+                <label translate="username"></label>
+                <input ng-model="ctrl.user.username" title="{{ username | translate }}" required/>
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label translate="password"></label>
+                <input type="password" ng-model="ctrl.user.password" title="{{ password | translate }}" required/>
+            </md-input-container>
+        </md-card-content>
+        <md-card-actions layout="row" layout-align="end center">
+            <md-button type="submit" class="md-primary" ng-click="ctrl.login()" ng-disabled="ctrl.loading || loginForm.$pristine || loginForm.$invalid">
+                <span translate="login"></span>
+            </md-button>
+        </md-card-actions>
+    </md-card>
+</form>
