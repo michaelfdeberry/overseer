@@ -15,8 +15,8 @@ namespace Overseer.Core
     {
         public static string ProcessUrl(this Uri uri, string refPath = "")
         {
-            if (Uri.TryCreate(refPath, UriKind.Absolute, out var refUri))
-            {
+            if (Uri.TryCreate(refPath, UriKind.Absolute, out var refUri) && refUri.Scheme.StartsWith("http"))
+            {                
                 //if the host is a loopback ip address assume it's local to base uri and construct a new url
                 //with the public host
                 if (IPAddress.TryParse(refUri.Host, out var ip) && IPAddress.IsLoopback(ip))
