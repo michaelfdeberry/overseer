@@ -138,6 +138,7 @@
     <Compile Include="Core\Models\OctoprintConfig.cs" />
     <Compile Include="Core\Models\Printer.cs" />
     <Compile Include="Core\PrinterProviders\RepRapProvider.cs" />
+    <Compile Include="Core\PrinterProviders\RestPrinterProvider.cs" />
     <Compile Include="Core\Utilities.cs" />
     <Compile Include="Modules\AuthenticationModule.cs" />
     <Compile Include="Modules\ModuleExtensions.cs" />

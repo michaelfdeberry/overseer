@@ -19,7 +19,7 @@ namespace Overseer.Core.PrinterProviders
         public OctoprintProvider(Printer printer)
         {
             PrinterId = printer.Id;
-            var config = (OctoprintConfig) printer.Config;
+            var config = (OctoprintConfig)printer.Config;
 
             _url = NormalizeOctoprintUrl(config);
             _apiKey = config.ApiKey;
