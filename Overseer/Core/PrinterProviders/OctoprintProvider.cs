@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,12 +10,12 @@ using RestSharp;
 
 namespace Overseer.Core.PrinterProviders
 {
-    public class OctoprintProvider : PrinterProvider
+    public class OctoprintProvider : RestPrinterProvider
     {
         static readonly ILog Log = LogManager.GetLogger(typeof(OctoprintProvider));
         string _apiKey;
         string _url;
-
+        
         public OctoprintProvider(Printer printer)
         {
             PrinterId = printer.Id;
@@ -26,6 +27,13 @@ namespace Overseer.Core.PrinterProviders
 
         public override int PrinterId { get; }
 
+        protected override Uri ServiceUri => new Uri(_url);
+
+        protected override Dictionary<string, string> Headers => new Dictionary<string, string>
+        {
+            { "X-Api-Key", _apiKey }
+        };
+
         /// <summary>
         /// This uses the Octoprint API to pause the print,
         /// this is needed because the Gcode command only works
@@ -34,7 +42,7 @@ namespace Overseer.Core.PrinterProviders
         /// </summary>
         public override Task PausePrint()
         {
-            return Execute("job", Method.POST, new { command = "pause", action = "pause" });
+            return ExecuteRequest("job", Method.POST, body: new { command = "pause", action = "pause" });
         }
 
         /// <summary>
@@ -45,7 +53,7 @@ namespace Overseer.Core.PrinterProviders
         /// </summary>
         public override Task ResumePrint()
         {
-            return Execute("job", Method.POST, new { command = "pause", action = "resume" });
+            return ExecuteRequest("job", Method.POST, body: new { command = "pause", action = "resume" });
         }
 
         /// <summary>
@@ -56,12 +64,12 @@ namespace Overseer.Core.PrinterProviders
         /// </summary>
         public override Task CancelPrint()
         {
-            return Execute("job", Method.POST, new { command = "cancel" });
+            return ExecuteRequest("job", Method.POST, body: new { command = "cancel" });
         }
 
         protected override Task ExecuteGcode(string command)
         {
-            return Execute("printer/command", Method.POST, new { command });
+            return ExecuteRequest("printer/command", Method.POST, body: new { command });
         }
 
         public override async Task LoadConfiguration(Printer printer)
@@ -72,11 +80,11 @@ namespace Overseer.Core.PrinterProviders
                 _url = NormalizeOctoprintUrl(config);
                 _apiKey = config.ApiKey;
 
-                var settings = await Execute("settings", Method.GET);
+                var settings = await ExecuteRequest("settings");
                 config.WebCamUrl = new Uri(config.Url).ProcessUrl((string)settings["webcam"]["streamUrl"]);
                 config.SnapshotUrl = new Uri(config.Url).ProcessUrl((string)settings["webcam"]["snapshotUrl"]);
 
-                var printerProfiles = await Execute("printerprofiles", Method.GET);
+                var printerProfiles = await ExecuteRequest("printerprofiles");
                 var octoprintProfiles = printerProfiles["profiles"]
                     .Value<JObject>()
                     .Properties()
@@ -111,7 +119,7 @@ namespace Overseer.Core.PrinterProviders
 
         protected override async Task<PrinterStatus> AcquireStatus(CancellationToken cancellationToken)
         {
-            var stateResponse = await Execute("printer", Method.GET, cancellationToken);
+            var stateResponse = await ExecuteRequest("printer", cancellation: cancellationToken);
             var status = new PrinterStatus { PrinterId = PrinterId };
 
             status.Temperatures = stateResponse["temperature"]
@@ -134,7 +142,7 @@ namespace Overseer.Core.PrinterProviders
             {
                 status.State = (bool)flags["paused"] ? PrinterState.Paused : PrinterState.Printing;
 
-                var jobStatus = await Execute("job", Method.GET, cancellationToken);
+                var jobStatus = await ExecuteRequest("job", cancellation: cancellationToken);
                 status.ElapsedPrintTime = (int?)jobStatus["progress"]["printTime"] ?? 0;
                 status.EstimatedTimeRemaining = (int?)jobStatus["progress"]["printTimeLeft"] ?? 0;
                 status.Progress = (float?)jobStatus["progress"]["completion"] ?? 0;
@@ -150,45 +158,6 @@ namespace Overseer.Core.PrinterProviders
         string NormalizeOctoprintUrl(OctoprintConfig config)
         {
             return new Uri(config.Url).ProcessUrl("/api");
-        }
-
-        async Task<JObject> Execute(string resource, Method method, CancellationToken cancellation, object body = null)
-        {
-            return HandleResult(await CreateClient().ExecuteTaskAsync(CreateRequest(resource, method, body), cancellation));
-        }
-
-        async Task<JObject> Execute(string resource, Method method, object body = null)
-        {
-            return HandleResult(await CreateClient().ExecuteTaskAsync(CreateRequest(resource, method, body)));
-        }
-
-        JObject HandleResult(IRestResponse response)
-        {
-            if (response.ErrorException != null || (int)response.StatusCode >= 400)
-                throw new Exception(response.Content);
-
-            if (string.IsNullOrWhiteSpace(response.Content)) return null;
-            if (!response.ContentType.Contains("json")) return null;
-
-            return JObject.Parse(response.Content);
-        }
-
-        RestClient CreateClient()
-        {
-            var client = new RestClient { BaseUrl = new Uri(_url) };            
-            client.AddDefaultHeader("X-Api-Key", _apiKey);
-
-            return client;
-        }
-
-        RestRequest CreateRequest(string resource, Method method, object body = null)
-        {
-            var request = new RestRequest(resource, method);
-
-            if (body != null)
-                request.AddJsonBody(body);
-
-            return request;
         }
     }
 }

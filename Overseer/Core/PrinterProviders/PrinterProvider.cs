@@ -1,16 +1,16 @@
-﻿using System;
+﻿using log4net;
+using Overseer.Core.Models;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using log4net;
-using Overseer.Core.Models;
 
 namespace Overseer.Core.PrinterProviders
 {
     public abstract class PrinterProvider : IPrinterProvider
     {
-        static readonly ILog Log = LogManager.GetLogger(typeof(RepRapProvider));
+        static readonly ILog Log = LogManager.GetLogger(typeof(PrinterProvider));
 
         //if there are 5 consecutive errors 
         const int MaxExceptionCount = 5;
@@ -108,7 +108,7 @@ namespace Overseer.Core.PrinterProviders
 
         static string GetToolIndex(string toolName)
         {
-            return string.Join(string.Empty, toolName.Select(char.IsDigit));
+            return string.Join(string.Empty, toolName.Where(char.IsDigit));
         }
     }
 }
