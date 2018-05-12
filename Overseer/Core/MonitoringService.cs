@@ -73,8 +73,8 @@ namespace Overseer.Core
                 if (!status.Any()) return;
 
                 StatusUpdate?.Invoke(this, new StatusUpdateEventArgs(status));
-                GlobalHost.ConnectionManager.GetHubContext<StatusHub>().Clients.All.StatusUpdate(status);
-            });
+                StatusHub.PushStatusUpdate(status);
+            }, cancellation.Token);
         }
 
         public void Dispose()

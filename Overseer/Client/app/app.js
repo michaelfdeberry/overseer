@@ -199,4 +199,7 @@ angular.module("overseer")
                 });
             });
         }
+
+        //attempt to subscribe to updates. If user authentication is required the server won't send updates.
+        subscribeToStatusUpdates();
     }]);

@@ -1,15 +1,19 @@
-﻿using log4net;
+﻿using System.Collections.Generic;
+using System.Linq;
+using log4net;
 using Microsoft.AspNet.SignalR;
 using Overseer.Core;
 using System.Threading.Tasks;
+using Overseer.Core.Models;
 
 namespace Overseer.Hubs
 {
     public class StatusHub : Hub
     {
-        static readonly ILog Log = LogManager.GetLogger(typeof(StatusHub));
+        static readonly ILog Log = LogManager.GetLogger(typeof(StatusHub)); 
+        static readonly HashSet<string> MonitoringGroup = new HashSet<string>();
+        public static readonly string MonitoringGroupName = "MonitoringGroup";
 
-        static int _connections;
         readonly MonitoringService _monitoringService;
         readonly ConfigurationManager _configurationManager;
 
@@ -23,7 +27,10 @@ namespace Overseer.Hubs
         { 
             if (!_configurationManager.AuthenticateToken(token)) return false;
 
-            if (++_connections == 1)
+            MonitoringGroup.Add(Context.ConnectionId);
+            await Groups.Add(Context.ConnectionId, "MonitoringGroup");
+                
+            if (MonitoringGroup.Count == 1)
             {
                 Log.Info("A client connected, initiating monitoring...");                
                 await _monitoringService.StartMonitoring();
@@ -32,17 +39,26 @@ namespace Overseer.Hubs
             return true;
         }
 
-        public override Task OnDisconnected(bool stopCalled)
+        public override async Task OnDisconnected(bool stopCalled)
         {
-            if (_connections > 0 && --_connections <= 0)
+            MonitoringGroup.Remove(Context.ConnectionId);
+            await Groups.Remove(Context.ConnectionId, "StatusGroup");
+
+            if (!MonitoringGroup.Any())
             {
                 Log.Info("All clients disconnected, suspending monitoring...");
-
                 _monitoringService.StopMonitoring();
-                _connections = 0;
             }
 
-            return base.OnDisconnected(stopCalled);
+            await base.OnDisconnected(stopCalled);
+        }
+
+        public static void PushStatusUpdate(Dictionary<int, PrinterStatus> statusUpdate)
+        {
+            GlobalHost.ConnectionManager.GetHubContext<StatusHub>()
+                .Clients
+                .Group(MonitoringGroupName)
+                .StatusUpdate(statusUpdate);
         }
     }
 }
