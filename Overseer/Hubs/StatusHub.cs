@@ -41,15 +41,13 @@ namespace Overseer.Hubs
 
         public override async Task OnDisconnected(bool stopCalled)
         {
-            MonitoringGroup.Remove(Context.ConnectionId);
-            await Groups.Remove(Context.ConnectionId, "StatusGroup");
-
+            MonitoringGroup.Remove(Context.ConnectionId); 
             if (!MonitoringGroup.Any())
             {
                 Log.Info("All clients disconnected, suspending monitoring...");
                 _monitoringService.StopMonitoring();
             }
-
+            
             await base.OnDisconnected(stopCalled);
         }
 
