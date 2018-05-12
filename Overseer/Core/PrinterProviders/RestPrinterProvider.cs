@@ -29,7 +29,7 @@ namespace Overseer.Core.PrinterProviders
 
             if (body != null)
             {
-                request.AddBody(body);
+                request.AddJsonBody(body);
             }
             
             return ExecuteRequest(request, cancellation);
@@ -47,8 +47,6 @@ namespace Overseer.Core.PrinterProviders
 
             if ((int)response.StatusCode >= 400)
                 throw new Exception($"The service responded with status code {response.StatusCode}({(int)response.StatusCode}): {response.Content}");
-
-            Console.WriteLine("Response URI:" + response.ResponseUri);
 
             if (string.IsNullOrWhiteSpace(response.Content)) return null;
             if (!response.ContentType.Contains("json")) return null;
