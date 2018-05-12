@@ -1,4 +1,4 @@
-﻿ <md-input-container class="md-block">
+﻿<md-input-container class="md-block">
     <label translate="url"></label>
     <input ng-model="ctrl.model.config.url" required />
 </md-input-container>
@@ -6,6 +6,12 @@
     <label translate="apiKey"></label>
     <input ng-model="ctrl.model.config.apiKey" required />
 </md-input-container>
+
+<!-- 
+    If there is an ID the user is editing
+    Allow the user to select a profile (currently not used)
+    Also expose the webcam and snapshot (currently not used) urls so the user can resolve potential parse errors. 
+-->
 <md-input-container class="md-block" ng-if="ctrl.model.id">
     <label translate="profile"></label>
     <md-select ng-model="ctrl.model.config.profile" ng-model-options="{trackBy: '$value.id'}" required title="{{ 'profileTitle' | translate }}">
@@ -13,4 +19,14 @@
             {{ profile.name }}
         </md-option>
     </md-select>
+</md-input-container>
+
+<md-input-container class="md-block" ng-if="ctrl.model.id">
+    <label translate="webcamUrl"></label>
+    <input ng-model="ctrl.model.config.webCamUrl" required />
+</md-input-container>
+
+<md-input-container class="md-block" ng-if="ctrl.model.id">
+    <label translate="snapshotUrl"></label>
+    <input ng-model="ctrl.model.config.snapshotUrl" required />
 </md-input-container>
