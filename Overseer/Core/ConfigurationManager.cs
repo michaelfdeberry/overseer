@@ -133,17 +133,29 @@ namespace Overseer.Core
 
         public UserDisplay AuthenticateUser(string username, string password)
         {
+            var settings = GetApplicationSettings();
             var user = _users.Get(u => u.Username == username);
+
             if(user == null)
                 throw new Exception("Invalid Username");
 
             var passwordHash = PasswordHash.ScryptHashBinary(Encoding.UTF8.GetBytes(password), user.PasswordSalt);
             if (PasswordHash.ScryptHashStringVerify(user.PasswordHash, passwordHash))
                 throw new Exception("Invalid Password");
+            
+            /*
+             * if the user already has a valid login session use the same token.
+             * This might be a little hacky, but it allows multiple active logins. A better way to
+             * accomplish this would be to maintain a collection of sessions, but I don't know if it's
+             * warranted in this application.
+             *
+             * However, it's probably worth investigating if there are any potential security issues with
+             * this approach.
+             */
+            if (!string.IsNullOrWhiteSpace(user.Token) && AuthenticateToken(user.Token))            
+                return user.ToDisplay();
 
             user.Token = Convert.ToBase64String(SodiumCore.GetRandomBytes(8));
-
-            var settings = GetApplicationSettings();
             if (settings.AuthenticationLifetime.HasValue)
             {
                 user.TokenExpiration = DateTime.UtcNow.AddDays(settings.AuthenticationLifetime.Value);
@@ -176,7 +188,7 @@ namespace Overseer.Core
                 (!user.TokenExpiration.HasValue || user.TokenExpiration.Value < DateTime.UtcNow))
                 return false;
 
-            //a matching token that isn't expired. 
+            //has a matching token that isn't expired. 
             return true;
         }
 
