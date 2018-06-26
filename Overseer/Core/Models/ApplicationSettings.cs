@@ -27,11 +27,6 @@ namespace Overseer.Core.Models
         /// <summary>
         /// Specifies if the application should require user authentication
         /// </summary>
-        public bool RequiresUserAuthentication { get; set; }
-
-        /// <summary>
-        /// How long, in days, an authenticated user will remain logged in
-        /// </summary>
-        public int? AuthenticationLifetime { get; set; }
+        public bool RequiresAuthentication { get; set; }
     }
 }

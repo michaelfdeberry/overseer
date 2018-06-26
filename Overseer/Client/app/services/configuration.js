@@ -10,6 +10,12 @@
         var cache = {
             printers: {}
         };
+        
+        self.clearCache = function() {
+            cache = {
+                printers: {}
+            };
+        };
 
         self.getConfiguration = function() {
             return $http.get(endpoint + "/configuration").then(function(result) {

@@ -22,21 +22,10 @@
                         </md-switch>
                     </md-input-container>
                     <md-input-container class="md-block">
-                        <md-switch class="md-primary" ng-model="ctrl.settings.requiresUserAuthentication" title="{{ 'requiresAuthenticationTitle' | translate }}">
+                        <md-switch class="md-primary" ng-model="ctrl.settings.requiresAuthentication" title="{{ 'requiresAuthenticationTitle' | translate }}">
                             <span translate="requiresAuthentication"></span>
                         </md-switch>
                     </md-input-container>
-                    <div ng-if="ctrl.settings.requiresUserAuthentication">
-                        <md-input-container class="md-block">
-                            <label translate="authenticationLifetime"></label>
-                            <md-select ng-model="ctrl.settings.authenticationLifetime" title="{{ authenticationLifetimeTitle | translate }}">
-                                <md-option ng-repeat="lifetime in ctrl.lifetimes" ng-value="lifetime">
-                                    <text ng-if="lifetime">{{ lifetime }} {{ 'days' | translate }}</text>
-                                    <text ng-if="!lifetime">{{ 'indefinite' | translate }}</text>
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
-                    </div>
                     <div class="actions" layout="row" layout-align="end center">
                         <md-button class="" ng-click="ctrl.revertSettings()" ng-disabled="ctrl.settingsForm.$pristine">
                             <span translate="cancel"></span>
@@ -52,6 +41,7 @@
                     <thead>
                         <tr>
                             <th translate="username"></th>
+                            <th translate="sessionLifetime"></th>
                             <th translate="isLoggedIn"></th>
                             <th>
                                 <md-button href="/#!/configuration/users/add">
@@ -65,8 +55,12 @@
                         <tr ng-repeat="user in ctrl.users">
                             <td ng-bind="user.username"></td>
                             <td>
-                                <i ng-if="user.isLoggedIn" class="fa fa-check" title="{{ 'isLoggedInTitle' | translate }}"></i>
+                                <span ng-if="user.sessionLifetime">{{ user.sessionLifetime }} <span translate="days"></span></span>
+                                <span ng-if="!user.sessionLifetime" translate="indefinite"></span>
                             </td>
+                            <td>
+                                <i ng-if="user.isLoggedIn" class="fa fa-check" title="{{ 'isLoggedInTitle' | translate }}"></i>
+                            </td>                            
                             <td>
                                 <md-button href="/#!/configuration/users/edit/{{ user.id }}">
                                     <i class="fa fa-edit"></i>

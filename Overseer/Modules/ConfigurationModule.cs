@@ -39,14 +39,13 @@ namespace Overseer.Modules
             Put["/users"] = p =>
             {
                 var model = this.Bind<UserAuthentication>();
-                return configurationManager.CreateUser(model.Username, model.Password);
+                return configurationManager.CreateUser(model.Username, model.Password, model.SessionLifetime);
             };
 
             Post["/users"] = p => //change password
             {
                 var model = this.Bind<UserAuthentication>();
-                configurationManager.DeleteUser(model.Id);
-                return configurationManager.CreateUser(model.Username, model.Password);
+                return configurationManager.UpdateUser(model);
             };
 
             Delete["/users/{id:int}"] = p => this.Ok((Action)(() => configurationManager.DeleteUser(p.id)));

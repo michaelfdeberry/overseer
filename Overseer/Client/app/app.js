@@ -148,58 +148,65 @@ angular.module("overseer")
             }]);
         }
     ])
-    .controller("appCtrl", ["$rootScope", "$location", "authentication", function ($rootScope, $location, authentication) {
-        "use strict";
+    .controller("appCtrl", [
+        "$rootScope", 
+        "$location", 
+        "authentication", 
+        "configuration",
+        function ($rootScope, $location, authentication, configuration) {
+            "use strict";
 
-        var self = this;
-        var monitoringEnabled;
+            var self = this;
+            var monitoringEnabled;
 
-        Object.defineProperties(self, {
-            showMenu: {
-                get: function() {
-                    return authentication.authToken;
+            Object.defineProperties(self, {
+                showMenu: {
+                    get: function() {
+                        return authentication.authToken;
+                    }
                 }
-            }
-        });
-
-        self.logout = function() {
-            authentication.logout();
-            $location.path("/login");
-        };
-        
-        $.connection.hub.url = "/push";
-        $.connection.statusHub.client.statusUpdate = function (status) {
-            $rootScope.$broadcast("$StatusUpdate$", status);
-        };
-
-        $rootScope.$watch(function () { return authentication.authToken; }, function(current, previous) {
-            if (current) {
-                //a user logged in or the page loaded with a logged in user
-                subscribeToStatusUpdates();
-            } else if (previous) {
-                //a user logged out, or a request returned a 401 or 403
-                unsubscribeFromStatusUpdates();
-            }
-        });
-        
-        function unsubscribeFromStatusUpdates() {
-            if (!$.connection.hub) return;
-
-            monitoringEnabled = false;
-            $.connection.hub.stop();
-        }
-
-        function subscribeToStatusUpdates() {
-            if (monitoringEnabled) return;
-
-            $.connection.hub.start().done(function () {
-                var token = authentication.activeUser ? authentication.activeUser.token : "";
-                $.connection.statusHub.server.startMonitoring(token).then(function(enabled) {
-                    monitoringEnabled = enabled;
-                });
             });
-        }
 
-        //attempt to subscribe to updates. If user authentication is required the server won't send updates.
-        subscribeToStatusUpdates();
-    }]);
+            self.logout = function() {
+                authentication.logout();
+                $location.path("/login");
+            };
+
+            $.connection.hub.url = "/push";
+            $.connection.statusHub.client.statusUpdate = function (status) {
+                $rootScope.$broadcast("$StatusUpdate$", status);
+            };
+
+            $rootScope.$watch(function () { return authentication.authToken; }, function(current, previous) {
+                if (current) {
+                    //a user logged in or the page loaded with a logged in user
+                    subscribeToStatusUpdates();
+                } else if (previous) {
+                    //a user logged out, or a request returned a 401 or 403
+                    configuration.clearCache();
+                    unsubscribeFromStatusUpdates();
+                }
+            });
+        
+            function unsubscribeFromStatusUpdates() {
+                if (!$.connection.hub) return;
+
+                monitoringEnabled = false;
+                $.connection.hub.stop();
+            }
+
+            function subscribeToStatusUpdates() {
+                if (monitoringEnabled) return;
+
+                $.connection.hub.start().done(function () {
+                    var token = authentication.activeUser ? authentication.activeUser.token : "";
+                    $.connection.statusHub.server.startMonitoring(token).then(function(enabled) {
+                        monitoringEnabled = enabled;
+                    });
+                });
+            }
+
+            //attempt to subscribe to updates. If user authentication is required the server won't send updates.
+            subscribeToStatusUpdates();
+    }
+]);

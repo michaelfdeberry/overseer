@@ -7,6 +7,7 @@
 
         var self = this;
         self.user = {};
+        self.lifetimes = [null, 1, 7, 30, 90];
 
         self.addUser = function () {
             self.loading = true;

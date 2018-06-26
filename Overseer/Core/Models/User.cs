@@ -10,6 +10,8 @@ namespace Overseer.Core.Models
         public string Username { get; set; }
 
         public string Password { get; set; }
+
+        public int? SessionLifetime { get; set; }
     }
 
     public class UserDisplay
@@ -21,6 +23,8 @@ namespace Overseer.Core.Models
         public string Token { get; set; }
 
         public bool IsLoggedIn { get; set; }
+
+        public int? SessionLifetime { get; set; }
     }
 
     public class User : IEntity
@@ -37,13 +41,16 @@ namespace Overseer.Core.Models
 
         public DateTime? TokenExpiration { get; set; }
 
-        public UserDisplay ToDisplay()
+        public int? SessionLifetime { get; set; }
+
+        public UserDisplay ToDisplay(bool includeToken = false)
         {
             return new UserDisplay
             {
                 Id = Id,
                 Username = Username,
-                Token = Token,
+                SessionLifetime = SessionLifetime,
+                Token = includeToken ? Token : null,
                 IsLoggedIn = Token != null && (!TokenExpiration.HasValue || DateTime.UtcNow < TokenExpiration.Value)
             };
         }

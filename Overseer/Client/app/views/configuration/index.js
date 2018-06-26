@@ -11,7 +11,6 @@
 
         var self = this;
         self.intervals = [1000, 5000, 10000, 15000, 20000];
-        self.lifetimes = [null, 1, 7, 30, 90];
 
         self.loading = true;
         self.ready = false;
@@ -26,7 +25,7 @@
         });
 
         self.updateSettings = function () {
-            if (self.settings.requiresUserAuthentication && !self.users.length) {
+            if (self.settings.requiresAuthentication && !self.users.length) {
                 var confirm = $mdDialog.confirm()
                     .title($translate.instant("warning"))
                     .textContent($translate.instant("requiresAutnenticationPrompt"))
@@ -45,16 +44,18 @@
                 configurationService.updateSettings(self.settings).then(function (updatedSettings) {
                     self.loading = false;
 
-                    //if user authentication was turned on, logout the user, if they exist
-                    if (self.settingsPristine.requiresUserAuthentication && !updatedSettings.requiresUserAuthentication) {
+                    //if user authentication was turned off logout the user this will put the UI in non user mode
+                    if (self.settingsPristine.requiresAuthentication && !updatedSettings.requiresAuthentication) {
                         authentication.logout();
+                        return;
                     }
 
-                    //the user would be redirected with the next request, but redirect immediately just to prevent any potential confusion. 
-                    if (!self.settingsPristine.requiresUserAuthentication && updatedSettings.requiresUserAuthentication) {
+                    //if user authentication was turned on force the user to log in
+                    if (!self.settingsPristine.requiresAuthentication && updatedSettings.requiresAuthentication) {
                         $location.path("/login");
+                        return;
                     }
-
+                    
                     self.settingsPristine = updatedSettings;
                     self.settings = angular.copy(updatedSettings);
                     self.settingsForm.$setPristine();

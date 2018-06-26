@@ -22,7 +22,16 @@
             <md-input-container class="md-block">
                 <label translate="confirmPassword"></label>
                 <input type="password" ng-model="ctrl.user.passwordMatch" match="ctrl.user.password" required />
-            </md-input-container>
+            </md-input-container> 
+            <md-input-container class="md-block">
+                <label translate="sessionLifetime"></label>
+                <md-select ng-model="ctrl.user.sessionLifetime" title="{{ sessionLifetimeTitle | translate }}">
+                    <md-option ng-repeat="lifetime in ctrl.lifetimes" ng-value="lifetime">
+                        <text ng-if="lifetime">{{ lifetime }} {{ 'days' | translate }}</text>
+                        <text ng-if="!lifetime">{{ 'indefinite' | translate }}</text>
+                    </md-option>
+                </md-select>
+            </md-input-container> 
         </md-card-content>
         <md-card-actions layout="row" layout-align="end center">
             <md-button href="/#!/configuration" translate="cancel"></md-button>

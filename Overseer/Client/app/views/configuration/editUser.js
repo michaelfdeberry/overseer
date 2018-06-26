@@ -11,6 +11,7 @@
         var self = this;
 
         self.loading = true;
+        self.lifetimes = [null, 1, 7, 30, 90];
         
         configuration.getSettings()
             .then(function(settings) {
@@ -50,7 +51,7 @@
         };
 
         self.deleteUser = function() {
-            if (self.users.length === 1 && self.settings.requiresUserAuthentication) {
+            if (self.users.length === 1 && self.settings.requiresAuthentication) {
                 var alert = $mdDialog.alert()
                     .title($translate.instant("warning"))
                     .textContent($translate.instant("deleteLastUserPrompt"))

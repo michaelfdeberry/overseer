@@ -103,7 +103,7 @@ namespace Overseer.Core
                 .ToList();
         }
 
-        public UserDisplay CreateUser(string username, string password)
+        public UserDisplay CreateUser(string username, string password, int? sessionLifetime)
         {
             if(_users.Get(u => u.Username == username) != null) 
                 throw new Exception("Username Unavailable");
@@ -114,7 +114,8 @@ namespace Overseer.Core
             {
                 Username = username,
                 PasswordSalt = salt,
-                PasswordHash = hash
+                PasswordHash = hash,
+                SessionLifetime = sessionLifetime
             };
             
             _users.Create(user);
@@ -133,8 +134,7 @@ namespace Overseer.Core
 
         public UserDisplay AuthenticateUser(string username, string password)
         {
-            var settings = GetApplicationSettings();
-            var user = _users.Get(u => u.Username == username);
+            var user = _users.Get(u => u.Username.ToLower() == username.ToLower());
 
             if(user == null)
                 throw new Exception("Invalid Username");
@@ -143,27 +143,22 @@ namespace Overseer.Core
             if (PasswordHash.ScryptHashStringVerify(user.PasswordHash, passwordHash))
                 throw new Exception("Invalid Password");
             
-            /*
-             * if the user already has a valid login session use the same token.
-             * This might be a little hacky, but it allows multiple active logins. A better way to
-             * accomplish this would be to maintain a collection of sessions, but I don't know if it's
-             * warranted in this application.
-             *
-             * However, it's probably worth investigating if there are any potential security issues with
-             * this approach.
-             */
             if (!string.IsNullOrWhiteSpace(user.Token) && AuthenticateToken(user.Token))            
-                return user.ToDisplay();
+                return user.ToDisplay(includeToken: true);
 
             user.Token = Convert.ToBase64String(SodiumCore.GetRandomBytes(8));
-            if (settings.AuthenticationLifetime.HasValue)
+            if (user.SessionLifetime.HasValue)
             {
-                user.TokenExpiration = DateTime.UtcNow.AddDays(settings.AuthenticationLifetime.Value);
+                user.TokenExpiration = DateTime.UtcNow.AddDays(user.SessionLifetime.Value);
+            }
+            else
+            {
+                user.TokenExpiration = null;
             }
 
             _users.Update(user);
 
-            return user.ToDisplay();
+            return user.ToDisplay(includeToken: true);
         }
 
         public bool AuthenticateToken(string token)
@@ -171,21 +166,19 @@ namespace Overseer.Core
             var settings = GetApplicationSettings();
 
             //if authentication isn't required just return
-            if (!settings.RequiresUserAuthentication) return true;
+            if (!settings.RequiresAuthentication) return true;
 
             if (string.IsNullOrWhiteSpace(token)) return false;
 
             token = token.Replace("Bearer", string.Empty).Trim();
-
             var user = _users.Get(u => u.Token == token);
 
-            //no user or no token
+            //no user or no token, means the user logged out
             if (string.IsNullOrWhiteSpace(user?.Token))
                 return false;
             
-            //tokens expire and the token is expired or empty
-            if (settings.AuthenticationLifetime.HasValue &&
-                (!user.TokenExpiration.HasValue || user.TokenExpiration.Value < DateTime.UtcNow))
+            //if the user has a configured session lifetime there will be a token expiration date, check if it's valid
+            if (user.TokenExpiration.HasValue && user.TokenExpiration.Value < DateTime.UtcNow)
                 return false;
 
             //has a matching token that isn't expired. 
@@ -213,6 +206,32 @@ namespace Overseer.Core
             _users.Update(user);
 
             return user.ToDisplay();
+        }
+
+        public UserDisplay UpdateSessionLifetime(int userId, int? sessionLifetime)
+        {
+            var user = _users.GetById(userId);
+            if (user == null) return null;
+            
+            //forces a new login
+            user.Token = null;
+            user.TokenExpiration = null;
+            user.SessionLifetime = sessionLifetime;
+            _users.Update(user);
+
+            return user.ToDisplay();
+        }
+
+        public UserDisplay UpdateUser(UserAuthentication user)
+        {
+            if (string.IsNullOrWhiteSpace(user.Username) && string.IsNullOrWhiteSpace(user.Password))
+            {
+                return UpdateSessionLifetime(user.Id, user.SessionLifetime);
+            }
+
+            //if they are changing the password delete and recreate the user.
+            DeleteUser(user.Id);
+            return CreateUser(user.Username, user.Password, user.SessionLifetime);
         }
     }
 }

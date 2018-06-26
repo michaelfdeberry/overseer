@@ -1,7 +1,8 @@
 ﻿angular.module("overseer").service("authentication", [
     "$q",
     "$http",
-    function ($q, $http) {
+    "configuration",
+    function ($q, $http, configuration) {
         "use strict";
 
         var self = this;
@@ -43,6 +44,7 @@
         self.logout = function () {
             return $http.delete(endpoint + "/logout").then(function () {
                 self.activeUser = undefined;
+                configuration.clearCache();
             });
         };
     }
