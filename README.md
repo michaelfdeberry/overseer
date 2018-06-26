@@ -71,7 +71,7 @@
     Exit nano by pressing ctrl+x. Enter y to save the changes when prompted.            
     
  1. #### Reboot
-	 sudo reboot`
+	 `sudo reboot`
     
      Overseer should be available on your network after the device boots. It will be available by host name or ip address. E.g:
      `http://<host-name>:9000/` or `http://xxx.xxx.xxx.xxx:9000/`
@@ -88,12 +88,9 @@ Alternatively, Overseer can be lauched from Command Prompt, or PowerShell, with 
 
 ## Caveats
 
-The recommended way to add Overseer to your network would be to host the application on a Raspberry Pi running Rasbian Lite. 
-
 Overseer can potentially run alongside Octoprint on an Octopi instance. However, this hasn't been tested and it is not recommended unless using a device with a multi-core processor.
 
-The following instructions above should work on any other Debian based Linux distribution. 
-
+The recommended way to add Overseer to your network would be to host the application on a Raspberry Pi running Rasbian Lite. However, the above instructions should work on any Debian based Linux distribution. 
 
 ## Usage 
 
