@@ -103,7 +103,7 @@ namespace Overseer.Core.PrinterProviders
         }
 
         /// <summary>
-        /// This attempts replicates what's being done by Duet Web Control to calculate the current progress. 
+        /// This attempts to replicate what's being done by Duet Web Control to calculate the current progress. 
         /// </summary>
         async Task<float> CalculateProgress(dynamic statusUpdate, CancellationToken cancellationToken)
         {
