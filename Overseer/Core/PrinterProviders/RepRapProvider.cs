@@ -26,6 +26,12 @@ namespace Overseer.Core.PrinterProviders
         }
 
         public override int PrinterId { get; }
+        
+        public override async Task CancelPrint()
+        {
+            await PausePrint();
+            await base.CancelPrint();
+        }
 
         public override async Task LoadConfiguration(Printer printer)
         {
