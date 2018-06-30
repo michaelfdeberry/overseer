@@ -26,7 +26,7 @@ namespace Overseer.Core.PrinterProviders
 
         public virtual Task SetToolTemperature(string toolName, int targetTemperature)
         {
-            return ExecuteGcode($"M104 T{GetToolIndex(toolName)} S{targetTemperature}");
+            return ExecuteGcode($"M104 P{GetToolIndex(toolName)} S{targetTemperature}");
         }
 
         public virtual Task SetBedTemperature(int targetTemperature)
