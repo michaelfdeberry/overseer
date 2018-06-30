@@ -15,25 +15,25 @@ namespace Overseer
 
         static void Main(string[] args)
         {
+            Log.Info("Starting Overseer...");
             var waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
-            var cancellation = new CancellationTokenSource();
-            var context = new LiteDataContext();            
 
-            var exitSignal = ExitSignal.Create();
-            exitSignal.Exit += (sender, eventArgs) =>
+            using (var cancellation = new CancellationTokenSource())
+            using (var context = new LiteDataContext())
             {
-                cancellation.Cancel();
-                waitHandle.Set();
-            };    
-            
-            Task.Run(() =>
-            {
+                var exitSignal = ExitSignal.Create();
+                exitSignal.Exit += (sender, eventArgs) =>
+                {
+                    Log.Info("Received Exit Signal...");
+                    waitHandle.Set();
+                };
+
                 try
                 {
                     var settings = context.GetApplicationSettings();
                     var parser = new FluentCommandLineParser();
                     parser.Setup<int>("port").Callback(port => settings.LocalPort = port);
-                    parser.Setup<int>("interval").Callback(interval => settings.Interval = interval); 
+                    parser.Setup<int>("interval").Callback(interval => settings.Interval = interval);
                     parser.Parse(args);
 
                     context.UpdateApplicationSettings(settings);
@@ -43,12 +43,14 @@ namespace Overseer
                 {
                     Log.Error("Application Failure", ex);
                 }
-            }, cancellation.Token);
-            
-            waitHandle.WaitOne();
 
-            context.Dispose();
-            cancellation.Dispose();
+                Log.Info("Waiting For Exit Signal...");
+                waitHandle.WaitOne();                                
+                cancellation.Cancel();
+
+                Log.Info("Exiting Overseer");
+                Environment.Exit(0);
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Overseer.Startup
 
         public UnixExitSignal()
         {
-            Task.Factory.StartNew(() =>
+            Task.Run(() =>
             {
                 // blocking call to wait for any kill signal
                 UnixSignal.WaitAny(_signals, -1);
@@ -52,11 +52,16 @@ namespace Overseer.Startup
     public class WinExitSignal : ExitSignal
     {
         [DllImport("Kernel32")]
-        public static extern bool SetConsoleCtrlHandler(HandlerRoutine Handler, bool Add);
+        public static extern bool SetConsoleCtrlHandler(HandlerRoutineDelagate Handler, bool Add);
 
         // A delegate type to be used as the handler routine
         // for SetConsoleCtrlHandler.
-        public delegate bool HandlerRoutine(CtrlTypes CtrlType);
+        public delegate bool HandlerRoutineDelagate(CtrlTypes CtrlType);
+
+        /// <summary>
+        /// Need this as a member variable to avoid it being garbage collected.
+        /// </summary>
+        static HandlerRoutineDelagate HandlerRoutine;
 
         // An enumerated type for the control messages
         // sent to the handler routine.
@@ -68,17 +73,11 @@ namespace Overseer.Startup
             CTRL_LOGOFF_EVENT = 5,
             CTRL_SHUTDOWN_EVENT
         }
-
-        /// <summary>
-        /// Need this as a member variable to avoid it being garbage collected.
-        /// </summary>
-        HandlerRoutine _handlerRoutine;
-
+        
         public WinExitSignal()
         {
-            _handlerRoutine = ConsoleCtrlCheck;
-            SetConsoleCtrlHandler(_handlerRoutine, true);
-
+            HandlerRoutine = ConsoleCtrlCheck;
+            SetConsoleCtrlHandler(HandlerRoutine, true);
         }
 
         /// <summary>
