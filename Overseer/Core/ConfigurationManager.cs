@@ -59,8 +59,6 @@ namespace Overseer.Core
 
         public async Task<Printer> UpdatePrinter(Printer printer)
         {
-            _printers.Update(printer);
-
             if (printer.Disabled)
             {
                 //if the printer is disabled remove the provider to stop monitoring
@@ -73,6 +71,7 @@ namespace Overseer.Core
                 await provider.LoadConfiguration(printer);
             }
 
+            _printers.Update(printer);
             return printer;
         }
 

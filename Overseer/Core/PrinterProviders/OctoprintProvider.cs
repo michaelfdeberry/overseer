@@ -81,8 +81,16 @@ namespace Overseer.Core.PrinterProviders
                 _apiKey = config.ApiKey;
 
                 var settings = await ExecuteRequest("settings");
-                config.WebCamUrl = new Uri(config.Url).ProcessUrl((string)settings["webcam"]["streamUrl"]);
-                config.SnapshotUrl = new Uri(config.Url).ProcessUrl((string)settings["webcam"]["snapshotUrl"]);
+
+                if (string.IsNullOrWhiteSpace(config.WebCamUrl))
+                {
+                    config.WebCamUrl = new Uri(config.Url).ProcessUrl((string)settings["webcam"]["streamUrl"]);                    
+                }
+
+                if (string.IsNullOrWhiteSpace(config.SnapshotUrl))
+                {
+                    config.SnapshotUrl = new Uri(config.Url).ProcessUrl((string)settings["webcam"]["snapshotUrl"]);
+                }
 
                 var printerProfiles = await ExecuteRequest("printerprofiles");
                 var octoprintProfiles = printerProfiles["profiles"]
