@@ -39,7 +39,7 @@ namespace Overseer.Startup
 
         public UnixExitSignal()
         {
-            Task.Run(() =>
+            Task.Factory.StartNew(() =>
             {
                 // blocking call to wait for any kill signal
                 UnixSignal.WaitAny(_signals, -1);
@@ -95,7 +95,7 @@ namespace Overseer.Startup
                     RaiseExit();
                     return true;
                 default:
-                    return true;
+                    return false;
             }
         }
     }
