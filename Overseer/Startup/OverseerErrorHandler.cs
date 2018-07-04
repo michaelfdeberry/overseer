@@ -24,13 +24,15 @@ namespace Overseer.Startup
 
                 if (exception.InnerException != null)
                 {
-                    var error = exception.InnerException.Message;                    
-                    context.Response = new JsonResponse(new { error }, new DefaultJsonSerializer())
-                    {
-                        StatusCode = HttpStatusCode.BadRequest
-                    };
-                }                
-            }    
+                    exception = exception.InnerException;
+                }
+
+                var error = exception.Message;
+                context.Response = new JsonResponse(new { error }, new DefaultJsonSerializer())
+                {
+                    StatusCode = HttpStatusCode.BadRequest
+                };
+            }
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿angular.module("overseer").controller("addPrinterController", [
     "$location",
-    "configuration",
-    function($location, configuration) {
+    "$mdToast",
+    "configuration",   
+    function($location, $mdToast, configuration) {
         "use strict";
 
         var self = this;
@@ -24,6 +25,14 @@
             configuration.createPrinter(self.model).then(function () {
                 self.loading = false;
                 $location.path("/configuration");
+            }, function(response) {
+                var toast = $mdToast.simple()
+                    .textContent(response.data.error)
+                    .position("bottom right")
+                    .hideDelay(3000)
+                    .toastClass("toast-error");
+
+                $mdToast.show(toast);
             });
         };
     }

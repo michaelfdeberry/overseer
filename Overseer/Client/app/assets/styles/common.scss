@@ -22,6 +22,10 @@ md-toolbar.md-hue-2:not(.md-menu-toolbar) {
     }
 }
 
+md-toast.toast-error .md-toast-content {
+    background-color: $error;
+}
+
 .user-table,
 .printers-table {
     width: 100%;

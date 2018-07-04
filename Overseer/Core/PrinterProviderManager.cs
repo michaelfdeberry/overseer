@@ -23,25 +23,37 @@ namespace Overseer.Core
             printers.Where(x => !x.Disabled).ForEach(printer => GetProvider(printer));
         }
 
-        public IPrinterProvider GetProvider(Printer printer)
+        IPrinterProvider CreateProvider(Printer printer)
         {
-            if (!ProviderCache.TryGetValue(printer.Id, out IPrinterProvider provider))
-            {
-                var providerType = Type.GetType($"Overseer.Core.PrinterProviders.{printer.PrinterType}Provider");
-                if (providerType == null)
-                    throw new ArgumentOutOfRangeException(nameof(printer.PrinterType), "Unsupported Printer Type");
+            var providerType = Type.GetType($"Overseer.Core.PrinterProviders.{printer.PrinterType}Provider");
+            if (providerType == null)
+                throw new ArgumentOutOfRangeException(nameof(printer.PrinterType), "Unsupported Printer Type");
 
-                provider = (IPrinterProvider)Activator.CreateInstance(providerType, printer);
-                Log.Debug($"Created {printer.PrinterType} Provider for printer {printer.Id}");
-            }
-
-            //only add the provider to the cache if it's enabled
-            if (!printer.Disabled)
-            {                
-                ProviderCache[printer.Id] = provider;
-            }
+            var provider = (IPrinterProvider)Activator.CreateInstance(providerType, printer);
+            Log.Debug($"Created {printer.PrinterType} Provider for printer {printer.Id}");
 
             return provider;
+        }
+
+        public IPrinterProvider GetProvider(Printer printer)
+        {
+            if (printer.Id == 0) return CreateProvider(printer);
+
+            if (!ProviderCache.TryGetValue(printer.Id, out IPrinterProvider provider))
+            {
+                provider = CreateProvider(printer);
+                if (!printer.Disabled)
+                {
+                    CacheProvider(printer.Id, provider);
+                }
+            }
+            
+            return provider;
+        }
+
+        public void CacheProvider(int printerId, IPrinterProvider provider)
+        {
+            ProviderCache[printerId] = provider;
         }
 
         public void RemoveProvider(int printerId)

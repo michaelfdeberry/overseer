@@ -120,8 +120,11 @@ namespace Overseer.Core.PrinterProviders
             }
             catch (Exception ex)
             {
-                Log.Error("Load Configuration Failure", ex);
-                throw;
+                Log.Error("Load Configuration Failure", ex);                
+                if (ex.Message.Contains("Invalid API key"))
+                    throw new Exception("Octoprint refused the connection because the provided API Key is invalid");
+
+                throw new Exception($"Failed to connect to Octoprint({_url})");
             }
         }
 

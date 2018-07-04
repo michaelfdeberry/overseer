@@ -42,17 +42,17 @@ namespace Overseer.Core
 
         public async Task<Printer> CreatePrinter(Printer printer)
         {
-            //create the printer to get the id
-            _printers.Create(printer);
-
-            //this will create and cache a provider that will be used to interact with this printer
+            //The printer won't have an id so a temporary provider will be created.
             var provider = _printerProviderManager.GetProvider(printer);
 
             //load any default configuration that will be retrieved from the printer.
             await provider.LoadConfiguration(printer);
+            
+            //if the configuration can be update from the printer then create the printer.
+            _printers.Create(printer);
 
-            //update the printer configuration
-            _printers.Update(printer);
+            //Use the printers id to cache the provider since the connection is verified.
+            _printerProviderManager.CacheProvider(printer.Id, provider);
 
             return printer;
         }

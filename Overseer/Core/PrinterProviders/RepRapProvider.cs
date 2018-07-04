@@ -35,13 +35,21 @@ namespace Overseer.Core.PrinterProviders
 
         public override async Task LoadConfiguration(Printer printer)
         {
-            var config = (RepRapConfig)printer.Config;
-            _url = new Uri(config.Url).ProcessUrl();
+            try
+            {
+                var config = (RepRapConfig)printer.Config;
+                _url = new Uri(config.Url).ProcessUrl();
 
-            dynamic status = await ExecuteRequest("rr_status", parameters: new[] { ("type", "1") });
-            int toolCount = status.temps.heads.current.Count;
-            printer.Config.HeatedBed = status.temps["bed"] != null;
-            printer.Config.Tools = Enumerable.Range(0, toolCount).Select(i => string.Concat("tool", i)).ToList();
+                dynamic status = await ExecuteRequest("rr_status", parameters: new[] { ("type", "1") });
+                int toolCount = status.temps.heads.current.Count;
+                printer.Config.HeatedBed = status.temps["bed"] != null;
+                printer.Config.Tools = Enumerable.Range(0, toolCount).Select(i => string.Concat("tool", i)).ToList();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Load Configuration Failure", ex);
+                throw new Exception($"Failed to connect to RepRapFirmware({_url})");
+            }
         }
 
         protected override async Task ExecuteGcode(string command)

@@ -62,19 +62,25 @@ namespace Overseer.Core
 
         async Task GetStatuses()
         {
-            //only allow the status request to take as long as the configured interval
-            var cancellation = new CancellationTokenSource();
-            cancellation.CancelAfter((int)_timer.Interval);
-
-            var tasks = PrinterProviderManager.ProviderCache.Values.Select(provider => provider.GetPrinterStatus(cancellation.Token));
-            await Task.WhenAll(tasks).ContinueWith(task =>
+            try
             {
-                var status = task.Result.OrderByDescending(x => x.State).ToDictionary(x => x.PrinterId);
-                if (!status.Any()) return;
+                var cancellation = new CancellationTokenSource();
+                cancellation.CancelAfter((int)_timer.Interval);
 
-                StatusUpdate?.Invoke(this, new StatusUpdateEventArgs(status));
-                StatusHub.PushStatusUpdate(status);
-            }, cancellation.Token);
+                var tasks = PrinterProviderManager.ProviderCache.Values.Select(provider => provider.GetPrinterStatus(cancellation.Token));
+                await Task.WhenAll(tasks).ContinueWith(task =>
+                {
+                    var status = task.Result.OrderByDescending(x => x.State).ToDictionary(x => x.PrinterId);
+                    if (!status.Any()) return;
+
+                    StatusUpdate?.Invoke(this, new StatusUpdateEventArgs(status));
+                    StatusHub.PushStatusUpdate(status);
+                }, cancellation.Token);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Monitoring Error", ex);
+            }
         }
 
         public void Dispose()
