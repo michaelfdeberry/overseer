@@ -20,12 +20,12 @@ angular.module("overseer")
                     controllerAs: "ctrl"
                 })
                 .when("/configuration/printers/add", {
-                    templateUrl: "views/configuration/add.html",
+                    templateUrl: "views/configuration/addPrinter.html",
                     controller: "addPrinterController",
                     controllerAs: "ctrl"
                 })
                 .when("/configuration/printers/edit/:id", {
-                    templateUrl: "views/configuration/edit.html",
+                    templateUrl: "views/configuration/editPrinter.html",
                     controller: "editPrinterController",
                     controllerAs: "ctrl"
                 })

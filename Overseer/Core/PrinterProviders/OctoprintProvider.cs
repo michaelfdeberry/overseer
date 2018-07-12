@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using log4net;
 using Newtonsoft.Json.Linq;
+using Overseer.Core.Exceptions;
 using Overseer.Core.Models;
 using RestSharp;
 
@@ -120,11 +121,15 @@ namespace Overseer.Core.PrinterProviders
             }
             catch (Exception ex)
             {
-                Log.Error("Load Configuration Failure", ex);                
-                if (ex.Message.Contains("Invalid API key"))
-                    throw new Exception("Octoprint refused the connection because the provided API Key is invalid");
+                Log.Error("Load Configuration Failure", ex);
 
-                throw new Exception($"Failed to connect to Octoprint({_url})");
+                if (ex.InnerException is OverseerException)
+                    throw ex.InnerException;
+
+                if (ex.Message.Contains("Invalid API key"))
+                    throw new OverseerException("Octoprint_InvalidKey");
+                
+                throw new OverseerException("Printer_ConnectFailure", printer);
             }
         }
 

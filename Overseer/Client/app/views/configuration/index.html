@@ -37,7 +37,7 @@
                 </form>
             </md-tab>
             <md-tab label="{{ 'users' | translate }}">
-                <table class="user-table">
+                <table class="config-table user-table">
                     <thead>
                         <tr>
                             <th translate="username"></th>
@@ -58,7 +58,7 @@
                                 <span ng-if="user.sessionLifetime">{{ user.sessionLifetime }} <span translate="days"></span></span>
                                 <span ng-if="!user.sessionLifetime" translate="indefinite"></span>
                             </td>
-                            <td>
+                            <td class="centered">
                                 <i ng-if="user.isLoggedIn" class="fa fa-check" title="{{ 'isLoggedInTitle' | translate }}"></i>
                             </td>                            
                             <td>
@@ -69,44 +69,44 @@
                             </td>
                         </tr>
                         <tr class="empty-row" ng-if="!ctrl.users.length">
-                            <td colspan="3" translate="noUsers"></td>
+                            <td colspan="4" translate="noUsers"></td>
                         </tr>
                     </tbody>
                 </table>
             </md-tab>
             <md-tab label="{{ 'printers' | translate }}">
-                <table class="printers-table">
+                <table class="config-table printers-table">
                     <thead>
-                        <tr>
-                            <th translate="name"></th>
-                            <th translate="printerType"></th>
-                            <th translate="monitoringEnabled"></th>
-                            <th>
-                                <md-button href="/#!/configuration/printers/add">
-                                    <i class="fa fa-plus"></i>
-                                    <span translate="add"></span>
-                                </md-button>
-                            </th>
-                        </tr>
+                    <tr>
+                        <th translate="name"></th>
+                        <th translate="printerType"></th>
+                        <th translate="monitoringEnabled"></th>
+                        <th>
+                            <md-button href="/#!/configuration/printers/add">
+                                <i class="fa fa-plus"></i>
+                                <span translate="add"></span>
+                            </md-button>
+                        </th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="printer in ctrl.printers">
-                            <td ng-bind="printer.name"></td>
-                            <td ng-bind="printer.printerType"></td>
-                            <td>
-                                <i ng-if="printer.disabled" class="fa fa-exclamation-triangle" title="{{ 'monitoringDisabled' | translate }}"></i>
-                                <i ng-if="!printer.disabled" class="fa fa-check" title="{{ 'monitoringEnabled' | translate }}"></i>
-                            </td>
-                            <td>
-                                <md-button href="/#!/configuration/printers/edit/{{printer.id}}">
-                                    <i class="fa fa-edit"></i>
-                                    <span translate="edit"></span>
-                                </md-button>
-                            </td>
-                        </tr>
-                        <tr class="empty-row" ng-if="!ctrl.printers.length">
-                            <td colspan="4" translate="noPrinters"></td>
-                        </tr>
+                    <tr ng-repeat="printer in ctrl.printers">
+                        <td ng-bind="printer.name"></td>
+                        <td ng-bind="printer.printerType"></td>
+                        <td class="centered">
+                            <i ng-if="printer.disabled" class="fa fa-exclamation-triangle" title="{{ 'monitoringDisabled' | translate }}"></i>
+                            <i ng-if="!printer.disabled" class="fa fa-check" title="{{ 'monitoringEnabled' | translate }}"></i>
+                        </td>
+                        <td>
+                            <md-button href="/#!/configuration/printers/edit/{{printer.id}}">
+                                <i class="fa fa-edit"></i>
+                                <span translate="edit"></span>
+                            </md-button>
+                        </td>
+                    </tr>
+                    <tr class="empty-row" ng-if="!ctrl.printers.length">
+                        <td colspan="4" translate="noPrinters"></td>
+                    </tr>
                     </tbody>
                 </table>
             </md-tab>

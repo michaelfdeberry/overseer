@@ -80,6 +80,17 @@
         no: "No",
         deletePrinterPrompt: "Are you sure you want remove this printer?",
         deleteUserPrompt: "Are you sure you want remove this user?",
-        deleteLastUserPrompt: "At least one user must exist when 'Require User Logins' is enabled. To remove this user disable 'Require User Logins' or add another user."
+        deleteLastUserPrompt: "At least one user must exist when 'Require User Logins' is enabled. To remove this user disable 'Require User Logins' or add another user.", 
+        certificateInformation: "Certificate Information",
+        certificateException: "Untrusted Certificate",
+        certificateWarning: "Overseer was unable to connect to the requested printer because the certificate is considered insecure or invalid.",
+        certificateCaution:"Adding this printer will require creating a security exception for this certificate. Do you want to add this printer?",
+        issuedTo: "Issued To",
+        issuedBy: "Issued By",
+        issuedDate: "Issued Date",
+        expireDate: "Expire Date",
+        thumbprint: "Thumbprint",
+        Octoprint_InvalidKey: "Octoprint refused the connection because the provided API Key is invalid",
+        Printer_ConnectFailure : "Failed to establish a connection with the printer"
     }).preferredLanguage("en");
 }]);

@@ -154,5 +154,9 @@
                 }
             });
         };
+
+        self.addCertificateException = function(exception) {
+            return $http.put(endpoint + "/certificate", exception);
+        };
     }
 ]);

@@ -1,0 +1,38 @@
+﻿md-dialog {
+    background-color: $white;
+    color: $black;
+    border-bottom: 1px solid $border-light;
+
+    md-toolbar {
+        padding: 16px 0;
+    }
+
+    md-dialog-content { 
+        border-top: 1px solid $border-light;
+        border-bottom: 1px solid $border-light;
+    }
+}
+
+.cert-exception {
+
+    h4 {
+        margin-bottom: 5px;
+    }
+
+    table {
+        margin-bottom: 16px;
+        width: 100%;
+
+        tr td {
+            padding: 5px 0;
+
+            &:first-child {
+                font-weight: bold;
+            }
+        }
+    }
+
+    md-dialog-content {
+        padding: 0 16px;        
+    }
+}

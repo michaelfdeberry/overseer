@@ -1,5 +1,4 @@
 ﻿using System;
-using Overseer.Core.Models;
 
 namespace Overseer.Core.Data
 {

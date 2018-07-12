@@ -118,7 +118,10 @@
   <ItemGroup>
     <Compile Include="Core\ConfigurationManager.cs" />
     <Compile Include="Core\ControlManager.cs" />
+    <Compile Include="Core\Exceptions\OverseerException.cs" />
     <Compile Include="Core\Models\ApplicationSettings.cs" />
+    <Compile Include="Core\Models\CertificateDetails.cs" />
+    <Compile Include="Core\Models\CertificateException.cs" />
     <Compile Include="Core\Models\PrinterConfig.cs" />
     <Compile Include="Core\Models\PrinterState.cs" />
     <Compile Include="Core\Models\PrinterStatus.cs" />

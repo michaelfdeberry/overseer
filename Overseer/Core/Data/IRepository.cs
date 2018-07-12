@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Overseer.Core.Models;
 
 namespace Overseer.Core.Data
 {
@@ -27,5 +26,7 @@ namespace Overseer.Core.Data
         void Delete(int id);
 
         void Delete(T entity);
+
+        bool Exist(Expression<Func<T, bool>> predicate);
     }
 }

@@ -54,5 +54,10 @@ namespace Overseer.Core.Data
         {
             Delete(entity.Id);
         }
+
+        public bool Exist(Expression<Func<T, bool>> predicate)
+        {
+            return _collection.FindOne(predicate) != null;
+        }
     }
 }

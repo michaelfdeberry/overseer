@@ -1,19 +1,12 @@
 ﻿.tune {
-    background-color: $white;
-    color: $black;
-    width: 50%;
-
     md-toolbar {
-        padding: 16px 0;
-
         .status, .action-button {
             @extend .sub-text;
         }
     }
 
     .progress {
-        padding: 16px 16px;
-        border-top: 1px solid $border-light;
+        padding: 16px;
         border-bottom: 1px solid $border-light;
 
         h5 {
@@ -149,14 +142,5 @@
         .tool-name {
             text-transform: capitalize;
         }
-        /*md-slider {  
-            .md-track {
-                background-color: $border-light;
-            }
-        }*/
-    }
-
-    md-dialog-content {
-        border-bottom: 1px solid $border-light;
     }
 }

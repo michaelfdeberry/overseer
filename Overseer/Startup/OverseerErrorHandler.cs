@@ -3,6 +3,8 @@ using Nancy;
 using Nancy.ErrorHandling;
 using Nancy.Extensions;
 using Nancy.Responses;
+using Overseer.Core.Exceptions;
+using Overseer.Startup.Json;
 
 namespace Overseer.Startup
 {
@@ -12,27 +14,35 @@ namespace Overseer.Startup
 
         public bool HandlesStatusCode(HttpStatusCode statusCode, NancyContext context)
         {
-            return (int) statusCode >= 400;
+            return (int)statusCode >= 400;
         }
 
         public void Handle(HttpStatusCode statusCode, NancyContext context)
         {
             var exception = context.GetException();
-            if (exception != null)
+            if (exception == null) return;
+
+            Log.Error("Server Error", exception);
+            if (exception.InnerException != null)
             {
-                Log.Error("Server Error", exception);
-
-                if (exception.InnerException != null)
-                {
-                    exception = exception.InnerException;
-                }
-
-                var error = exception.Message;
-                context.Response = new JsonResponse(new { error }, new DefaultJsonSerializer())
-                {
-                    StatusCode = HttpStatusCode.BadRequest
-                };
+                exception = exception.InnerException;
             }
+
+            object exceptionModel;
+            if (exception is OverseerException oEx)
+            {
+                exceptionModel = new { error = oEx.Message, oEx.Properties };
+            }
+            else
+            {
+                exceptionModel = new { error = exception.Message };
+            }
+
+            var serializer = new JsonNetSerializer(new OverseerJsonSerializer());
+            context.Response = new JsonResponse(exceptionModel, serializer)
+            {
+                StatusCode = HttpStatusCode.BadRequest
+            };
         }
     }
 }

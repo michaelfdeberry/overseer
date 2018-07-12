@@ -14,6 +14,7 @@ namespace Overseer.Core
         readonly IDataContext _context;
         readonly IRepository<User> _users;
         readonly IRepository<Printer> _printers;
+        readonly IRepository<CertificateException> _certificateExceptions;
         readonly PrinterProviderManager _printerProviderManager;
         readonly MonitoringService _monitoringService; 
 
@@ -22,7 +23,9 @@ namespace Overseer.Core
         {
             _context = context;
             _users = context.GetRepository<User>();
-            _printers = context.GetRepository<Printer>(); 
+            _printers = context.GetRepository<Printer>();
+            _certificateExceptions = context.GetRepository<CertificateException>();
+
             _printerProviderManager = printerProviderManager;
             _monitoringService = monitoringService;
         }
@@ -42,17 +45,14 @@ namespace Overseer.Core
 
         public async Task<Printer> CreatePrinter(Printer printer)
         {
-            //The printer won't have an id so a temporary provider will be created.
-            var provider = _printerProviderManager.GetProvider(printer);
-
             //load any default configuration that will be retrieved from the printer.
-            await provider.LoadConfiguration(printer);
-            
-            //if the configuration can be update from the printer then create the printer.
+            await _printerProviderManager.LoadConfiguration(printer);
+
+            //if the configuration is updated with data from the printer then store the configuration.
             _printers.Create(printer);
 
-            //Use the printers id to cache the provider since the connection is verified.
-            _printerProviderManager.CacheProvider(printer.Id, provider);
+            //cache a provider since the connection is verified.
+            _printerProviderManager.CacheProvider(printer.Id);
 
             return printer;
         }
@@ -67,8 +67,7 @@ namespace Overseer.Core
             else
             {
                 //update the configuration from the printer on config printer change
-                var provider = _printerProviderManager.GetProvider(printer);
-                await provider.LoadConfiguration(printer);
+                await _printerProviderManager.LoadConfiguration(printer);
             }
 
             _printers.Update(printer);
@@ -78,8 +77,7 @@ namespace Overseer.Core
         public void DeletePrinter(int printerId)
         {
             _printerProviderManager.RemoveProvider(printerId);
-            var printer = _printers.GetById(printerId);
-            _printers.Delete(printer);
+            _printers.Delete(printerId);
         }
 
         public ApplicationSettings GetApplicationSettings()
@@ -104,7 +102,13 @@ namespace Overseer.Core
 
         public UserDisplay CreateUser(string username, string password, int? sessionLifetime)
         {
-            if(_users.Get(u => u.Username == username) != null) 
+            if(string.IsNullOrWhiteSpace(username))
+                throw new Exception("Invalid Username");;
+
+            if(string.IsNullOrWhiteSpace(password))
+                throw new Exception("Invalid Password");
+
+            if(_users.Get(u => u.Username.ToLower() == username.ToLower()) != null) 
                 throw new Exception("Username Unavailable");
 
             var salt = PasswordHash.ScryptGenerateSalt();
@@ -223,14 +227,19 @@ namespace Overseer.Core
 
         public UserDisplay UpdateUser(UserAuthentication user)
         {
-            if (string.IsNullOrWhiteSpace(user.Username) && string.IsNullOrWhiteSpace(user.Password))
+            if (!string.IsNullOrWhiteSpace(user.Username) && !string.IsNullOrWhiteSpace(user.Password))
             {
-                return UpdateSessionLifetime(user.Id, user.SessionLifetime);
+                //if they are changing the password delete and recreate the user.
+                DeleteUser(user.Id);
+                return CreateUser(user.Username, user.Password, user.SessionLifetime);
             }
 
-            //if they are changing the password delete and recreate the user.
-            DeleteUser(user.Id);
-            return CreateUser(user.Username, user.Password, user.SessionLifetime);
+            return UpdateSessionLifetime(user.Id, user.SessionLifetime);
         }
+        
+        public void AddCertificateException(CertificateException certificateException)
+        {
+            _certificateExceptions.Create(certificateException);
+        } 
     }
 }

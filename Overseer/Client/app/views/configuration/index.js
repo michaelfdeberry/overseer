@@ -22,6 +22,7 @@
             self.settings = angular.copy(configuration.settings);
             self.printers = configuration.printers;
             self.users = configuration.users;
+            self.certificateExceptions = configuration.certificateExceptions;
         });
 
         self.updateSettings = function () {
@@ -34,10 +35,9 @@
 
                 $mdDialog.show(confirm).then(function () {
                     $location.path("/configuration/users/add");
-                },
-                    function () {
-                        self.revertSettings();
-                    });
+                }, function () {
+                    self.revertSettings();
+                });
             } else {
                 self.loading = true;
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Overseer.Core.Exceptions;
 
 namespace Overseer.Core.PrinterProviders
 {
@@ -48,7 +49,7 @@ namespace Overseer.Core.PrinterProviders
             catch (Exception ex)
             {
                 Log.Error("Load Configuration Failure", ex);
-                throw new Exception($"Failed to connect to RepRapFirmware({_url})");
+                throw new OverseerException("Printer_ConnectFailure", printer);
             }
         }
 

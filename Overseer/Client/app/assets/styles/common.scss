@@ -26,8 +26,7 @@ md-toast.toast-error .md-toast-content {
     background-color: $error;
 }
 
-.user-table,
-.printers-table {
+.config-table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
@@ -41,8 +40,9 @@ md-toast.toast-error .md-toast-content {
             border-bottom: $border;
             text-align: left;
             padding-left: 20px;
+            overflow: hidden;
 
-            &:nth-child(3) {
+            &.centered {
                 text-align: center;
             }
 
@@ -55,13 +55,14 @@ md-toast.toast-error .md-toast-content {
         th {
             background-color: $border;
             border: none;
+            height: 50px;
         }
 
         &:last-child > td {
             border: none;
         }
 
-        &.empty-row td {            
+        &.empty-row td {
             text-align: center;
             padding: 10px 0;
         }

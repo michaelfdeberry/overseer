@@ -1,0 +1,46 @@
+﻿<md-dialog class="cert-exception" flex-gt-md="40" flex="80">
+    <md-toolbar class="md-hue-2">
+        <div class="md-toolbar-tools">            
+            <h2 translate="certificateException"></h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div>            
+            <p translate="certificateWarning"></p>           
+        </div>
+        <div>
+            <h4 translate="certificateInformation"></h4>
+            <table>
+                <tr>
+                    <td translate="issuedTo"></td>
+                    <td ng-bind="ctrl.certificateDetails.issuedTo"></td>
+                </tr>
+                <tr>
+                    <td translate="issuedBy"></td>
+                    <td ng-bind="ctrl.certificateDetails.issuedBy"></td>
+                </tr>
+                <tr>
+                    <td translate="issuedDate"></td>
+                    <td ng-bind="ctrl.certificateDetails.issueDate"></td>
+                </tr>
+                <tr>
+                    <td translate="expireDate"></td>
+                    <td ng-bind="ctrl.certificateDetails.expireDate"></td>
+                </tr>
+                <tr>
+                    <td translate="thumbprint"></td>
+                    <td ng-bind="ctrl.certificateDetails.thumbprint"></td>
+                </tr>
+            </table>
+            <p translate="certificateCaution"></p>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="end center">
+        <md-button ng-click="ctrl.cancel()">
+            <span translate="cancel"></span>
+        </md-button>
+        <md-button ng-click="ctrl.addException()">
+            <span translate="add"></span>
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

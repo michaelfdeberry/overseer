@@ -1,7 +1,8 @@
 ﻿using Nancy;
 using Nancy.TinyIoc;
 using Overseer.Core;
-using Overseer.Core.Data; 
+using Overseer.Core.Data;
+using Overseer.Hubs;
 
 namespace Overseer.Startup
 {
@@ -15,8 +16,13 @@ namespace Overseer.Startup
         public OverseerBootstrapper(IDataContext context)
         {
             _context = context;
+
             var applicationSettings = _context.GetApplicationSettings(); 
             _monitoringService = new MonitoringService(applicationSettings.Interval);
+            _monitoringService.StatusUpdate += (sender, args) =>
+            {
+                StatusHub.PushStatusUpdate(args.Status);
+            };
         }
 
         protected override void ConfigureApplicationContainer(TinyIoCContainer container)

@@ -7,8 +7,12 @@ using Nancy.Owin;
 using Newtonsoft.Json;
 using Overseer.Core;
 using Overseer.Core.Data;
+using Overseer.Core.Models;
 using Overseer.Hubs;
 using Owin;
+using System.Net;
+using System.Net.Security;
+using Overseer.Core.Exceptions;
 
 namespace Overseer.Startup
 {
@@ -29,8 +33,23 @@ namespace Overseer.Startup
         {
             Log.Info("Starting Server...");
 
+            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, errors) =>
+            {
+                if (errors == SslPolicyErrors.None) return true;
+
+                var certificateDetails = new CertificateDetails(certificate);
+                var thumbprint = certificateDetails.Thumbprint;
+                var exceptions = context.GetRepository<CertificateException>();
+
+                if (exceptions.Exist(x => x.Thumbprint == thumbprint)) return true;
+
+                Log.Error($"Invalid Certificate: {certificateDetails}");
+                throw new OverseerException("Certificate_Exception", certificateDetails);
+            };
+
             var settings = context.GetApplicationSettings();
             var endPoint = string.Format(EndPointFormatter, settings.LocalPort);
+            
             WebApp.Start(endPoint, app =>
             {
                 GlobalHost.DependencyResolver.Register(typeof(StatusHub), () => OverseerBootstrapper.Container.Resolve<StatusHub>());

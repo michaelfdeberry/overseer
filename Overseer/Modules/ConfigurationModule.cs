@@ -49,6 +49,8 @@ namespace Overseer.Modules
             };
 
             Delete["/users/{id:int}"] = p => this.Ok((Action)(() => configurationManager.DeleteUser(p.id)));
+
+            Put["/certificate"] = p => this.Ok(() => configurationManager.AddCertificateException(this.Bind<CertificateException>()));            
         }
     }
 }

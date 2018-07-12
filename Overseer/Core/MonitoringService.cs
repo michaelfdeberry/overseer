@@ -4,9 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
-using Microsoft.AspNet.SignalR;
 using Overseer.Core.Models;
-using Overseer.Hubs;
 using Timer = System.Timers.Timer;
 
 namespace Overseer.Core
@@ -23,12 +21,11 @@ namespace Overseer.Core
 
     public class MonitoringService : IDisposable
     {
+        static readonly ILog Log = LogManager.GetLogger(typeof(MonitoringService));
+
         public event EventHandler<StatusUpdateEventArgs> StatusUpdate;
         
-        static readonly ILog Log = LogManager.GetLogger(typeof(MonitoringService));
-        
         readonly Timer _timer;
-        public bool IsMonitoring => _timer != null;
 
         public MonitoringService(int interval)
         {
@@ -67,14 +64,13 @@ namespace Overseer.Core
                 var cancellation = new CancellationTokenSource();
                 cancellation.CancelAfter((int)_timer.Interval);
 
-                var tasks = PrinterProviderManager.ProviderCache.Values.Select(provider => provider.GetPrinterStatus(cancellation.Token));
+                var tasks = PrinterProviderManager.GetPrinterProviders().Select(provider => provider.GetPrinterStatus(cancellation.Token));
                 await Task.WhenAll(tasks).ContinueWith(task =>
                 {
-                    var status = task.Result.OrderByDescending(x => x.State).ToDictionary(x => x.PrinterId);
-                    if (!status.Any()) return;
-
-                    StatusUpdate?.Invoke(this, new StatusUpdateEventArgs(status));
-                    StatusHub.PushStatusUpdate(status);
+                    var statuses = task.Result;
+                    if (!statuses.Any()) return;
+                    
+                    StatusUpdate?.Invoke(this, new StatusUpdateEventArgs(statuses.ToDictionary(x => x.PrinterId)));
                 }, cancellation.Token);
             }
             catch (Exception ex)

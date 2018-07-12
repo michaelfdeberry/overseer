@@ -1,11 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Fclp;
+﻿using Fclp;
 using log4net;
 using Overseer.Core;
 using Overseer.Core.Data;
 using Overseer.Startup;
+using System;
+using System.Threading;
 
 namespace Overseer
 {
@@ -18,7 +17,6 @@ namespace Overseer
             Log.Info("Starting Overseer...");
             var waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
 
-            using (var cancellation = new CancellationTokenSource())
             using (var context = new LiteDataContext())
             {
                 var exitSignal = ExitSignal.Create();
@@ -43,10 +41,8 @@ namespace Overseer
                 {
                     Log.Error("Application Failure", ex);
                 }
-
-                Log.Info("Waiting For Exit Signal...");
-                waitHandle.WaitOne();                                
-                cancellation.Cancel();
+                
+                waitHandle.WaitOne();
 
                 Log.Info("Exiting Overseer");
                 Environment.Exit(0);
