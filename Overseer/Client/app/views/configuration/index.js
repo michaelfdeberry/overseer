@@ -22,7 +22,6 @@
             self.settings = angular.copy(configuration.settings);
             self.printers = configuration.printers;
             self.users = configuration.users;
-            self.certificateExceptions = configuration.certificateExceptions;
         });
 
         self.updateSettings = function () {
