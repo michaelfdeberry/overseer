@@ -12,7 +12,7 @@
         self.addUser = function () {
             self.loading = true;
             configuration.addUser(self.user).then(function () {
-                $location.path("/configuration");
+                $location.path("/configuration/users");
             }, function (e) {
                 self.error = e;
             }).finally(function () {

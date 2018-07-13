@@ -26,7 +26,7 @@
 
             configuration.createPrinter(self.model).then(function () {
                 self.loading = false;
-                $location.path("/configuration");
+                $location.path("/configuration/printers");
             }, function(response) {
                 if (response.data.error === "Certificate_Exception") {
                     certificateExceptionModal.open(response.data.properties).then(function(retry) {

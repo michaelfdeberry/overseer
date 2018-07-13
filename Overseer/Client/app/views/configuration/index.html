@@ -1,7 +1,7 @@
 ﻿<md-card class="configuration" ng-if="ctrl.ready" flex-gt-sm="50" flex-offset-gt-sm="25">
     <md-card-content>
         <md-tabs md-dynamic-height md-border-bottom>
-            <md-tab label="{{ 'generalSettings' | translate }}">
+            <md-tab label="{{ 'generalSettings' | translate }}" md-on-select="ctrl.setTabPath()">
                 <form name="ctrl.settingsForm" ng-disabled="ctrl.loading">
                     <br />
                     <md-input-container class="md-block">
@@ -36,7 +36,7 @@
                     </div>
                 </form>
             </md-tab>
-            <md-tab label="{{ 'users' | translate }}">
+            <md-tab label="{{ 'users' | translate }}" md-active="ctrl.activeTab === 'users'" md-on-select="ctrl.setTabPath('users')">
                 <table class="config-table user-table">
                     <thead>
                         <tr>
@@ -74,7 +74,7 @@
                     </tbody>
                 </table>
             </md-tab>
-            <md-tab label="{{ 'printers' | translate }}">
+            <md-tab label="{{ 'printers' | translate }}" md-active="ctrl.activeTab === 'printers'" md-on-select="ctrl.setTabPath('printers')">
                 <table class="config-table printers-table">
                     <thead>
                     <tr>

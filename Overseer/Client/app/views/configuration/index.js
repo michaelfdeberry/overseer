@@ -4,9 +4,10 @@
     "$mdDialog",
     "$location",
     "$translate",
+    "$routeParams",
     "configuration",
     "authentication",
-    function ($scope, $q, $mdDialog, $location, $translate, configurationService, authentication) {
+    function ($scope, $q, $mdDialog, $location, $translate, $routeParams, configurationService, authentication) {
         "use strict";
 
         var self = this;
@@ -14,6 +15,7 @@
 
         self.loading = true;
         self.ready = false;
+        self.activeTab = $routeParams.tab;
 
         configurationService.getConfiguration().then(function (configuration) {
             self.loading = false;
@@ -23,6 +25,10 @@
             self.printers = configuration.printers;
             self.users = configuration.users;
         });
+
+        self.setTabPath = function(path) {
+            $location.update_path("/configuration/" + (path || ""));
+        };
 
         self.updateSettings = function () {
             if (self.settings.requiresAuthentication && !self.users.length) {

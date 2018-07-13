@@ -38,7 +38,7 @@
                 </md-button>
                 <md-button ng-if="ctrl.user.isLoggedIn" ng-click="ctrl.logout()" translate="logout"></md-button>
             </div>
-            <md-button href="/#!/configuration" translate="cancel"></md-button>
+            <md-button href="/#!/configuration/users" translate="cancel"></md-button>
             <md-button type="submit" class="md-primary" ng-click="ctrl.changePassword()" ng-disabled="ctrl.addForm.$pristine || ctrl.addForm.$invalid || ctrl.loading" translate="save"></md-button>
         </md-card-actions>
     </md-card>

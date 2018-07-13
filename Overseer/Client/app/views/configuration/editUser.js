@@ -76,7 +76,7 @@
         };
 
         function gotoConfiguration() {
-            $location.path("/configuration");
+            $location.path("/configuration/users");
         }
 
         function handleError(e) {

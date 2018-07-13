@@ -21,7 +21,7 @@
         self.updatePrinter = function () {
             self.loading = true;
             configurationService.updatePrinter(self.model).then(function () {
-                $location.path("/configuration");
+                $location.path("/configuration/printers");
             });
         };
 
@@ -34,7 +34,7 @@
 
             $mdDialog.show(confirm).then(function () {
                 configurationService.deletePrinter(self.model).then(function () {
-                    $location.path("/configuration");
+                    $location.path("/configuration/printers");
                 });
             }, function () { });
         };

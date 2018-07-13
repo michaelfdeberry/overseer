@@ -1,4 +1,4 @@
-﻿angular.module("overseer", ["ngRoute", "ngAnimate", "ngMaterial", "pascalprecht.translate"]);
+﻿angular.module("overseer", ["ngRoute", "ngAnimate", "ngMaterial", "pascalprecht.translate", "ngLocationUpdate"]);
 
 angular.module("overseer")
     .config([
@@ -14,7 +14,7 @@ angular.module("overseer")
                     controller: "indexController",
                     controllerAs: "ctrl"
                 })
-                .when("/configuration", {
+                .when("/configuration/:tab?", {
                     templateUrl: "views/configuration/index.html",
                     controller: "configurationController",
                     controllerAs: "ctrl"
