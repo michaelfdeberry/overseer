@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using Nancy;
+using System.Net; 
 using Overseer.Core.Data;
 using Overseer.Core.Models;
-using HttpStatusCode = Nancy.HttpStatusCode;
 
 namespace Overseer.Core
 {
@@ -64,18 +60,6 @@ namespace Overseer.Core
         public static void UpdateApplicationSettings(this IDataContext context, ApplicationSettings settings)
         {
             context.GetRepository<ApplicationSettings>().Update(settings);
-        }
-
-        public static async Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), tcs))
-            {
-                if (task != await Task.WhenAny(task, tcs.Task))
-                    throw new OperationCanceledException(cancellationToken);
-            }
-
-            return await task;
         }
     }
 }

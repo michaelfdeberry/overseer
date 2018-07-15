@@ -15,17 +15,17 @@ namespace Overseer.Hubs
         public static readonly string MonitoringGroupName = "MonitoringGroup";
 
         readonly MonitoringService _monitoringService;
-        readonly ConfigurationManager _configurationManager;
+        readonly UserManager _userManager;
 
-        public StatusHub(MonitoringService monitoringService, ConfigurationManager configurationManager)
+        public StatusHub(MonitoringService monitoringService, UserManager userManager)
         {
             _monitoringService = monitoringService;
-            _configurationManager = configurationManager;
+            _userManager = userManager;
         }
         
         public async Task<bool> StartMonitoring(string token)
         { 
-            if (!_configurationManager.AuthenticateToken(token)) return false;
+            if (!_userManager.AuthenticateToken(token)) return false;
 
             MonitoringGroup.Add(Context.ConnectionId);
             await Groups.Add(Context.ConnectionId, "MonitoringGroup");

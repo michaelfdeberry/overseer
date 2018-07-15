@@ -9,7 +9,7 @@ namespace Overseer.Modules
 {
     public class AuthenticationModule : NancyModule
     {
-        public AuthenticationModule(ConfigurationManager configurationManager)
+        public AuthenticationModule(UserManager userManager)
             : base("services/auth")
         {
             Post["/"] = p =>
@@ -18,7 +18,7 @@ namespace Overseer.Modules
 
                 try
                 {
-                    return configurationManager.AuthenticateUser(model.Username, model.Password);
+                    return userManager.AuthenticateUser(model.Username, model.Password);
                 }
                 catch (Exception ex)
                 {
@@ -36,14 +36,14 @@ namespace Overseer.Modules
                 var token = Request.Headers["Authorization"].FirstOrDefault();                
                 if (string.IsNullOrWhiteSpace(token)) return HttpStatusCode.OK;
 
-                configurationManager.DeauthenticateUser(token.Replace("Bearer", string.Empty).Trim());
+                userManager.DeauthenticateUser(token.Replace("Bearer", string.Empty).Trim());
                 return HttpStatusCode.OK;
             };
 
             Post["/logout/{id:int}"] = p =>
             {
                 this.RequiresAuthentication();
-                return configurationManager.DeauthenticateUser((int)p.id);
+                return userManager.DeauthenticateUser((int)p.id);
             };
         }
     }

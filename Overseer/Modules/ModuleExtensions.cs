@@ -30,10 +30,10 @@ namespace Overseer.Modules
 
         public static Response RequiresAuthentication(this NancyContext context)
         {
-            var configurationManager = OverseerBootstrapper.Container.Resolve<ConfigurationManager>();
+            var userManager = OverseerBootstrapper.Container.Resolve<UserManager>();
             var token = context.Request.Headers["Authorization"]?.FirstOrDefault();
             
-            if (!configurationManager.AuthenticateToken(token))
+            if (!userManager.AuthenticateToken(token))
                 return new Response { StatusCode = HttpStatusCode.Unauthorized };
             
             return null;

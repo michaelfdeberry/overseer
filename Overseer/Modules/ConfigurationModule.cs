@@ -8,47 +8,47 @@ namespace Overseer.Modules
 {
     public class ConfigurationModule : NancyModule
     {
-        public ConfigurationModule(ConfigurationManager configurationManager)
+        public ConfigurationModule(ConfigurationManager configurationManager, PrinterManager printerManager, UserManager userManager)
             : base("services/config")
         {
             this.RequiresAuthentication();
 
-            Get["/"] = p => configurationManager.GetPrinters();
+            Get["/"] = p => printerManager.GetPrinters();
 
-            Get["/{id:int}"] = p => configurationManager.GetPrinter(p.id);
+            Get["/{id:int}"] = p => printerManager.GetPrinter(p.id);
 
-            Put["/", true] = async (p, ct) => await configurationManager.CreatePrinter(this.Bind<Printer>());
+            Put["/", true] = async (p, ct) => await printerManager.CreatePrinter(this.Bind<Printer>());
 
-            Post["/", true] = async (p, ct) => await configurationManager.UpdatePrinter(this.Bind<Printer>());
+            Post["/", true] = async (p, ct) => await printerManager.UpdatePrinter(this.Bind<Printer>());
 
-            Delete["/{id:int}"] = p => this.Ok((Action)(() => configurationManager.DeletePrinter(p.id)));
+            Delete["/{id:int}"] = p => this.Ok((Action)(() => printerManager.DeletePrinter(p.id)));
 
             Get["/settings"] = p => configurationManager.GetApplicationSettings();
 
             Post["/settings"] = p => configurationManager.UpdateApplicationSettings(this.Bind<ApplicationSettings>());
 
-            Get["/users"] = p => configurationManager.GetUsers();
+            Get["/users"] = p => userManager.GetUsers();
 
             Get["/configuration"] = p => new
             {
-                Printers = configurationManager.GetPrinters(),
-                Users = configurationManager.GetUsers(),
+                Printers = printerManager.GetPrinters(),
+                Users = userManager.GetUsers(),
                 Settings = configurationManager.GetApplicationSettings()
             };
 
             Put["/users"] = p =>
             {
                 var model = this.Bind<UserAuthentication>();
-                return configurationManager.CreateUser(model.Username, model.Password, model.SessionLifetime);
+                return userManager.CreateUser(model.Username, model.Password, model.SessionLifetime);
             };
 
-            Post["/users"] = p => //change password
+            Post["/users"] = p =>
             {
                 var model = this.Bind<UserAuthentication>();
-                return configurationManager.UpdateUser(model);
+                return userManager.UpdateUser(model);
             };
 
-            Delete["/users/{id:int}"] = p => this.Ok((Action)(() => configurationManager.DeleteUser(p.id)));
+            Delete["/users/{id:int}"] = p => this.Ok((Action)(() => userManager.DeleteUser(p.id)));
 
             Put["/certificate"] = p => this.Ok(() => configurationManager.AddCertificateException(this.Bind<CertificateException>()));            
         }

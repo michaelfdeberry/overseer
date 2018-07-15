@@ -129,6 +129,7 @@
     <Compile Include="Core\Models\RepRapConfig.cs" />
     <Compile Include="Core\Models\TemperatureStatus.cs" />
     <Compile Include="Core\Models\User.cs" />
+    <Compile Include="Core\PrinterManager.cs" />
     <Compile Include="Core\PrinterProviderManager.cs" />
     <Compile Include="Core\PrinterProviders\PrinterProvider.cs" />
     <Compile Include="Core\PrinterProviders\IPrinterProvider.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Core\Models\Printer.cs" />
     <Compile Include="Core\PrinterProviders\RepRapProvider.cs" />
     <Compile Include="Core\PrinterProviders\RestPrinterProvider.cs" />
+    <Compile Include="Core\UserManager.cs" />
     <Compile Include="Core\Utilities.cs" />
     <Compile Include="Modules\AuthenticationModule.cs" />
     <Compile Include="Modules\ModuleExtensions.cs" />
