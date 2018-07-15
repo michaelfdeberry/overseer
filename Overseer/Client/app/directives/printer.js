@@ -65,8 +65,9 @@
                         var printerStatus = status[self.model.id];
                         if (printerStatus) {
                             self.status = printerStatus;
-                            $scope.$digest();
-                        }                        
+                        }
+
+                        $scope.$digest();                   
                     });
 
                     self.toggleZoom = function () {
