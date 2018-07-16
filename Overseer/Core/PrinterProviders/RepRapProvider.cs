@@ -38,6 +38,8 @@ namespace Overseer.Core.PrinterProviders
         {
             try
             {
+                AddClientCertificate(printer.Config.ClientCertificatePem);
+
                 var config = (RepRapConfig)printer.Config;
                 _url = new Uri(config.Url).ProcessUrl();
 

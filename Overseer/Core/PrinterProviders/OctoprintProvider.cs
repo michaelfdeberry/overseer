@@ -77,6 +77,8 @@ namespace Overseer.Core.PrinterProviders
         {
             try
             {
+                AddClientCertificate(printer.Config.ClientCertificatePem);
+
                 var config = (OctoprintConfig)printer.Config;
                 _url = NormalizeOctoprintUrl(config);
                 _apiKey = config.ApiKey;
