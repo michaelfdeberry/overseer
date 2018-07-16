@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using log4net;
 using Overseer.Core.Models;
+using Overseer.Core.PrinterProviders;
 using Timer = System.Timers.Timer;
 
 namespace Overseer.Core
@@ -27,10 +28,14 @@ namespace Overseer.Core
         
         readonly Timer _timer;
 
-        public MonitoringService(int interval)
+        readonly Func<IEnumerable<IPrinterProvider>> _printerProvidersAccessor;
+
+        public MonitoringService(int interval, Func<IEnumerable<IPrinterProvider>> printerProvidersAccessor)
         {
             _timer = new Timer(interval);
             _timer.Elapsed += async (sender, args) => await GetStatuses();
+
+            _printerProvidersAccessor = printerProvidersAccessor;
         }
 
         public async Task StartMonitoring()
@@ -64,7 +69,7 @@ namespace Overseer.Core
                 var cancellation = new CancellationTokenSource();
                 cancellation.CancelAfter((int)_timer.Interval);
 
-                var tasks = PrinterProviderManager.GetPrinterProviders().Select(provider => provider.GetPrinterStatus(cancellation.Token));
+                var tasks = _printerProvidersAccessor().Select(provider => provider.GetPrinterStatus(cancellation.Token));
                 await Task.WhenAll(tasks).ContinueWith(task =>
                 {
                     var statuses = task.Result;

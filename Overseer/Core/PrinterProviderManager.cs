@@ -15,16 +15,16 @@ namespace Overseer.Core
         static readonly ILog Log = LogManager.GetLogger(typeof(PrinterProviderManager));
         static readonly ConcurrentDictionary<int, IPrinterProvider> ProviderCache = new ConcurrentDictionary<int, IPrinterProvider>();
         
-        public static IReadOnlyList<IPrinterProvider> GetPrinterProviders()
-        {
-            return ProviderCache.Values.ToList();
-        }
-
         readonly IRepository<Printer> _printers;
 
         public PrinterProviderManager(IDataContext context)
         {
             _printers = context.GetRepository<Printer>();
+        }
+
+        public IReadOnlyList<IPrinterProvider> GetPrinterProviders()
+        {
+            return ProviderCache.Values.ToList();
         }
 
         public void LoadCache(IEnumerable<Printer> printers)
@@ -78,19 +78,8 @@ namespace Overseer.Core
         public void RemoveProvider(int printerId)
         {
             if (!ProviderCache.ContainsKey(printerId)) return;
-
-            IPrinterProvider provider;
-            var removeAttempts = 1;
-            while (!ProviderCache.TryRemove(printerId, out provider))
-            {
-                if (removeAttempts++ > 3)
-                {
-                    Log.Error("Failed to remove printer provider");
-                    return;
-                }
-            }
-
-            Log.Debug($"{provider.GetType().Name} for printer {printerId} removed after {removeAttempts} attempts");
+            
+            ProviderCache.TryRemove(printerId, out IPrinterProvider provider);
         }
 
         public Task LoadConfiguration(Printer printer)

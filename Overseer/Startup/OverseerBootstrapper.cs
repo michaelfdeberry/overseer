@@ -18,7 +18,12 @@ namespace Overseer.Startup
             _context = context;
 
             var applicationSettings = _context.GetApplicationSettings(); 
-            _monitoringService = new MonitoringService(applicationSettings.Interval);
+            _monitoringService = new MonitoringService(applicationSettings.Interval, () =>
+            {
+                var providerManager = Container.Resolve<PrinterProviderManager>();
+                return providerManager.GetPrinterProviders();
+            });
+
             _monitoringService.StatusUpdate += (sender, args) =>
             {
                 StatusHub.PushStatusUpdate(args.Status);
