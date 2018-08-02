@@ -1,7 +1,7 @@
-﻿angular.module("overseer").config(["$translateProvider", function($translateProvider) {
+﻿angular.module("overseer").config(["$translateProvider", function ($translateProvider) {
     "use strict";
 
-    $translateProvider.translations("en", {                 
+    $translateProvider.translations("en", {
         add: "Add",
         edit: "Edit",
         editing: "Editing",
@@ -65,7 +65,7 @@
         requiresAuthentication: "Require User Logins",
         requiresAutnenticationPrompt: "At least one user must be added before enabling 'Require User Logins'",
         sessionLifetimeTitle: "Specifies how long the user will remain logged into the application before needing to re-authenticate. Leave blank to remain logged in indefinitely.",
-        sessionLifetime: "Login Session Duration",        
+        sessionLifetime: "Login Session Duration",
         days: "Days",
         indefinite: "Indefinite",
         login: "Sign In",
@@ -75,22 +75,27 @@
         addUser: "Add User",
         isLoggedIn: "Logged In?",
         isLoggedInTitle: "Specifies if a user has a active login",
-        warning:"Warning!",
+        warning: "Warning!",
         yes: "Yes",
         no: "No",
         deletePrinterPrompt: "Are you sure you want remove this printer?",
         deleteUserPrompt: "Are you sure you want remove this user?",
-        deleteLastUserPrompt: "At least one user must exist when 'Require User Logins' is enabled. To remove this user disable 'Require User Logins' or add another user.", 
+        deleteLastUserPrompt: "At least one user must exist when 'Require User Logins' is enabled. To remove this user disable 'Require User Logins' or add another user.",
         certificateInformation: "Certificate Information",
         certificateException: "Untrusted Certificate",
         certificateWarning: "Overseer was unable to connect to the requested printer because the certificate is considered insecure or invalid.",
-        certificateCaution:"Adding this printer will require creating a security exception for this certificate. Do you want to add this printer?",
+        certificateCaution: "Adding this printer will require creating a security exception for this certificate. Do you want to add this printer?",
         issuedTo: "Issued To",
         issuedBy: "Issued By",
         issuedDate: "Issued Date",
         expireDate: "Expire Date",
         thumbprint: "Thumbprint",
         Octoprint_InvalidKey: "Octoprint refused the connection because the provided API Key is invalid",
-        Printer_ConnectFailure : "Failed to establish a connection with the printer"
+        Printer_ConnectFailure: "Failed to establish a connection with the printer",
+        clientPem: "Client Authentication Certificate",
+        clientPemTitle: "Providing a certificate allows Overseer to connect to printers accessible through a reverse proxy configured to use Client Certificate Authentication.",
+        clientPemPlaceholder: "Paste Contents of the .PEM client certificate",
+        showAdvancedOptions: "Show Advanced Options",
+        hideAdvancedOptions: "Hide Advanced Options"
     }).preferredLanguage("en");
 }]);

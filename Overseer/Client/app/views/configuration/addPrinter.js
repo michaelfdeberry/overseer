@@ -4,22 +4,15 @@
     "configuration",   
     "certificateExceptionModal",
     "$translate",
-    function($location, $mdToast, configuration, certificateExceptionModal, $translate) {
+    "addEditPrinterService",
+    function($location, $mdToast, configuration, certificateExceptionModal, $translate, addEditPrinterService) {
         "use strict";
 
         var self = this;
-        
-        self.printerTypes = ["Octoprint", "RepRap"]; 
-        self.model = {};   
-        
-        Object.defineProperty(self, "configTemplateUrl", {
-            get: function() {
-                if (!self.model.printerType) return;
+        self.model = {};
 
-                return "views/configuration/" + self.model.printerType + ".html";
-            }
-        });
-
+        addEditPrinterService.bind(self);        
+        
         self.addPrinter = function () {
             self.loading = true;
             self.model.config.printerType = self.model.printerType;            
@@ -45,7 +38,7 @@
                         $mdToast.show(toast);                    
                         self.loading = false;
                     });         
-                }                              
+                }
             });
         };
     }

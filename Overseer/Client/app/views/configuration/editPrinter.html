@@ -13,6 +13,8 @@
 
             <ng-include src="ctrl.configTemplateUrl"></ng-include>
 
+            <ng-include ng-if="ctrl.isRestfulProvider" src="'views/configuration/advancedRest.html'"></ng-include>
+
             <md-input-container class="md-block">
                 <md-switch class="md-primary" ng-model="ctrl.model.disabled" title="{{ 'disableMonitoringTitle' | translate }}">
                     <span translate="disableMonitoring"></span>

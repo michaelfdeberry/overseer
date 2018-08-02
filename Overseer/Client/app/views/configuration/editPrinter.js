@@ -5,16 +5,17 @@
     "$mdDialog",
     "$translate",
     "configuration",
-    function ($scope, $location, $routeParams, $mdDialog, $translate, configurationService) {
+    "addEditPrinterService",
+    function ($scope, $location, $routeParams, $mdDialog, $translate, configurationService, addEditPrinterService) {
         "use strict";
 
-        var self = this;
-        self.loading = true;        
+        var self = this; 
+        addEditPrinterService.bind(self);
         
+        self.loading = true;
         configurationService.getPrinter($routeParams.id).then(function (printer) {            
             self.model = angular.copy(printer);
             self.currentName = printer.name;
-            self.configTemplateUrl = "views/configuration/" + self.model.printerType + ".html";
             self.loading = false;
         });
 
@@ -26,6 +27,7 @@
         };
 
         self.deletePrinter = function() {
+            self.loading = true;
             var confirm = $mdDialog.confirm()
                 .title($translate.instant("warning"))
                 .textContent($translate.instant("deletePrinterPrompt"))

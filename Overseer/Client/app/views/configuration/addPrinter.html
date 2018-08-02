@@ -7,6 +7,7 @@
             </md-card-title-text>
         </md-card-title>
         <md-card-content>
+            
             <md-input-container class="md-block">
                 <label translate="printerType"></label>
                 <md-select ng-model="ctrl.model.printerType" ng-disabled="ctrl.printerTypes.length === 1" required>
@@ -15,11 +16,15 @@
                     </md-option>
                 </md-select>
             </md-input-container>
+
             <md-input-container class="md-block" ng-if="ctrl.model.printerType">
                 <label translate="name"></label>
-                <input ng-model="ctrl.model.name" required />
+                <input ng-model="ctrl.model.name" required/>
             </md-input-container>
+
             <ng-include ng-if="ctrl.configTemplateUrl" src="ctrl.configTemplateUrl"></ng-include>
+
+            <ng-include ng-if="ctrl.isRestfulProvider" src="'views/configuration/advancedRest.html'"></ng-include>
         </md-card-content>
         <md-card-actions layout="row" layout-align="end center">
             <md-button href="/#!/configuration/printers" translate="cancel"></md-button>
