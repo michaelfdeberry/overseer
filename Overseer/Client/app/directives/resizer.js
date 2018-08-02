@@ -8,15 +8,15 @@
         replace: true,
         scope: {
             count: "=",
-            output: "="
+            name: "="
         },
         link: function (scope) {            
             var body = $window.document.body;
             var width;
             var height;
 
-            scope.output = {};
-            Object.defineProperties(scope.output, {
+            scope.name = {};
+            Object.defineProperties(scope.name, {
                 width: {
                     get: function () { 
                         return width;
