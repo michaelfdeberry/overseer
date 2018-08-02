@@ -4,7 +4,9 @@ namespace Overseer.Core.Models
 {
     public class PrinterStatus
     {
-        //The id of the configured printer that this status is for
+        /// <summary>
+        /// The id of the configured printer that this status is for
+        /// </summary>
         public int PrinterId { get; set; }
 
         /// <summary>
@@ -15,7 +17,7 @@ namespace Overseer.Core.Models
         /// <summary>
         /// The current temperatures of the printer
         /// </summary>
-        public Dictionary<string, TemperatureStatus> Temperatures { get; set; }
+        public Dictionary<string, TemperatureStatus> Temperatures { get; set; } = new Dictionary<string, TemperatureStatus>();
 
         /// <summary>
         /// The total amount of time the printer has been printing
@@ -45,5 +47,15 @@ namespace Overseer.Core.Models
         /// The current speed of the fan
         /// </summary>
         public float FanSpeed { get; set; }
+
+        /// <summary>
+        /// The current feed rate of the print
+        /// </summary>
+        public float FeedRate { get; set; }
+
+        /// <summary>
+        /// The current flow rates for each extruder
+        /// </summary>
+        public Dictionary<string, float> FlowRates { get; set; } = new Dictionary<string, float>();
     }
 }

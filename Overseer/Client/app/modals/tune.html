@@ -69,30 +69,30 @@
                     <tr>
                         <th translate="fanSpeed"></th>
                         <td>
-                            <md-slider class="md-primary" flex md-discrete ng-model="ctrl.fanSpeed" ng-model-options="ctrl.ngModelOptions" ng-change="ctrl.setFanSpeed()" step="1" min="0" max="100"></md-slider>
+                            <md-slider class="md-primary" flex md-discrete ng-model="ctrl.status.fanSpeed" ng-model-options="ctrl.ngModelOptions" ng-change="ctrl.setFanSpeed()" step="1" min="0" max="100"></md-slider>
                         </td>
                         <td>
-                            {{ ctrl.fanSpeed }}%
+                            {{ ctrl.status.fanSpeed }}%
                         </td>
                     </tr>
                     <tr>
                         <th translate="feedRate"></th>
                         <td>                            
-                            <md-slider class="md-primary" flex md-discrete ng-model="ctrl.feedRate" ng-model-options="ctrl.ngModelOptions" ng-change="ctrl.setFeedRate()" step="1" min="50" max="150"></md-slider>
+                            <md-slider class="md-primary" flex md-discrete ng-model="ctrl.status.feedRate" ng-model-options="ctrl.ngModelOptions" ng-change="ctrl.setFeedRate()" step="1" min="50" max="150"></md-slider>
                         </td>
                         <td>
-                            {{ ctrl.feedRate }}%
+                            {{ ctrl.status.feedRate }}%
                         </td>
                     </tr>
-                    <tr ng-repeat="tool in ctrl.printer.config.tools">
+                    <tr ng-repeat="(key, value) in ctrl.status.flowRates">
                         <th>
-                            <span translate="flowRate"></span> <span class="tool-name" ng-if="ctrl.printer.config.tools.length > 1">" {{tool}}</span>
+                            <span translate="flowRate"></span> <span class="tool-name" ng-if="ctrl.printer.config.tools.length > 1">" {{key}}</span>
                         </th>
                         <td>
-                            <md-slider class="md-primary" flex md-discrete ng-model="ctrl.flowRates[$index]" ng-model-options="ctrl.ngModelOptions" ng-change="ctrl.setFlowRate($index)" step="1" min="75" max="125"></md-slider>
+                            <md-slider class="md-primary" flex md-discrete ng-model="value" ng-model-options="ctrl.ngModelOptions" ng-change="ctrl.setFlowRate($index)" step="1" min="75" max="125"></md-slider>
                         </td>
                         <td>
-                            {{ ctrl.flowRates[$index] }}%
+                            {{ value }}%
                         </td>
                     </tr>
                     </tbody>

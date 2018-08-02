@@ -4,7 +4,7 @@
         function ($mdDialog) {
             "use strict";
 
-            this.open = function(printer, status) {
+            this.open = function (printer, status) {
                 $mdDialog.show({
                     controllerAs: "ctrl",
                     controller: "tuneModalController",
@@ -30,32 +30,42 @@
             var self = this;
             self.printer = printer;
             self.status = status;
-            self.fanSpeed = 0;
-            self.feedRate = 100;
-            self.flowRates = _.map(printer.config.tools, function() { return 100; });
+            setRates(status);
 
             self.ngModelOptions = {
                 debounce: 400
             };
-
-            $scope.$on("$StatusUpdate$", function(event, status) {                
-                var printerStatus = status[self.printer.id];
-                if (printerStatus) {
-                    self.status = printerStatus;
-                    $scope.$digest();
-                }
-            });
             
             function lockUi(promise) {
                 self.busy = true;
-                return promise.then(function() { self.busy = false; });
+                return promise.then(function () { self.busy = false; });
             }
 
-            self.pause = function() {
+            function setRates(status) {
+                self.status.fanSpeed = status.fanSpeed || 0;
+                self.status.feedRate = status.feedRate || 100;
+                self.status.flowRates = status.flowRates || _.reduce(self.printer.config.tools, function (result, value) {
+                    result[value] = 100;
+                    return result;
+                }, {});
+            }
+
+            $scope.$on("$StatusUpdate$", function (event, status) {
+                var printerStatus = status[self.printer.id];
+
+                if (printerStatus) {
+                    self.status = printerStatus;
+                    setRates(self.status);
+                }
+
+                $scope.$digest();
+            });
+
+            self.pause = function () {
                 lockUi(controlService.pause(printer.id));
             };
 
-            self.resume = function() {
+            self.resume = function () {
                 lockUi(controlService.resume(printer.id));
             };
 
@@ -65,12 +75,12 @@
                     .textContent("Are you sure you want to cancel this print?")
                     .ok("Yes")
                     .cancel("No")
-					.multiple(true);
-                
-                $mdDialog.show(confirm).then(function () { 
-                    lockUi(controlService.cancel(printer.id)).then(function(){
-						self.hide();
-					});
+                    .multiple(true);
+
+                $mdDialog.show(confirm).then(function () {
+                    lockUi(controlService.cancel(printer.id)).then(function () {
+                        self.hide();
+                    });
                 }, function () { });
             };
 
@@ -88,7 +98,7 @@
                 lockUi(controlService.setTemperature(printer.id, toolName, tool.target));
             };
 
-            self.setFeedRate = function() {
+            self.setFeedRate = function () {
                 lockUi(controlService.setFeedRate(printer.id, self.feedRate));
             };
 
@@ -97,11 +107,11 @@
                 lockUi(controlService.setFlowRate(printer.id, toolName, self.flowRates[index]));
             };
 
-            self.setFanSpeed = function() {
+            self.setFanSpeed = function () {
                 lockUi(controlService.setFanSpeed(printer.id, self.fanSpeed));
             };
 
-            self.hide = function() {
+            self.hide = function () {
                 $mdDialog.hide();
             };
         }

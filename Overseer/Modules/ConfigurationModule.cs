@@ -26,15 +26,15 @@ namespace Overseer.Modules
             Get["/settings"] = p => configurationManager.GetApplicationSettings();
 
             Post["/settings"] = p => configurationManager.UpdateApplicationSettings(this.Bind<ApplicationSettings>());
-
-            Get["/users"] = p => userManager.GetUsers();
-
+            
             Get["/configuration"] = p => new
             {
                 Printers = printerManager.GetPrinters(),
                 Users = userManager.GetUsers(),
                 Settings = configurationManager.GetApplicationSettings()
             };
+
+            Get["/users"] = p => userManager.GetUsers();
 
             Put["/users"] = p =>
             {

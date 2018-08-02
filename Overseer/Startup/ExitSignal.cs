@@ -48,7 +48,6 @@ namespace Overseer.Startup
         }
     }
 
-
     public class WinExitSignal : ExitSignal
     {
         [DllImport("Kernel32")]
