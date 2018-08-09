@@ -33,7 +33,7 @@ namespace Overseer.Hubs
             if (MonitoringGroup.Count == 1)
             {
                 Log.Info("A client connected, initiating monitoring...");                
-                await _monitoringService.StartMonitoring();
+                _monitoringService.StartMonitoring();
             }
 
             return true;
