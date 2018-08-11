@@ -169,7 +169,7 @@ namespace Overseer.Core.PrinterProviders
             
             if (!_printFanIndex.HasValue)
             {           
-                dynamic tools = printerConfiguration.tools;
+                var tools = printerConfiguration.tools;
                 var currentToolIndex = (int)statusUpdate.currentTool;
                 var currentTool = tools[currentToolIndex];
 
@@ -217,7 +217,7 @@ namespace Overseer.Core.PrinterProviders
                     if (fileInfo.height > 0)
                     {
                         //determine the progress based on the current height compared to the total print height
-                        var progress = statusUpdate.coords.xyx[2] / fileInfo.height * 100;
+                        var progress = statusUpdate.coords.xyz[2] / fileInfo.height * 100;
                         return progress < 0 ? 0 : progress.round(1);
                     }
                 }
