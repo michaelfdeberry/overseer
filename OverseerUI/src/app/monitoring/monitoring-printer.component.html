@@ -1,0 +1,53 @@
+<div class="printer" [ngClass]="{ 'zoom': zoomState }" [ngStyle]="{ 'height.px': height, 'width.%': width }">
+    <div class="zoom-panel">
+        <div class="web-cam" (click)="toggleZoom()" [ngStyle]="{ 'background-image': 'url(' + printer.config.webCamUrl + ')' }"></div>
+        <mat-progress-bar color="accent" [mode]="progressMode" [value]="printer.status && printer.status.progress"></mat-progress-bar>
+        <div class="container">
+            <div class="status">
+                <div class="name">{{ printer.name }}</div>
+                <div class="state-container">
+                    <span class="state">{{ printer.currentStateName | translate }}</span>
+                    <span class="state" *ngIf="printer.status && printer.status.estimatedTimeRemaining">
+                        ({{ printer.status.estimatedTimeRemaining | duration }} {{'remaining' | translate}})
+                    </span>
+                </div>
+            </div>
+            <div class="controls" [ngClass]="printer.currentStateName">
+                <button class="control-button resume" color="primary" mat-raised-button (click)="resume()">
+                    <mat-icon>play_arrow</mat-icon>
+                </button>
+                <button class="control-button pause" color="primary" mat-raised-button (click)="pause()">
+                    <mat-icon>pause</mat-icon>
+                </button>
+                <button class="control-button cancel" color="primary" mat-raised-button (click)="cancel()">
+                    <mat-icon>stop</mat-icon>
+                </button>
+                <button class="control-button tune" color="primary" mat-raised-button (click)="tune()">
+                    <mat-icon>build</mat-icon>
+                </button>
+                <a class="control-button web-access" color="primary" mat-raised-button href="{{ printer.config.url }}" target="_blank">
+                    <mat-icon>open_in_new</mat-icon>
+                </a>
+                <a class="control-button edit" color="primary" mat-raised-button [routerLink]="['/configuration/printers/edit/', printer.id]">
+                    <mat-icon>settings</mat-icon>
+                </a>
+            </div>
+        </div>
+        <div *ngIf="printer.status" class="temperatures">
+            <table class="temp-table" *ngFor="let tempStatus of printer.status.temperatures | keyvalue">
+                <tbody>
+                    <tr>
+                        <td>{{ tempStatus.key.replace("tool", "heater ") }}</td>
+                    </tr>
+                    <tr>
+                    <td>
+                        <span>{{ tempStatus.value.actual | number : '1.1-1' }}</span> &deg;C /
+                        <span>{{ tempStatus.value.target | number : '1.0-0' }}</span> &deg;C
+                    </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <img class="printer-type-logo" src="{{ '/assets/' + printer.printerType + '.png'}}" alt="logo" />
+</div>

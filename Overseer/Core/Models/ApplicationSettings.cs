@@ -25,6 +25,12 @@ namespace Overseer.Core.Models
         public bool HideDisabledPrinters { get; set; }
 
         /// <summary>
+        /// If true printers that aren't currently on a printer job won't be
+        /// visible on the monitoring screen
+        /// </summary>
+        public bool HideIdlePrinters { get; set; }
+
+        /// <summary>
         /// Specifies if the application should require user authentication
         /// </summary>
         public bool RequiresAuthentication { get; set; }

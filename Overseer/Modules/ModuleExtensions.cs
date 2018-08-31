@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Nancy.ModelBinding;
-using Overseer.Core;
-using Overseer.Startup;
 
 namespace Overseer.Modules
 {
@@ -21,22 +19,6 @@ namespace Overseer.Modules
         {
             await asyncFunc.Invoke();
             return HttpStatusCode.OK;
-        }
-
-        public static void RequiresAuthentication(this NancyModule module)
-        {
-            module.Before.AddItemToEndOfPipeline(RequiresAuthentication);
-        }
-
-        public static Response RequiresAuthentication(this NancyContext context)
-        {
-            var userManager = OverseerBootstrapper.Container.Resolve<UserManager>();
-            var token = context.Request.Headers["Authorization"]?.FirstOrDefault();
-            
-            if (!userManager.AuthenticateToken(token))
-                return new Response { StatusCode = HttpStatusCode.Unauthorized };
-            
-            return null;
         }
     }
 

@@ -92,15 +92,13 @@ namespace Overseer.Core.PrinterProviders
             }
             catch (Exception ex)
             {
-                Log.Debug("Status Update Failure", ex);
-
-                _exceptionCount++;
-                if (_exceptionCount >= MaxExceptionCount)
+                if (++_exceptionCount >= MaxExceptionCount)
                 {
-                    //start the timer, or restart the timer in the case it was already running
+                    //start the timer, or restart the timer in the case it was already running,
                     //this will keep the printer in an offline state and recheck again after the timeout period
                     _stopwatch.Restart();
-                    Log.Debug("Max consecutive exception count reached, throttling updates");
+                    Log.Debug("Status Update Failure", ex);
+                    Log.Error("Max consecutive exception count reached, throttling updates", ex);
                 }
 
                 return new PrinterStatus { PrinterId = PrinterId };

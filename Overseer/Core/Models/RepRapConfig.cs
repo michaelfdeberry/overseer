@@ -1,10 +1,8 @@
 ﻿namespace Overseer.Core.Models
 {
-    public class RepRapConfig : PrinterConfig
+    public class RepRapConfig : RestPrinterConfig
     {
         public override PrinterType PrinterType => PrinterType.RepRap;
-
-        public string Url { get; set; }
 
         /// <summary>
         /// TODO: Add password support

@@ -81,6 +81,9 @@
       <HintPath>..\packages\Nancy.1.4.4\lib\net40\Nancy.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Nancy.MSOwinSecurity, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.MSOwinSecurity.2.0.0\lib\net45\Nancy.MSOwinSecurity.dll</HintPath>
+    </Reference>
     <Reference Include="Nancy.Owin, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Owin.1.4.1\lib\net40\Nancy.Owin.dll</HintPath>
       <Private>True</Private>
@@ -116,6 +119,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\AppInfo.cs" />
     <Compile Include="Core\ConfigurationManager.cs" />
     <Compile Include="Core\ControlManager.cs" />
     <Compile Include="Core\Exceptions\OverseerException.cs" />
@@ -127,6 +131,7 @@
     <Compile Include="Core\Models\PrinterStatus.cs" />
     <Compile Include="Core\Models\PrinterType.cs" />
     <Compile Include="Core\Models\RepRapConfig.cs" />
+    <Compile Include="Core\Models\RestPrinterConfig.cs" />
     <Compile Include="Core\Models\TemperatureStatus.cs" />
     <Compile Include="Core\Models\User.cs" />
     <Compile Include="Core\PrinterManager.cs" />
@@ -156,6 +161,7 @@
     <Compile Include="Startup\Json\Helpers.cs" />
     <Compile Include="Startup\Json\JsonNetBodyDeserializer.cs" />
     <Compile Include="Startup\Json\JsonNetSerializer.cs" />
+    <Compile Include="Startup\OverseerAuthentication.cs" />
     <Compile Include="Startup\OverseerBootstrapper.cs" />
     <Compile Include="Startup\OverseerContentTypeProvider.cs" />
     <Compile Include="Startup\OverseerErrorHandler.cs" />
@@ -169,72 +175,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Client\fonts\fontawesome-webfont.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Client\fonts\fontawesome-webfont.woff">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Client\fonts\fontawesome-webfont.woff2">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Client\css\angular-material.min.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\css\font-awesome.min.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\css\nprogress.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\index.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\overseer.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\overseer.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\angular-animate.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\angular-aria.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\angular-location-update.min.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\angular-material.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\angular-messages.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\angular-route.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\angular-translate.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\angular.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\jquery.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\jquery.signalR.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\lodash.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Client\scripts\nprogress.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

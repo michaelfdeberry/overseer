@@ -1,0 +1,14 @@
+@import "variables";
+
+$purple: mat-palette($mat-purple, 700, 100, 800);
+$green: mat-palette($mat-green, A200, A100, A400);
+$purple-green-theme: mat-light-theme($purple, $green);
+
+.purple-green {
+    .app {
+        color: $black;
+        background: $white;
+    }
+
+    @include angular-material-theme($purple-green-theme);
+}

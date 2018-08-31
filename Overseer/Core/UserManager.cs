@@ -5,11 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Overseer.Core.Exceptions;
 
 namespace Overseer.Core
 {
     public class UserManager
     {
+        const string Bearer = "Bearer";
         readonly IDataContext _context;
         readonly IRepository<User> _users;
 
@@ -24,16 +26,16 @@ namespace Overseer.Core
             var user = _users.Get(u => u.Username.ToLower() == username.ToLower());
 
             if (user == null)
-                throw new Exception("Invalid Username");
+                throw new OverseerException("invalid_username");
 
             var passwordHash = PasswordHash.ScryptHashBinary(Encoding.UTF8.GetBytes(password), user.PasswordSalt);
-            if (PasswordHash.ScryptHashStringVerify(user.PasswordHash, passwordHash))
-                throw new Exception("Invalid Password");
+            if (!user.PasswordHash.SequenceEqual(passwordHash))
+                throw new OverseerException("invalid_password");
 
-            if (!string.IsNullOrWhiteSpace(user.Token) && AuthenticateToken(user.Token))
+            if (!string.IsNullOrWhiteSpace(user.Token) && AuthenticateToken(user.Token) != null)
                 return user.ToDisplay(includeToken: true);
 
-            user.Token = Convert.ToBase64String(SodiumCore.GetRandomBytes(8));
+            user.Token = Convert.ToBase64String(SodiumCore.GetRandomBytes(16));
             if (user.SessionLifetime.HasValue)
             {
                 user.TokenExpiration = DateTime.UtcNow.AddDays(user.SessionLifetime.Value);
@@ -48,35 +50,40 @@ namespace Overseer.Core
             return user.ToDisplay(includeToken: true);
         }
 
-        public bool AuthenticateToken(string token)
+        public bool IsAuthenticated(string token)
         {
             var settings = _context.GetApplicationSettings();
-
-            //if authentication isn't required just return
             if (!settings.RequiresAuthentication) return true;
 
-            if (string.IsNullOrWhiteSpace(token)) return false;
+            return AuthenticateToken(token) != null;
+        }
 
-            token = token.Replace("Bearer", string.Empty).Trim();
-            var user = _users.Get(u => u.Token == token);
+        public User AuthenticateToken(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                return null;
 
-            //no user or no token, means the user logged out
-            if (string.IsNullOrWhiteSpace(user?.Token))
-                return false;
-
-            //if the user has a configured session lifetime there will be a token expiration date, check if it's valid
-            if (user.TokenExpiration.HasValue && user.TokenExpiration.Value < DateTime.UtcNow)
-                return false;
-
+            var user = _users.Get(u => u.Token == StripToken(token));
+            
+            if (user.IsTokenExpired())
+                return null;
+            
             //has a matching token that isn't expired. 
-            return true;
+            return user;
         }
 
         public UserDisplay DeauthenticateUser(string token)
         {
-            if (string.IsNullOrWhiteSpace(token)) return null;
+            if (string.IsNullOrWhiteSpace(token))
+                return null;
+            
+            return DeauthenticateUser(_users.Get(u => u.Token == StripToken(token)));
+        }
 
-            return DeauthenticateUser(_users.Get(u => u.Token == token));
+        string StripToken(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token)) return string.Empty;
+            return token.Replace(Bearer, string.Empty).Trim();
         }
 
         public UserDisplay DeauthenticateUser(int userId)
@@ -87,13 +94,13 @@ namespace Overseer.Core
         public UserDisplay CreateUser(string username, string password, int? sessionLifetime)
         {
             if (string.IsNullOrWhiteSpace(username))
-                throw new Exception("Invalid Username"); ;
+                throw new OverseerException("invalid_username"); ;
 
             if (string.IsNullOrWhiteSpace(password))
-                throw new Exception("Invalid Password");
+                throw new OverseerException("invalid_password");
 
             if (_users.Get(u => u.Username.ToLower() == username.ToLower()) != null)
-                throw new Exception("Username Unavailable");
+                throw new OverseerException("unavailable_username");
 
             var salt = PasswordHash.ScryptGenerateSalt();
             var hash = PasswordHash.ScryptHashBinary(Encoding.UTF8.GetBytes(password), salt);
@@ -115,6 +122,11 @@ namespace Overseer.Core
             return _users.GetAll()
                 .Select(user => user.ToDisplay())
                 .ToList();
+        }
+
+        public UserDisplay GetUser(int userId)
+        {
+            return _users.GetById(userId).ToDisplay();
         }
 
         public UserDisplay UpdateUser(UserAuthentication user)

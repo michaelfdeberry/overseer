@@ -1,0 +1,37 @@
+<mat-card class="form-card">
+    <mat-card-header>
+        <div mat-card-avatar>
+            <mat-icon class="edit">edit</mat-icon>
+            <mat-icon class="user">person</mat-icon>
+        </div>
+        <mat-card-title>
+            {{ 'editingUser' | translate }} '{{ user?.username }}'
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <form [formGroup]="form">
+            <mat-form-field>
+                <input matInput type="password" id="password" placeholder="{{ 'password' | translate }}" formControlName="password" autocomplete="new-password" />
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput type="password" id="passwordMatch" placeholder="{{ 'confirmPassword' | translate }}" formControlName="confirmPassword" autocomplete="new-password" />
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-select id="sessionLifetime" placeholder="{{ 'sessionLifetime' | translate }}" formControlName="sessionLifetime">
+                    <mat-option *ngFor="let lifetime of lifetimes" [value]="lifetime.value">
+                        {{ lifetime.value }} {{ lifetime.translationKey | translate }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </form>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button color="warn" (click)="delete()">{{ 'delete' | translate }}</button>
+        <button mat-button (click)="signOut()" [disabled]="!user?.isLoggedIn" translate>{{ 'logout' | translate }}</button>
+        <span class="spacer"></span>
+        <a mat-button routerLink="/configuration/users" translate>{{ 'cancel' | translate }}</a>
+        <button color="primary" mat-button (click)="save()" [disabled]="form.pristine || form.invalid" translate>{{ 'save' | translate }}</button>
+    </mat-card-actions>
+</mat-card>

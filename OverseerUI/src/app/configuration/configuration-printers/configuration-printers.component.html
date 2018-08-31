@@ -1,0 +1,33 @@
+<table *ngIf="printers$ | async;  let printers" class="config-table printers">
+    <thead>
+    <tr>
+        <th translate>name</th>
+        <th translate>printerType</th>
+        <th class="centered" translate>monitoringEnabled</th>
+        <th class="action">
+            <a routerLink="/configuration/printers/add" mat-button>
+                <mat-icon>add</mat-icon> {{ 'add' | translate }}
+            </a>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let printer of printers">
+        <td>{{ printer.name }}</td>
+        <td>{{ printer.printerType }}</td>
+        <td class="centered">
+            <mat-icon *ngIf="printer.disabled">warning</mat-icon>
+            <mat-icon *ngIf="!printer.disabled">check</mat-icon>
+        </td>
+        <td class="action">
+            <a mat-button [routerLink]="['/configuration/printers/edit/', printer.id]">
+                <mat-icon>edit</mat-icon>
+                {{ 'edit' | translate }}
+            </a>
+        </td>
+    </tr>
+    <tr *ngIf="!printers || !printers.length">
+        <td colspan="4" class="empty" translate>noPrinters</td>
+    </tr>
+    </tbody>
+</table>

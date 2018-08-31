@@ -1,0 +1,32 @@
+<table *ngIf="users$ | async; let users" class="config-table users">
+    <thead>
+    <tr>
+        <th translate>username</th>
+        <th translate>sessionLifetime</th>
+        <th class="centered" translate>isLoggedIn</th>
+        <th class="action">
+            <a routerLink="/configuration/users/add" mat-button>
+                <mat-icon>add</mat-icon> {{ 'add' | translate }}
+            </a>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of users">
+        <td>{{ user.username }}</td>
+        <td>{{ user.sessionLifetime }} days</td>
+        <td class="centered">
+            <mat-icon *ngIf="user.isLoggedIn">check</mat-icon>
+        </td>
+        <td class="action">
+            <a mat-button [routerLink]="['/configuration/users/edit/', user.id]">
+                <mat-icon>edit</mat-icon>
+                {{ 'edit' | translate }}
+            </a>
+        </td>
+    </tr>
+    <tr *ngIf="!users || !users.length">
+        <td colspan="4" class="empty" translate>noUsers</td>
+    </tr>
+    </tbody>
+</table>

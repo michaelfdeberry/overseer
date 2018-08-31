@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using log4net;
+﻿using log4net;
 using Microsoft.AspNet.SignalR;
 using Overseer.Core;
-using System.Threading.Tasks;
 using Overseer.Core.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Overseer.Hubs
 {
@@ -15,18 +15,14 @@ namespace Overseer.Hubs
         public static readonly string MonitoringGroupName = "MonitoringGroup";
 
         readonly MonitoringService _monitoringService;
-        readonly UserManager _userManager;
 
-        public StatusHub(MonitoringService monitoringService, UserManager userManager)
+        public StatusHub(MonitoringService monitoringService)
         {
             _monitoringService = monitoringService;
-            _userManager = userManager;
         }
         
-        public async Task<bool> StartMonitoring(string token)
-        { 
-            if (!_userManager.AuthenticateToken(token)) return false;
-
+        public async Task<bool> StartMonitoring()
+        {
             MonitoringGroup.Add(Context.ConnectionId);
             await Groups.Add(Context.ConnectionId, "MonitoringGroup");
                 
@@ -51,7 +47,7 @@ namespace Overseer.Hubs
             await base.OnDisconnected(stopCalled);
         }
 
-        public static void PushStatusUpdate(Dictionary<int, PrinterStatus> statusUpdate)
+        public static void PushStatusUpdate(PrinterStatus statusUpdate)
         {
             GlobalHost.ConnectionManager.GetHubContext<StatusHub>()
                 .Clients

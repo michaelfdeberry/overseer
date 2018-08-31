@@ -2,6 +2,7 @@
 using System.Linq; 
 using Nancy;
 using Nancy.ModelBinding;
+using Nancy.Security;
 using Overseer.Core;
 using Overseer.Core.Models;
 
@@ -10,28 +11,23 @@ namespace Overseer.Modules
     public class AuthenticationModule : NancyModule
     {
         public AuthenticationModule(UserManager userManager)
-            : base("services/auth")
+            : base("auth")
         {
-            Post["/"] = p =>
+            Get["/"] = p =>
+            {
+                this.RequiresMSOwinAuthentication();
+                return HttpStatusCode.OK;
+            };
+
+            Post["/login"] = p =>
             {
                 var model = this.Bind<UserAuthentication>();
-
-                try
-                {
-                    return userManager.AuthenticateUser(model.Username, model.Password);
-                }
-                catch (Exception ex)
-                {
-                    var response = (Response)ex.Message;
-                    response.StatusCode = HttpStatusCode.BadRequest;
-
-                    return response;
-                }
+                return userManager.AuthenticateUser(model.Username, model.Password);
             };
 
             Delete["/logout"] = p =>
             {
-                this.RequiresAuthentication();
+                this.RequiresMSOwinAuthentication();
 
                 var token = Request.Headers["Authorization"].FirstOrDefault();                
                 if (string.IsNullOrWhiteSpace(token)) return HttpStatusCode.OK;
@@ -42,7 +38,7 @@ namespace Overseer.Modules
 
             Post["/logout/{id:int}"] = p =>
             {
-                this.RequiresAuthentication();
+                this.RequiresMSOwinAuthentication();
                 return userManager.DeauthenticateUser((int)p.id);
             };
         }

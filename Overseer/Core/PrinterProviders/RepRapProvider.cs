@@ -38,9 +38,9 @@ namespace Overseer.Core.PrinterProviders
         {
             try
             {
-                AddClientCertificate(printer.Config.ClientCertificatePem);
-
                 var config = (RepRapConfig)printer.Config;
+                AddClientCertificate(config.ClientCertificatePem);
+
                 _url = new Uri(config.Url).ProcessUrl();
 
                 dynamic status = await ExecuteRequest("rr_status", parameters: new[] { ("type", "2") });                
@@ -52,7 +52,7 @@ namespace Overseer.Core.PrinterProviders
             catch (Exception ex)
             {
                 Log.Error("Load Configuration Failure", ex);
-                throw new OverseerException("Printer_ConnectFailure", printer);
+                throw new OverseerException("printer_connect_failure", printer);
             }
         }
 

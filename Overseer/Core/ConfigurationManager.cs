@@ -9,8 +9,7 @@ namespace Overseer.Core
         readonly IRepository<CertificateException> _certificateExceptions;
         readonly MonitoringService _monitoringService; 
 
-        public ConfigurationManager(IDataContext context, PrinterProviderManager printerProviderManager,
-            MonitoringService monitoringService)
+        public ConfigurationManager(IDataContext context, MonitoringService monitoringService)
         {
             _context = context;
             _certificateExceptions = context.GetRepository<CertificateException>();
@@ -28,7 +27,7 @@ namespace Overseer.Core
             _context.UpdateApplicationSettings(settings);
             _monitoringService.Update(settings);
 
-            return settings;
+            return _context.GetApplicationSettings();
         }
                 
         public void AddCertificateException(CertificateException certificateException)

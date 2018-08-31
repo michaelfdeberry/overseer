@@ -77,9 +77,10 @@ namespace Overseer.Core.PrinterProviders
         {
             try
             {
-                AddClientCertificate(printer.Config.ClientCertificatePem);
-
                 var config = (OctoprintConfig)printer.Config;
+
+                AddClientCertificate(config.ClientCertificatePem);
+
                 _url = NormalizeOctoprintUrl(config);
                 _apiKey = config.ApiKey;
 
@@ -125,13 +126,22 @@ namespace Overseer.Core.PrinterProviders
             {
                 Log.Error("Load Configuration Failure", ex);
 
-                if (ex.InnerException is OverseerException)
-                    throw ex.InnerException;
+                //mono wraps this in an additional exceptions, so check all inner exceptions
+                var innerEx = ex.InnerException;
+                while (innerEx != null)
+                {
+                    if (innerEx is OverseerException) break;
+
+                    innerEx = innerEx.InnerException;
+                }
+                
+                if (innerEx is OverseerException)
+                    throw innerEx;
 
                 if (ex.Message.Contains("Invalid API key"))
-                    throw new OverseerException("Octoprint_InvalidKey");
+                    throw new OverseerException("octoprint_invalid_key");
                 
-                throw new OverseerException("Printer_ConnectFailure", printer);
+                throw new OverseerException("printer_connect_failure", printer);
             }
         }
 
@@ -164,6 +174,14 @@ namespace Overseer.Core.PrinterProviders
                 status.ElapsedPrintTime = (int?)jobStatus["progress"]["printTime"] ?? 0;
                 status.EstimatedTimeRemaining = (int?)jobStatus["progress"]["printTimeLeft"] ?? 0;
                 status.Progress = (float?)jobStatus["progress"]["completion"] ?? 0;
+
+                // these values can't be retrieved from marlin, but they are being set here
+                // so that the UI can be "dumb" and not have to default these values.
+                status.FanSpeed = 100;
+                status.FeedRate = 100;
+                status.FlowRates = status.Temperatures.Keys
+                    .Where(key => key.ToLower() != "bed")
+                    .ToDictionary(key => key, key => 100f);
             }
             else
             {

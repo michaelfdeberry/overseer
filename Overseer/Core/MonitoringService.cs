@@ -12,9 +12,9 @@ namespace Overseer.Core
 {
     public class StatusUpdateEventArgs : EventArgs
     {
-        public Dictionary<int, PrinterStatus> Status { get; }
+        public PrinterStatus Status { get; }
 
-        public StatusUpdateEventArgs(Dictionary<int, PrinterStatus> status)
+        public StatusUpdateEventArgs(PrinterStatus status)
         {
             Status = status;
         }
@@ -71,19 +71,20 @@ namespace Overseer.Core
             {
                 void OnStatusUpdateComplete(Task<PrinterStatus> completedTask)
                 {
-                    if (completedTask.Result == null) return;
+                    var statusUpdate = completedTask.Result;
+                    if (statusUpdate == null) return;
 
-                    StatusUpdate?.Invoke(this, new StatusUpdateEventArgs(new Dictionary<int, PrinterStatus>
-                    {
-                        { completedTask.Result.PrinterId, completedTask.Result }
-                    }));
+                    //raise the event to push the updates to the client
+                    StatusUpdate?.Invoke(this, new StatusUpdateEventArgs(statusUpdate));
+
+                    //remove the task from the pending update cache
+                    _pendingUpdates.TryRemove(statusUpdate.PrinterId, out var pendingUpdate);
                 }
 
                 foreach (var provider in _printerProvidersAccessor())
                 {
                     //remove and cancel any pending update that hasn't completed, it's likely timing out
-                    if (_pendingUpdates.ContainsKey(provider.PrinterId) &&
-                        _pendingUpdates.TryRemove(provider.PrinterId, out var pendingUpdate))
+                    if (_pendingUpdates.ContainsKey(provider.PrinterId) && _pendingUpdates.TryRemove(provider.PrinterId, out var pendingUpdate))
                     {
                         pendingUpdate.cancellation.Cancel();
                     }

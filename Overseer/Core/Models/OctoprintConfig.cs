@@ -18,15 +18,10 @@ namespace Overseer.Core.Models
         public string Name { get; set; }
     }
 
-    public class OctoprintConfig : PrinterConfig
+    public class OctoprintConfig : RestPrinterConfig
     {
         public override PrinterType PrinterType => PrinterType.Octoprint;
-
-        /// <summary>
-        /// The url for the octoprint instance
-        /// </summary>
-        public string Url { get; set; }
-
+        
         /// <summary>
         /// The octoprint api key
         /// </summary>
