@@ -72,7 +72,7 @@ export class OverseerHttpInterceptor implements HttpInterceptor {
                             break;
                         case 401:
                         case 403:
-                            errorMessage = "Unauthorized Access Attempted!";
+                            errorMessage = "unauthorized_access";
                             if (this.router.url !== "/login") {
                                 this.router.navigate(["/login"]);
                             }

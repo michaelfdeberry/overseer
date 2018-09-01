@@ -43,8 +43,6 @@ export class MonitoringComponent implements OnInit, OnDestroy {
                 printer.status = status;
                 return printer;
             });
-
-            // this.changeDetector.detectChanges();
         });
     }
 

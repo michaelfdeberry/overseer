@@ -132,6 +132,7 @@
         "printer_connect_failure": "Failed to establish a connection with the printer",
         "invalid_username": "Invalid Username",
         "invalid_password": "Invalid Password",
-        "unavailable_username": "Username is current in use"
+        "unavailable_username": "Username is current in use",
+        "unauthorized_access": "Unauthorized Access Attempted!"
     }
 }
