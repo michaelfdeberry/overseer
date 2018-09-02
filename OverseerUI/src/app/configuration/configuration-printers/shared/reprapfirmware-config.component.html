@@ -20,7 +20,7 @@
     <div>
         <div *ngIf="advancedSettingsVisible">
             <mat-form-field>
-                <textarea matInput id="pem" placeholder="{{'clientPem' | translate}}" formControlName="clientCertificatePem"></textarea>
+                <input type="text" matInput id="pem" placeholder="{{'clientPem' | translate}}" formControlName="clientCertificate" />
             </mat-form-field>
         </div>
         <button *ngIf="!advancedSettingsVisible" mat-raised-button color="primary" (click)="advancedSettingsVisible = true">

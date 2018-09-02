@@ -12,7 +12,7 @@ export class OctoprintConfigComponent extends PrinterConfigComponentBase {
         this.configGroup.addControl("printerType", new FormControl("Octoprint"));
         this.configGroup.addControl("url", new FormControl(null, Validators.required));
         this.configGroup.addControl("apiKey", new FormControl(null, Validators.required));
-        this.configGroup.addControl("clientCertificatePem", new FormControl());
+        this.configGroup.addControl("clientCertificate", new FormControl());
 
         if (this.printer) {
             this.configGroup.addControl("profile", new FormControl(null, Validators.required));
@@ -28,7 +28,7 @@ export class OctoprintConfigComponent extends PrinterConfigComponentBase {
         this.tryRemoveControl(this.configGroup, "profile");
         this.tryRemoveControl(this.configGroup, "webCamUrl");
         this.tryRemoveControl(this.configGroup, "snapshotUrl");
-        this.tryRemoveControl(this.configGroup, "clientCertificatePem");
+        this.tryRemoveControl(this.configGroup, "clientCertificate");
     }
 
     compareProfiles(profileA: any, profileB: any): boolean {

@@ -20,6 +20,6 @@ namespace Overseer.Core.Models
         /// <summary>
         /// The text for the PEM certificate that will be used for client authentication
         /// </summary>
-        public string ClientCertificatePem { get; set; }
+        public string ClientCertificate { get; set; }
     }
 }

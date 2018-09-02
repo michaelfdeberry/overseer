@@ -13,7 +13,7 @@ export class RepRapFirmwareConfigComponent extends PrinterConfigComponentBase {
         this.configGroup.addControl("url", new FormControl(null, Validators.required));
         this.configGroup.addControl("webCamUrl", new FormControl(null, Validators.required));
         this.configGroup.addControl("snapshotUrl", new FormControl(null, Validators.required));
-        this.configGroup.addControl("clientCertificatePem", new FormControl());
+        this.configGroup.addControl("clientCertificate", new FormControl());
     }
 
     onDestroy() {
@@ -21,6 +21,6 @@ export class RepRapFirmwareConfigComponent extends PrinterConfigComponentBase {
         this.tryRemoveControl(this.configGroup, "url");
         this.tryRemoveControl(this.configGroup, "webCamUrl");
         this.tryRemoveControl(this.configGroup, "snapshotUrl");
-        this.tryRemoveControl(this.configGroup, "clientCertificatePem");
+        this.tryRemoveControl(this.configGroup, "clientCertificate");
     }
 }

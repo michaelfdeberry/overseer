@@ -24,6 +24,8 @@ namespace Overseer.Core.PrinterProviders
 
             _url = NormalizeOctoprintUrl(config);
             _apiKey = config.ApiKey;
+
+            AddClientCertificate(config.ClientCertificate);
         }
 
         public override int PrinterId { get; }
@@ -79,7 +81,7 @@ namespace Overseer.Core.PrinterProviders
             {
                 var config = (OctoprintConfig)printer.Config;
 
-                AddClientCertificate(config.ClientCertificatePem);
+                AddClientCertificate(config.ClientCertificate);
 
                 _url = NormalizeOctoprintUrl(config);
                 _apiKey = config.ApiKey;

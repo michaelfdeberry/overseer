@@ -31,7 +31,7 @@
 
     <div>
         <mat-form-field *ngIf="advancedSettingsVisible">
-            <textarea matInput id="pem" placeholder="{{'clientPem' | translate}}" formControlName="clientCertificatePem"></textarea>
+            <input type="text" matInput id="pem" placeholder="{{'clientPem' | translate}}" formControlName="clientCertificate" />
         </mat-form-field>
         <button *ngIf="!advancedSettingsVisible" mat-raised-button color="primary" (click)="advancedSettingsVisible = true">{{'showAdvancedOptions' | translate}}</button>
         <button *ngIf="advancedSettingsVisible" mat-raised-button (click)="advancedSettingsVisible = false">{{'hideAdvancedOptions' | translate}}</button>

@@ -24,6 +24,8 @@ namespace Overseer.Core.PrinterProviders
             config.Url = new Uri(config.Url).ProcessUrl();
 
             _url = config.Url;
+
+            AddClientCertificate(config.ClientCertificate);
         }
 
         public override int PrinterId { get; }
@@ -39,7 +41,7 @@ namespace Overseer.Core.PrinterProviders
             try
             {
                 var config = (RepRapConfig)printer.Config;
-                AddClientCertificate(config.ClientCertificatePem);
+                AddClientCertificate(config.ClientCertificate);
 
                 _url = new Uri(config.Url).ProcessUrl();
 

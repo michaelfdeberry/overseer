@@ -21,7 +21,7 @@ namespace Overseer.Core.PrinterProviders
 
         protected virtual Dictionary<string, string> Headers { get; } = new Dictionary<string, string>();
 
-        X509Certificate _clientCertificate;
+        X509Certificate2Collection _clientCertificate;
 
         public Task<JObject> ExecuteRequest(string resource, 
             Method method = Method.GET,
@@ -46,9 +46,9 @@ namespace Overseer.Core.PrinterProviders
             var client = new RestClient(ServiceUri);
             Headers?.ForEach(header => client.AddDefaultHeader(header.Key, header.Value));
 
-            if (_clientCertificate != null)
+            if (_clientCertificate != null && _clientCertificate.Count > 0)
             {
-                client.ClientCertificates.Add(_clientCertificate);
+                client.ClientCertificates = _clientCertificate;
             }
             
             var response = await client.ExecuteTaskAsync(request, cancellationToken);
@@ -65,24 +65,38 @@ namespace Overseer.Core.PrinterProviders
             return JObject.Parse(response.Content);
         }
 
-        protected void AddClientCertificate(string pemString)
+        protected void AddClientCertificate(string commonName)
         {
-            if (string.IsNullOrWhiteSpace(pemString)) return;
+            if (string.IsNullOrWhiteSpace(commonName)) return;
 
             try
             {
-                const string header = "-----BEGIN CERTIFICATE-----";
-                const string footer = "-----END CERTIFICATE-----";
-                var start = pemString.IndexOf(header, StringComparison.Ordinal) + header.Length;
-                var end = pemString.IndexOf(footer, start, StringComparison.Ordinal) - start;
-                var certificateBuffer = Convert.FromBase64String(pemString.Substring(start, end));
-
-                _clientCertificate = new X509Certificate2(certificateBuffer);
+                _clientCertificate = FindCertificate(commonName, StoreName.My, StoreLocation.CurrentUser);
             }
             catch (Exception ex)
             {
                 Log.Error("Failed To Add Client Certificate", ex);
             }
         }
+
+        static X509Certificate2Collection FindCertificate(string commonName, StoreName storeName, StoreLocation storeLocation)
+        {
+            try
+            {
+                var certificateStore = new X509Store(storeName, storeLocation);
+                certificateStore.Open(OpenFlags.ReadOnly);
+
+                var certificates = certificateStore.Certificates.Find(X509FindType.FindBySubjectName, commonName, false);
+                certificateStore.Close();
+
+                return certificates;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Unable to find {commonName} for {storeName} in {storeLocation}", ex);
+                return null;
+            }
+        }
     }
 }
+
