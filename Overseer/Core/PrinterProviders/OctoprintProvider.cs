@@ -24,7 +24,6 @@ namespace Overseer.Core.PrinterProviders
 
             _url = NormalizeOctoprintUrl(config);
             _apiKey = config.ApiKey;
-
             AddClientCertificate(config.ClientCertificate);
         }
 
@@ -81,10 +80,10 @@ namespace Overseer.Core.PrinterProviders
             {
                 var config = (OctoprintConfig)printer.Config;
 
-                AddClientCertificate(config.ClientCertificate);
 
                 _url = NormalizeOctoprintUrl(config);
                 _apiKey = config.ApiKey;
+                AddClientCertificate(config.ClientCertificate);
 
                 var settings = await ExecuteRequest("settings");
 

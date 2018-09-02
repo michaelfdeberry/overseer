@@ -24,7 +24,6 @@ namespace Overseer.Core.PrinterProviders
             config.Url = new Uri(config.Url).ProcessUrl();
 
             _url = config.Url;
-
             AddClientCertificate(config.ClientCertificate);
         }
 
@@ -41,9 +40,9 @@ namespace Overseer.Core.PrinterProviders
             try
             {
                 var config = (RepRapConfig)printer.Config;
-                AddClientCertificate(config.ClientCertificate);
 
                 _url = new Uri(config.Url).ProcessUrl();
+                AddClientCertificate(config.ClientCertificate);
 
                 dynamic status = await ExecuteRequest("rr_status", parameters: new[] { ("type", "2") });                
                 printer.Config.HeatedBed = status.temps["bed"] != null;
