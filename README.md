@@ -66,7 +66,7 @@
     
     By default Overseer will run on port 9000. To host the application on a different port use -port command line argument with the desired port. 
     
-    `@reboot /usr/bin/mono /home/pi/overseer/overseer.exe --port 80` 
+    `@reboot /usr/bin/mono /home/pi/overseer/Overseer.exe --port 80` 
     
     This can also be changed from within the application from the settings page, but will require a manual restart. 
     
