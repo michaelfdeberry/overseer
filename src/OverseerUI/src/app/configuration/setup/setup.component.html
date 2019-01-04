@@ -1,0 +1,67 @@
+<mat-card class="form-card">
+    <mat-card-header>
+        <mat-card-title> {{ "setup.welcomeTitle" | translate }} </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-horizontal-stepper linear="true" #stepper>
+            <mat-step [stepControl]="userForm" editable="false">
+                <form [formGroup]="userForm">
+                    <ng-template matStepLabel>{{ 'setup.createUser' | translate }}</ng-template>
+                    <div class="step-content">
+                        <p>{{ 'setup.createUserMessage' | translate }}</p>
+                        <app-create-user [form]="userForm"></app-create-user>
+                    </div>
+                    <div class="step-actions">
+                        <span class="spacer"></span>
+                        <button mat-raised-button color="primary" (click)="createUser()" [disabled]="userForm.invalid || busy">
+                            {{ 'setup.next' | translate }}
+                        </button>
+                    </div>
+                </form>
+            </mat-step>
+            <mat-step [stepControl]="machineForm" editable="false" #createMachineStep>
+               <form [formGroup]="machineForm">
+                    <ng-template matStepLabel>{{ 'setup.createMachine' | translate }}</ng-template>
+                    <div class="step-content">
+                        <p>{{ 'setup.createMachineMessage' | translate }}</p>
+                        <app-create-machine [form]="machineForm"></app-create-machine>
+                    </div>
+                    <div class="step-actions">
+                        <button mat-raised-button (click)="createMachine(true)" [disabled]="machineForm.invalid || busy">
+                            {{ 'setup.createMultipleMachines' | translate }}
+                        </button>
+                        <span class="spacer"></span>
+                        <button mat-raised-button (click)="createMachine(false)" color="primary" [disabled]="machineFormDisabled">
+                            {{ 'setup.next' | translate }}
+                        </button>
+                    </div>
+               </form>
+            </mat-step>
+            <mat-step [stepControl]="themeForm" editable="false">
+                <form [formGroup]="themeForm">
+                    <ng-template matStepLabel>{{ 'setup.selectTheme' | translate }}</ng-template>
+                    <div class="step-content">
+                        <p>{{ 'setup.selectThemeMessage' | translate }}</p>
+                        <app-theme-selector [form]="themeForm"></app-theme-selector>
+                    </div>
+                    <div class="step-actions">
+                        <span class="spacer"></span>
+                        <button type="submit" mat-raised-button matStepperNext color="primary">{{ 'setup.next' | translate }}</button>
+                    </div>
+                </form>
+            </mat-step>
+            <mat-step>
+                <div class="done-step">
+                    <ng-template matStepLabel>{{ 'setup.complete' | translate }}</ng-template>
+                    <p>{{ 'setup.completeMessage' | translate }}</p>
+
+                    <div class="complete-actions">
+                        <a [routerLink]="['/']" color="primary" mat-button>{{ 'setup.monitorMachines' | translate }}</a>
+                        <a [routerLink]="['/configuration', 'machines', 'add']" color="primary" routerLinkActive="router-link-active"  mat-button>{{ 'setup.addMachine' | translate }}</a>
+                        <a [routerLink]="['/configuration', 'users', 'add']" color="primary" routerLinkActive="router-link-active"  mat-button>{{ 'setup.addUser' | translate }}</a>
+                    </div>
+                </div>
+            </mat-step>
+        </mat-horizontal-stepper>
+    </mat-card-content>
+</mat-card>

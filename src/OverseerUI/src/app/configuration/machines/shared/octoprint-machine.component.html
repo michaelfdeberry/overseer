@@ -1,0 +1,36 @@
+<div [formGroup]="form">
+    <mat-form-field>
+        <input matInput type="text" id="name" placeholder="{{'name' | translate}}" formControlName="name" required />
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="url" id="url" placeholder="{{'url' | translate}}" formControlName="url" required />
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput type="text" id="apikey" placeholder="{{'apiKey' | translate}}" formControlName="apiKey" required />
+    </mat-form-field>
+
+    <mat-form-field *ngIf="machine">
+        <mat-select id="profiles" placeholder="{{ 'profile' | translate }}" formControlName="profile" [compareWith]="compareProfiles" required>
+            <mat-option *ngFor="let profile of machine.availableProfiles | keyvalue" [value]="profile.value">
+                {{ profile.value }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="machine">
+        <input matInput type="url" id="webcamUrl" placeholder="{{'webcamUrl' | translate}}" formControlName="webCamUrl" required />
+    </mat-form-field>
+
+    <mat-form-field *ngIf="machine">
+        <input matInput type="url" id="snapshotUrl" placeholder="{{'snapshotUrl' | translate}}" formControlName="snapshotUrl" required />
+    </mat-form-field>
+
+    <div>
+        <mat-form-field *ngIf="advancedSettingsVisible">
+            <input type="text" matInput id="pem" placeholder="{{'clientPem' | translate}}" formControlName="clientCertificate" />
+        </mat-form-field>
+        <button *ngIf="!advancedSettingsVisible" mat-raised-button color="primary" (click)="advancedSettingsVisible = true">{{'showAdvancedOptions' | translate}}</button>
+        <button *ngIf="advancedSettingsVisible" mat-raised-button (click)="advancedSettingsVisible = false">{{'hideAdvancedOptions' | translate}}</button>
+    </div>
+</div>

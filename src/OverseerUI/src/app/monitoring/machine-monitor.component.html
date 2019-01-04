@@ -1,0 +1,56 @@
+<div class="machine" [ngClass]="{ 'zoom': zoomState }">
+    <div class="zoom-panel">
+        <div class="web-cam" (click)="toggleZoom()" [ngStyle]="{ 'background-image': 'url(' + machine.webCamUrl + ')' }"></div>
+        <mat-progress-bar color="accent" [mode]="progressMode" [value]="machine.status && machine.status.progress"></mat-progress-bar>
+        <div class="container">
+            <div class="status">
+                <div class="name">{{ machine.name }}</div>
+                <div class="state-container">
+                    <span class="state">{{ machine.currentStateName | translate }}</span>
+                    <span class="state" *ngIf="machine.status && machine.status.estimatedTimeRemaining">
+                        ({{ machine.status.estimatedTimeRemaining | duration }} {{'remaining' | translate}})
+                    </span>
+                </div>
+            </div>
+            <div class="controls" [ngClass]="machine.currentStateName">
+                <button class="control-button resume" color="primary" mat-raised-button (click)="resume()">
+                    <mat-icon>play_arrow</mat-icon>
+                </button>
+                <button class="control-button pause" color="primary" mat-raised-button (click)="pause()">
+                    <mat-icon>pause</mat-icon>
+                </button>
+                <button class="control-button cancel" color="primary" mat-raised-button (click)="cancel()">
+                    <mat-icon>stop</mat-icon>
+                </button>
+                <button class="control-button tune" color="primary" mat-raised-button (click)="tune()">
+                    <mat-icon>build</mat-icon>
+                </button>
+                <a *ngIf="machine.url" class="control-button web-access" color="primary" mat-raised-button href="{{ machine.url }}" target="_blank">
+                    <mat-icon>open_in_new</mat-icon>
+                </a>
+                <a class="control-button edit" color="primary" mat-raised-button [routerLink]="['/configuration/machines/edit/', machine.id]">
+                    <mat-icon>settings</mat-icon>
+                </a>
+            </div>
+        </div>
+        <div *ngIf="machine.status && machine.status.temperatures" class="temperatures">
+            <table class="temp-table" *ngFor="let heater of machine.heaters">
+                <tbody>
+                    <tr>
+                        <td>{{ heater.name }} </td>
+                    </tr>
+                    <tr *appLet="machine.status.temperatures[heater.index] as temp">
+                        <td *ngIf="temp">
+                            <span>{{ temp.actual | number : '1.1-1' }}</span> &deg;C /
+                            <span>{{ temp.target | number : '1.0-0' }}</span> &deg;C
+                        </td>
+                        <td *ngIf="!temp">
+                            <span>{{ 'unavailable' | translate}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <img class="machine-type-logo" src="{{ '/assets/' + machine.machineTypeName + '.png'}}" alt="logo" />
+</div>

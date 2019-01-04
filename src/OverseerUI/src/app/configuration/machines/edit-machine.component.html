@@ -1,0 +1,23 @@
+<form [formGroup]="form">
+    <mat-card class="form-card">
+        <mat-card-header>
+            <div mat-card-avatar>
+                <mat-icon>edit</mat-icon>
+            </div>
+            <mat-card-title>{{ 'editing' | translate }} {{ machine?.name }}</mat-card-title>
+            <span class="spacer"></span>
+            <mat-slide-toggle id="disabled" formControlName="disabled">{{ 'disableMonitoring' | translate }}</mat-slide-toggle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <app-machine [form]="form" [machine]="machine"></app-machine>
+        </mat-card-content>
+
+        <mat-card-actions>
+            <button mat-button color="warn" (click)="delete()">{{'delete' | translate}}</button>
+            <span class="spacer"></span>
+            <a routerLink="/configuration/machines" mat-button>{{'cancel' | translate}}</a>
+            <button mat-button color="primary" (click)="save()" [disabled]="form.pristine || form.invalid">{{'save' | translate}}</button>
+        </mat-card-actions>
+    </mat-card>
+</form>
