@@ -105,6 +105,8 @@
     "heater": "Heater",
     "cancelJobTitle": "Cancel Job?",
     "cancelJobMessage": "Are you sure you want to cancel this job?",
+    "invalidForm": "Invalid Form",
+    "dataLoss": "Performing this action will discard invalid form data. Would you like to continue?",
     "about": {
         "title": "Overseer is a utility that allows you to monitor multiple automated machines, such as 3D Printers, from a single web interface.",
         "helpDescription": "Have a suggestion, a request, or just need some help? Please create an item in the",

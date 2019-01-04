@@ -102,13 +102,19 @@ export class SetupComponent {
         // The form is invalid, but the user has already added machines
         // so allow them to progress.
         if (this.machineForm.invalid && this.machines.length) {
-            // TODO: check if there is any data on the form and if so prompt the user.
-
+            // if there is any data on the form prompt the user saying it will be lost
             if (this.machineForm.touched) {
-                alert("Touched!!!");
+                this.dialogService.prompt({ titleKey: "invalidForm", messageKey: "dataLoss" })
+                    .afterClosed()
+                    .subscribe(result => {
+                        if (result) {
+                            this.skipMachines();
+                        }
+                    });
+            } else {
+                this.skipMachines();
             }
 
-            this.skipMachines();
             return;
         }
 
