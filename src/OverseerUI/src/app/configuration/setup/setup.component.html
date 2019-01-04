@@ -6,7 +6,7 @@
         <mat-horizontal-stepper linear="true" #stepper>
             <mat-step [stepControl]="userForm" editable="false">
                 <form [formGroup]="userForm">
-                    <ng-template matStepLabel>{{ 'setup.createUser' | translate }}</ng-template>
+                    <ng-template *ngIf="screenSize !== 'xs'" matStepLabel>{{ 'setup.createUser' | translate }}</ng-template>
                     <div class="step-content">
                         <p>{{ 'setup.createUserMessage' | translate }}</p>
                         <app-create-user [form]="userForm"></app-create-user>
@@ -21,7 +21,7 @@
             </mat-step>
             <mat-step [stepControl]="machineForm" editable="false" #createMachineStep>
                <form [formGroup]="machineForm">
-                    <ng-template matStepLabel>{{ 'setup.createMachine' | translate }}</ng-template>
+                    <ng-template *ngIf="screenSize !== 'xs'" matStepLabel>{{ 'setup.createMachine' | translate }}</ng-template>
                     <div class="step-content">
                         <p>{{ 'setup.createMachineMessage' | translate }}</p>
                         <app-create-machine [form]="machineForm"></app-create-machine>
@@ -39,7 +39,7 @@
             </mat-step>
             <mat-step [stepControl]="themeForm" editable="false">
                 <form [formGroup]="themeForm">
-                    <ng-template matStepLabel>{{ 'setup.selectTheme' | translate }}</ng-template>
+                    <ng-template *ngIf="screenSize !== 'xs'" matStepLabel>{{ 'setup.selectTheme' | translate }}</ng-template>
                     <div class="step-content">
                         <p>{{ 'setup.selectThemeMessage' | translate }}</p>
                         <app-theme-selector [form]="themeForm"></app-theme-selector>
@@ -52,7 +52,7 @@
             </mat-step>
             <mat-step>
                 <div class="done-step">
-                    <ng-template matStepLabel>{{ 'setup.complete' | translate }}</ng-template>
+                    <ng-template *ngIf="screenSize !== 'xs'" matStepLabel>{{ 'setup.complete' | translate }}</ng-template>
                     <p>{{ 'setup.completeMessage' | translate }}</p>
 
                     <div class="complete-actions">
