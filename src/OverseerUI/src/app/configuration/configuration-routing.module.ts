@@ -1,5 +1,5 @@
-import { NgModule, Injectable } from "@angular/core";
-import { CanActivate, RouterModule, Routes, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
 
 import { ConfigurationComponent } from "./configuration.component";
 import { GeneralSettingsComponent } from "./general/general-settings.component";

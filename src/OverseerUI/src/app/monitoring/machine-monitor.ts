@@ -1,4 +1,3 @@
-import { BehaviorSubject } from "rxjs";
 import { MachineStatus, idleStates, MachineState } from "../models/machine-status.model";
 import { Machine, MachineType, MachineTool, MachineToolType } from "../models/machine.model";
 

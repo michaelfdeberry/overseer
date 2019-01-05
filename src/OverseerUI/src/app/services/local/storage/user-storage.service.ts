@@ -39,7 +39,6 @@ export class UserStorageService {
     }
 
     async getUserCount(): Promise<number> {
-        const db = await openDatabase();
         const users = await this.getUsers();
         return users.length;
     }

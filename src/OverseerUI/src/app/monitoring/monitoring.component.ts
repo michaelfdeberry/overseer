@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Subscription, forkJoin } from "rxjs";
 import { MonitoringService } from "../services/monitoring.service";
 import { MachineMonitor } from "./machine-monitor";
-import { map } from "rxjs/operators";
 import { MachinesService } from "../services/machines.service";
 import { SettingsService } from "../services/settings.service";
 import { ObservableMedia, MediaChange } from "@angular/flex-layout";

@@ -1,5 +1,4 @@
 import * as Url from "url-parse";
-import { Machine } from "../../../models/machine.model";
 
 export function processUrl(url: string, refPath?: string): string {
     const uri = new Url(url, {});
