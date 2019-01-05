@@ -7,9 +7,11 @@ import { Machine } from "../../models/machine.model";
 
 @Injectable({ providedIn: "root" })
 export class RemoteMachinesService implements MachinesService {
-    constructor(private http: HttpClient) {}
-
     private getEndpoint = endpointFactory("/api/machines");
+
+    supportsAdvanceSettings = true;
+
+    constructor(private http: HttpClient) {}
 
     getMachines(): Observable<Machine[]> {
         return this.http.get<Machine[]>(this.getEndpoint());

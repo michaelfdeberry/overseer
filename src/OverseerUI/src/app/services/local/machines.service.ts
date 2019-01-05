@@ -12,6 +12,7 @@ import { ErrorHandlerService } from "../error-handler.service";
 
 @Injectable({ providedIn: "root" })
 export class LocalMachinesService implements MachinesService {
+    supportsAdvanceSettings = false;
 
     constructor(
         private machineStorage: MachineStorageService,

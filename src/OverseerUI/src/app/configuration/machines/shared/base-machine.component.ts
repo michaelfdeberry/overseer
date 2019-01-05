@@ -23,11 +23,14 @@ export abstract class BaseMachineComponent implements OnInit, OnDestroy {
     @Input()
     form: FormGroup;
 
+    @Input()
+    enableAdvancedSettings: boolean;
+
     advancedSettingsVisible = false;
 
-    abstract onInit();
+    abstract onInit(): void;
 
-    abstract onDestroy();
+    abstract onDestroy(): void;
 
     ngOnInit() {
         this.form.addControl("name", new FormControl(null, Validators.required));

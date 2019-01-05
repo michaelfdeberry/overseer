@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { machineTypes } from "../display-option.type";
 
@@ -9,6 +9,9 @@ import { machineTypes } from "../display-option.type";
 export class CreateMachineComponent {
     @Input()
     form: FormGroup;
+
+    @Input()
+    enableAdvancedSettings: boolean;
 
     machineTypes = machineTypes;
 }

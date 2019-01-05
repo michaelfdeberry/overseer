@@ -4,6 +4,8 @@ import { Injectable } from "@angular/core";
 
 @Injectable({ providedIn: "root" })
 export abstract class MachinesService {
+    abstract readonly supportsAdvanceSettings: boolean;
+
     abstract getMachines(): Observable<Machine[]>;
 
     abstract getMachine(machineId: number): Observable<Machine>;

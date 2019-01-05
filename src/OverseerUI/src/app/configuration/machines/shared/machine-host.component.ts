@@ -6,13 +6,17 @@ import { RepRapFirmwareMachineComponent } from "./reprapfirmware-machine.compone
 import { BaseMachineComponent } from "./base-machine.component";
 import { MachineHostDirective } from "./machine-host.directive";
 import { MachineType } from "../../../models/machine.model";
+import { MachinesService } from "../../../services/machines.service";
 
 @Component({
     selector: "app-machine",
     templateUrl: "./machine-host.component.html"
 })
 export class MachineHostComponent implements OnInit, OnDestroy {
-    constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
+    constructor(
+        private componentFactoryResolver: ComponentFactoryResolver,
+        private machinesService: MachinesService
+    ) { }
 
     @Input() form: FormGroup;
 
@@ -44,6 +48,7 @@ export class MachineHostComponent implements OnInit, OnDestroy {
             const instance = (<BaseMachineComponent>componentRef.instance);
             instance.form = this.form;
             instance.machine = this.machine;
+            instance.enableAdvancedSettings = this.machinesService.supportsAdvanceSettings;
         });
     }
 

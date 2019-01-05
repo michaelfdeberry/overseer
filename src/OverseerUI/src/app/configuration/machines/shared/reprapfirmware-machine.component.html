@@ -14,7 +14,7 @@
         <input matInput type="url" id="snapshotUrl" placeholder="{{'snapshotUrl' | translate}}" formControlName="snapshotUrl" required />
     </mat-form-field>
 
-    <div>
+    <div *ngIf="enableAdvancedSettings">
         <div *ngIf="advancedSettingsVisible">
             <mat-form-field>
                 <input type="text" matInput id="pem" placeholder="{{'clientPem' | translate}}" formControlName="clientCertificate" />
