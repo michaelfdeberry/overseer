@@ -26,7 +26,7 @@ Please refer to the [wiki page](https://github.com/michaelfdeberry/overseer/wiki
 
 ### 2. Cross Platform Server
 
-There is a cross platform server solution that will allow you to host Overseer on your local network. All configuration will be stored on a centralized database allowing the application to be configured once and accessible from multiple browser/device. 
+This is a cross platform server based solution that will allow you to host Overseer on your local network. All configuration will be stored on a centralized database allowing the application to be configured once and accessible from multiple browsers/devices. 
 
 Please refer to the [wiki page](https://github.com/michaelfdeberry/overseer/wiki/Overseer-Daemon-%28.Net-Core%29) for configuration instructions. 
 
