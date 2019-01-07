@@ -22,13 +22,13 @@ The Standalone Web Application has been published online and is available at [ht
 
 You can also host the application on your local network if you prefer. Since the application consist of only static files the configuration is very simple and can be hosted on a Octopi instance along with Octoprint with minimal overhead. 
 
-Please refer to the [wiki page](Overseer-Standalone-Web-App) for configuration instructions. 
+Please refer to the [wiki page](https://github.com/michaelfdeberry/overseer/wiki/Overseer-Standalone-Web-App) for configuration instructions. 
 
 ### 2. Cross Platform Server
 
 There is a cross platform server solution that will allow you to host Overseer on your local network. All configuration will be stored on a centralized database allowing the application to be configured once and accessible from multiple browser/device. 
 
-Please refer to the [wiki page](Overseer-Daemon-%28.Net-Core%29) for configuration instructions. 
+Please refer to the [wiki page](https://github.com/michaelfdeberry/overseer/wiki/Overseer-Daemon-%28.Net-Core%29) for configuration instructions. 
 
 ### 3. Low-end Single Board Computers.
 
@@ -36,5 +36,5 @@ Overseer is a fairly lightweight application and can run fine on low-end devices
 
 This version contains all the same functionality of the Cross Platform Server version, however the configuration is slightly more involved. 
 
-Please refer to the [wiki page](Overseer-Daemon-%28Mono%29) for configuration instructions.
+Please refer to the [wiki page](https://github.com/michaelfdeberry/overseer/wiki/Overseer-Daemon-%28Mono%29) for configuration instructions.
 
