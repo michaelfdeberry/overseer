@@ -1,4 +1,5 @@
 ﻿using Overseer.Data;
+using System;
 using System.Collections.Generic;
 
 namespace Overseer.Tests.Data
@@ -17,6 +18,21 @@ namespace Overseer.Tests.Data
 			if (!_values.ContainsKey(key)) return default(T);
 
 			return (T)_values[typeof(T).Name];
+		}
+
+		public T GetOrPut<T>(Func<T> putFunc)
+		{
+			return GetOrPut<T>(typeof(T).Name, putFunc);
+		}
+
+		public T GetOrPut<T>(string key, Func<T> putFunc)
+		{
+			if (!_values.ContainsKey(key))
+			{
+				_values[key] = putFunc();
+			}
+
+			return (T)_values[key];
 		}
 
 		public void Put<T>(T value)

@@ -29,7 +29,7 @@ namespace Overseer.Daemon
 
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args) {			
 			var valueStore = DataContext.GetValueStore();
-			var appSettings = valueStore.Get<ApplicationSettings>();
+			var appSettings = valueStore.GetOrPut(() => new ApplicationSettings());
 			var parser = new FluentCommandLineParser();
 			parser.Setup<int>("port").Callback(port => appSettings.LocalPort = port);
 			parser.Setup<int>("interval").Callback(interval => appSettings.Interval = interval);

@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Overseer.Daemon.Bootstrapping;
 using Overseer.Daemon.Hubs;
 using Overseer.Data;

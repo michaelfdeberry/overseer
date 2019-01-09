@@ -9,13 +9,11 @@ namespace Overseer
 	public class UserManager : IUserManager
 	{
 		const string Bearer = "Bearer";
-
-		readonly IDataContext _context;
+		
 		readonly IRepository<User> _users;
 
 		public UserManager(IDataContext context)
 		{
-			_context = context;
 			_users = context.GetRepository<User>();
 		}
 		

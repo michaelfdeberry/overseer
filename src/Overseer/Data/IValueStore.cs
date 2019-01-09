@@ -1,4 +1,6 @@
-﻿namespace Overseer.Data
+﻿using System;
+
+namespace Overseer.Data
 {
 	public interface IValueStore
 	{
@@ -8,9 +10,18 @@
 		T Get<T>();
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		T GetOrPut<T>(Func<T> putFunc);
+
+		/// <summary>
 		/// Gets a value by key
 		/// </summary>
 		T Get<T>(string key);
+
+		T GetOrPut<T>(string key, Func<T> putFunc);
 
 		/// <summary>
 		/// Stores a value where the key will be the name of type T

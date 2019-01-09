@@ -42,7 +42,7 @@ namespace Overseer.Daemon
 				try
 				{
 					var valueStore = context.GetValueStore();
-					var settings = valueStore.Get<ApplicationSettings>();
+					var settings = valueStore.GetOrPut(() => new ApplicationSettings());
 					var parser = new FluentCommandLineParser();
 					parser.Setup<int>("port").Callback(port => settings.LocalPort = port);
 					parser.Setup<int>("interval").Callback(interval => settings.Interval = interval);

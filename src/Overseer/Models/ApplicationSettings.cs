@@ -1,6 +1,4 @@
-﻿using Overseer.Data;
-
-namespace Overseer.Models
+﻿namespace Overseer.Models
 {
 	public class ApplicationSettings
     {

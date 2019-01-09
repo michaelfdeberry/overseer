@@ -1,4 +1,5 @@
-﻿using LiteDB;
+﻿using System;
+using LiteDB;
 
 namespace Overseer.Data
 {
@@ -25,7 +26,12 @@ namespace Overseer.Data
 
 		public void Put<T>(T value)
 		{
-			Put<T>(typeof(T).Name, value);
+			Put(typeof(T).Name, value);
+		}
+
+		public T GetOrPut<T>(Func<T> putFunc)
+		{
+			return GetOrPut<T>(typeof(T).Name, putFunc);
 		}
 
 		public T Get<T>(string key)
@@ -44,5 +50,23 @@ namespace Overseer.Data
 				Value = value
 			});
 		}
+
+		public T GetOrPut<T>(string key, Func<T> putFunc)
+		{
+			var record = _valueCollection.FindById(key);
+			if (record == null)
+			{
+				record = new ValueRecord
+				{
+					Id = key,
+					Value = putFunc()
+				};
+
+				_valueCollection.Insert(record);
+			}
+
+			return (T)record.Value;
+		}
+
 	}
 }

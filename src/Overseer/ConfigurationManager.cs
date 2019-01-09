@@ -21,14 +21,7 @@ namespace Overseer
 
         public ApplicationSettings GetApplicationSettings()
         {
-			var settings = _valueStore.Get<ApplicationSettings>();
-			if (settings == null)
-			{
-				settings = new ApplicationSettings();
-				_valueStore.Put(settings);
-			}
-
-			return settings;
+			return _valueStore.GetOrPut(() => new ApplicationSettings());
         }
 
         public ApplicationSettings UpdateApplicationSettings(ApplicationSettings settings)
