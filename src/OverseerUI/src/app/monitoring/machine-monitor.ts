@@ -1,11 +1,6 @@
 import { MachineStatus, idleStates, MachineState } from "../models/machine-status.model";
 import { Machine, MachineType, MachineTool, MachineToolType } from "../models/machine.model";
 
-export interface StreamDimensions {
-    width: number;
-    height: number;
-}
-
 export class MachineMonitor implements Machine {
     id: number;
     name: string;

@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy, Renderer2 } from "@angular/core";
-import { ThemeService } from "./services/theme.service";
-import { Subscription } from "rxjs";
+import { Component, OnDestroy, OnInit, Renderer2 } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
+import { Subscription } from "rxjs";
+import { ThemeService } from "./services/theme.service";
 
 @Component({
     selector: "app-root",
     templateUrl: "./app.component.html"
 })
-
 export class AppComponent implements OnInit, OnDestroy {
     themeSubscription: Subscription;
 
