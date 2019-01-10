@@ -9,7 +9,6 @@ import { MachineStorageService } from "./storage/machine-storage.service";
 import { catchError } from "rxjs/operators";
 import { ErrorHandlerService } from "../error-handler.service";
 
-
 @Injectable({ providedIn: "root" })
 export class LocalMachinesService implements MachinesService {
     supportsAdvanceSettings = false;
