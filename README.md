@@ -35,6 +35,7 @@
     sudo make install  
     echo "/usr/local/lib/libsodium.so" >> sudo /etc/Id.so.conf
     sudo ldconfig -p
+    cd ..
     ``` 
     
     It's recommended that the latest stable release of libsodium is used. The url for the most recent version can be found [here](https://download.libsodium.org/libsodium/releases/)        
