@@ -1,0 +1,65 @@
+@import "variables";
+
+.config-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    tr {
+        th {
+            .mat-button {
+                font-weight: bold;
+            }
+        }
+
+        th, td {
+            text-align: left;
+            padding-left: 20px;
+            height: 38px;
+
+            @media (max-width: 480px) {
+                padding-left: 0;
+            }
+
+            &.centered {
+                text-align: center;
+            }
+
+            &.action {
+                text-align: right;
+                width: 100px;
+                padding: 0;
+
+                .mat-button {
+                    .mat-icon {
+                        $icon-size: 16px;
+                        font-size: $icon-size;
+                        line-height: $icon-size - 2;
+                        height: $icon-size;
+                        width: $icon-size;
+                        font-weight: bolder;
+                    }
+                }
+            }
+
+            &.empty {
+                @extend .centered;
+                padding: 10px 0;
+            }
+        }
+
+        &:last-child > td {
+            border: none;
+        }
+    }
+}
+
+.config-form {
+    padding: 0 20px;
+}
+
+app-octoprint,
+app-reprap {
+    display: flex;
+    flex-direction: column;
+}

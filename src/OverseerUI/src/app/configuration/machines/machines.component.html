@@ -1,0 +1,33 @@
+<table *ngIf="machines$ | async;  let machines" class="config-table machines">
+    <thead>
+    <tr>
+        <th translate>name</th>
+        <th translate>machineType</th>
+        <th class="centered" translate>monitoringEnabled</th>
+        <th class="action">
+            <a routerLink="/configuration/machines/add" mat-button>
+                <mat-icon>add</mat-icon> {{ 'add' | translate }}
+            </a>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let machine of machines">
+        <td>{{ machine.name }}</td>
+        <td>{{ getMachineTypeName(machine.machineType) }}</td>
+        <td class="centered">
+            <mat-icon *ngIf="machine.disabled">warning</mat-icon>
+            <mat-icon *ngIf="!machine.disabled">check</mat-icon>
+        </td>
+        <td class="action">
+            <a mat-button [routerLink]="['/configuration/machines/edit/', machine.id]">
+                <mat-icon>edit</mat-icon>
+                {{ 'edit' | translate }}
+            </a>
+        </td>
+    </tr>
+    <tr *ngIf="!machines || !machines.length">
+        <td colspan="4" class="empty" translate>noMachines</td>
+    </tr>
+    </tbody>
+</table>

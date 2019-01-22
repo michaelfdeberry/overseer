@@ -1,0 +1,25 @@
+﻿{
+  "job": {
+    "averagePrintTime": null, 
+    "estimatedPrintTime": null, 
+    "filament": null, 
+    "file": {
+      "date": 1536869430, 
+      "display": "juggernaut.gcode", 
+      "name": "juggernaut.gcode", 
+      "origin": "local", 
+      "path": "juggernaut.gcode", 
+      "size": 201326592
+    }, 
+    "lastPrintTime": null, 
+    "user": "michael"
+  }, 
+  "progress": {
+    "completion": 73.51443469524384, 
+    "filepos": 148004106, 
+    "printTime": 287131, 
+    "printTimeLeft": 103481, 
+    "printTimeLeftOrigin": "estimate"
+  }, 
+  "state": "Printing"
+}

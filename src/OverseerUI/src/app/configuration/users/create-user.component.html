@@ -1,0 +1,21 @@
+<form [formGroup]="form">
+    <mat-form-field>
+        <input matInput type="text" id="username" placeholder="{{ 'username' | translate }}" formControlName="username" required autocomplete="username" />
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput type="password" id="password" placeholder="{{ 'password' | translate }}" formControlName="password" required autocomplete="new-password"/>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput type="password" id="passwordMatch" placeholder="{{ 'confirmPassword' | translate }}" formControlName="confirmPassword" required autocomplete="new-password" />
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-select id="sessionLifetime" placeholder="{{ 'sessionLifetime' | translate }}" formControlName="sessionLifetime">
+            <mat-option *ngFor="let lifetime of lifetimes" [value]="lifetime.value">
+                {{ lifetime.value }} {{ lifetime.translationKey | translate }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</form>

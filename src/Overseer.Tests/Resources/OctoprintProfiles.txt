@@ -1,0 +1,51 @@
+﻿{
+  "profiles": {
+    "_default": {
+      "axes": {
+        "e": {
+          "inverted": false, 
+          "speed": 300
+        }, 
+        "x": {
+          "inverted": false, 
+          "speed": 6000
+        }, 
+        "y": {
+          "inverted": false, 
+          "speed": 6000
+        }, 
+        "z": {
+          "inverted": false, 
+          "speed": 200
+        }
+      }, 
+      "color": "default", 
+      "current": true, 
+      "default": true, 
+      "extruder": {
+        "count": 1, 
+        "nozzleDiameter": 0.4, 
+        "offsets": [
+          [
+            0.0, 
+            0.0
+          ]
+        ], 
+        "sharedNozzle": false
+      }, 
+      "heatedBed": true, 
+      "id": "_default", 
+      "model": "Generic RepRap Printer", 
+      "name": "CR10", 
+      "resource": "http://192.168.1.79/api/printerprofiles/_default", 
+      "volume": {
+        "custom_box": false, 
+        "depth": 300.0, 
+        "formFactor": "rectangular", 
+        "height": 400.0, 
+        "origin": "lowerleft", 
+        "width": 300.0
+      }
+    }
+  }
+}
