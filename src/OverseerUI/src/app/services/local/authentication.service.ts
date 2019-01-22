@@ -31,17 +31,22 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
             const userCount = await self.userStorage.getUserCount();
             if (!userCount) {
                 self.router.navigate(["/configuration", "setup"]);
+                self.errorHandler.handle("setup_required");
                 return false;
             }
 
             if (!self.localStorageService.get("activeUser")) {
                 self.router.navigate(["/login"]);
+                self.errorHandler.handle("unauthorized_access");
                 return false;
             }
 
             return true;
-        })
-            .pipe(catchError(err => this.errorHandler.handle(err)));
+        });
+
+        // I am not sure what the can activate is doing, but anything piped into the defer
+        // isn't executing. So piping in catchError doesn't work here. The code still functioned
+        // properly since it treated the error as a false result.
     }
 
     login(user: User): Observable<User> {
