@@ -5,7 +5,8 @@ overseerDirectory=${PWD}'/overseer'
 overseerExecutable='Overseer.Daemon.exe'
 overseerExecutablePath=${overseerDirectory}'/'${overseerExecutable}
 overseerPID=$(ps auxf | grep ${overseerExecutable} | grep -v grep  | awk '{print $2}')
-overseerZipUrl=https://github.com/michaelfdeberry/overseer/releases/download/${overseerVersion}/overseer-linux-amrv6.zip
+overseerZipFile='overseer-linux-armv6.zip'
+overseerZipUrl=https://github.com/michaelfdeberry/overseer/releases/download/${overseerVersion}/${overseerZipFile}
 servicePath='/lib/systemd/system/overseer.service'
 
 echo Installing Overseer...
@@ -41,7 +42,7 @@ echo WantedBy=multi-user.target >> $servicePath
 echo >> $servicePath
 
 # download the latest and unzip the archive
-wget $overseerZipUrl && unzip -o overseer.zip
+wget $overseerZipUrl && unzip -o ${overseerZipFile}
 
 # enable the service
 systemctl enable overseer
