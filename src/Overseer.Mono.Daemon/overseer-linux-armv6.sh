@@ -17,7 +17,7 @@ apt-get update
 # install the prerequisites 
 apt-get install mono-complete
 
-if [ -n "${overseerPID}" ]; then     
+if [ -n "${overseerPID}" ]; then
     # stop the service if it's is running
     service overseer stop
     
