@@ -1,4 +1,5 @@
 #addin "Cake.Npm"
+#addin "Cake.FileHelpers"
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
@@ -18,6 +19,45 @@ Task("NuGet")
     .IsDependentOn("Clean")
     .Does(() => {
         NuGetRestore("../src/Overseer.sln");
+    });
+
+Task("Version")
+    .Does(() => {
+        var versionPattern = "(\\d+\\.){2,3}(\\d+)";
+        var overseerProjectFile = "../src/Overseer/Overseer.csproj";
+        var projectFileVersionPath = "/Project/PropertyGroup/Version";        
+        var currentVersion = System.Version.Parse(XmlPeek(overseerProjectFile, projectFileVersionPath));
+        var newVersion = new Version(currentVersion.Major, currentVersion.Minor, currentVersion.Build + 1);
+
+        // update the csproj xml files
+        var csprojFiles = new [] {
+            overseerProjectFile, 
+            "../src/Overseer.Core.Daemon/Overseer.Core.Daemon.csproj",
+            "../src/Overseer.Tests/Overseer.Tests.csproj"
+        };
+        foreach (var csprojFile in csprojFiles)
+        {     
+            XmlPoke(csprojFile, projectFileVersionPath, newVersion.ToString());            
+        }
+
+        // update npm files
+        var npmRunScriptSettings = new NpmRunScriptSettings();
+        npmRunScriptSettings.ScriptName = $"setVersion";
+        npmRunScriptSettings.WorkingDirectory = "../src/OverseerUI";
+        npmRunScriptSettings.Arguments.Add(newVersion.ToString());
+        NpmRunScript(npmRunScriptSettings);
+
+        // update environment files
+        ReplaceRegexInFiles("../src/OverseerUI/src/environments/environment*", $"appVersion:.\"{versionPattern}\"", $"appVersion: \"{newVersion}\"");
+        
+        // update install scripts
+        ReplaceRegexInFiles("../src/**/overseer*.sh", $"overseerVersion='{versionPattern}'", $"overseerVersion='{newVersion}'");
+
+        // update the assembly info files
+        ReplaceRegexInFiles("../src/**/AssemblyInfo.cs", $"AssemblyVersion\\(\"{versionPattern}\"\\)", $"AssemblyVersion(\"{newVersion}\")");
+        ReplaceRegexInFiles("../src/**/AssemblyInfo.cs", $"AssemblyFileVersion\\(\"{versionPattern}\"\\)", $"AssemblyFileVersion(\"{newVersion}\")");
+        
+        Information($"Updated from version {currentVersion} to {newVersion}");
     });
 
 Task("Build")    
@@ -144,6 +184,7 @@ Task("PublishCoreLinuxArmv7")
 
 Task("Publish")
     .IsDependentOn("Test")
+    .IsDependentOn("Version")
     .IsDependentOn("PreparePublish")
     .IsDependentOn("PublishClientApp")
     .IsDependentOn("PublishMono") 
