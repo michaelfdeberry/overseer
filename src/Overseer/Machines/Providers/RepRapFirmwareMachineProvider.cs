@@ -38,7 +38,7 @@ namespace Overseer.Machines.Providers
             try
             {
 				var updatedMachine = machine as RepRapFirmwareMachine;
-                dynamic status = await _connector.Request(Machine, "rr_status", query: new[] { ("type", "2") });
+                dynamic status = await _connector.Request(updatedMachine, "rr_status", query: new[] { ("type", "2") });
 
 				var tools = new List<MachineTool>();
 				MachineTool.AuxiliaryHeaterTypes.ToList().ForEach(auxToolType =>
@@ -126,7 +126,7 @@ namespace Overseer.Machines.Providers
 				var currentHeater = Machine.GetHeater(heaterIndex);
 				if (currentHeater == null) continue;
 
-				if(MachineTool.AuxiliaryHeaterTypes.Contains(currentHeater.Name))
+				if (MachineTool.AuxiliaryHeaterTypes.Contains(currentHeater.Name))
 				{
 					var auxilaryTemp = temps[currentHeater.Name];
 					if (auxilaryTemp == null) continue;

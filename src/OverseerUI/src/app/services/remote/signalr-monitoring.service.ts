@@ -1,23 +1,24 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Inject } from "@angular/core";
 import { Subject } from "rxjs";
 import { MachineStatus } from "../../models/machine-status.model";
 import { MonitoringService } from "../monitoring.service";
-
-export class OverseerWindow extends Window {
-    $: any;
-}
+import { OverseerWindow } from "../../app.module";
 
 // This is used when the mono host is used.
 @Injectable({
     providedIn: "root"
 })
-export class SignalrMonitoringService extends MonitoringService {
+export class SignalrMonitoringService implements MonitoringService {
     public readonly statusEvent$ = new Subject<MachineStatus>();
     private hubConnection;
     private hubProxy;
 
-    constructor(private window: OverseerWindow) {
-        super();
+    constructor(@Inject(OverseerWindow)private window: OverseerWindow) {
+        if (this.window.$ === undefined || this.window.$.hubConnection === undefined) {
+            throw new Error("The variable '$' or the .hubConnection() function are not defined\
+                ...please check the SignalR scripts have been loaded properly");
+        }
+
         this.hubConnection = this.window.$.hubConnection();
         this.hubConnection.url = "/push";
     }

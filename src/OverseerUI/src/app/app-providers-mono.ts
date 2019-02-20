@@ -11,7 +11,7 @@ import { RemoteAuthenticationService } from "./services/remote/authentication.se
 import { RemoteControlService } from "./services/remote/control.service";
 import { RemoteMachinesService } from "./services/remote/machines.service";
 import { RemoteSettingsService } from "./services/remote/settings.service";
-import { OverseerWindow, SignalrMonitoringService } from "./services/remote/signalr-monitoring.service";
+import { SignalrMonitoringService } from "./services/remote/signalr-monitoring.service";
 import { RemoteUsersService } from "./services/remote/users.service";
 import { SettingsService } from "./services/settings.service";
 import { ThemeService } from "./services/theme.service";
@@ -28,10 +28,6 @@ export const providers = [
         provide: HTTP_INTERCEPTORS,
         useClass: OverseerHttpInterceptor,
         multi: true
-    },
-    {
-        provide: OverseerWindow,
-        useValue: window
     },
     {
         provide: MonitoringService,
