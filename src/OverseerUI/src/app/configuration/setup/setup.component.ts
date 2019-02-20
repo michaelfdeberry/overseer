@@ -6,7 +6,7 @@ import { MatHorizontalStepper, MatStep } from "@angular/material";
 import { MachinesService } from "../../services/machines.service";
 import { CertificateErrorService } from "../machines/certificate-error.service";
 import { DialogService } from "../../dialogs/dialog.service";
-import { ObservableMedia, MediaChange } from "@angular/flex-layout";
+import { MediaObserver, MediaChange } from "@angular/flex-layout";
 
 @Component({
     templateUrl: "./setup.component.html",
@@ -43,14 +43,14 @@ export class SetupComponent {
         private machinesService: MachinesService,
         private certErrorService: CertificateErrorService,
         private dialogService: DialogService,
-        private media: ObservableMedia
+        private mediaObserver: MediaObserver
     ) {
         this.clientForm = formBuilder.group({});
         this.userForm = formBuilder.group({});
         this.themeForm = formBuilder.group({});
         this.machineForm = machineFormFactory(formBuilder);
 
-        this.media.asObservable().subscribe((change: MediaChange) => {
+        this.mediaObserver.media$.subscribe((change: MediaChange) => {
             this.screenSize = change.mqAlias;
         });
     }

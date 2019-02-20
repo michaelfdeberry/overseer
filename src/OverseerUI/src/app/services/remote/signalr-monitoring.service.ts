@@ -2,7 +2,7 @@ import { Injectable, Inject } from "@angular/core";
 import { Subject } from "rxjs";
 import { MachineStatus } from "../../models/machine-status.model";
 import { MonitoringService } from "../monitoring.service";
-import { OverseerWindow } from "../../app.module";
+import { WindowService } from "./window.service";
 
 // This is used when the mono host is used.
 @Injectable({
@@ -13,7 +13,7 @@ export class SignalrMonitoringService implements MonitoringService {
     private hubConnection;
     private hubProxy;
 
-    constructor(@Inject(OverseerWindow)private window: OverseerWindow) {
+    constructor(@Inject(WindowService)private window: WindowService) {
         if (this.window.$ === undefined || this.window.$.hubConnection === undefined) {
             throw new Error("The variable '$' or the .hubConnection() function are not defined\
                 ...please check the SignalR scripts have been loaded properly");

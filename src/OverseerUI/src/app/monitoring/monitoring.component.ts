@@ -4,7 +4,7 @@ import { MonitoringService } from "../services/monitoring.service";
 import { MachineMonitor } from "./machine-monitor";
 import { MachinesService } from "../services/machines.service";
 import { SettingsService } from "../services/settings.service";
-import { ObservableMedia, MediaChange } from "@angular/flex-layout";
+import { MediaObserver, MediaChange } from "@angular/flex-layout";
 
 @Component({
     templateUrl: "./monitoring.component.html",
@@ -15,7 +15,7 @@ export class MonitoringComponent implements OnInit, OnDestroy {
         private settingsService: SettingsService,
         private machinesService: MachinesService,
         private monitoringService: MonitoringService,
-        private media: ObservableMedia
+        private mediaObserver: MediaObserver
     ) {}
 
     columns = 1;
@@ -45,7 +45,7 @@ export class MonitoringComponent implements OnInit, OnDestroy {
                     });
                 });
 
-                this.mediaChangeSubscription = this.media.asObservable().subscribe((change: MediaChange) => {
+                this.mediaChangeSubscription = this.mediaObserver.media$.subscribe((change: MediaChange) => {
                     const count = this.machines.filter(m => m.isVisible).length;
                     if (["xs", "sm"].indexOf(change.mqAlias) >= 0) {
                         this.columns = 1;

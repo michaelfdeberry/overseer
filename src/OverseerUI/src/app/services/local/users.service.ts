@@ -53,13 +53,13 @@ export class LocalUsersService implements UsersService, UserManager {
     }
 
     createUser(user: User): Observable<User> {
-        return defer<User>(() => createUser(this, user))
+        return defer(() => createUser(this, user))
             .pipe(catchError(err => this.errorHandler.handle(err)));
     }
 
     updateUser(user: User): Observable<User> {
         const self = this;
-        return defer<User>(async function(): Promise<User> {
+        return defer(async function(): Promise<User> {
             const pUser = await self.userStorage.getUserById(user.id);
 
             if (user.password) {
@@ -83,7 +83,7 @@ export class LocalUsersService implements UsersService, UserManager {
 
     deleteUser(user: User): Observable<any> {
         const self = this;
-        return defer<User>(async function (): Promise<User> {
+        return defer(async function (): Promise<User> {
             if ((await self.userStorage.getUserCount()) === 1) {
                 throw new Error("delete_user_unavailable");
             }

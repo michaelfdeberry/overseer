@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Observable, throwError, forkJoin, defer } from "rxjs";
+import { Observable, throwError, forkJoin, defer, ObservableInput } from "rxjs";
 import { tap, catchError, map } from "rxjs/operators";
 
 import { BaseMachineProvider } from "./machine.provider";
@@ -110,7 +110,7 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
             temperatures: {}
         };
 
-        return defer<MachineStatus>(async function() {
+        return defer(async function() {
             const machineState = await self.http.get<any>(self.getUrl("api/printer"), self.httpOptions).toPromise();
 
             // tslint:disable-next-line:forin
