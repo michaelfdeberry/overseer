@@ -11,5 +11,6 @@ namespace Overseer
 		Machine GetMachine(int id);
 		IReadOnlyList<Machine> GetMachines();
 		Task<Machine> UpdateMachine(Machine machine);
+		void SortMachines(List<int> sortOrder);
 	}
 }

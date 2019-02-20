@@ -21,6 +21,8 @@ namespace Overseer.Data
 
         void Update(T entity);
 
+		void Update(IEnumerable<T> entities);
+
         void Delete(int id);
 
         bool Exist(Expression<Func<T, bool>> predicate);

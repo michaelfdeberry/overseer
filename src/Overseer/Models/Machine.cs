@@ -38,6 +38,8 @@ namespace Overseer.Models
 
 		public abstract MachineType MachineType { get; }
 
+		public int SortIndex { get; set; }
+
 		public MachineTool GetHeater(int heaterIndex)
 		{
 			return GetTool(MachineToolType.Heater, heaterIndex);

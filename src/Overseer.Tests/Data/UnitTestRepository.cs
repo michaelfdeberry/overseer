@@ -61,5 +61,10 @@ namespace Overseer.Tests.Data
 		{
 			return _entities.Count();
 		}
+
+		public void Update(IEnumerable<T> entities)
+		{
+			entities.ToList().ForEach(Update);
+		}
 	}
 }

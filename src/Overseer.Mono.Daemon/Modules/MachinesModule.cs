@@ -2,25 +2,28 @@
 using Nancy.ModelBinding;
 using Nancy.Security;
 using Overseer.Models;
+using System.Collections.Generic;
 
 namespace Overseer.Daemon.Modules
 {
 	public class MachinesModule : NancyModule		
 	{
-		public MachinesModule(IMachineManager printerManager)
+		public MachinesModule(IMachineManager machineManager)
 			: base("machines")
 		{
 			this.RequiresMSOwinAuthentication();
 
-			Get("/", p => printerManager.GetMachines());
+			Get("/", p => machineManager.GetMachines());
 
-			Get("/{id:int}", p => printerManager.GetMachine((int)p.id));
+			Get("/{id:int}", p => machineManager.GetMachine((int)p.id));
 
-			Put("/", async p => await printerManager.CreateMachine(this.Bind<Machine>()));
+			Put("/", async p => await machineManager.CreateMachine(this.Bind<Machine>()));
 
-			Post("/", async p => await printerManager.UpdateMachine(this.Bind<Machine>()));
+			Post("/", async p => await machineManager.UpdateMachine(this.Bind<Machine>()));
 			
-			Delete("/{id:int}", p => printerManager.DeleteMachine((int)p.id));
+			Delete("/{id:int}", p => machineManager.DeleteMachine((int)p.id));
+
+			Post("/sort", p => this.Ok(() => machineManager.SortMachines(this.Bind<List<int>>())));
 		}
 	}
 }

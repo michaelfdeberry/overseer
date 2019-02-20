@@ -3,6 +3,7 @@ using Overseer.Machines;
 using Overseer.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Overseer
 {
@@ -32,6 +33,9 @@ namespace Overseer
             //load any default configuration that will be retrieved from the machine.
             await LoadConfiguration(machine);
 
+            //The new machine will be added to the end of the list
+            machine.SortIndex = _machines.Count() + 1;
+
             //if the configuration is updated with data from the machine then store the configuration.
             _machines.Create(machine);
 
@@ -57,6 +61,14 @@ namespace Overseer
 
             _machines.Delete(machineId);
 			return machine;
+		}
+
+		public void SortMachines(List<int> sortOrder)
+		{
+			var machines = _machines.GetAll().ToList();
+			machines.ForEach(m => m.SortIndex = sortOrder.IndexOf(m.Id));
+
+			_machines.Update(machines);
 		}
 
 		Task LoadConfiguration(Machine machine)

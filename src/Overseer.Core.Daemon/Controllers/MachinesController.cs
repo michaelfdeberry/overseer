@@ -23,13 +23,13 @@ namespace Overseer.Daemon.Controllers
 		}
 		
 		[HttpPut]
-		public async Task<ActionResult<Machine>> CreatePrinter([FromBody]Machine machine)
+		public async Task<ActionResult<Machine>> CreateMachine([FromBody]Machine machine)
 		{
 			return await _machineManager.CreateMachine(machine);
 		}
 		
 		[HttpPost]
-		public async Task<ActionResult<Machine>> UpdatePrinter([FromBody]Machine machine)
+		public async Task<ActionResult<Machine>> UpdateMachine([FromBody]Machine machine)
 		{
 			return await _machineManager.UpdateMachine(machine);
 		}
@@ -41,9 +41,15 @@ namespace Overseer.Daemon.Controllers
 		}
 
 		[HttpDelete("{machineId:int}")]
-		public ActionResult DeletePrinter(int machineId)
+		public ActionResult<Machine> DeleteMachine(int machineId)
 		{
-			_machineManager.DeleteMachine(machineId);
+			return _machineManager.DeleteMachine(machineId);			
+		}
+
+		[HttpPost("sort")]
+		public ActionResult SortMachines([FromBody]List<int> sortOrder)
+		{
+			_machineManager.SortMachines(sortOrder);
 			return Ok();
 		}
 	}
