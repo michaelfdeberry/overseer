@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Overseer.Data
 {
-	public interface IEntity
+    public interface IEntity
     {
         int Id { get; set; }
     }
@@ -12,7 +12,7 @@ namespace Overseer.Data
     public interface IRepository<T> where T : IEntity
     {
         IReadOnlyList<T> GetAll();
-		
+        
         T GetById(int id);
 
         T Get(Expression<Func<T, bool>> predicate);
@@ -21,12 +21,12 @@ namespace Overseer.Data
 
         void Update(T entity);
 
-		void Update(IEnumerable<T> entities);
+        void Update(IEnumerable<T> entities);
 
         void Delete(int id);
 
         bool Exist(Expression<Func<T, bool>> predicate);
 
-		int Count();
+        int Count();
     }
 }

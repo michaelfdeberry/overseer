@@ -7,59 +7,59 @@ using System.Threading.Tasks;
 
 namespace Overseer.Machines.Providers
 {
-	public class RepRapFirmwareMachineProvider : MachineProvider<RepRapFirmwareMachine> 
+    public class RepRapFirmwareMachineProvider : MachineProvider<RepRapFirmwareMachine> 
     {
-		readonly RestMachineConnector<RepRapFirmwareMachine> _connector;
+        readonly RestMachineConnector<RepRapFirmwareMachine> _connector;
 
-		public RepRapFirmwareMachineProvider(RepRapFirmwareMachine machine)
-			: this(new RestMachineConnector<RepRapFirmwareMachine>(), machine)
-		{
-		}
+        public RepRapFirmwareMachineProvider(RepRapFirmwareMachine machine)
+            : this(new RestMachineConnector<RepRapFirmwareMachine>(), machine)
+        {
+        }
 
         public RepRapFirmwareMachineProvider(RestMachineConnector<RepRapFirmwareMachine> connector, RepRapFirmwareMachine machine)
-		{
-			Machine = machine;
-			_connector = connector;
-		}                     
+        {
+            Machine = machine;
+            _connector = connector;
+        }                     
 
         public override async Task CancelJob()
         {
             await PauseJob();
             await base.CancelJob();
-		}
+        }
 
-		public override async Task ExecuteGcode(string command)
-		{
-			await _connector.Request(Machine, "rr_gcode", query: new[] { ("gcode", command) });
-		}
+        public override async Task ExecuteGcode(string command)
+        {
+            await _connector.Request(Machine, "rr_gcode", query: new[] { ("gcode", command) });
+        }
 
-		public override async Task LoadConfiguration(Machine machine)
+        public override async Task LoadConfiguration(Machine machine)
         {
             try
             {
-				var updatedMachine = machine as RepRapFirmwareMachine;
+                var updatedMachine = machine as RepRapFirmwareMachine;
                 dynamic status = await _connector.Request(updatedMachine, "rr_status", query: new[] { ("type", "2") });
 
-				var tools = new List<MachineTool>();
-				MachineTool.AuxiliaryHeaterTypes.ToList().ForEach(auxToolType =>
-				{
-					var auxTool = status["temps"][auxToolType];
-					if (auxTool != null)
-					{
-						tools.Add(new MachineTool(MachineToolType.Heater, (int)auxTool["heater"], auxToolType));
-					}
-				});
+                var tools = new List<MachineTool>();
+                MachineTool.AuxiliaryHeaterTypes.ToList().ForEach(auxToolType =>
+                {
+                    var auxTool = status["temps"][auxToolType];
+                    if (auxTool != null)
+                    {
+                        tools.Add(new MachineTool(MachineToolType.Heater, (int)auxTool["heater"], auxToolType));
+                    }
+                });
 
-				foreach(var tool in status["tools"])
-				{
-					List<int> heaters = tool["heaters"].ToObject<List<int>>();
-					List<int> extruders = tool["drives"].ToObject<List<int>>();
-					heaters.ForEach(heaterIndex => tools.Add(new MachineTool(MachineToolType.Heater, heaterIndex)));
-					extruders.ForEach(extruderIndex => tools.Add(new MachineTool(MachineToolType.Extruder, extruderIndex)));
-				}
+                foreach(var tool in status["tools"])
+                {
+                    List<int> heaters = tool["heaters"].ToObject<List<int>>();
+                    List<int> extruders = tool["drives"].ToObject<List<int>>();
+                    heaters.ForEach(heaterIndex => tools.Add(new MachineTool(MachineToolType.Heater, heaterIndex)));
+                    extruders.ForEach(extruderIndex => tools.Add(new MachineTool(MachineToolType.Extruder, extruderIndex)));
+                }
 
-				updatedMachine.Tools = tools;
-				Machine = updatedMachine;
+                updatedMachine.Tools = tools;
+                Machine = updatedMachine;
             }
             catch (Exception ex)
             {
@@ -100,15 +100,15 @@ namespace Overseer.Machines.Providers
                 var parameters = jobStatus["params"];
                 List<float> extruderFactors = parameters.extrFactors.ToObject<List<float>>();
 
-				status.FanSpeed = ReadFanSpeed(jobStatus, machineStatus);				
+                status.FanSpeed = ReadFanSpeed(jobStatus, machineStatus);                
                 status.FeedRate = parameters.speedFactor;
                 status.ElapsedJobTime = jobStatus.printDuration;
-				status.FlowRates = Enumerable.Range(0, extruderFactors.Count)
-					.ToDictionary(index => index, index => extruderFactors[index]);
+                status.FlowRates = Enumerable.Range(0, extruderFactors.Count)
+                    .ToDictionary(index => index, index => extruderFactors[index]);
 
-				(int timeRemaining, float progress) completion = await CalculateCompletion(jobStatus, cancellationToken);
-				status.Progress = completion.progress;
-				status.EstimatedTimeRemaining = completion.timeRemaining;
+                (int timeRemaining, float progress) completion = await CalculateCompletion(jobStatus, cancellationToken);
+                status.Progress = completion.progress;
+                status.EstimatedTimeRemaining = completion.timeRemaining;
             }
             
             return status;
@@ -116,57 +116,57 @@ namespace Overseer.Machines.Providers
 
         protected Dictionary<int, TemperatureStatus> ReadTemperatures(dynamic machineStatus)
         {
-			Dictionary<int, TemperatureStatus> temperatures = new Dictionary<int, TemperatureStatus>();
+            Dictionary<int, TemperatureStatus> temperatures = new Dictionary<int, TemperatureStatus>();
 
-			var tools = machineStatus.tools;
-			var temps = machineStatus.temps;
-			List<int> currentTemps = temps.current.ToObject<List<int>>();
+            var tools = machineStatus.tools;
+            var temps = machineStatus.temps;
+            List<int> currentTemps = temps.current.ToObject<List<int>>();
             for (var heaterIndex = 0; heaterIndex < currentTemps.Count; heaterIndex++)
             {
-				var currentHeater = Machine.GetHeater(heaterIndex);
-				if (currentHeater == null) continue;
+                var currentHeater = Machine.GetHeater(heaterIndex);
+                if (currentHeater == null) continue;
 
-				if (MachineTool.AuxiliaryHeaterTypes.Contains(currentHeater.Name))
-				{
-					var auxilaryTemp = temps[currentHeater.Name];
-					if (auxilaryTemp == null) continue;
+                if (MachineTool.AuxiliaryHeaterTypes.Contains(currentHeater.Name))
+                {
+                    var auxilaryTemp = temps[currentHeater.Name];
+                    if (auxilaryTemp == null) continue;
 
-					temperatures.Add(currentHeater.Index, new TemperatureStatus
-					{
-						HeaterIndex = currentHeater.Index,
-						Actual = auxilaryTemp.current,
-						Target = auxilaryTemp.active
-					});
-				}
-				else
-				{
-					//Overseer doesn't have a concept of tools similar to RRF, just heaters and drives. 
-					//So no matter the configuration it will just list all the heaters and drives. So,
-					//something like a tool changing system with 2 tool heads each configured with 
-					//a dual extruder setup it will show up as 4 heaters and 4 drives. Or, 2 heaters and 4 drives
-					//in a shared nozzle configuration. 
-					for (int toolIndex = 0; toolIndex < tools.Count; toolIndex++)
-					{
-						var tool = tools[toolIndex]; 
-						if (!tool.heaters.ToObject<List<int>>().Contains(currentHeater.Index)) continue;
+                    temperatures.Add(currentHeater.Index, new TemperatureStatus
+                    {
+                        HeaterIndex = currentHeater.Index,
+                        Actual = auxilaryTemp.current,
+                        Target = auxilaryTemp.active
+                    });
+                }
+                else
+                {
+                    //Overseer doesn't have a concept of tools similar to RRF, just heaters and drives. 
+                    //So no matter the configuration it will just list all the heaters and drives. So,
+                    //something like a tool changing system with 2 tool heads each configured with 
+                    //a dual extruder setup it will show up as 4 heaters and 4 drives. Or, 2 heaters and 4 drives
+                    //in a shared nozzle configuration. 
+                    for (int toolIndex = 0; toolIndex < tools.Count; toolIndex++)
+                    {
+                        var tool = tools[toolIndex]; 
+                        if (!tool.heaters.ToObject<List<int>>().Contains(currentHeater.Index)) continue;
 
-						//This finds the position of the heater index in the heater configuration section,
-						//so if tool 0 has is configured to use to use heater 1 as it's only heater, then 
-						//then 1, specifying the heater index, will be in the 0 position. That position, 0, 
-						//will correspond to the position of the active temp for that heater in the active 
-						//temps section.
-						var toolHeaterIndex = tool.heaters.ToObject<List<int>>().IndexOf(currentHeater.Index);
-						temperatures.Add(currentHeater.Index, new TemperatureStatus
-						{
-							HeaterIndex = currentHeater.Index,
-							Actual = currentTemps[currentHeater.Index],
-							Target = temps.tools.active.ToObject<List<List<float>>>()[toolIndex][toolHeaterIndex]
-						});
-					}
-				}
+                        //This finds the position of the heater index in the heater configuration section,
+                        //so if tool 0 has is configured to use to use heater 1 as it's only heater, then 
+                        //then 1, specifying the heater index, will be in the 0 position. That position, 0, 
+                        //will correspond to the position of the active temp for that heater in the active 
+                        //temps section.
+                        var toolHeaterIndex = tool.heaters.ToObject<List<int>>().IndexOf(currentHeater.Index);
+                        temperatures.Add(currentHeater.Index, new TemperatureStatus
+                        {
+                            HeaterIndex = currentHeater.Index,
+                            Actual = currentTemps[currentHeater.Index],
+                            Target = temps.tools.active.ToObject<List<List<float>>>()[toolIndex][toolHeaterIndex]
+                        });
+                    }
+                }
             }
 
-			return temperatures;
+            return temperatures;
         }
 
         int? _fanIndex;
@@ -220,7 +220,7 @@ namespace Overseer.Machines.Providers
                         var totalRawFilament = rawFilament.Aggregate((product, next) => product + next);
                         var progress = totalRawFilament / totalFilament * 100;
 
-                        return (jobStatus.timesLeft.filament, Math.Max(0, (float)Math.Round(progress, 1)));	
+                        return (jobStatus.timesLeft.filament, Math.Max(0, (float)Math.Round(progress, 1)));    
                     }
 
                     if (fileInfo.height > 0)

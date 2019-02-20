@@ -1,87 +1,87 @@
 ﻿{
-	"status": "P",
-	"coords": {
-		"axesHomed": [1, 1, 1],
-		"xyz": [162.128, 79.418, 0.500],
-		"machine": [161.120, 79.295, 0.500],
-		"extr": [2374.9]
-	},
-	"speeds": {
-		"requested": 45.0,
-		"top": 6.7
-	},
-	"currentTool": 0,
-	"params": {
-		"atxPower": 0,
-		"fanPercent": [0, 93, 0, 100, 100, 100, 100, 0, 0],
-		"fanNames": ["", "", "", "", "", "", "", "", ""],
-		"speedFactor": 100.0,
-		"extrFactors": [100.0],
-		"babystep": 0.000
-	},
-	"seq": 20,
-	"sensors": {
-		"probeValue": 0,
-		"fanRPM": 0
-	},
-	"temps": {
-		"bed": {
-			"current": 59.9,
-			"active": 60.0,
-			"state": 2,
-			"heater": 0
-		},
-		"current": [59.9, 215.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0],
-		"state": [2, 2, 0, 0, 0, 0, 0, 0],
-		"names": ["", "", "", "", "", "", "", ""],
-		"tools": {
-			"active": [[215.0]],
-			"standby": [[215.0]]
-		},
-		"extra": [{
-				"name": "MCU",
-				"temp": 33.4
-			}
-		]
-	},
-	"time": 2721.0,
-	"coldExtrudeTemp": 160.0,
-	"coldRetractTemp": 90.0,
-	"compensation": "None",
-	"controllableFans": 7,
-	"tempLimit": 290.0,
-	"endstops": 3192,
-	"firmwareName": "RepRapFirmware for Duet 2 WiFi/Ethernet",
-	"geometry": "coreXY",
-	"axes": 3,
-	"totalAxes": 3,
-	"axisNames": "XYZ",
-	"volumes": 2,
-	"mountedVolumes": 1,
-	"name": "HyperCube Evolution",
-	"probe": {
-		"threshold": 25,
-		"height": 2.00,
-		"type": 9
-	},
-	"tools": [{
-			"number": 0,
-			"heaters": [1],
-			"drives": [0],
-			"axisMap": [[0], [1]],
-			"fans": 2,
-			"filament": "",
-			"offsets": [0.00, 0.00, 0.00]
-		}
-	],
-	"mcutemp": {
-		"min": 32.8,
-		"cur": 33.4,
-		"max": 36.0
-	},
-	"vin": {
-		"min": 23.3,
-		"cur": 23.5,
-		"max": 24.2
-	}
+    "status": "P",
+    "coords": {
+        "axesHomed": [1, 1, 1],
+        "xyz": [162.128, 79.418, 0.500],
+        "machine": [161.120, 79.295, 0.500],
+        "extr": [2374.9]
+    },
+    "speeds": {
+        "requested": 45.0,
+        "top": 6.7
+    },
+    "currentTool": 0,
+    "params": {
+        "atxPower": 0,
+        "fanPercent": [0, 93, 0, 100, 100, 100, 100, 0, 0],
+        "fanNames": ["", "", "", "", "", "", "", "", ""],
+        "speedFactor": 100.0,
+        "extrFactors": [100.0],
+        "babystep": 0.000
+    },
+    "seq": 20,
+    "sensors": {
+        "probeValue": 0,
+        "fanRPM": 0
+    },
+    "temps": {
+        "bed": {
+            "current": 59.9,
+            "active": 60.0,
+            "state": 2,
+            "heater": 0
+        },
+        "current": [59.9, 215.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0],
+        "state": [2, 2, 0, 0, 0, 0, 0, 0],
+        "names": ["", "", "", "", "", "", "", ""],
+        "tools": {
+            "active": [[215.0]],
+            "standby": [[215.0]]
+        },
+        "extra": [{
+                "name": "MCU",
+                "temp": 33.4
+            }
+        ]
+    },
+    "time": 2721.0,
+    "coldExtrudeTemp": 160.0,
+    "coldRetractTemp": 90.0,
+    "compensation": "None",
+    "controllableFans": 7,
+    "tempLimit": 290.0,
+    "endstops": 3192,
+    "firmwareName": "RepRapFirmware for Duet 2 WiFi/Ethernet",
+    "geometry": "coreXY",
+    "axes": 3,
+    "totalAxes": 3,
+    "axisNames": "XYZ",
+    "volumes": 2,
+    "mountedVolumes": 1,
+    "name": "HyperCube Evolution",
+    "probe": {
+        "threshold": 25,
+        "height": 2.00,
+        "type": 9
+    },
+    "tools": [{
+            "number": 0,
+            "heaters": [1],
+            "drives": [0],
+            "axisMap": [[0], [1]],
+            "fans": 2,
+            "filament": "",
+            "offsets": [0.00, 0.00, 0.00]
+        }
+    ],
+    "mcutemp": {
+        "min": 32.8,
+        "cur": 33.4,
+        "max": 36.0
+    },
+    "vin": {
+        "min": 23.3,
+        "cur": 23.5,
+        "max": 24.2
+    }
 }

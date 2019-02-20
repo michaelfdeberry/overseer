@@ -5,8 +5,8 @@ using System;
 
 namespace Overseer.Tests
 {
-	[TestFixture]
-	public class ProcessUrlTests
+    [TestFixture]
+    public class ProcessUrlTests
     {
         [Test]
         public void ShouldReturnValidUri()
@@ -24,13 +24,13 @@ namespace Overseer.Tests
             Assert.AreEqual(new Uri("http://192.168.1.1/api"), uri);
         }
 
-		[Test]
-		public void ShouldApplyRefWithQueryString()
-		{
-			var url = "http://192.168.1.1/";
-			var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, "/api?test=1");
-			Assert.AreEqual(new Uri("http://192.168.1.1/api?test=1"), uri);
-		}
+        [Test]
+        public void ShouldApplyRefWithQueryString()
+        {
+            var url = "http://192.168.1.1/";
+            var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, "/api?test=1");
+            Assert.AreEqual(new Uri("http://192.168.1.1/api?test=1"), uri);
+        }
 
         [Test]
         public void ShouldApplyRefWithoutSlash()
@@ -58,16 +58,16 @@ namespace Overseer.Tests
             Assert.AreEqual(new Uri("http://192.168.1.1/some/path"), uri);
         }
 
-		[Test]
-		public void ShouldUseRelativePathForLocalHostWithQuery()
-		{
-			var url = "http://192.168.1.1/";
-			var refPath = "http://localhost/some/path?test=1";
-			var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, refPath);
-			Assert.AreEqual(new Uri("http://192.168.1.1/some/path?test=1"), uri);
-		}
+        [Test]
+        public void ShouldUseRelativePathForLocalHostWithQuery()
+        {
+            var url = "http://192.168.1.1/";
+            var refPath = "http://localhost/some/path?test=1";
+            var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, refPath);
+            Assert.AreEqual(new Uri("http://192.168.1.1/some/path?test=1"), uri);
+        }
 
-		[Test]
+        [Test]
         public void ShouldUseRelativePathForLoopback()
         {
             var url = "http://192.168.1.1/";

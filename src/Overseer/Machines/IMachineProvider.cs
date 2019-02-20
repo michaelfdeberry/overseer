@@ -6,7 +6,7 @@ namespace Overseer.Machines
 {
     public interface IMachineProvider
     {
-		int MachineId { get; }
+        int MachineId { get; }
 
         Task SetToolTemperature(int heaterIndex, int targetTemperature);
 
@@ -24,7 +24,7 @@ namespace Overseer.Machines
 
         Task CancelJob();
 
-		Task ExecuteGcode(string command);
+        Task ExecuteGcode(string command);
 
         Task LoadConfiguration(Machine machine);
 

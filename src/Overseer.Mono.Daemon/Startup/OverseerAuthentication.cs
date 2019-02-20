@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Overseer.Daemon.Startup
 {
-	public class OverseerAuthenticationOptions : AuthenticationOptions
+    public class OverseerAuthenticationOptions : AuthenticationOptions
     {
         public OverseerAuthenticationOptions() 
             : base("default")
@@ -27,8 +27,8 @@ namespace Overseer.Daemon.Startup
             var user = userManager.AuthenticateToken(token);
             if (user != null)
             {
-				var identity = new GenericIdentity(user.Username, "Admin");
-				return Task.FromResult(new AuthenticationTicket(identity, null));
+                var identity = new GenericIdentity(user.Username, "Admin");
+                return Task.FromResult(new AuthenticationTicket(identity, null));
             }
 
             return Task.FromResult<AuthenticationTicket>(null);

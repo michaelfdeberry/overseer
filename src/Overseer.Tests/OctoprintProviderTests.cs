@@ -14,52 +14,52 @@ using System.Threading.Tasks;
 
 namespace Overseer.Tests
 {
-	[TestFixture]
-	public class OctoprintProviderTests
+    [TestFixture]
+    public class OctoprintProviderTests
     {
         OctoprintMachine _machine;
         IMachineProvider _provider;
         Mock<RestMachineConnector<OctoprintMachine>> _connector;
 
-		[SetUp]
+        [SetUp]
         public void Setup()
         {
             _machine = new OctoprintMachine();
             _machine.Name = "UnitTestPrinter1";
-			_machine.Url = "http://octoprint.local/";
-			_machine.ApiKey = Guid.NewGuid().ToString();
+            _machine.Url = "http://octoprint.local/";
+            _machine.ApiKey = Guid.NewGuid().ToString();
 
-			_connector = new Mock<RestMachineConnector<OctoprintMachine>>();
-			_connector.Setup(x => x.ProcessUrl(It.IsAny<string>(), It.IsAny<string>()))
-				.Returns<string, string>((p, r) => {
-					return RestMachineConnector<OctoprintMachine>.ProcessUri(p, r).ToString();
-				});
-			_connector
-				.Setup(p => p.Request(
-					It.IsAny<OctoprintMachine>(),
-					It.IsAny<string>(),
-					It.IsAny<string>(),
-					It.IsAny<IEnumerable<(string name, string value)>>(),
-					It.IsAny<object>(),
-					It.IsAny<CancellationToken>()
-				))
-				.Returns((OctoprintMachine machine, string r, string m, IEnumerable<(string, string)> q, object b, CancellationToken c) =>
-				{
-					switch (r)
-					{
-						case "api/printer":
-							return Task.FromResult(JObject.Parse(Resources.OctoprintPrinter));
-						case "api/job":
-							return Task.FromResult(JObject.Parse(Resources.OctoprintJob));
-						case "api/settings":
-							return Task.FromResult(JObject.Parse(Resources.OctoprintSettings));
-						case "api/printerprofiles":
-							return Task.FromResult(JObject.Parse(Resources.OctoprintProfiles));
-						default:
-							return Task.FromResult<JObject>(null);
-					}
-				});
-			_provider = new OctoprintMachineProvider(_connector.Object, _machine);
+            _connector = new Mock<RestMachineConnector<OctoprintMachine>>();
+            _connector.Setup(x => x.ProcessUrl(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns<string, string>((p, r) => {
+                    return RestMachineConnector<OctoprintMachine>.ProcessUri(p, r).ToString();
+                });
+            _connector
+                .Setup(p => p.Request(
+                    It.IsAny<OctoprintMachine>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<IEnumerable<(string name, string value)>>(),
+                    It.IsAny<object>(),
+                    It.IsAny<CancellationToken>()
+                ))
+                .Returns((OctoprintMachine machine, string r, string m, IEnumerable<(string, string)> q, object b, CancellationToken c) =>
+                {
+                    switch (r)
+                    {
+                        case "api/printer":
+                            return Task.FromResult(JObject.Parse(Resources.OctoprintPrinter));
+                        case "api/job":
+                            return Task.FromResult(JObject.Parse(Resources.OctoprintJob));
+                        case "api/settings":
+                            return Task.FromResult(JObject.Parse(Resources.OctoprintSettings));
+                        case "api/printerprofiles":
+                            return Task.FromResult(JObject.Parse(Resources.OctoprintProfiles));
+                        default:
+                            return Task.FromResult<JObject>(null);
+                    }
+                });
+            _provider = new OctoprintMachineProvider(_connector.Object, _machine);
         }
 
         [Test]
@@ -72,11 +72,11 @@ namespace Overseer.Tests
             Assert.AreEqual("http://octoprint.local:8080/?action=snapshot", _machine.SnapshotUrl);                                    
             Assert.AreEqual("CR10", _machine.ProfileName);
             Assert.AreEqual(1, _machine.AvailableProfiles.Count);
-			Assert.AreEqual(_machine.ProfileName, _machine.AvailableProfiles.First().Value);
-            Assert.AreEqual(3, _machine.Tools.Count());			
+            Assert.AreEqual(_machine.ProfileName, _machine.AvailableProfiles.First().Value);
+            Assert.AreEqual(3, _machine.Tools.Count());            
             Assert.IsNotNull(_machine.GetHeater(-1)); //bed
-			Assert.IsNotNull(_machine.GetHeater(0)); //hotend
-			Assert.IsNotNull(_machine.GetExtruder(0)); //extruder			
+            Assert.IsNotNull(_machine.GetHeater(0)); //hotend
+            Assert.IsNotNull(_machine.GetExtruder(0)); //extruder            
         }
 
         [Test]
@@ -86,15 +86,15 @@ namespace Overseer.Tests
             try
             {
                 _connector
-					 .Setup(p => p.Request(
-						It.IsAny<OctoprintMachine>(),
-						It.IsAny<string>(),
-						It.IsAny<string>(),
-						It.IsAny<IEnumerable<(string name, string value)>>(),
-						It.IsAny<object>(),
-						It.IsAny<CancellationToken>()
-					))
-					.Throws(new Exception("out exception", exception));
+                     .Setup(p => p.Request(
+                        It.IsAny<OctoprintMachine>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<IEnumerable<(string name, string value)>>(),
+                        It.IsAny<object>(),
+                        It.IsAny<CancellationToken>()
+                    ))
+                    .Throws(new Exception("out exception", exception));
 
                 _provider.LoadConfiguration(_machine);
             }
@@ -111,22 +111,22 @@ namespace Overseer.Tests
             try
             {
                 _connector
-					.Setup(p => p.Request(
-						It.IsAny<OctoprintMachine>(),
-						It.IsAny<string>(),
-						It.IsAny<string>(),
-						It.IsAny<IEnumerable<(string name, string value)>>(),
-						It.IsAny<object>(),
-						It.IsAny<CancellationToken>()
-					))
-					.Throws(new Exception("The service responded with status code FORBIDDEN(403): Invalid API key"));
+                    .Setup(p => p.Request(
+                        It.IsAny<OctoprintMachine>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<IEnumerable<(string name, string value)>>(),
+                        It.IsAny<object>(),
+                        It.IsAny<CancellationToken>()
+                    ))
+                    .Throws(new Exception("The service responded with status code FORBIDDEN(403): Invalid API key"));
 
                 _provider.LoadConfiguration(_machine);
             }
             catch (Exception e)
-			{
-				Assert.AreSame(typeof(OverseerException), e.GetType());
-				Assert.AreEqual("octoprint_invalid_key", e.Message);
+            {
+                Assert.AreSame(typeof(OverseerException), e.GetType());
+                Assert.AreEqual("octoprint_invalid_key", e.Message);
             }
         }
 
@@ -135,30 +135,30 @@ namespace Overseer.Tests
         {
             try
             {
-				_connector
-					.Setup(p => p.Request(
-						It.IsAny<OctoprintMachine>(),
-						It.IsAny<string>(),
-						It.IsAny<string>(),
-						It.IsAny<IEnumerable<(string name, string value)>>(),
-						It.IsAny<object>(),
-						It.IsAny<CancellationToken>()
-					))
-					.Throws(new Exception("The service responded with status code NOTFOUND(404)"));
+                _connector
+                    .Setup(p => p.Request(
+                        It.IsAny<OctoprintMachine>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<IEnumerable<(string name, string value)>>(),
+                        It.IsAny<object>(),
+                        It.IsAny<CancellationToken>()
+                    ))
+                    .Throws(new Exception("The service responded with status code NOTFOUND(404)"));
 
                 _provider.LoadConfiguration(_machine);
             }
             catch (Exception e)
-			{
-				Assert.AreSame(typeof(OverseerException), e.GetType());
-				Assert.AreEqual("printer_connect_failure", e.Message);
+            {
+                Assert.AreSame(typeof(OverseerException), e.GetType());
+                Assert.AreEqual("printer_connect_failure", e.Message);
             }
         }
 
         [Test]
         public async Task ShouldGetPrinterStatus()
         {
-			await _provider.LoadConfiguration(_machine);
+            await _provider.LoadConfiguration(_machine);
             var status = await _provider.GetStatus(CancellationToken.None);
             Assert.NotNull(status);
             Assert.AreEqual(MachineState.Operational, status.State);
@@ -168,16 +168,16 @@ namespace Overseer.Tests
             Assert.AreEqual(100f, status.FanSpeed);
             Assert.AreEqual(100f, status.FeedRate);
 
-			Assert.AreEqual(1, status.FlowRates.Count);
-			Assert.AreEqual(0, status.FlowRates.First().Key);
+            Assert.AreEqual(1, status.FlowRates.Count);
+            Assert.AreEqual(0, status.FlowRates.First().Key);
             Assert.AreEqual(100f, status.FlowRates.First().Value);
 
             Assert.AreEqual(2, status.Temperatures.Count);
-			var bed = status.Temperatures[-1];
+            var bed = status.Temperatures[-1];
             Assert.IsNotNull(bed);
             Assert.AreEqual(45.02f, bed.Actual);
             Assert.AreEqual(45f, bed.Target);
-			var hotEnd = status.Temperatures[0];
+            var hotEnd = status.Temperatures[0];
             Assert.IsNotNull(hotEnd);
             Assert.AreEqual(215.21f, hotEnd.Actual);
             Assert.AreEqual(215f, hotEnd.Target);
@@ -245,17 +245,17 @@ namespace Overseer.Tests
         bool ExecuteJobTest(Action act, Action<JObject> assert)
         {
             var callbackExecuted = false;
-			_connector
-				 .Setup(p => p.Request(
-					 It.IsAny<OctoprintMachine>(),
-					 It.IsAny<string>(),
-					 It.IsAny<string>(),
-					 It.IsAny<IEnumerable<(string name, string value)>>(),
-					 It.IsAny<object>(),
-					 It.IsAny<CancellationToken>()
-				 ))
-				 .Callback((OctoprintMachine machine, string r, string m, IEnumerable<(string, string)> q, object b, CancellationToken c) =>
-				 {
+            _connector
+                 .Setup(p => p.Request(
+                     It.IsAny<OctoprintMachine>(),
+                     It.IsAny<string>(),
+                     It.IsAny<string>(),
+                     It.IsAny<IEnumerable<(string name, string value)>>(),
+                     It.IsAny<object>(),
+                     It.IsAny<CancellationToken>()
+                 ))
+                 .Callback((OctoprintMachine machine, string r, string m, IEnumerable<(string, string)> q, object b, CancellationToken c) =>
+                 {
                     Assert.AreEqual("api/job", r);
                     Assert.AreEqual("POST", m);
                     Assert.NotNull(b);
@@ -271,17 +271,17 @@ namespace Overseer.Tests
         bool ExecuteGCodeTest(Action act, Action<string> assert)
         {
             var callbackExecuted = false;
-			_connector
-				.Setup(p => p.Request(
-					It.IsAny<OctoprintMachine>(),
-					It.IsAny<string>(),
-					It.IsAny<string>(),
-					It.IsAny<IEnumerable<(string name, string value)>>(),
-					It.IsAny<object>(),
-					It.IsAny<CancellationToken>()
-				))
-				.Callback((OctoprintMachine machine, string r, string m, IEnumerable<(string, string)> q, object b, CancellationToken c) =>
-				{
+            _connector
+                .Setup(p => p.Request(
+                    It.IsAny<OctoprintMachine>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<IEnumerable<(string name, string value)>>(),
+                    It.IsAny<object>(),
+                    It.IsAny<CancellationToken>()
+                ))
+                .Callback((OctoprintMachine machine, string r, string m, IEnumerable<(string, string)> q, object b, CancellationToken c) =>
+                {
                     Assert.AreEqual("api/printer/command", r);
                     Assert.AreEqual("POST", m);
                     Assert.NotNull(b);

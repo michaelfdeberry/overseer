@@ -6,6 +6,6 @@ namespace Overseer.Data
     {
         IRepository<T> GetRepository<T>() where T : IEntity;
 
-		IValueStore GetValueStore();
+        IValueStore GetValueStore();
     }
 }

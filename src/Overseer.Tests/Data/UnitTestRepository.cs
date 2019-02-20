@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Overseer.Tests.Data
 {
-	public class UnitTestRepository<T> : IRepository<T> where T : IEntity
+    public class UnitTestRepository<T> : IRepository<T> where T : IEntity
     {
         readonly List<T> _entities = new List<T>();
 
@@ -23,14 +23,14 @@ namespace Overseer.Tests.Data
         public T GetById(int id)
         {
             return _entities.FirstOrDefault(x => x.Id == id);
-		}
+        }
 
-		public T Get(Expression<Func<T, bool>> predicate)
-		{
-			return _entities.FirstOrDefault(predicate.Compile());
-		}
+        public T Get(Expression<Func<T, bool>> predicate)
+        {
+            return _entities.FirstOrDefault(predicate.Compile());
+        }
 
-		public void Create(T entity)
+        public void Create(T entity)
         {
             entity.Id = _entities.Count > 0 ? _entities.Max(x => x.Id) + 1 : 1;
             _entities.Add(entity);
@@ -57,14 +57,14 @@ namespace Overseer.Tests.Data
             return _entities.Any(predicate.Compile());
         }
 
-		public int Count()
-		{
-			return _entities.Count();
-		}
+        public int Count()
+        {
+            return _entities.Count();
+        }
 
-		public void Update(IEnumerable<T> entities)
-		{
-			entities.ToList().ForEach(Update);
-		}
-	}
+        public void Update(IEnumerable<T> entities)
+        {
+            entities.ToList().ForEach(Update);
+        }
+    }
 }

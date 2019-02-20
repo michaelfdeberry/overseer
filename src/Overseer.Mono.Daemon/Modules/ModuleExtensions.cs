@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Overseer.Daemon.Modules
 {
-	public static class ModuleExtensions
+    public static class ModuleExtensions
     {
         public static HttpStatusCode Ok(this NancyModule module, Action action)
         {

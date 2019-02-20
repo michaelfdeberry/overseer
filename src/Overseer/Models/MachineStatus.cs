@@ -2,24 +2,24 @@
 
 namespace Overseer.Models
 {
-	public enum MachineState
-	{
-		Offline = 0,
-		Idle = 1,
-		Paused = 2,
-		Operational = 3
-	}
+    public enum MachineState
+    {
+        Offline = 0,
+        Idle = 1,
+        Paused = 2,
+        Operational = 3
+    }
 
-	public class TemperatureStatus
-	{
-		public int HeaterIndex { get; set; }
+    public class TemperatureStatus
+    {
+        public int HeaterIndex { get; set; }
 
-		public float Actual { get; set; }
+        public float Actual { get; set; }
 
-		public float Target { get; set; }
-	}
+        public float Target { get; set; }
+    }
 
-	public class MachineStatus
+    public class MachineStatus
     {
         /// <summary>
         /// The id of the configured machine that this status is for
@@ -62,9 +62,9 @@ namespace Overseer.Models
         /// </summary>
         public Dictionary<int, float> FlowRates { get; set; } = new Dictionary<int, float>();
 
-		/// <summary>
-		/// The current temperatures for each heater
-		/// </summary>
-		public Dictionary<int, TemperatureStatus> Temperatures { get; set; } = new Dictionary<int, TemperatureStatus>();
-	}
+        /// <summary>
+        /// The current temperatures for each heater
+        /// </summary>
+        public Dictionary<int, TemperatureStatus> Temperatures { get; set; } = new Dictionary<int, TemperatureStatus>();
+    }
 }

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Overseer.Daemon.Startup
 {
-	public class OverseerStartup
+    public class OverseerStartup
     {
         static readonly ILog Log = LogManager.GetLogger(typeof(OverseerStartup));
 
@@ -25,7 +25,7 @@ namespace Overseer.Daemon.Startup
         {
             Log.Info("Starting Server...");
 
-			var settings = context.GetValueStore().Get<ApplicationSettings>();
+            var settings = context.GetValueStore().Get<ApplicationSettings>();
             var endPoint = string.Format(EndPointFormatter, settings.LocalPort);
 
             WebApp.Start(endPoint, app =>
@@ -38,7 +38,7 @@ namespace Overseer.Daemon.Startup
                     EnableJavaScriptProxies = true,
                     EnableJSONP = false
                 });
-				
+                
                 app.Map("/api", a =>
                 {
                     a.UseNancy(new NancyOptions { Bootstrapper = new OverseerBootstrapper(context) });

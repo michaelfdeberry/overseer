@@ -12,12 +12,12 @@ namespace Overseer.Daemon.Modules
         public AuthenticationModule(UserManager userManager)
             : base("auth")
         {
-			Get("/", p =>
-			{
-				if (Context.CurrentUser.IsAuthenticated()) return HttpStatusCode.OK;
+            Get("/", p =>
+            {
+                if (Context.CurrentUser.IsAuthenticated()) return HttpStatusCode.OK;
 
-				return new TextResponse(HttpStatusCode.Unauthorized, $"requiresInitialization={userManager.RequiresInitialSetup()}");
-			});
+                return new TextResponse(HttpStatusCode.Unauthorized, $"requiresInitialization={userManager.RequiresInitialSetup()}");
+            });
 
             Post("/login", p => userManager.AuthenticateUser(this.Bind<UserDisplay>()));
 
@@ -36,15 +36,15 @@ namespace Overseer.Daemon.Modules
                 return userManager.DeauthenticateUser((int)p.id);
             });
 
-			Put("/setup", p =>
-			{
-				if (!userManager.RequiresInitialSetup())
-				{
-					return HttpStatusCode.PreconditionFailed;
-				}
+            Put("/setup", p =>
+            {
+                if (!userManager.RequiresInitialSetup())
+                {
+                    return HttpStatusCode.PreconditionFailed;
+                }
 
-				return userManager.CreateUser(this.Bind<UserDisplay>());
-			});
-		}
+                return userManager.CreateUser(this.Bind<UserDisplay>());
+            });
+        }
     }
 }

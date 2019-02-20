@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace Overseer.Tests.Data
 {
-	public class UnitTestContext : IDataContext
+    public class UnitTestContext : IDataContext
     {
         readonly Dictionary<Type, object> _repositoryCache = new Dictionary<Type, object>();
-		readonly IValueStore _valueStore = new UnitTestValueStore();
+        readonly IValueStore _valueStore = new UnitTestValueStore();
 
         public IRepository<T> GetRepository<T>() where T : IEntity
         {
@@ -25,14 +25,14 @@ namespace Overseer.Tests.Data
         {
             throw new NotImplementedException();
         }
-		
-		public IValueStore GetValueStore()
-		{
-			return _valueStore;
-		}
+        
+        public IValueStore GetValueStore()
+        {
+            return _valueStore;
+        }
 
-		public void Dispose()
-		{
-		}
-	}
+        public void Dispose()
+        {
+        }
+    }
 }

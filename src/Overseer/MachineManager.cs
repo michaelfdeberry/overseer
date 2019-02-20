@@ -7,8 +7,8 @@ using System.Linq;
 
 namespace Overseer
 {
-	public class MachineManager : IMachineManager
-	{
+    public class MachineManager : IMachineManager
+    {
         readonly IRepository<Machine> _machines;
         readonly MachineProviderManager _machineProviderManager;
 
@@ -56,24 +56,24 @@ namespace Overseer
 
         public Machine DeleteMachine(int machineId)
         {
-			var machine = GetMachine(machineId);
-			if (machine == null) return null;
+            var machine = GetMachine(machineId);
+            if (machine == null) return null;
 
             _machines.Delete(machineId);
-			return machine;
-		}
+            return machine;
+        }
 
-		public void SortMachines(List<int> sortOrder)
-		{
-			var machines = _machines.GetAll().ToList();
-			machines.ForEach(m => m.SortIndex = sortOrder.IndexOf(m.Id));
+        public void SortMachines(List<int> sortOrder)
+        {
+            var machines = _machines.GetAll().ToList();
+            machines.ForEach(m => m.SortIndex = sortOrder.IndexOf(m.Id));
 
-			_machines.Update(machines);
-		}
+            _machines.Update(machines);
+        }
 
-		Task LoadConfiguration(Machine machine)
-		{
-			return _machineProviderManager.GetProvider(machine).LoadConfiguration(machine);
-		}
-	}
+        Task LoadConfiguration(Machine machine)
+        {
+            return _machineProviderManager.GetProvider(machine).LoadConfiguration(machine);
+        }
+    }
 }

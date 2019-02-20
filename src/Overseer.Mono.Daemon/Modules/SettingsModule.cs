@@ -5,14 +5,14 @@ using Overseer.Models;
 
 namespace Overseer.Daemon.Modules
 {
-	public class ConfigurationModule : NancyModule
+    public class ConfigurationModule : NancyModule
     {
         public ConfigurationModule
-			(
-			IConfigurationManager configurationManager, 
-			IMachineManager machineManager, 
-			IUserManager userManager
-		)
+            (
+            IConfigurationManager configurationManager, 
+            IMachineManager machineManager, 
+            IUserManager userManager
+        )
             : base("settings")
         {
             this.RequiresMSOwinAuthentication();

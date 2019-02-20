@@ -188,15 +188,15 @@ namespace Overseer.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to {
-        ///	&quot;err&quot;: 0,
-        ///	&quot;size&quot;: 3778348,
-        ///	&quot;height&quot;: 10.10,
-        ///	&quot;firstLayerHeight&quot;: 0.20,
-        ///	&quot;layerHeight&quot;: 0.20,
-        ///	&quot;filament&quot;: [22575.2],
-        ///	&quot;generatedBy&quot;: &quot;Cura_SteamEngine 3.3.1&quot;,
-        ///	&quot;printDuration&quot;: 311,
-        ///	&quot;fileName&quot;: &quot;CFDMP_spidy.gcode&quot;
+        ///    &quot;err&quot;: 0,
+        ///    &quot;size&quot;: 3778348,
+        ///    &quot;height&quot;: 10.10,
+        ///    &quot;firstLayerHeight&quot;: 0.20,
+        ///    &quot;layerHeight&quot;: 0.20,
+        ///    &quot;filament&quot;: [22575.2],
+        ///    &quot;generatedBy&quot;: &quot;Cura_SteamEngine 3.3.1&quot;,
+        ///    &quot;printDuration&quot;: 311,
+        ///    &quot;fileName&quot;: &quot;CFDMP_spidy.gcode&quot;
         ///}
         ///.
         /// </summary>
@@ -208,15 +208,15 @@ namespace Overseer.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to {
-        ///	&quot;err&quot;: 0,
-        ///	&quot;size&quot;: 3778348,
-        ///	&quot;height&quot;: 0,
-        ///	&quot;firstLayerHeight&quot;: 0.20,
-        ///	&quot;layerHeight&quot;: 0.20,
-        ///	&quot;filament&quot;: [],
-        ///	&quot;generatedBy&quot;: &quot;Cura_SteamEngine 3.3.1&quot;,
-        ///	&quot;printDuration&quot;: 311,
-        ///	&quot;fileName&quot;: &quot;CFDMP_spidy.gcode&quot;
+        ///    &quot;err&quot;: 0,
+        ///    &quot;size&quot;: 3778348,
+        ///    &quot;height&quot;: 0,
+        ///    &quot;firstLayerHeight&quot;: 0.20,
+        ///    &quot;layerHeight&quot;: 0.20,
+        ///    &quot;filament&quot;: [],
+        ///    &quot;generatedBy&quot;: &quot;Cura_SteamEngine 3.3.1&quot;,
+        ///    &quot;printDuration&quot;: 311,
+        ///    &quot;fileName&quot;: &quot;CFDMP_spidy.gcode&quot;
         ///}
         ///.
         /// </summary>
@@ -228,15 +228,15 @@ namespace Overseer.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to {
-        ///	&quot;err&quot;: 0,
-        ///	&quot;size&quot;: 3778348,
-        ///	&quot;height&quot;: 10.10,
-        ///	&quot;firstLayerHeight&quot;: 0.20,
-        ///	&quot;layerHeight&quot;: 0.20,
-        ///	&quot;filament&quot;: [],
-        ///	&quot;generatedBy&quot;: &quot;Cura_SteamEngine 3.3.1&quot;,
-        ///	&quot;printDuration&quot;: 311,
-        ///	&quot;fileName&quot;: &quot;CFDMP_spidy.gcode&quot;
+        ///    &quot;err&quot;: 0,
+        ///    &quot;size&quot;: 3778348,
+        ///    &quot;height&quot;: 10.10,
+        ///    &quot;firstLayerHeight&quot;: 0.20,
+        ///    &quot;layerHeight&quot;: 0.20,
+        ///    &quot;filament&quot;: [],
+        ///    &quot;generatedBy&quot;: &quot;Cura_SteamEngine 3.3.1&quot;,
+        ///    &quot;printDuration&quot;: 311,
+        ///    &quot;fileName&quot;: &quot;CFDMP_spidy.gcode&quot;
         ///}
         ///.
         /// </summary>
@@ -248,30 +248,30 @@ namespace Overseer.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to {
-        ///	&quot;status&quot;: &quot;P&quot;,
-        ///	&quot;coords&quot;: {
-        ///		&quot;axesHomed&quot;: [1, 1, 1],
-        ///		&quot;xyz&quot;: [162.128, 79.418, 0.500],
-        ///		&quot;machine&quot;: [161.120, 79.295, 0.500],
-        ///		&quot;extr&quot;: [2374.9]
-        ///	},
-        ///	&quot;speeds&quot;: {
-        ///		&quot;requested&quot;: 45.0,
-        ///		&quot;top&quot;: 6.7
-        ///	},
-        ///	&quot;currentTool&quot;: 0,
-        ///	&quot;params&quot;: {
-        ///		&quot;atxPower&quot;: 0,
-        ///		&quot;fanPercent&quot;: [0, 93, 0, 100, 100, 100, 100, 0, 0],
-        ///		&quot;fanNames&quot;: [&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;],
-        ///		&quot;speedFactor&quot;: 100.0,
-        ///		&quot;extrFactors&quot;: [100.0],
-        ///		&quot;babystep&quot;: 0.000
-        ///	},
-        ///	&quot;seq&quot;: 20,
-        ///	&quot;sensors&quot;: {
-        ///		&quot;probeValue&quot;: 0,
-        ///		&quot;fanRPM [rest of string was truncated]&quot;;.
+        ///    &quot;status&quot;: &quot;P&quot;,
+        ///    &quot;coords&quot;: {
+        ///        &quot;axesHomed&quot;: [1, 1, 1],
+        ///        &quot;xyz&quot;: [162.128, 79.418, 0.500],
+        ///        &quot;machine&quot;: [161.120, 79.295, 0.500],
+        ///        &quot;extr&quot;: [2374.9]
+        ///    },
+        ///    &quot;speeds&quot;: {
+        ///        &quot;requested&quot;: 45.0,
+        ///        &quot;top&quot;: 6.7
+        ///    },
+        ///    &quot;currentTool&quot;: 0,
+        ///    &quot;params&quot;: {
+        ///        &quot;atxPower&quot;: 0,
+        ///        &quot;fanPercent&quot;: [0, 93, 0, 100, 100, 100, 100, 0, 0],
+        ///        &quot;fanNames&quot;: [&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;],
+        ///        &quot;speedFactor&quot;: 100.0,
+        ///        &quot;extrFactors&quot;: [100.0],
+        ///        &quot;babystep&quot;: 0.000
+        ///    },
+        ///    &quot;seq&quot;: 20,
+        ///    &quot;sensors&quot;: {
+        ///        &quot;probeValue&quot;: 0,
+        ///        &quot;fanRPM [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string RepRapFirmwareStatusType2 {
             get {
@@ -281,33 +281,33 @@ namespace Overseer.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to {
-        ///	&quot;status&quot;: &quot;P&quot;,
-        ///	&quot;coords&quot;: {
-        ///		&quot;axesHomed&quot;: [1, 1, 1],
-        ///		&quot;xyz&quot;: [79.068, 159.650, 0.500],
-        ///		&quot;machine&quot;: [79.063, 159.090, 0.500],
-        ///		&quot;extr&quot;: [2355.9]
-        ///	},
-        ///	&quot;speeds&quot;: {
-        ///		&quot;requested&quot;: 45.0,
-        ///		&quot;top&quot;: 45.0
-        ///	},
-        ///	&quot;currentTool&quot;: 0,
-        ///	&quot;params&quot;: {
-        ///		&quot;atxPower&quot;: 0,
-        ///		&quot;fanPercent&quot;: [0, 93, 0, 100, 100, 100, 100, 0, 0],
-        ///		&quot;speedFactor&quot;: 100.0,
-        ///		&quot;extrFactors&quot;: [100.0],
-        ///		&quot;babystep&quot;: 0.000
-        ///	},
-        ///	&quot;seq&quot;: 20,
-        ///	&quot;sensors&quot;: {
-        ///		&quot;probeValue&quot;: 0,
-        ///		&quot;fanRPM&quot;: 0
-        ///	},
-        ///	&quot;temps&quot;: {
-        ///		&quot;bed&quot;: {
-        ///			&quot;current&quot;: 60 [rest of string was truncated]&quot;;.
+        ///    &quot;status&quot;: &quot;P&quot;,
+        ///    &quot;coords&quot;: {
+        ///        &quot;axesHomed&quot;: [1, 1, 1],
+        ///        &quot;xyz&quot;: [79.068, 159.650, 0.500],
+        ///        &quot;machine&quot;: [79.063, 159.090, 0.500],
+        ///        &quot;extr&quot;: [2355.9]
+        ///    },
+        ///    &quot;speeds&quot;: {
+        ///        &quot;requested&quot;: 45.0,
+        ///        &quot;top&quot;: 45.0
+        ///    },
+        ///    &quot;currentTool&quot;: 0,
+        ///    &quot;params&quot;: {
+        ///        &quot;atxPower&quot;: 0,
+        ///        &quot;fanPercent&quot;: [0, 93, 0, 100, 100, 100, 100, 0, 0],
+        ///        &quot;speedFactor&quot;: 100.0,
+        ///        &quot;extrFactors&quot;: [100.0],
+        ///        &quot;babystep&quot;: 0.000
+        ///    },
+        ///    &quot;seq&quot;: 20,
+        ///    &quot;sensors&quot;: {
+        ///        &quot;probeValue&quot;: 0,
+        ///        &quot;fanRPM&quot;: 0
+        ///    },
+        ///    &quot;temps&quot;: {
+        ///        &quot;bed&quot;: {
+        ///            &quot;current&quot;: 60 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string RepRapFirmwareStatusType3 {
             get {

@@ -5,8 +5,8 @@ using Overseer.Data;
 namespace Overseer.Models
 {
     public class CertificateDetails : IEntity
-	{
-		public CertificateDetails() { }
+    {
+        public CertificateDetails() { }
 
         public CertificateDetails(X509Certificate certificate)
         {
@@ -17,9 +17,9 @@ namespace Overseer.Models
             Thumbprint = certificate.GetCertHashString()?.ToLower();
         }
 
-		public int Id { get; set; }
+        public int Id { get; set; }
 
-		public string IssuedTo { get; set; }
+        public string IssuedTo { get; set; }
 
         public string IssuedBy { get; set; }
 
@@ -29,7 +29,7 @@ namespace Overseer.Models
 
         public string Thumbprint { get; set; }
 
-		public override string ToString()
+        public override string ToString()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }

@@ -10,72 +10,72 @@ using System;
 
 namespace Overseer.Daemon.Startup
 {
-	public class OverseerBootstrapper : DefaultNancyBootstrapper
+    public class OverseerBootstrapper : DefaultNancyBootstrapper
     {
         public static TinyIoCContainer Container = new TinyIoCContainer();
 
-		CertificateExceptionHandler _certificateExceptionHandler;
+        CertificateExceptionHandler _certificateExceptionHandler;
         readonly IDataContext _context;
-		MonitoringService _monitoringService;
+        MonitoringService _monitoringService;
 
         public OverseerBootstrapper(IDataContext context)
         {
             _context = context;
-			
-			GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () =>
-			{
-				var serializer = new JsonSerializer();
-				serializer.ContractResolver = new OverseerContractResolver();
-				serializer.Formatting = Formatting.None;
+            
+            GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () =>
+            {
+                var serializer = new JsonSerializer();
+                serializer.ContractResolver = new OverseerContractResolver();
+                serializer.Formatting = Formatting.None;
 
-				return serializer;
-			});
-			
-			GlobalHost.DependencyResolver.Register(typeof(StatusHub), () =>
-			{
-				return Container.Resolve<StatusHub>();
-			});
-		}
+                return serializer;
+            });
+            
+            GlobalHost.DependencyResolver.Register(typeof(StatusHub), () =>
+            {
+                return Container.Resolve<StatusHub>();
+            });
+        }
 
-		protected override void ConfigureApplicationContainer(TinyIoCContainer container)
+        protected override void ConfigureApplicationContainer(TinyIoCContainer container)
         {
             base.ConfigureApplicationContainer(container);
 
             container.Register((c, n) => _context);
-			
+            
             container.Register<Func<Machine, IMachineProvider>>((c, n) => machine =>
             {
-				var machineType = MachineProviderManager.GetProviderType(machine);
-				var provider = (IMachineProvider)Activator.CreateInstance(machineType, machine);
+                var machineType = MachineProviderManager.GetProviderType(machine);
+                var provider = (IMachineProvider)Activator.CreateInstance(machineType, machine);
 
-				return provider;
-			});
+                return provider;
+            });
 
-			container.Register<IConfigurationManager, ConfigurationManager>();
-			container.Register<IUserManager, UserManager>();
-			container.Register<IMachineManager, MachineManager>();
-			container.Register<IControlManager, ControlManager>();
+            container.Register<IConfigurationManager, ConfigurationManager>();
+            container.Register<IUserManager, UserManager>();
+            container.Register<IMachineManager, MachineManager>();
+            container.Register<IControlManager, ControlManager>();
 
-			container.Register<IMonitoringService>((c, n) =>
-			{
-				if (_monitoringService == null)
-				{
-					_monitoringService = new MonitoringService(
-						c.Resolve<MachineManager>(), 
-						c.Resolve<ConfigurationManager>(), 
-						c.Resolve<MachineProviderManager>());
+            container.Register<IMonitoringService>((c, n) =>
+            {
+                if (_monitoringService == null)
+                {
+                    _monitoringService = new MonitoringService(
+                        c.Resolve<MachineManager>(), 
+                        c.Resolve<ConfigurationManager>(), 
+                        c.Resolve<MachineProviderManager>());
 
-					_monitoringService.StatusUpdate += (s, args) =>
-					{
-						StatusHub.PushStatusUpdate(args.Data);
-					};
-				}
+                    _monitoringService.StatusUpdate += (s, args) =>
+                    {
+                        StatusHub.PushStatusUpdate(args.Data);
+                    };
+                }
 
-				return _monitoringService;
-			});
+                return _monitoringService;
+            });
 
-			_certificateExceptionHandler = container.Resolve<CertificateExceptionHandler>();
-			_certificateExceptionHandler.Initialize();
+            _certificateExceptionHandler = container.Resolve<CertificateExceptionHandler>();
+            _certificateExceptionHandler.Initialize();
         }
 
         protected override TinyIoCContainer GetApplicationContainer()

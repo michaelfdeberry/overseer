@@ -29,16 +29,16 @@ namespace Overseer.Daemon.Hubs
             {
                 Log.Info("A client connected, initiating monitoring...");                
                 _monitoringService.StartMonitoring();
-				_monitoringService.PollProviders();
+                _monitoringService.PollProviders();
             }
 
             return true;
         }
 
-		public void PollProviders()
-		{
-			_monitoringService.PollProviders();
-		}
+        public void PollProviders()
+        {
+            _monitoringService.PollProviders();
+        }
 
         public override Task OnDisconnected(bool stopCalled)
         {

@@ -7,8 +7,8 @@ using System.Linq;
 
 namespace Overseer.Tests
 {
-	[TestFixture]
-	public class UserManagerTests
+    [TestFixture]
+    public class UserManagerTests
     {
         const string Username = "UnitTestUser";
         const string Password = "UnitTestPassword";
@@ -18,7 +18,7 @@ namespace Overseer.Tests
         IDataContext _context;
         IRepository<User> _users;
 
-		[SetUp]
+        [SetUp]
         public void Setup()
         {
             _context = new UnitTestContext();
@@ -26,35 +26,35 @@ namespace Overseer.Tests
             _userManager = new UserManager(_context);
         }
 
-		[Test]
-		public void ShouldFailToCreateUserWithoutUsername()
-		{
-			var ex = Assert.Throws<OverseerException>(() => _userManager.CreateUser(new UserDisplay
-			{
-				Password = Password
-			}));
-			Assert.AreEqual("invalid_username", ex.Message);
-		}
+        [Test]
+        public void ShouldFailToCreateUserWithoutUsername()
+        {
+            var ex = Assert.Throws<OverseerException>(() => _userManager.CreateUser(new UserDisplay
+            {
+                Password = Password
+            }));
+            Assert.AreEqual("invalid_username", ex.Message);
+        }
 
-		[Test]
-		public void ShouldFailToCreateUserWithoutPassword()
-		{
-			var ex = Assert.Throws<OverseerException>(() => _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username
-			}));
-			Assert.AreEqual("invalid_password", ex.Message);
-		}
+        [Test]
+        public void ShouldFailToCreateUserWithoutPassword()
+        {
+            var ex = Assert.Throws<OverseerException>(() => _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username
+            }));
+            Assert.AreEqual("invalid_password", ex.Message);
+        }
 
-		[Test]
+        [Test]
         public void ShouldCreateUser()
         {
             var userDisplay = _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password,
-				SessionLifetime = 7
-			});
+            {
+                Username = Username,
+                Password = Password,
+                SessionLifetime = 7
+            });
 
             Assert.NotNull(userDisplay);
             Assert.AreEqual(Username, userDisplay.Username);
@@ -77,16 +77,16 @@ namespace Overseer.Tests
         public void ShouldFailToCreateUserWithDuplicateUsername()
         {
             _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password
-			});
+            {
+                Username = Username,
+                Password = Password
+            });
             var ex = Assert.Throws<OverseerException>(() => _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password,
-				SessionLifetime = 7
-			}));
+            {
+                Username = Username,
+                Password = Password,
+                SessionLifetime = 7
+            }));
             Assert.AreEqual("unavailable_username", ex.Message);
         }
 
@@ -94,10 +94,10 @@ namespace Overseer.Tests
         public void ShouldFailToAuthenticateIfUserNotFound()
         {
             _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password
-			});
+            {
+                Username = Username,
+                Password = Password
+            });
 
             var ex = Assert.Throws<OverseerException>(() => _userManager.AuthenticateUser("FakeName", Password));
             Assert.AreEqual("invalid_username", ex.Message);
@@ -107,10 +107,10 @@ namespace Overseer.Tests
         public void ShouldFailToAuthenticateIfPasswordIsIncorrect()
         {
             _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password
-			});
+            {
+                Username = Username,
+                Password = Password
+            });
 
             var ex = Assert.Throws<OverseerException>(() => _userManager.AuthenticateUser(Username, "WrongPassword"));
             Assert.AreEqual("invalid_password", ex.Message);
@@ -118,13 +118,13 @@ namespace Overseer.Tests
 
         [Test]
         public void ShouldAuthenticateUserWithExpiringSession()
-		{
-			var createdUser = _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password,
-				SessionLifetime = 7
-			});
+        {
+            var createdUser = _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = Password,
+                SessionLifetime = 7
+            });
             Assert.NotNull(createdUser);
 
             var authenticatedUser = _userManager.AuthenticateUser(Username, Password);
@@ -137,12 +137,12 @@ namespace Overseer.Tests
 
         [Test]
         public void ShouldAuthenticateUserWithNonExpiringSession()
-		{
-			var createdUser = _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password
-			});
+        {
+            var createdUser = _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = Password
+            });
             Assert.NotNull(createdUser);
 
             var authenticatedUser = _userManager.AuthenticateUser(Username, Password);
@@ -156,41 +156,41 @@ namespace Overseer.Tests
         public void ShouldUseExistingSessionTokenForNewSession()
         {
             _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password,
-				SessionLifetime = 7
-			});
+            {
+                Username = Username,
+                Password = Password,
+                SessionLifetime = 7
+            });
 
             var session1 = _userManager.AuthenticateUser(Username, Password);
             var session2 = _userManager.AuthenticateUser(Username, Password);
             Assert.AreEqual(session1.Token, session2.Token);
         }
-		
+        
         [Test]
         public void ShouldAuthenticateIfRequiresAuthenticationIsEnabled()
         {
             _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password, 
-				SessionLifetime = 7
-			});
+            {
+                Username = Username,
+                Password = Password, 
+                SessionLifetime = 7
+            });
             var session = _userManager.AuthenticateUser(Username, Password);
             
             Assert.IsNotNull(_userManager.AuthenticateToken(session.Token));
         }
-		
+        
         [Test]
         public void ShouldAuthenticateTokenWithExpiration()
-		{
-			_userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password,
-				SessionLifetime = 7
-			});
-			var passwordAuthedUser = _userManager.AuthenticateUser(Username, Password);
+        {
+            _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = Password,
+                SessionLifetime = 7
+            });
+            var passwordAuthedUser = _userManager.AuthenticateUser(Username, Password);
             var tokenAuthedUser = _userManager.AuthenticateToken(passwordAuthedUser.Token);
             Assert.NotNull(tokenAuthedUser);
             Assert.AreEqual(passwordAuthedUser.Token, tokenAuthedUser.Token);
@@ -198,13 +198,13 @@ namespace Overseer.Tests
 
         [Test]
         public void ShouldAuthenticateTokenWithoutExpiration()
-		{
-			_userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password
-			});
-			var passwordAuthedUser = _userManager.AuthenticateUser(Username, Password);
+        {
+            _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = Password
+            });
+            var passwordAuthedUser = _userManager.AuthenticateUser(Username, Password);
             var tokenAuthedUser = _userManager.AuthenticateToken(passwordAuthedUser.Token);
             Assert.NotNull(tokenAuthedUser);
             Assert.AreEqual(passwordAuthedUser.Token, tokenAuthedUser.Token);
@@ -220,14 +220,14 @@ namespace Overseer.Tests
 
         [Test]
         public void ShouldFailToAuthenticateExpiredToken()
-		{
-			_userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password,
-				SessionLifetime = 7
-			});
-			var passwordAuthedUser = _userManager.AuthenticateUser(Username, Password);
+        {
+            _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = Password,
+                SessionLifetime = 7
+            });
+            var passwordAuthedUser = _userManager.AuthenticateUser(Username, Password);
 
             var user = _users.GetById(passwordAuthedUser.Id);
             user.TokenExpiration = DateTime.Now.Subtract(TimeSpan.FromDays(8));
@@ -239,14 +239,14 @@ namespace Overseer.Tests
 
         [Test]
         public void ShouldDeauthenticateUserByToken()
-		{
-			_userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password,
-				SessionLifetime = 7
-			});
-			var session = _userManager.AuthenticateUser(Username, Password);
+        {
+            _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = Password,
+                SessionLifetime = 7
+            });
+            var session = _userManager.AuthenticateUser(Username, Password);
             Assert.True(session.IsLoggedIn);
 
             session = _userManager.DeauthenticateUser(session.Token);
@@ -255,14 +255,14 @@ namespace Overseer.Tests
 
         [Test]
         public void ShouldDeauthenticateUserById()
-		{
-			_userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password,
-				SessionLifetime = 7
-			});
-			var session = _userManager.AuthenticateUser(Username, Password);
+        {
+            _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = Password,
+                SessionLifetime = 7
+            });
+            var session = _userManager.AuthenticateUser(Username, Password);
             Assert.True(session.IsLoggedIn);
 
             session = _userManager.DeauthenticateUser(session.Id);
@@ -274,11 +274,11 @@ namespace Overseer.Tests
         {
             for (var i = 0; i < 10; i++)
             {
-				_userManager.CreateUser(new UserDisplay
-				{
-					Username = Username + i,
-					Password = Password
-				});
+                _userManager.CreateUser(new UserDisplay
+                {
+                    Username = Username + i,
+                    Password = Password
+                });
             }
 
             var users = _users.GetAll();
@@ -294,56 +294,56 @@ namespace Overseer.Tests
         [Test]
         public void ShouldGetUserById()
         {
-			var user1 = _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password,
-				SessionLifetime = 7
-			});
+            var user1 = _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = Password,
+                SessionLifetime = 7
+            });
 
-			var user2 = _userManager.GetUser(user1.Id);
+            var user2 = _userManager.GetUser(user1.Id);
 
             Assert.NotNull(user2);
             Assert.AreEqual(user1.Id, user2.Id);
         }
 
-		[Test]
-		public void ShouldFailToGetUserById()
-		{
-			Assert.Throws<NullReferenceException>(() => _userManager.GetUser(100));
-		}
+        [Test]
+        public void ShouldFailToGetUserById()
+        {
+            Assert.Throws<NullReferenceException>(() => _userManager.GetUser(100));
+        }
 
-		[Test]
-		public void ShouldNotAllowDeletionOfLastUser()
-		{
-			_userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = "Password1",
-				SessionLifetime = 7
-			});
+        [Test]
+        public void ShouldNotAllowDeletionOfLastUser()
+        {
+            _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = "Password1",
+                SessionLifetime = 7
+            });
 
-			var user = _users.GetById(1);
-			Assert.NotNull(user);
-			Assert.Throws<OverseerException>(() => _userManager.DeleteUser(user.Id));
-		}
+            var user = _users.GetById(1);
+            Assert.NotNull(user);
+            Assert.Throws<OverseerException>(() => _userManager.DeleteUser(user.Id));
+        }
 
-		[Test]
+        [Test]
         public void ShouldChangePasswordByRecreatingUser()
         {
-			_userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = "Password1",
-				SessionLifetime = 7
-			});
+            _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = "Password1",
+                SessionLifetime = 7
+            });
 
-			var first = _users.GetById(1);
+            var first = _users.GetById(1);
             Assert.NotNull(first);
             Assert.NotNull(_userManager.AuthenticateUser(Username, "Password1"));
 
             _userManager.UpdateUser(new UserDisplay
-			{
+            {
                 Id = first.Id,
                 Username = Username,
                 Password = "Password2"
@@ -358,11 +358,11 @@ namespace Overseer.Tests
         public void ShouldChangeSessionDuration()
         {
             var user = _userManager.CreateUser(new UserDisplay
-			{
-				Username = Username,
-				Password = Password
-			});
-			Assert.IsNull(user.SessionLifetime);
+            {
+                Username = Username,
+                Password = Password
+            });
+            Assert.IsNull(user.SessionLifetime);
 
             user.SessionLifetime = 7;
             user = _userManager.UpdateUser(user);            

@@ -1,8 +1,8 @@
 ﻿namespace Overseer.Models
 {
-	public class ApplicationSettings
+    public class ApplicationSettings
     {
-		public const int DefaultPort = 9000;
+        public const int DefaultPort = 9000;
         public const int DefaultInterval = 10000;
         
         /// <summary>
@@ -20,10 +20,10 @@
         /// visible on the monitoring screen
         /// </summary>
         public bool HideIdleMachines { get; set; }
-		
-		/// <summary>
-		/// Gets/Sets the port which the overseer daemon listens on
-		/// </summary>
-		public int LocalPort { get; set; } = DefaultPort;		
-	}
+        
+        /// <summary>
+        /// Gets/Sets the port which the overseer daemon listens on
+        /// </summary>
+        public int LocalPort { get; set; } = DefaultPort;        
+    }
 }

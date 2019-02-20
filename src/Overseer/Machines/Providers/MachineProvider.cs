@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Overseer.Machines.Providers
 {
-	public abstract class MachineProvider<TMachine> : IMachineProvider<TMachine> where TMachine: Machine, new()
+    public abstract class MachineProvider<TMachine> : IMachineProvider<TMachine> where TMachine: Machine, new()
     {
         protected static readonly ILog Log = LogManager.GetLogger(typeof(MachineProvider<TMachine>));
 
@@ -21,7 +21,7 @@ namespace Overseer.Machines.Providers
 
         int _exceptionCount;
 
-		public int MachineId => Machine.Id;
+        public int MachineId => Machine.Id;
 
         public TMachine Machine { get; protected set; }
 
@@ -63,13 +63,13 @@ namespace Overseer.Machines.Providers
         public virtual Task CancelJob()
         {
             return ExecuteGcode("M0");
-		}
+        }
 
-		public abstract Task ExecuteGcode(string command);
+        public abstract Task ExecuteGcode(string command);
 
-		public abstract Task LoadConfiguration(Machine machine);
+        public abstract Task LoadConfiguration(Machine machine);
 
-		protected abstract Task<MachineStatus> AcquireStatus(CancellationToken cancellationToken);
+        protected abstract Task<MachineStatus> AcquireStatus(CancellationToken cancellationToken);
         
         public async Task<MachineStatus> GetStatus(CancellationToken cancellationToken)
         {
@@ -103,5 +103,5 @@ namespace Overseer.Machines.Providers
                 return new MachineStatus { MachineId = MachineId };
             }
         }
-	}
+    }
 }

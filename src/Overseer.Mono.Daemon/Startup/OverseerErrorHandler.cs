@@ -7,7 +7,7 @@ using Overseer.Models;
 
 namespace Overseer.Daemon.Startup
 {
-	public class OverseerErrorHandler : IStatusCodeHandler
+    public class OverseerErrorHandler : IStatusCodeHandler
     {
         static readonly ILog Log = LogManager.GetLogger(typeof(OverseerErrorHandler));
 
@@ -37,7 +37,7 @@ namespace Overseer.Daemon.Startup
                 exceptionModel = new { error = exception.Message };
             }
 
-			var serializer = new DefaultJsonSerializer(context.Environment);
+            var serializer = new DefaultJsonSerializer(context.Environment);
             context.Response = new JsonResponse(exceptionModel, serializer, context.Environment)
             {
                 StatusCode = HttpStatusCode.BadRequest
