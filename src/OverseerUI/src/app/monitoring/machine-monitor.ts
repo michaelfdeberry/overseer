@@ -1,5 +1,6 @@
 import { MachineStatus, idleStates, MachineState } from "../models/machine-status.model";
 import { Machine, MachineType, MachineTool, MachineToolType } from "../models/machine.model";
+import { ApplicationSettings } from "../models/settings.model";
 
 export class MachineMonitor implements Machine {
     id: number;
@@ -13,6 +14,7 @@ export class MachineMonitor implements Machine {
     apiKey?: string;
     profile: string;
     availableProfiles: Map<string, string>;
+    sortIndex: number;
 
     get machineTypeName() {
         return MachineType[this.machineType];
@@ -20,7 +22,7 @@ export class MachineMonitor implements Machine {
 
     private statusBacking: MachineStatus;
 
-    constructor(machine: any, private settings: any) {
+    constructor(machine: Machine, private settings: ApplicationSettings) {
         Object.assign(this, machine);
     }
 

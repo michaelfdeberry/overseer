@@ -28,6 +28,7 @@ export interface Machine {
     webCamUrl: string;
     snapshotUrl: string;
     tools: MachineTool[];
+    sortIndex: number;
 
     apiKey?: string;
     profile: string;

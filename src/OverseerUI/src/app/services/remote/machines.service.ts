@@ -32,4 +32,8 @@ export class RemoteMachinesService implements MachinesService {
     deleteMachine(machine: Machine): Observable<Machine> {
         return this.http.delete<Machine>(this.getEndpoint(machine.id));
     }
+
+    sortMachines(sortOrder: number[]): Observable<any> {
+        return this.http.post(this.getEndpoint("sort"), sortOrder);
+    }
 }

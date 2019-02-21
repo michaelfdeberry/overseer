@@ -30,4 +30,11 @@ export class MachineStorageService {
         return db.delete(machineStoreName, machineId);
     }
 
+    async updateMachines(machines: Machine[]) {
+        const db = await openDatabase();
+        const promises: Promise<any>[] = [];
+        machines.forEach(machine => promises.push(db.update(machineStoreName, machine)));
+
+        return Promise.all(promises);
+    }
 }

@@ -1,6 +1,7 @@
-<table *ngIf="machines$ | async;  let machines" class="config-table machines">
+<table *ngIf="machines" class="config-table machines">
     <thead>
     <tr>
+        <th class="sort-column"></th>
         <th translate>name</th>
         <th translate>machineType</th>
         <th class="centered" translate>monitoringEnabled</th>
@@ -11,9 +12,17 @@
         </th>
     </tr>
     </thead>
-    <tbody>
-    <tr *ngFor="let machine of machines">
-        <td>{{ machine.name }}</td>
+    <tbody class="drag-boundary" cdkDropList (cdkDropListDropped)="drop($event)">
+    <tr *ngFor="let machine of machines; let $index = index" cdkDrag cdkDragBoundary=".drag-boundary">
+        <td class="sort-column">
+            <button mat-button (click)="moveUp($index)" [disabled]="$index === 0">
+                <mat-icon>arrow_drop_up</mat-icon>
+            </button>
+            <button mat-button (click)="moveDown($index)" [disabled]="$index === machines.length - 1">
+                <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+        </td>
+        <td class="name">{{ machine.name }}</td>
         <td>{{ getMachineTypeName(machine.machineType) }}</td>
         <td class="centered">
             <mat-icon *ngIf="machine.disabled">warning</mat-icon>

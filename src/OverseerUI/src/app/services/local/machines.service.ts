@@ -63,4 +63,16 @@ export class LocalMachinesService implements MachinesService {
         })
             .pipe(catchError(err => this.errorHandler.handle(err)));
     }
+
+    sortMachines(sortOrder: number[]): Observable<any> {
+        const self = this;
+        return defer(async function() {
+            const machines = await self.machineStorage.getMachines();
+
+            await self.machineStorage.updateMachines(machines.map(function(machine) {
+                machine.sortIndex = sortOrder.indexOf(machine.id);
+                return machine;
+            }));
+        });
+    }
 }

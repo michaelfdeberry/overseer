@@ -15,4 +15,6 @@ export abstract class MachinesService {
     abstract updateMachine(machine: Machine): Observable<Machine>;
 
     abstract deleteMachine(machine: Machine): Observable<Machine>;
+
+    abstract sortMachines(sortOrder: number[]): Observable<any>;
 }

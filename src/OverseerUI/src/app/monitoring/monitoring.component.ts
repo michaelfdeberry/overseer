@@ -5,6 +5,7 @@ import { MachineMonitor } from "./machine-monitor";
 import { MachinesService } from "../services/machines.service";
 import { SettingsService } from "../services/settings.service";
 import { MediaObserver, MediaChange } from "@angular/flex-layout";
+import { simpleMachineSort } from "../shared/machine-sorts";
 
 @Component({
     templateUrl: "./monitoring.component.html",
@@ -25,6 +26,10 @@ export class MonitoringComponent implements OnInit, OnDestroy {
     machineStatusSubscription: Subscription;
     mediaChangeSubscription: Subscription;
 
+    setMachines(machines: MachineMonitor[]) {
+        this.machines = machines.sort(simpleMachineSort);
+    }
+
     ngOnInit() {
         forkJoin(
             this.settingsService.getSettings(),
@@ -32,17 +37,21 @@ export class MonitoringComponent implements OnInit, OnDestroy {
         )
             .subscribe(results => {
                 this.settings = results[0];
-                this.machines = results[1].map(machine => new MachineMonitor(machine, this.settings));
+                this.machines = results[1]
+                    .map(machine => new MachineMonitor(machine, this.settings))
+                    .sort(simpleMachineSort);
 
                 this.monitoringService.enableMonitoring();
                 this.machineStatusSubscription = this.monitoringService.statusEvent$.subscribe(status => {
-                    this.machines = this.machines.map(machine => {
-                        if (machine.id === status.machineId) {
-                            machine.status = status;
-                        }
+                    this.machines = this.machines
+                        .map(machine => {
+                            if (machine.id === status.machineId) {
+                                machine.status = status;
+                            }
 
-                        return machine;
-                    });
+                            return machine;
+                        })
+                        .sort(simpleMachineSort);
                 });
 
                 this.mediaChangeSubscription = this.mediaObserver.media$.subscribe((change: MediaChange) => {
