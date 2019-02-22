@@ -16,6 +16,7 @@ export class LocalSettingsService implements SettingsService {
         const settings: ApplicationSettings = {
             hideDisabledMachines: false,
             hideIdleMachines: false,
+            sortByTimeRemaining: false,
             interval: 10000
         };
 

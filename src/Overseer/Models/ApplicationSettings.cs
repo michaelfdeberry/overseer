@@ -20,6 +20,12 @@
         /// visible on the monitoring screen
         /// </summary>
         public bool HideIdleMachines { get; set; }
+
+        /// <summary>
+        /// If true the monitoring view will be sorted by the etimated 
+        /// remaining time. 
+        /// </summary>
+        public bool SortByTimeRemaining { get; set; }
         
         /// <summary>
         /// Gets/Sets the port which the overseer daemon listens on

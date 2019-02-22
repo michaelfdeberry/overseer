@@ -14,6 +14,10 @@ export const idleStates = [
     MachineState.Idle,
 ];
 
+export function isIdle(state: MachineState) {
+    return state <= MachineState.Idle;
+}
+
 export interface TemperatureStatus {
     heaterIndex: number;
     actual: number;

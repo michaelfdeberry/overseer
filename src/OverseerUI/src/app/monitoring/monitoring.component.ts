@@ -5,7 +5,7 @@ import { MachineMonitor } from "./machine-monitor";
 import { MachinesService } from "../services/machines.service";
 import { SettingsService } from "../services/settings.service";
 import { MediaObserver, MediaChange } from "@angular/flex-layout";
-import { simpleMachineSort } from "../shared/machine-sorts";
+import { simpleMachineSort, machineSortFunctionFactory } from "../shared/machine-sorts";
 
 @Component({
     templateUrl: "./monitoring.component.html",
@@ -51,7 +51,7 @@ export class MonitoringComponent implements OnInit, OnDestroy {
 
                             return machine;
                         })
-                        .sort(simpleMachineSort);
+                        .sort(machineSortFunctionFactory(this.settings));
                 });
 
                 this.mediaChangeSubscription = this.mediaObserver.media$.subscribe((change: MediaChange) => {

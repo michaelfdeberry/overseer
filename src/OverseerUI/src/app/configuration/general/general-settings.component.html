@@ -4,7 +4,7 @@
         <app-theme-selector [(form)]="clientForm"></app-theme-selector>
     </form>
     <h5 translate>appSettings</h5>
-    <form *ngIf="configuration$ | async" [formGroup]="form" (ngSubmit)="save()">
+    <form *ngIf="settings" [formGroup]="form" (ngSubmit)="save()">
         <mat-form-field>
             <mat-select placeholder="Poll Interval" formControlName="interval">
                 <mat-option *ngFor="let interval of intervals" [value]="interval.value">
@@ -16,6 +16,8 @@
         <mat-slide-toggle formControlName="hideDisabledMachines">{{'hideDisabledMachines' | translate}}</mat-slide-toggle>
 
         <mat-slide-toggle formControlName="hideIdleMachines">{{'hideIdleMachines' | translate}}</mat-slide-toggle>
+
+        <mat-slide-toggle formControlName="sortByTimeRemaining">{{ 'sortByTimeRemaining' | translate }}</mat-slide-toggle>
 
         <div class="actions">
             <button mat-button (click)="cancel()" [disabled]="form.pristine">{{'cancel' | translate}}</button>

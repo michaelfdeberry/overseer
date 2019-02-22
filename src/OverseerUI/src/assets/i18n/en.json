@@ -25,6 +25,7 @@
     "localPortTitle": "The local port where the Overseer web app will be hosted.",
     "hideDisabledMachines": "Hide Disabled Machines",
     "hideIdleMachines": "Hide Idle Machines",
+    "sortByTimeRemaining": "Sort By Estimated Time Remaining",
     "name": "Name",
     "machineType": "Machine Type",
     "monitoringDisabled": "Monitoring Disabled",
