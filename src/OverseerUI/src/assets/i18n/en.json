@@ -8,6 +8,7 @@
     "confirm": "Confirm",
     "dismiss": "Dismiss",
     "machines": "Machines",
+    "sort": "Sort",
     "noMachines": "No machines have been configured.",
     "noUsers": "No users have been configured.",
     "noMachine": "There are no machines configured.",
