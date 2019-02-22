@@ -25,6 +25,7 @@ export class MonitoringComponent implements OnInit, OnDestroy {
     machines: MachineMonitor[];
     machineStatusSubscription: Subscription;
     mediaChangeSubscription: Subscription;
+    currentMediaSize: string;
 
     setMachines(machines: MachineMonitor[]) {
         this.machines = machines.sort(simpleMachineSort);
@@ -52,23 +53,30 @@ export class MonitoringComponent implements OnInit, OnDestroy {
                             return machine;
                         })
                         .sort(machineSortFunctionFactory(this.settings));
+
+                    this.resizeMachinesGrid();
                 });
 
                 this.mediaChangeSubscription = this.mediaObserver.media$.subscribe((change: MediaChange) => {
-                    const count = this.machines.filter(m => m.isVisible).length;
-                    if (["xs", "sm"].indexOf(change.mqAlias) >= 0) {
-                        this.columns = 1;
-                        this.rowHeight = "4:3";
-                    } else if (count >= 1 && count <= 9) {
-                        const base = change.mqAlias === "md" ? 2 : 3;
-                        this.columns = Math.ceil(count / (Math.floor(count / base) + (count % base > 0 ? 1 : 0)));
-                        this.rowHeight = "fit";
-                    } else {
-                        this.columns = 3;
-                        this.rowHeight = "4:3";
-                    }
+                    this.currentMediaSize = change.mqAlias;
+                    this.resizeMachinesGrid();
                 });
             });
+    }
+
+    private resizeMachinesGrid() {
+        const count = this.machines.filter(m => m.isVisible).length;
+        if (["xs", "sm"].indexOf(this.currentMediaSize) >= 0) {
+            this.columns = 1;
+            this.rowHeight = "4:3";
+        } else if (count >= 1 && count <= 9) {
+            const base = this.currentMediaSize === "md" ? 2 : 3;
+            this.columns = Math.ceil(count / (Math.floor(count / base) + (count % base > 0 ? 1 : 0)));
+            this.rowHeight = "fit";
+        } else {
+            this.columns = 3;
+            this.rowHeight = "4:3";
+        }
     }
 
     ngOnDestroy() {
