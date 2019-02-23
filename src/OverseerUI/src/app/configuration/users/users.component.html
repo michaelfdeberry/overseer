@@ -3,7 +3,7 @@
     <tr>
         <th translate>username</th>
         <th translate>sessionLifetime</th>
-        <th class="centered" translate>isLoggedIn</th>
+        <th  class="centered hidden-mobile" translate>isLoggedIn</th>
         <th class="action">
             <a routerLink="/configuration/users/add" mat-button>
                 <mat-icon>add</mat-icon> {{ 'add' | translate }}
@@ -20,7 +20,7 @@
             </span>
             <ng-template #elseBlock><span translate>indefinite</span></ng-template>
         </td>
-        <td class="centered">
+        <td class="centered hidden-mobile">
             <mat-icon *ngIf="user.isLoggedIn">check</mat-icon>
         </td>
         <td class="action">
