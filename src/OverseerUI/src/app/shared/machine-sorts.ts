@@ -11,7 +11,7 @@ export function simpleMachineSort(left: Machine, right: Machine): number {
 }
 
 export function timeRemainingMachineSort(left: MachineMonitor, right: MachineMonitor) {
-    if (!left.status || !right.status) {
+    if (!left.status && !right.status) {
          return simpleMachineSort(left, right);
     }
 
