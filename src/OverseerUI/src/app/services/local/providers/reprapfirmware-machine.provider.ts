@@ -127,7 +127,7 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider {
         return temperatures;
     }
 
-    readFanSpeed(machineStatus: any, jobStatus: any): number {
+    readFanSpeed(jobStatus: any, machineStatus: any): number {
         if (!jobStatus.params.fanPercent) { return 0; }
 
         const currentTool = machineStatus.tools[jobStatus.currentTool];
