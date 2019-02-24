@@ -1,54 +1,56 @@
 import { Injectable } from "@angular/core";
 import { ControlService } from "../control.service";
 import { Observable } from "rxjs";
-import { LocalStorageService } from "ngx-store";
 import { MachineProviderService } from "./providers/machine-provider.service";
-import { Machine, MachineToolType } from "../../models/machine.model";
+import { MachineToolType } from "../../models/machine.model";
 import { MachineProvider } from "./providers/machine.provider";
+import { MachinesService } from "../machines.service";
+import { map, flatMap } from "rxjs/operators";
 
 @Injectable({ providedIn: "root" })
 export class LocalControlService implements ControlService {
-    constructor(private localStorage: LocalStorageService, private machineProviderService: MachineProviderService) {}
+    constructor(private machinesService: MachinesService, private machineProviderService: MachineProviderService) {}
 
-    getMachine(machineId: number): Machine {
-        const machines: Machine[] = this.localStorage.get("machines");
-        return machines.find(m => m.id === machineId);
-    }
-
-    getProvider(machineId: number): MachineProvider {
-        return this.machineProviderService.getProvider(this.getMachine(machineId));
+    getProvider(machineId: number): Observable<MachineProvider> {
+        return this.machinesService.getMachine(machineId)
+            .pipe(map(machine => this.machineProviderService.getProvider(machine)));
     }
 
     pauseJob(machineId: number): Observable<Object> {
-        return this.getProvider(machineId).pauseJob();
+        return this.getProvider(machineId).pipe(flatMap(provider => provider.pauseJob()));
     }
 
     resumeJob(machineId: number): Observable<Object> {
-        return this.getProvider(machineId).resumeJob();
+        return this.getProvider(machineId).pipe(flatMap(provider => provider.resumeJob()));
     }
 
     cancelJob(machineId: number): Observable<Object> {
-        return this.getProvider(machineId).cancelJob();
+        return this.getProvider(machineId).pipe(flatMap(provider => provider.cancelJob()));
     }
 
     setFanSpeed(machineId: number, speedPercentage: number): Observable<Object> {
-        return this.getProvider(machineId).setFanSpeed(speedPercentage);
+        return this.getProvider(machineId).pipe(flatMap(provider => provider.setFanSpeed(speedPercentage)));
     }
 
     setFeedRate(machineId: number, speedPercentage: number): Observable<Object> {
-        return this.getProvider(machineId).setFeedRate(speedPercentage);
+        return this.getProvider(machineId).pipe(flatMap(provider => provider.setFeedRate(speedPercentage)));
     }
 
     setTemperature(machineId: number, heaterIndex: number, temperature: number): Observable<Object> {
-        const machine = this.getMachine(machineId);
-        if (machine.tools.find(t => t.toolType === MachineToolType.Heater && t.index === heaterIndex && t.name === "bed")) {
-            return this.getProvider(machineId).setBedTemperature(temperature);
-        }
+        const self = this;
+        return self.machinesService.getMachine(machineId).
+            pipe(flatMap(function(machine) {
+                if (machine.tools.find(t => t.toolType === MachineToolType.Heater && t.index === heaterIndex && t.name === "bed")) {
+                    return self.getProvider(machineId)
+                        .pipe(flatMap(provider => provider.setBedTemperature(temperature)));
+                }
 
-        return this.getProvider(machineId).setToolTemperature(heaterIndex, temperature);
+                return self.getProvider(machineId)
+                    .pipe(flatMap(provider => provider.setToolTemperature(heaterIndex, temperature)));
+            }));
     }
 
     setFlowRate(machineId: number, extruderIndex: number, flowRatePercentage: number): Observable<Object> {
-        return this.getProvider(machineId).setFlowRate(extruderIndex, flowRatePercentage);
+        return this.getProvider(machineId).pipe(flatMap(provider => provider.setFlowRate(extruderIndex, flowRatePercentage)));
     }
 }
