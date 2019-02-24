@@ -37,7 +37,7 @@ export class MachineProviderService {
     }
 
     getProviders(machines: Machine[]): MachineProvider[] {
-        return machines.map(machine => this.getProvider(machine));
+        return machines.filter(machine => !machine.disabled).map(machine => this.getProvider(machine));
     }
 
     clearCache() {
