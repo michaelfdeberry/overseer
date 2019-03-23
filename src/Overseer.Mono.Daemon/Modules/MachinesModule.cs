@@ -13,17 +13,44 @@ namespace Overseer.Daemon.Modules
         {
             this.RequiresMSOwinAuthentication();
 
-            Get("/", p => machineManager.GetMachines());
+            Get("/", p => 
+            {
+                return machineManager.GetMachines();
+            });
 
-            Get("/{id:int}", p => machineManager.GetMachine((int)p.id));
+            Get("/{id:int}", p => 
+            {                
+                return machineManager.GetMachine((int)p.id);
+            });
 
-            Put("/", async p => await machineManager.CreateMachine(this.Bind<Machine>()));
+            Put("/", async p => 
+            {
+                this.RequireAdmin();
 
-            Post("/", async p => await machineManager.UpdateMachine(this.Bind<Machine>()));
+                return await machineManager.CreateMachine(this.Bind<Machine>());
+            });
+
+            Post("/", async p => 
+            {
+                this.RequireAdmin();
+
+                return await machineManager.UpdateMachine(this.Bind<Machine>());
+            });
             
-            Delete("/{id:int}", p => machineManager.DeleteMachine((int)p.id));
+            Delete("/{id:int}", p => 
+            {
+                this.RequireAdmin();
 
-            Post("/sort", p => this.Ok(() => machineManager.SortMachines(this.Bind<List<int>>())));
+                return machineManager.DeleteMachine((int)p.id);
+            });
+
+            Post("/sort", p => 
+            {
+                this.RequireAdmin();
+
+                machineManager.SortMachines(this.Bind<List<int>>());
+                return HttpStatusCode.OK;
+            });
         }
     }
 }

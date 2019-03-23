@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Overseer.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,12 +24,14 @@ namespace Overseer.Daemon.Controllers
         }
         
         [HttpPut]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Machine>> CreateMachine([FromBody]Machine machine)
         {
             return await _machineManager.CreateMachine(machine);
         }
         
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Machine>> UpdateMachine([FromBody]Machine machine)
         {
             return await _machineManager.UpdateMachine(machine);
@@ -41,12 +44,14 @@ namespace Overseer.Daemon.Controllers
         }
 
         [HttpDelete("{machineId:int}")]
+        [Authorize(Roles = "Administrator")]
         public ActionResult<Machine> DeleteMachine(int machineId)
         {
             return _machineManager.DeleteMachine(machineId);            
         }
 
         [HttpPost("sort")]
+        [Authorize(Roles = "Administrator")]
         public ActionResult SortMachines([FromBody]List<int> sortOrder)
         {
             _machineManager.SortMachines(sortOrder);

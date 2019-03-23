@@ -3,6 +3,7 @@ using Overseer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Overseer
 {
@@ -198,6 +199,18 @@ namespace Overseer
             _users.Update(user);
 
             return user.ToDisplay();
+        }
+
+        public ClaimsIdentity Authenticate(string token)
+        {
+            var user = AuthenticateToken(token);
+            if (user == null) return null;
+
+            var identity = new ClaimsIdentity(user.Username);
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+            identity.AddClaim(new Claim(ClaimTypes.Role, user.AccessLevel.ToString()));
+
+            return identity;
         }
     }
 }

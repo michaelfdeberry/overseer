@@ -31,7 +31,7 @@ namespace Overseer.Daemon.Modules
 
             Post("/logout/{id:int}", p =>
             {
-                this.RequiresMSOwinAuthentication();
+                this.RequireAdmin();
 
                 return userManager.DeauthenticateUser((int)p.id);
             });

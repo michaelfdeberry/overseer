@@ -39,14 +39,11 @@ namespace Overseer.Daemon
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var user = _userManager.AuthenticateToken(Context.Request.Headers["Authorization"]);
-            if (user == null)
+            var identity = _userManager.Authenticate(Context.Request.Headers["Authorization"]);
+            if (identity == null)
                 return Task.FromResult(AuthenticateResult.Fail("invalid_token"));
-
-            var identity = new GenericIdentity(user.Username, "Admin");
-            var principle = new ClaimsPrincipal(identity);
-            var ticket = new AuthenticationTicket(principle, null);
-
+            
+            var ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), null);
             return Task.FromResult(AuthenticateResult.Success(ticket));
         }
     }

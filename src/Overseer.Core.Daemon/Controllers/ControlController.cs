@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace Overseer.Daemon.Controllers
 {
     [Route("[controller]")]
+    [Authorize(Roles = "Administrator")]
     public class ControlController : Controller
     {
         readonly IControlManager _controlManager;

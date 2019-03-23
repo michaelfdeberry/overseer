@@ -34,7 +34,7 @@ namespace Overseer
                     //and less than or equal to the current version
                     var patches = typeof(IPatch).GetAssignableTypes()
                         .Select(updateType => (IPatch)Activator.CreateInstance(updateType))
-                        .Where(patch => patch.Version > lastRunVersion && patch.Version <= currentVersion)
+                        .Where(patch => patch.Version > lastRunVersion)
                         .OrderBy(patch => patch.Version)
                         .ToList();
 
@@ -49,13 +49,9 @@ namespace Overseer
                         {
                             Log.Info($"Applying Patch {patch.Version}...");
                             patch.Execute(context);
-                            Log.Info($"Patch {patch.Version} completed!");
                         });
 
                         File.Delete(LiteDataContext.DatabaseBackupPath);
-                        valueStore.Put("lastRunVersion", currentVersion.ToString());
-                        context.Dispose();
-                        Log.Info("Update Successful!");
                     }
                 }
                 catch (Exception ex)
@@ -71,6 +67,10 @@ namespace Overseer
 
                     return false;
                 }
+
+                valueStore.Put("lastRunVersion", currentVersion.ToString());
+                context.Dispose();
+                Log.Info("Update Successful!");
             }
 
             return true;

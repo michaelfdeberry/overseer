@@ -3,7 +3,6 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using Owin;
 using System;
-using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace Overseer.Daemon.Startup
@@ -23,15 +22,11 @@ namespace Overseer.Daemon.Startup
         {
             var userManager = OverseerBootstrapper.Container.Resolve<UserManager>();
 
-            var token = Context.Request.Headers["Authorization"];
-            var user = userManager.AuthenticateToken(token);
-            if (user != null)
-            {
-                var identity = new GenericIdentity(user.Username, "Admin");
-                return Task.FromResult(new AuthenticationTicket(identity, null));
-            }
+            var identity = userManager.Authenticate(Context.Request.Headers["Authorization"]);
+            if (identity == null)
+                return Task.FromResult<AuthenticationTicket>(null);
 
-            return Task.FromResult<AuthenticationTicket>(null);
+            return Task.FromResult(new AuthenticationTicket(identity, null));
         }
     }
 

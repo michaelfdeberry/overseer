@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Claims;
 using Overseer.Models;
 
 namespace Overseer
@@ -16,5 +17,6 @@ namespace Overseer
         UserDisplay GetUser(int userId);
         IReadOnlyList<UserDisplay> GetUsers(); 
         UserDisplay UpdateUser(UserDisplay user);
+        ClaimsIdentity Authenticate(string token);
     }
 }

@@ -8,7 +8,7 @@ namespace Overseer.Daemon.Modules
         public ControlModule(ControlManager controlManager)
             : base("control")
         {
-            this.RequiresMSOwinAuthentication();
+            this.RequireAdmin();
 
             Get("/{id:int}/pause", async (p, ct) => await this.OkAsync(() => controlManager.Pause(p.id)));
 

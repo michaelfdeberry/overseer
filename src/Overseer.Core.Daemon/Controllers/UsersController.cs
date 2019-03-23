@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Overseer.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,30 +17,35 @@ namespace Overseer.Daemon.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public ActionResult<List<UserDisplay>> GetUsers()
         {
             return _userManager.GetUsers().ToList();
         }
 
         [HttpGet("{userId}")]
+        [Authorize(Roles = "Administrator")]
         public ActionResult<UserDisplay> GetUser(int userId)
         {
             return _userManager.GetUser(userId);
         }
 
         [HttpPut]
+        [Authorize(Roles = "Administrator")]
         public ActionResult<UserDisplay> CreateUser([FromBody]UserDisplay user)
         {
             return _userManager.CreateUser(user);
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public ActionResult<UserDisplay> UpdateUser([FromBody]UserDisplay user)
         {
             return _userManager.UpdateUser(user);
         }
         
         [HttpDelete("{userId}")]
+        [Authorize(Roles = "Administrator")]
         public ActionResult DeleteUser(int userId)
         {
             _userManager.DeleteUser(userId);

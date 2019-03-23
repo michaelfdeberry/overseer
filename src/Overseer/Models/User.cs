@@ -3,6 +3,16 @@ using System;
 
 namespace Overseer.Models
 {
+    public enum AccessLevel
+    {
+        Readonly = 0,
+        
+        //TODO: Add support for a user access level
+        //User = 1,
+
+        Administrator = 2,
+    }
+
     /// <summary>
     /// This is the user object that is send to and from the client
     /// </summary>
@@ -19,6 +29,8 @@ namespace Overseer.Models
         public string Token { get; set; }
 
         public bool IsLoggedIn { get; set; }
+
+        public AccessLevel AccessLevel { get; set; }
     }
 
     /// <summary>
@@ -40,6 +52,8 @@ namespace Overseer.Models
 
         public int? SessionLifetime { get; set; }
 
+        public AccessLevel AccessLevel { get; set; }
+
         /// <summary>
         /// Helper method to quickly convert a user to a user display object
         /// </summary>
@@ -51,7 +65,8 @@ namespace Overseer.Models
                 Username = Username,
                 SessionLifetime = SessionLifetime,
                 Token = includeToken ? Token : null,
-                IsLoggedIn = !this.IsTokenExpired()
+                IsLoggedIn = !this.IsTokenExpired(),
+                AccessLevel = AccessLevel
             };
         }
     }

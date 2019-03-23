@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Overseer.Models;
 
 namespace Overseer.Daemon.Controllers
@@ -34,13 +35,15 @@ namespace Overseer.Daemon.Controllers
             return _configurationManager.GetApplicationSettings();
         }
         
-        [HttpPost] 
+        [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public ActionResult<ApplicationSettings> UpdateSettings([FromBody]ApplicationSettings settings)
         {
             return _configurationManager.UpdateApplicationSettings(settings);
         }
         
         [HttpPut("certificate")]
+        [Authorize(Roles = "Administrator")]
         public ActionResult AddCertificateExclusion([FromBody]CertificateDetails certificateDetails)
         {
             _configurationManager.AddCertificateExclusion(certificateDetails);

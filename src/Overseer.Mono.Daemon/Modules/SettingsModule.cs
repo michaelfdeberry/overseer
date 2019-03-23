@@ -8,7 +8,7 @@ namespace Overseer.Daemon.Modules
     public class ConfigurationModule : NancyModule
     {
         public ConfigurationModule
-            (
+        (
             IConfigurationManager configurationManager, 
             IMachineManager machineManager, 
             IUserManager userManager
@@ -17,20 +17,37 @@ namespace Overseer.Daemon.Modules
         {
             this.RequiresMSOwinAuthentication();
 
-            Get("/bundle", p => new
-            {
-                Machines = machineManager.GetMachines(),
-                Users = userManager.GetUsers(),
-                Settings = configurationManager.GetApplicationSettings()
+            Get("/bundle", p => {
+                return new
+                {
+                    Machines = machineManager.GetMachines(),
+                    Users = userManager.GetUsers(),
+                    Settings = configurationManager.GetApplicationSettings()
+                };
             });
 
-            Get("/", p => configurationManager.GetApplicationSettings());
+            Get("/", p => 
+            {
+                return configurationManager.GetApplicationSettings();
+            });
 
-            Post("/", p => configurationManager.UpdateApplicationSettings(this.Bind<ApplicationSettings>()));
+            Post("/", p =>
+            {
+                this.RequireAdmin();
+
+                return configurationManager.UpdateApplicationSettings(this.Bind<ApplicationSettings>());
+            });
             
-            Put("/certificate", p => configurationManager.AddCertificateExclusion(this.Bind<CertificateDetails>()));
+            Put("/certificate", p => 
+            {
+                this.RequireAdmin();
 
-            Get("/about", p => configurationManager.GetApplicationInfo());
+                return configurationManager.AddCertificateExclusion(this.Bind<CertificateDetails>());
+            });
+
+            Get("/about", p => {
+                return configurationManager.GetApplicationInfo();
+            });
         }
     }
 }

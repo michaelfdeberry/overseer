@@ -53,6 +53,7 @@ namespace Overseer.Daemon.Controllers
         /// Allows a logged in user to log out another user
         /// </summary>
         [HttpPost("logout/{userId}")]
+        [Authorize(Roles = "Administrator")]
         public ActionResult<UserDisplay> Logout(int userId)
         {
             return _userManager.DeauthenticateUser(userId);

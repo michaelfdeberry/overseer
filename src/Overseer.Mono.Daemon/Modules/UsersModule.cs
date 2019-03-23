@@ -12,15 +12,34 @@ namespace Overseer.Daemon.Modules
         {
             this.RequiresMSOwinAuthentication();
 
-            Get("/", p => userManager.GetUsers());
+            Get("/", p =>
+            {
+                this.RequireAdmin();
+                return userManager.GetUsers();
+            });
 
-            Get("/{id:int}", p => userManager.GetUser(p.id));
+            Get("/{id:int}", p => {
+                this.RequireAdmin();
+                return userManager.GetUser(p.id);
+            });
 
-            Put("/", p => userManager.CreateUser(this.Bind<UserDisplay>()));
+            Put("/", p => 
+            {
+                this.RequireAdmin();
+                return userManager.CreateUser(this.Bind<UserDisplay>());
+            });
 
-            Post("/", p => userManager.UpdateUser(this.Bind<UserDisplay>()));
+            Post("/", p =>
+            {
+                this.RequireAdmin();
+                return userManager.UpdateUser(this.Bind<UserDisplay>());
+            });
 
-            Delete("/{id:int}", p => userManager.DeleteUser(p.id));
+            Delete("/{id:int}", p => 
+            {
+                this.RequireAdmin();
+                return userManager.DeleteUser(p.id);
+            });
         }
     }
 }
