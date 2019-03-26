@@ -8,6 +8,7 @@ import { MachineProviderService } from "./providers/machine-provider.service";
 import { MachineStorageService } from "./storage/machine-storage.service";
 import { catchError } from "rxjs/operators";
 import { ErrorHandlerService } from "../error-handler.service";
+import { RequireAdministrator } from "../../shared/require-admin.decorator";
 
 @Injectable({ providedIn: "root" })
 export class LocalMachinesService implements MachinesService {
@@ -27,6 +28,7 @@ export class LocalMachinesService implements MachinesService {
         return defer(() => this.machineStorage.getMachineById(machineId));
     }
 
+    @RequireAdministrator()
     createMachine(machine: Machine): Observable<Machine> {
         const self = this;
         const provider = this.machineProviders.getProvider(machine);
@@ -38,6 +40,7 @@ export class LocalMachinesService implements MachinesService {
             .pipe(catchError(err => this.errorHandler.handle(err)));
     }
 
+    @RequireAdministrator()
     updateMachine(machine: Machine): Observable<Machine> {
         const self = this;
         return defer(async function() {
@@ -55,6 +58,7 @@ export class LocalMachinesService implements MachinesService {
             .pipe(catchError(err => this.errorHandler.handle(err)));
     }
 
+    @RequireAdministrator()
     deleteMachine(machine: Machine): Observable<Machine> {
         const self = this;
         return defer(async function() {
@@ -64,6 +68,7 @@ export class LocalMachinesService implements MachinesService {
             .pipe(catchError(err => this.errorHandler.handle(err)));
     }
 
+    @RequireAdministrator()
     sortMachines(sortOrder: number[]): Observable<any> {
         const self = this;
         return defer(async function() {

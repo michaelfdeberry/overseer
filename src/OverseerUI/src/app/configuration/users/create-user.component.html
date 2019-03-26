@@ -1,4 +1,13 @@
 <form [formGroup]="form">
+
+    <mat-form-field>
+        <mat-select id="accessLevel" placeholder="{{ 'accessLevel' | translate }}" formControlName="accessLevel">
+            <mat-option *ngFor="let accessLevel of accessLevels" [value]="accessLevel.value">
+                {{ accessLevel.translationKey | translate }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
     <mat-form-field>
         <input matInput type="text" id="username" placeholder="{{ 'username' | translate }}" formControlName="username" required autocomplete="username" />
     </mat-form-field>
@@ -18,4 +27,5 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
+
 </form>

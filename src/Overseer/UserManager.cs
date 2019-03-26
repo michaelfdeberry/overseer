@@ -130,7 +130,8 @@ namespace Overseer
                 Username = userModel.Username,
                 PasswordSalt = salt,
                 PasswordHash = hash,
-                SessionLifetime = userModel.SessionLifetime
+                SessionLifetime = userModel.SessionLifetime,
+                AccessLevel = userModel.AccessLevel
             };
 
             _users.Create(user);
@@ -164,7 +165,13 @@ namespace Overseer
 
         public void DeleteUser(int userId)
         {
-            if (_users.Count() == 1)
+            var users = _users.GetAll();
+            if (users.Count == 1)
+                throw new OverseerException("delete_user_unavailable");
+
+            var user = users.FirstOrDefault(u => u.Id == userId);
+            if (user.AccessLevel == AccessLevel.Administrator && 
+                users.Count(u => u.AccessLevel == AccessLevel.Administrator) == 1)
                 throw new OverseerException("delete_user_unavailable");            
             
             _users.Delete(userId);

@@ -10,6 +10,8 @@ import { DialogService } from "../../dialogs/dialog.service";
 import { matchValidator } from "../../shared/validators";
 import { SettingsService } from "src/app/services/settings.service";
 import { UsersService } from "src/app/services/users.service";
+import { User, AccessLevel } from "../../models/user.model";
+import { ApplicationSettings } from "../../models/settings.model";
 
 @Component({
     templateUrl: "./edit-user.component.html",
@@ -23,9 +25,9 @@ export class EditUserComponent implements OnInit {
     form: FormGroup;
 
     @LocalStorage() activeUser: any;
-    user: any;
-    users: Array<any>;
-    settings: any;
+    user: User;
+    users: User[];
+    settings: ApplicationSettings;
 
     constructor(
         private usersService: UsersService,
@@ -75,10 +77,12 @@ export class EditUserComponent implements OnInit {
     }
 
     delete() {
-        if (this.users.length === 1 && this.settings.requiresAuthentication) {
+        if (this.user.accessLevel === AccessLevel.Administrator &&
+            this.users.filter(u => u.accessLevel === AccessLevel.Administrator).length === 1) {
+
             this.dialog.alert({
                 titleKey: "warning",
-                messageKey: "requiresAuthenticationPrompt"
+                messageKey: "requiresAdminPrompt"
             });
 
             return;

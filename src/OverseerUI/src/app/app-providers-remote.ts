@@ -14,13 +14,14 @@ import { RemoteUsersService } from "./services/remote/users.service";
 import { SettingsService } from "./services/settings.service";
 import { ThemeService } from "./services/theme.service";
 import { UsersService } from "./services/users.service";
-import { AuthenticationGuard } from "./shared/authentication-guard";
+import { AuthenticationGuard, AccessLevelGuard } from "./shared/authentication-guard";
 import { MonitoringService } from "./services/monitoring.service";
 import { SignalrCoreMonitoringService } from "./services/remote/signalr-core-monitoring.service";
 
 export const providers = [
     LoaderService,
     AuthenticationGuard,
+    AccessLevelGuard,
     DialogService,
     TuneDialogService,
     ThemeService,

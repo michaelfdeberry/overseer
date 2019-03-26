@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { LocalStorageService } from "ngx-store";
-import { Observable, of } from "rxjs";
+import { Observable, of, Subject } from "rxjs";
 import { catchError, map, tap } from "rxjs/operators";
 import { User } from "../../models/user.model";
 import { AuthenticationService } from "../authentication.service";
@@ -9,6 +9,8 @@ import { endpointFactory } from "./endpoint-factory";
 
 @Injectable({ providedIn: "root" })
 export class RemoteAuthenticationService implements AuthenticationService {
+    public readonly authenticationChangeEvent$ = new Subject<User>();
+
     private getEndpoint = endpointFactory("/api/auth");
 
     get activeUser(): User {
@@ -27,19 +29,23 @@ export class RemoteAuthenticationService implements AuthenticationService {
     login(user: User): Observable<User> {
         return this.http
             .post<User>(this.getEndpoint("login"), user)
-            .pipe(tap(activeUser => this.localStorageService.set("activeUser", activeUser)));
+            .pipe(tap(activeUser => {
+                this.localStorageService.set("activeUser", activeUser);
+                this.authenticationChangeEvent$.next(activeUser);
+            }));
     }
 
     logout(): Observable<Object> {
         return this.http
             .delete(this.getEndpoint("logout"))
-            .pipe(tap(() => this.localStorageService.clear("all")));
+            .pipe(tap(() => {
+                this.localStorageService.clear("all");
+                this.authenticationChangeEvent$.next(null);
+            }));
     }
 
-    logoutUser(userId: number): Observable<Object> {
-        return this.http
-        .post(this.getEndpoint("logout", userId), {})
-        .pipe(map(user => user));
+    logoutUser(userId: number): Observable<User> {
+        return this.http.post<User>(this.getEndpoint("logout", userId), {});
     }
 
     createInitialUser(user: User): Observable<User> {

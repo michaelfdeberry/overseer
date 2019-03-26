@@ -12,7 +12,7 @@
                     </span>
                 </div>
             </div>
-            <div class="controls" [ngClass]="machine.currentStateName">
+            <div appHiddenFor="Readonly" class="controls" [ngClass]="machine.currentStateName">
                 <button class="control-button resume" color="primary" mat-raised-button (click)="resume()">
                     <mat-icon>play_arrow</mat-icon>
                 </button>

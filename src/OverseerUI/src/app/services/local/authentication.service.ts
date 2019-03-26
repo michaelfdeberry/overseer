@@ -3,7 +3,7 @@ import { Router } from "@angular/router";
 
 import * as bcrypt from "bcryptjs";
 import { LocalStorageService } from "ngx-store";
-import { defer, Observable } from "rxjs";
+import { defer, Observable, Subject } from "rxjs";
 import { tap, catchError } from "rxjs/operators";
 
 import { isTokenExpired, toUser, User } from "../../models/user.model";
@@ -14,6 +14,8 @@ import { ErrorHandlerService } from "../error-handler.service";
 
 @Injectable({ providedIn: "root" })
 export class LocalAuthenticationService implements AuthenticationService, UserManager {
+    public readonly authenticationChangeEvent$ = new Subject<User>();
+
     constructor(
         public userStorage: UserStorageService,
         private localStorageService: LocalStorageService,
@@ -75,6 +77,7 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
 
             await self.userStorage.updateUser(pUser);
             self.localStorageService.set("activeUser", toUser(pUser, true));
+            self.authenticationChangeEvent$.next(self.activeUser);
             return self.activeUser;
         })
             .pipe(catchError(err => this.errorHandler.handle(err)));
@@ -83,11 +86,12 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
     logout(): Observable<Object> {
         return this.logoutUser(this.activeUser.id).pipe(tap(() => {
             this.localStorageService.remove("activeUser");
+            this.authenticationChangeEvent$.next(null);
         }))
             .pipe(catchError(err => this.errorHandler.handle(err)));
     }
 
-    logoutUser(userId: number): Observable<Object> {
+    logoutUser(userId: number): Observable<User> {
         const self = this;
         return defer(async function() {
             const pUser = await self.userStorage.getUserById(userId);

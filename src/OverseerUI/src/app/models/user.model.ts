@@ -1,3 +1,8 @@
+export enum AccessLevel {
+    Readonly = 0,
+    Administrator = 2
+}
+
 export class User {
     id: number;
     username: string;
@@ -5,6 +10,7 @@ export class User {
     sessionLifetime?: number;
     token: string;
     isLoggedIn: boolean;
+    accessLevel: AccessLevel;
 }
 
 export class PersistedUser {
@@ -15,6 +21,7 @@ export class PersistedUser {
     sessionLifetime?: number;
     token?: string;
     tokenExpiration?: number;
+    accessLevel: AccessLevel;
 }
 
 export function isTokenExpired(user: PersistedUser): boolean {
@@ -30,11 +37,12 @@ export function isTokenExpired(user: PersistedUser): boolean {
 }
 
 export function toUser(user: PersistedUser, includeToken?: boolean): User {
-    return  {
+    return  Object.assign(new User(), {
         id: user.id,
         username: user.username,
         sessionLifetime: user.sessionLifetime,
         token: includeToken ? user.token : null,
-        isLoggedIn: !isTokenExpired(user)
-    };
+        isLoggedIn: !isTokenExpired(user),
+        accessLevel: user.accessLevel
+    });
 }

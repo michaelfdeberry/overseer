@@ -16,13 +16,14 @@ import { MachinesService } from "./services/machines.service";
 import { SettingsService } from "./services/settings.service";
 import { ThemeService } from "./services/theme.service";
 import { UsersService } from "./services/users.service";
-import { AuthenticationGuard } from "./shared/authentication-guard";
+import { AuthenticationGuard, AccessLevelGuard } from "./shared/authentication-guard";
 import { UserStorageService } from "./services/local/storage/user-storage.service";
 import { MachineStorageService } from "./services/local/storage/machine-storage.service";
 
 export const providers = [
     LoaderService,
     AuthenticationGuard,
+    AccessLevelGuard,
     DialogService,
     TuneDialogService,
     ThemeService,

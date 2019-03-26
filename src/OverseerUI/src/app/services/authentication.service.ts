@@ -1,9 +1,11 @@
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { User } from "../models/user.model";
 import { Injectable } from "@angular/core";
 
 @Injectable({ providedIn: "root" })
 export abstract class AuthenticationService {
+    readonly authenticationChangeEvent$: Subject<User>;
+
     abstract readonly activeUser: User;
 
     abstract requiresLogin(): Observable<boolean>;
@@ -12,7 +14,7 @@ export abstract class AuthenticationService {
 
     abstract logout(): Observable<Object>;
 
-    abstract logoutUser(userId: number): Observable<Object>;
+    abstract logoutUser(userId: number): Observable<User>;
 
     abstract createInitialUser(user: User): Observable<User>;
 }

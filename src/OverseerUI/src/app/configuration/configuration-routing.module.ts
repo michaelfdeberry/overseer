@@ -11,7 +11,7 @@ import { AddMachineComponent } from "./machines/add-machine.component";
 import { EditMachineComponent } from "./machines/edit-machine.component";
 import { AboutComponent } from "./about/about.component";
 import { SetupComponent } from "./setup/setup.component";
-import { AuthenticationGuard } from "../shared/authentication-guard";
+import { AuthenticationGuard, AccessLevelGuard } from "../shared/authentication-guard";
 
 const configurationRoutes: Routes = [
     {
@@ -21,49 +21,49 @@ const configurationRoutes: Routes = [
             {
                 path: "",
                 redirectTo: "general",
-                canActivate: [AuthenticationGuard]
+                canActivate: [AuthenticationGuard, AccessLevelGuard]
             },
             {
                 path: "general",
                 component: GeneralSettingsComponent,
-                canActivate: [AuthenticationGuard]
+                canActivate: [AuthenticationGuard, AccessLevelGuard]
             },
             {
                 path: "machines",
                 component: MachinesComponent,
-                canActivate: [AuthenticationGuard]
+                canActivate: [AuthenticationGuard, AccessLevelGuard]
             },
             {
                 path: "users",
                 component: UsersComponent,
-                canActivate: [AuthenticationGuard]
+                canActivate: [AuthenticationGuard, AccessLevelGuard]
             },
             {
                 path: "about",
                 component: AboutComponent,
-                canActivate: [AuthenticationGuard]
+                canActivate: [AuthenticationGuard, AccessLevelGuard]
             }
         ]
     },
     {
         path: "machines/add",
         component: AddMachineComponent,
-        canActivate: [AuthenticationGuard]
+        canActivate: [AuthenticationGuard, AccessLevelGuard]
     },
     {
         path: "machines/edit/:id",
         component: EditMachineComponent,
-        canActivate: [AuthenticationGuard]
+        canActivate: [AuthenticationGuard, AccessLevelGuard]
     },
     {
         path: "users/add",
         component: AddUserComponent,
-        canActivate: [AuthenticationGuard]
+        canActivate: [AuthenticationGuard, AccessLevelGuard]
     },
     {
         path: "users/edit/:id",
         component: EditUserComponent,
-        canActivate: [AuthenticationGuard]
+        canActivate: [AuthenticationGuard, AccessLevelGuard]
     },
     {
         path: "setup",

@@ -10,8 +10,8 @@ import { WindowService } from "./window.service";
 })
 export class SignalrMonitoringService implements MonitoringService {
     public readonly statusEvent$ = new Subject<MachineStatus>();
-    private hubConnection;
-    private hubProxy;
+    private hubConnection: any;
+    private hubProxy: any;
 
     constructor(@Inject(WindowService)private window: WindowService) {
         if (this.window.$ === undefined || this.window.$.hubConnection === undefined) {

@@ -24,6 +24,7 @@ import { NavigationComponent } from "./navigation/navigation.component";
 import { WindowService } from "./services/remote/window.service";
 import { DurationPipe } from "./shared/duration.pipe";
 import { LetDirective } from "./shared/let.directive";
+import { HiddenForDirective, DisabledForDirective } from "./shared/authorization.directive";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http);
@@ -47,6 +48,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         PromptDialogComponent,
         TuneDialogComponent,
         LetDirective,
+        HiddenForDirective,
+        DisabledForDirective
     ],
     imports: [
         AppRoutingModule,

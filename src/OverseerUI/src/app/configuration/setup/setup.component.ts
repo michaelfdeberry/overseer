@@ -1,24 +1,25 @@
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { AuthenticationService } from "../../services/authentication.service";
-import { Component, ViewChild } from "@angular/core";
+import { Component, ViewChild, AfterViewChecked } from "@angular/core";
 import { machineFormFactory } from "../machines/shared/base-machine.component";
 import { MatHorizontalStepper, MatStep } from "@angular/material";
 import { MachinesService } from "../../services/machines.service";
 import { CertificateErrorService } from "../machines/certificate-error.service";
 import { DialogService } from "../../dialogs/dialog.service";
 import { MediaObserver, MediaChange } from "@angular/flex-layout";
+import { AccessLevel } from "../../models/user.model";
 
 @Component({
     templateUrl: "./setup.component.html",
     styleUrls: ["./setup.component.scss"]
 })
-export class SetupComponent {
+export class SetupComponent implements AfterViewChecked {
     busy = false;
     clientForm: FormGroup;
     userForm: FormGroup;
     machineForm: FormGroup;
-    themeForm: FormGroup;
     machines: any[];
+    themeForm: FormGroup;
     screenSize: string;
 
     @ViewChild("stepper")
@@ -55,10 +56,20 @@ export class SetupComponent {
         });
     }
 
+    ngAfterViewChecked(): void {
+        setTimeout(() => {
+            const accessLevel = this.userForm.get("accessLevel");
+            accessLevel.setValue(AccessLevel.Administrator);
+            accessLevel.markAsDirty();
+            accessLevel.markAsTouched();
+            accessLevel.disable();
+        });
+    }
+
     createUser() {
         this.busy = true;
 
-        const user = this.userForm.value;
+        const user = this.userForm.getRawValue();
         this.authService.createInitialUser(user).subscribe(() => {
             this.authService.login(user).subscribe(() => {
                 // With version 1.0.0 anonymous users are no longer support,

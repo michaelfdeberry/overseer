@@ -1,4 +1,5 @@
 import { MachineType } from "../models/machine.model";
+import { AccessLevel } from "../models/user.model";
 
 export class DisplayOption<TValue> {
     constructor(
@@ -26,4 +27,9 @@ export const pollIntervals = [
 export const machineTypes = [
     new DisplayOption("Octoprint", MachineType.Octoprint),
     new DisplayOption("RepRapFirmware", MachineType.RepRapFirmware)
+];
+
+export const accessLevels = [
+    new DisplayOption("readonly", AccessLevel.Readonly),
+    new DisplayOption("administrator", AccessLevel.Administrator)
 ];
