@@ -1,17 +1,14 @@
 import { Component, OnInit } from "@angular/core";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { LocalStorage } from "ngx-store";
 import { Observable } from "rxjs";
 
-import { sessionLifetimes } from "../display-option.type";
+import { sessionLifetimes, accessLevels } from "../display-option.type";
 import { AuthenticationService } from "../../services/authentication.service";
 import { DialogService } from "../../dialogs/dialog.service";
 import { matchValidator } from "../../shared/validators";
-import { SettingsService } from "src/app/services/settings.service";
 import { UsersService } from "src/app/services/users.service";
 import { User, AccessLevel } from "../../models/user.model";
-import { ApplicationSettings } from "../../models/settings.model";
 
 @Component({
     templateUrl: "./edit-user.component.html",
@@ -23,15 +20,16 @@ import { ApplicationSettings } from "../../models/settings.model";
 export class EditUserComponent implements OnInit {
     lifetimes = sessionLifetimes;
     form: FormGroup;
-
-    @LocalStorage() activeUser: any;
+    passwordForm: FormGroup;
     user: User;
     users: User[];
-    settings: ApplicationSettings;
+    accessLevels = accessLevels;
 
+    get activeUser() {
+        return this.authenticationService.activeUser;
+    }
     constructor(
         private usersService: UsersService,
-        private settingsService: SettingsService,
         private authenticationService: AuthenticationService,
         private router: Router,
         private route: ActivatedRoute,
@@ -40,9 +38,14 @@ export class EditUserComponent implements OnInit {
     ) {
         this.form = this.formBuilder.group({
             id: [],
-            password: [null, [Validators.min(8)]],
-            confirmPassword: [],
-            sessionLifetime: []
+            sessionLifetime: [],
+            accessLevel: [],
+        });
+
+        this.passwordForm = this.formBuilder.group({
+            id: [],
+            password: [null, [Validators.min(8), Validators.required]],
+            confirmPassword: [null, [Validators.required]],
         }, {
             validator: matchValidator("password", "confirmPassword")
         });
@@ -51,14 +54,11 @@ export class EditUserComponent implements OnInit {
     ngOnInit() {
         this.route.paramMap
             .subscribe((params: ParamMap) => {
-                this.settingsService.getConfigurationBundle().subscribe(bundle => {
-                    this.settings = bundle.settings;
-                    this.users = bundle.users;
-
-                    const userId = parseInt(params.get("id"), 10);
-                    this.user = Object.assign({}, this.users.find(u => u.id === userId));
-
-                    this.form.patchValue(this.user);
+                const userId = parseInt(params.get("id"), 10);
+                this.usersService.getUser(userId).subscribe(user => {
+                    this.user = user;
+                    this.form.patchValue(user);
+                    this.passwordForm.patchValue(user);
                 });
             })
             .unsubscribe();
@@ -99,6 +99,10 @@ export class EditUserComponent implements OnInit {
 
     save() {
         this.handleNetworkAction(this.usersService.updateUser(this.form.value));
+    }
+
+    changePassword() {
+        this.handleNetworkAction(this.usersService.changePassword(this.passwordForm.value));
     }
 
     private handleNetworkAction(observable: Observable<any>) {

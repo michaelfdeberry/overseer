@@ -62,6 +62,10 @@ form {
             margin: 0 4px;
         }
     }
+
+    .form-actions {
+        display: flex;
+    }
 }
 
 .mat-card.form-card {

@@ -51,5 +51,12 @@ namespace Overseer.Daemon.Controllers
             _userManager.DeleteUser(userId);
             return Ok();
         }
+
+        [HttpPost("password")]
+        [Authorize(Roles = "Administrator")]
+        public ActionResult<UserDisplay> ChangePassword([FromBody]UserDisplay user)
+        {
+            return _userManager.ChangePassword(user);
+        }
     }
 }

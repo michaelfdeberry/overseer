@@ -17,6 +17,7 @@ namespace Overseer
         UserDisplay GetUser(int userId);
         IReadOnlyList<UserDisplay> GetUsers(); 
         UserDisplay UpdateUser(UserDisplay user);
+        UserDisplay ChangePassword(UserDisplay user);
         ClaimsIdentity Authenticate(string token);
     }
 }

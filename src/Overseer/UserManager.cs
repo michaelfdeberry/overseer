@@ -20,7 +20,7 @@ namespace Overseer
         
         public bool RequiresInitialSetup()
         {
-            return _users.Count() == 0;
+            return _users.GetAll().Count(u => u.AccessLevel == AccessLevel.Administrator) == 0;
         }
 
         public UserDisplay AuthenticateUser(UserDisplay user)
@@ -151,16 +151,42 @@ namespace Overseer
             return _users.GetById(userId).ToDisplay();
         }
 
-        public UserDisplay UpdateUser(UserDisplay user)
+        public UserDisplay UpdateUser(UserDisplay userModel)
         {
-            if (!string.IsNullOrWhiteSpace(user.Username) && !string.IsNullOrWhiteSpace(user.Password))
+            var user = _users.GetById(userModel.Id);
+            if (user == null)
             {
-                //if they are changing the password delete and recreate the user.
-                _users.Delete(user.Id);
-                return CreateUser(user);
+                return null;
             }
 
-            return UpdateSessionLifetime(user.Id, user.SessionLifetime);
+            //forces a new login if the session lifetime changes
+            user.Token = null;
+            user.TokenExpiration = null;
+            user.SessionLifetime = userModel.SessionLifetime;
+            user.AccessLevel = userModel.AccessLevel;
+            _users.Update(user);
+
+            return user.ToDisplay();
+        }
+        
+        public UserDisplay ChangePassword(UserDisplay userModel)
+        {
+            if (string.IsNullOrWhiteSpace(userModel.Password))
+            {
+                throw new OverseerException("invalid_password");
+            }
+
+            var salt = BCrypt.Net.BCrypt.GenerateSalt();
+            var hash = BCrypt.Net.BCrypt.HashPassword(userModel.Password, salt);
+
+            var user = _users.GetById(userModel.Id);
+            user.PasswordSalt = salt;
+            user.PasswordHash = hash;
+            user.Token = null;
+            user.TokenExpiration = null;
+            _users.Update(user);
+
+            return user.ToDisplay();
         }
 
         public void DeleteUser(int userId)
@@ -186,23 +212,6 @@ namespace Overseer
 
             user.Token = null;
             user.TokenExpiration = null;
-            _users.Update(user);
-
-            return user.ToDisplay();
-        }
-
-        UserDisplay UpdateSessionLifetime(int userId, int? sessionLifetime)
-        {
-            var user = _users.GetById(userId);
-            if (user == null)
-            {
-                return null;
-            }
-
-            //forces a new login
-            user.Token = null;
-            user.TokenExpiration = null;
-            user.SessionLifetime = sessionLifetime;
             _users.Update(user);
 
             return user.ToDisplay();

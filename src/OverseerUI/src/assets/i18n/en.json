@@ -110,6 +110,8 @@
     "accessLevel": "Access Level",
     "readonly": "Readonly",
     "administrator": "Administrator",
+    "changePassword": "Change Password",
+    "userSettings": "Account Settings",
     "about": {
         "title": "Overseer is a utility that allows you to monitor multiple automated machines, such as 3D Printers, from a single web interface.",
         "helpDescription": "Have a suggestion, a request, or just need some help? Please create an item in the",

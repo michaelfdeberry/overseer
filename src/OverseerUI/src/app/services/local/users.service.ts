@@ -68,16 +68,8 @@ export class LocalUsersService implements UsersService, UserManager {
         return defer(async function(): Promise<User> {
             const pUser = await self.userStorage.getUserById(user.id);
 
-            if (user.password) {
-                const salt = bcrypt.genSaltSync();
-                const hash = bcrypt.hashSync(user.password, salt);
-                pUser.passwordHash = hash;
-                pUser.passwordSalt = salt;
-
-            } else {
-                pUser.sessionLifetime = user.sessionLifetime;
-            }
-
+            pUser.sessionLifetime = user.sessionLifetime;
+            pUser.accessLevel = user.accessLevel;
             pUser.token = null;
             pUser.tokenExpiration = null;
             await self.userStorage.updateUser(pUser);
@@ -103,6 +95,24 @@ export class LocalUsersService implements UsersService, UserManager {
 
             await self.userStorage.deleteUser(user.id);
             return user;
+        })
+            .pipe(catchError(err => this.errorHandler.handle(err)));
+    }
+
+    changePassword(user: User): Observable<User> {
+        const self = this;
+        return defer(async function(): Promise<User> {
+            const pUser = await self.userStorage.getUserById(user.id);
+
+            const salt = bcrypt.genSaltSync();
+            const hash = bcrypt.hashSync(user.password, salt);
+            pUser.passwordHash = hash;
+            pUser.passwordSalt = salt;
+            pUser.token = null;
+            pUser.tokenExpiration = null;
+            await self.userStorage.updateUser(pUser);
+
+            return toUser(pUser);
         })
             .pipe(catchError(err => this.errorHandler.handle(err)));
     }

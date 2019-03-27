@@ -29,4 +29,8 @@ export class RemoteUsersService implements UsersService {
     deleteUser(user: User) {
         return this.http.delete(this.getEndpoint(user.id));
     }
+
+    changePassword(user: User) {
+        return this.http.post<User>(this.getEndpoint("password"), user);
+    }
 }

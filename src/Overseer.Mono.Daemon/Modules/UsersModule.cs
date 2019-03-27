@@ -40,6 +40,12 @@ namespace Overseer.Daemon.Modules
                 this.RequireAdmin();
                 return userManager.DeleteUser(p.id);
             });
+
+            Post("/password", p => 
+            {
+                this.RequireAdmin();
+                return userManager.ChangePassword(this.Bind<UserDisplay>());
+            });
         }
     }
 }
