@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs";
 import { UsersService } from "../../services/users.service";
+import { AccessLevel, User } from "../../models/user.model";
 
 @Component({
     templateUrl: "./users.component.html",
@@ -9,9 +10,13 @@ import { UsersService } from "../../services/users.service";
 export class UsersComponent implements OnInit {
     constructor(private usersService: UsersService) {}
 
-    users$: Observable<any>;
+    users$: Observable<User[]>;
 
     ngOnInit() {
         this.users$ = this.usersService.getUsers();
+    }
+
+    getUserAccessLevelName(accessLevel: AccessLevel) {
+        return AccessLevel[accessLevel];
     }
 }

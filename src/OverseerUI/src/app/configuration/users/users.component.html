@@ -2,8 +2,9 @@
     <thead>
     <tr>
         <th translate>username</th>
+        <th translate>accessLevel</th>
         <th translate>sessionLifetime</th>
-        <th  class="centered hidden-mobile" translate>isLoggedIn</th>
+        <th class="centered hidden-mobile" translate>isLoggedIn</th>
         <th class="action">
             <a routerLink="/configuration/users/add" mat-button>
                 <mat-icon>add</mat-icon> {{ 'add' | translate }}
@@ -14,6 +15,7 @@
     <tbody>
     <tr *ngFor="let user of users">
         <td>{{ user.username }}</td>
+        <td>{{ getUserAccessLevelName(user.accessLevel) }}</td>
         <td>
             <span *ngIf="user.sessionLifetime; else elseBlock">
                 {{ user.sessionLifetime }} days
