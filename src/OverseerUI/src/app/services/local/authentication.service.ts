@@ -30,8 +30,8 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
     requiresLogin(): Observable<boolean> {
         const self = this;
         return defer(async function(): Promise<boolean> {
-            const userCount = await self.userStorage.getUserCount();
-            if (!userCount) {
+            const adminCount = await self.userStorage.getAdminCount();
+            if (!adminCount) {
                 self.router.navigate(["/configuration", "setup"]);
                 self.errorHandler.handle("setup_required");
                 return false;

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { PersistedUser } from "../../../models/user.model";
+import { PersistedUser, AccessLevel } from "../../../models/user.model";
 import { openDatabase, usernameIndex, userStoreName } from "./open-database-function";
 
 @Injectable({ providedIn: "root" })
@@ -36,6 +36,11 @@ export class UserStorageService {
     async deleteUser(userId: number): Promise<any> {
         const db = await openDatabase();
         return await db.delete(userStoreName, userId);
+    }
+
+    async getAdminCount(): Promise<number> {
+        const users = await this.getUsers();
+        return users.filter(u => u.accessLevel === AccessLevel.Administrator).length;
     }
 
     async getUserCount(): Promise<number> {
