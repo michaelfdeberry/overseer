@@ -10,19 +10,21 @@ export const databaseName = "overseer";
 const keyConfiguration = { keyPath: "id", autoIncrement: true };
 
 const databaseUpdates = {
-    3: function(transaction) {
+    4: function(transaction) {
         const store = transaction.objectStore(userStoreName);
         const request = store.openCursor();
 
         // convert existing users to admins now that readonly users are supported.
         request.onsuccess = function(event: Event) {
             const cursor = (<IDBOpenDBRequest>event.target).result;
+
             if (cursor) {
                 const user = cursor["value"];
                 if (user.accessLevel === undefined || user.accessLevel === null) {
                     user.accessLevel = AccessLevel.Administrator;
                 }
 
+                cursor["update"](user);
                 cursor["continue"]();
             }
         };
