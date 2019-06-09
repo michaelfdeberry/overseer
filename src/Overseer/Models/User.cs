@@ -54,6 +54,10 @@ namespace Overseer.Models
 
         public AccessLevel AccessLevel { get; set; }
 
+        public string PreauthenticatedToken { get; set; }
+
+        public DateTime? PreauthenticatedTokenExpiration { get; set; }
+
         /// <summary>
         /// Helper method to quickly convert a user to a user display object
         /// </summary>

@@ -14,6 +14,8 @@ namespace Overseer.Tests
         const string Password = "UnitTestPassword";
 
         UserManager _userManager;
+        AuthenticationManager _authenticationManager;
+        AuthorizationManager _authorizationManager;
 
         IDataContext _context;
         IRepository<User> _users;
@@ -24,6 +26,8 @@ namespace Overseer.Tests
             _context = new UnitTestContext();
             _users = _context.GetRepository<User>();
             _userManager = new UserManager(_context);
+            _authenticationManager = new AuthenticationManager(_context);
+            _authorizationManager = new AuthorizationManager(_context, _authenticationManager);
         }
 
         [Test]
@@ -99,7 +103,7 @@ namespace Overseer.Tests
                 Password = Password
             });
 
-            var ex = Assert.Throws<OverseerException>(() => _userManager.AuthenticateUser("FakeName", Password));
+            var ex = Assert.Throws<OverseerException>(() => _authenticationManager.AuthenticateUser("FakeName", Password));
             Assert.AreEqual("invalid_username", ex.Message);
         }
 
@@ -112,7 +116,7 @@ namespace Overseer.Tests
                 Password = Password
             });
 
-            var ex = Assert.Throws<OverseerException>(() => _userManager.AuthenticateUser(Username, "WrongPassword"));
+            var ex = Assert.Throws<OverseerException>(() => _authenticationManager.AuthenticateUser(Username, "WrongPassword"));
             Assert.AreEqual("invalid_password", ex.Message);
         }
 
@@ -127,7 +131,7 @@ namespace Overseer.Tests
             });
             Assert.NotNull(createdUser);
 
-            var authenticatedUser = _userManager.AuthenticateUser(Username, Password);
+            var authenticatedUser = _authenticationManager.AuthenticateUser(Username, Password);
             Assert.NotNull(authenticatedUser);
             Assert.AreEqual(createdUser.Id, authenticatedUser.Id);
             Assert.NotNull(authenticatedUser.Token);
@@ -145,7 +149,7 @@ namespace Overseer.Tests
             });
             Assert.NotNull(createdUser);
 
-            var authenticatedUser = _userManager.AuthenticateUser(Username, Password);
+            var authenticatedUser = _authenticationManager.AuthenticateUser(Username, Password);
             Assert.NotNull(authenticatedUser);
             Assert.AreEqual(createdUser.Id, authenticatedUser.Id);
             Assert.NotNull(authenticatedUser.Token);
@@ -162,8 +166,8 @@ namespace Overseer.Tests
                 SessionLifetime = 7
             });
 
-            var session1 = _userManager.AuthenticateUser(Username, Password);
-            var session2 = _userManager.AuthenticateUser(Username, Password);
+            var session1 = _authenticationManager.AuthenticateUser(Username, Password);
+            var session2 = _authenticationManager.AuthenticateUser(Username, Password);
             Assert.AreEqual(session1.Token, session2.Token);
         }
         
@@ -176,9 +180,9 @@ namespace Overseer.Tests
                 Password = Password, 
                 SessionLifetime = 7
             });
-            var session = _userManager.AuthenticateUser(Username, Password);
+            var session = _authenticationManager.AuthenticateUser(Username, Password);
             
-            Assert.IsNotNull(_userManager.AuthenticateToken(session.Token));
+            Assert.IsNotNull(_authenticationManager.AuthenticateToken(session.Token));
         }
         
         [Test]
@@ -190,8 +194,8 @@ namespace Overseer.Tests
                 Password = Password,
                 SessionLifetime = 7
             });
-            var passwordAuthedUser = _userManager.AuthenticateUser(Username, Password);
-            var tokenAuthedUser = _userManager.AuthenticateToken(passwordAuthedUser.Token);
+            var passwordAuthedUser = _authenticationManager.AuthenticateUser(Username, Password);
+            var tokenAuthedUser = _authenticationManager.AuthenticateToken(passwordAuthedUser.Token);
             Assert.NotNull(tokenAuthedUser);
             Assert.AreEqual(passwordAuthedUser.Token, tokenAuthedUser.Token);
         }
@@ -204,8 +208,8 @@ namespace Overseer.Tests
                 Username = Username,
                 Password = Password
             });
-            var passwordAuthedUser = _userManager.AuthenticateUser(Username, Password);
-            var tokenAuthedUser = _userManager.AuthenticateToken(passwordAuthedUser.Token);
+            var passwordAuthedUser = _authenticationManager.AuthenticateUser(Username, Password);
+            var tokenAuthedUser = _authenticationManager.AuthenticateToken(passwordAuthedUser.Token);
             Assert.NotNull(tokenAuthedUser);
             Assert.AreEqual(passwordAuthedUser.Token, tokenAuthedUser.Token);
         }
@@ -213,9 +217,9 @@ namespace Overseer.Tests
         [Test]
         public void ShouldFailToAuthenticateInvalidToken()
         {
-            Assert.Null(_userManager.AuthenticateToken(null));
-            Assert.Null(_userManager.AuthenticateToken(string.Empty));
-            Assert.Null(_userManager.AuthenticateToken("Invalid"));
+            Assert.Null(_authenticationManager.AuthenticateToken(null));
+            Assert.Null(_authenticationManager.AuthenticateToken(string.Empty));
+            Assert.Null(_authenticationManager.AuthenticateToken("Invalid"));
         }
 
         [Test]
@@ -227,13 +231,13 @@ namespace Overseer.Tests
                 Password = Password,
                 SessionLifetime = 7
             });
-            var passwordAuthedUser = _userManager.AuthenticateUser(Username, Password);
+            var passwordAuthedUser = _authenticationManager.AuthenticateUser(Username, Password);
 
             var user = _users.GetById(passwordAuthedUser.Id);
             user.TokenExpiration = DateTime.Now.Subtract(TimeSpan.FromDays(8));
             _users.Update(user);
 
-            var tokenAuthedUser = _userManager.AuthenticateToken(passwordAuthedUser.Token);
+            var tokenAuthedUser = _authenticationManager.AuthenticateToken(passwordAuthedUser.Token);
             Assert.Null(tokenAuthedUser);
         }
 
@@ -246,10 +250,10 @@ namespace Overseer.Tests
                 Password = Password,
                 SessionLifetime = 7
             });
-            var session = _userManager.AuthenticateUser(Username, Password);
+            var session = _authenticationManager.AuthenticateUser(Username, Password);
             Assert.True(session.IsLoggedIn);
 
-            session = _userManager.DeauthenticateUser(session.Token);
+            session = _authenticationManager.DeauthenticateUser(session.Token);
             Assert.False(session.IsLoggedIn);
         }
 
@@ -262,10 +266,10 @@ namespace Overseer.Tests
                 Password = Password,
                 SessionLifetime = 7
             });
-            var session = _userManager.AuthenticateUser(Username, Password);
+            var session = _authenticationManager.AuthenticateUser(Username, Password);
             Assert.True(session.IsLoggedIn);
 
-            session = _userManager.DeauthenticateUser(session.Id);
+            session = _authenticationManager.DeauthenticateUser(session.Id);
             Assert.False(session.IsLoggedIn);
         }
 
@@ -340,7 +344,7 @@ namespace Overseer.Tests
 
             var first = _users.GetById(1);
             Assert.NotNull(first);
-            Assert.NotNull(_userManager.AuthenticateUser(Username, "Password1"));
+            Assert.NotNull(_authenticationManager.AuthenticateUser(Username, "Password1"));
 
             _userManager.UpdateUser(new UserDisplay
             {
@@ -350,8 +354,8 @@ namespace Overseer.Tests
             });
             var second = _users.GetById(1);
             Assert.NotNull(second);            
-            Assert.NotNull(_userManager.AuthenticateUser(Username, "Password2"));
-            Assert.Throws<OverseerException>(() => _userManager.AuthenticateUser(Username, "Password1"));
+            Assert.NotNull(_authenticationManager.AuthenticateUser(Username, "Password2"));
+            Assert.Throws<OverseerException>(() => _authenticationManager.AuthenticateUser(Username, "Password1"));
         }
 
         [Test]
