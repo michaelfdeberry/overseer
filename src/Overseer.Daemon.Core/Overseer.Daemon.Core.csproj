@@ -28,7 +28,7 @@
     <PackageReference Include="Nancy.Owin" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Overseer.Daemon\Overseer.Daemon.Common.csproj" />
+    <ProjectReference Include="..\Overseer.Daemon.Common\Overseer.Daemon.Common.csproj" />
     <ProjectReference Include="..\Overseer\Overseer.csproj" />
   </ItemGroup>
   <ItemGroup>

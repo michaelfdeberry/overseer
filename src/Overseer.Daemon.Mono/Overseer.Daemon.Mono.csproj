@@ -121,8 +121,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Overseer.Daemon\Overseer.Daemon.Common.csproj">
-      <Project>{21f99bef-c613-477c-968d-2dd7d033b31f}</Project>
+    <ProjectReference Include="..\Overseer.Daemon.Common\Overseer.Daemon.Common.csproj">
+      <Project>{05c2bcbf-b376-43ca-a589-7957c6fa8280}</Project>
       <Name>Overseer.Daemon.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Overseer\Overseer.csproj">
