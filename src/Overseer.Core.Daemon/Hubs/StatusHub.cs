@@ -1,53 +1,33 @@
-﻿using log4net;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Overseer.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Overseer.Daemon.Hubs
 {
     public class StatusHub : Hub
     {
-        static readonly ILog Log = LogManager.GetLogger(typeof(StatusHub));
-        static readonly HashSet<string> MonitoringGroup = new HashSet<string>();
+        readonly StatusHubService _statusHubService;
 
-        public static readonly string MonitoringGroupName = "MonitoringGroup";
-
-        readonly IMonitoringService _monitoringService;
-
-        public StatusHub(IMonitoringService monitoringService)
+        public StatusHub(StatusHubService statusHubService)
         {
-            _monitoringService = monitoringService;
+            _statusHubService = statusHubService;
         }
 
         public async Task StartMonitoring()
         {
-            MonitoringGroup.Add(Context.ConnectionId);
-            await Groups.AddToGroupAsync(Context.ConnectionId, MonitoringGroupName);
-
-            if (!_monitoringService.Enabled)
-            {
-                Log.Info("A client connected, initiating monitoring...");
-                _monitoringService.StartMonitoring();
-                _monitoringService.PollProviders();
-            }
+            await Groups.AddToGroupAsync(Context.ConnectionId, StatusHubService.MonitoringGroupName);
+            _statusHubService.StartMonitoring(Context.ConnectionId);
         }
 
         public void PollProviders()
         {
-            _monitoringService.PollProviders();
+            _statusHubService.PollProviders(Context.ConnectionId);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            MonitoringGroup.Remove(Context.ConnectionId);
-            if (!MonitoringGroup.Any())
-            {
-                _monitoringService.StopMonitoring();
-            }
-
+            _statusHubService.StopMonitoring(Context.ConnectionId);
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -55,7 +35,7 @@ namespace Overseer.Daemon.Hubs
         {
             hubContext
                 .Clients
-                .Group(MonitoringGroupName)
+                .Group(StatusHubService.MonitoringGroupName)
                 .SendAsync("StatusUpdate", status);
         }
     }

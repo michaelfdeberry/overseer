@@ -15,9 +15,10 @@ namespace Overseer.Daemon.Modules
         )
             : base("settings")
         {
-            this.RequiresMSOwinAuthentication();
+            this.RequiresAuthentication();
 
-            Get("/bundle", p => {
+            Get("/bundle", p => 
+            {
                 return new
                 {
                     Machines = machineManager.GetMachines(),
@@ -33,19 +34,20 @@ namespace Overseer.Daemon.Modules
 
             Post("/", p =>
             {
-                this.RequireAdmin();
+                this.RequiresAdmin();
 
                 return configurationManager.UpdateApplicationSettings(this.Bind<ApplicationSettings>());
             });
             
             Put("/certificate", p => 
             {
-                this.RequireAdmin();
+                this.RequiresAdmin();
 
                 return configurationManager.AddCertificateExclusion(this.Bind<CertificateDetails>());
             });
 
-            Get("/about", p => {
+            Get("/about", p => 
+            {
                 return configurationManager.GetApplicationInfo();
             });
         }

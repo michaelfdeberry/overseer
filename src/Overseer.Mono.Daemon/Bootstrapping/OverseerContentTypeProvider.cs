@@ -1,6 +1,6 @@
 ﻿using Microsoft.Owin.StaticFiles.ContentTypes;
 
-namespace Overseer.Daemon.Startup
+namespace Overseer.Daemon.Bootstrapping
 {
     public class OverseerContentTypeProvider : FileExtensionContentTypeProvider
     {

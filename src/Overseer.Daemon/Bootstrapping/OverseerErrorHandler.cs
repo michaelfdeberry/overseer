@@ -5,7 +5,7 @@ using Nancy.Extensions;
 using Nancy.Responses;
 using Overseer.Models;
 
-namespace Overseer.Daemon.Startup
+namespace Overseer.Daemon.Bootstrapping
 {
     public class OverseerErrorHandler : IStatusCodeHandler
     {

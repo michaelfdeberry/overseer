@@ -9,24 +9,20 @@ namespace Overseer.Daemon.Modules
 {
     public static class ModuleExtensions
     {
-        public static HttpStatusCode Ok(this NancyModule module, Action action)
-        {
-            action.Invoke();
-            return HttpStatusCode.OK;
-        }
-
         public static async Task<HttpStatusCode> OkAsync(this NancyModule module, Func<Task> asyncFunc)
         {
+            if (module == null) return HttpStatusCode.BadRequest;
+
             await asyncFunc.Invoke();
             return HttpStatusCode.OK;
         }
 
-        public static void RequireAdmin(this NancyModule module)
+        public static void RequiresAdmin(this NancyModule module)
         {
-            module.RequireRole(AccessLevel.Administrator);
+            module.RequiresRole(AccessLevel.Administrator);
         }
 
-        public static void RequireRole(this NancyModule module, AccessLevel accessLevel)
+        public static void RequiresRole(this NancyModule module, AccessLevel accessLevel)
         {
             module.RequiresClaims(claims => claims.Type == ClaimTypes.Role && claims.Value == accessLevel.ToString());
         }

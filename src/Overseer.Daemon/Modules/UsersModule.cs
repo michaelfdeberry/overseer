@@ -10,40 +10,41 @@ namespace Overseer.Daemon.Modules
         public UsersModule(IUserManager userManager)
             : base("users")
         {
-            this.RequiresMSOwinAuthentication();
+            this.RequiresAuthentication();
 
             Get("/", p =>
             {
-                this.RequireAdmin();
+                this.RequiresAdmin();
                 return userManager.GetUsers();
             });
 
-            Get("/{id:int}", p => {
-                this.RequireAdmin();
+            Get("/{id:int}", p => 
+            {
+                this.RequiresAdmin();
                 return userManager.GetUser(p.id);
             });
 
             Put("/", p => 
             {
-                this.RequireAdmin();
+                this.RequiresAdmin();
                 return userManager.CreateUser(this.Bind<UserDisplay>());
             });
 
             Post("/", p =>
             {
-                this.RequireAdmin();
+                this.RequiresAdmin();
                 return userManager.UpdateUser(this.Bind<UserDisplay>());
             });
 
             Delete("/{id:int}", p => 
             {
-                this.RequireAdmin();
+                this.RequiresAdmin();
                 return userManager.DeleteUser(p.id);
             });
 
             Post("/password", p => 
             {
-                this.RequireAdmin();
+                this.RequiresAdmin();
                 return userManager.ChangePassword(this.Bind<UserDisplay>());
             });
         }

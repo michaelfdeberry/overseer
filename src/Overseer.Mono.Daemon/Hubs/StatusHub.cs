@@ -1,54 +1,33 @@
-﻿using log4net;
-using Microsoft.AspNet.SignalR;
+﻿using Microsoft.AspNet.SignalR;
 using Overseer.Models;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Overseer.Daemon.Hubs
 {
+    #pragma warning disable UseAsyncSuffix 
     public class StatusHub : Hub
     {
-        static readonly ILog Log = LogManager.GetLogger(typeof(StatusHub)); 
-        static readonly HashSet<string> MonitoringGroup = new HashSet<string>();
-        public static readonly string MonitoringGroupName = "MonitoringGroup";
+        readonly StatusHubService _statusHubService;
 
-        readonly IMonitoringService _monitoringService;
-
-        public StatusHub(IMonitoringService monitoringService)
+        public StatusHub(StatusHubService statusHubService)
         {
-            _monitoringService = monitoringService;
+            _statusHubService = statusHubService;
         }
         
-        public async Task<bool> StartMonitoring()
+        public async Task StartMonitoring()
         {
-            MonitoringGroup.Add(Context.ConnectionId);
             await Groups.Add(Context.ConnectionId, "MonitoringGroup");
-                
-            if (MonitoringGroup.Count == 1)
-            {
-                Log.Info("A client connected, initiating monitoring...");                
-                _monitoringService.StartMonitoring();
-                _monitoringService.PollProviders();
-            }
-
-            return true;
+            _statusHubService.StartMonitoring(Context.ConnectionId);
         }
 
         public void PollProviders()
         {
-            _monitoringService.PollProviders();
+            _statusHubService.PollProviders(Context.ConnectionId);
         }
 
         public override Task OnDisconnected(bool stopCalled)
         {
-            MonitoringGroup.Remove(Context.ConnectionId); 
-            if (!MonitoringGroup.Any())
-            {
-                Log.Info("All clients disconnected, suspending monitoring...");
-                _monitoringService.StopMonitoring();
-            }
-            
+            _statusHubService.StopMonitoring(Context.ConnectionId);
             return base.OnDisconnected(stopCalled);
         }
 
@@ -56,7 +35,7 @@ namespace Overseer.Daemon.Hubs
         {
             GlobalHost.ConnectionManager.GetHubContext<StatusHub>()
                 .Clients
-                .Group(MonitoringGroupName)
+                .Group(StatusHubService.MonitoringGroupName)
                 .StatusUpdate(statusUpdate);
         }
     }

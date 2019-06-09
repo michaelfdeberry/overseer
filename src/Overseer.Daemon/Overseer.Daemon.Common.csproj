@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Overseer.Daemon</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentCommandLineParser-netstandard" Version="1.4.3.13" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Nancy" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Overseer\Overseer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Authentication.Abstractions">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.aspnetcore.authentication.abstractions\2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Authentication.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

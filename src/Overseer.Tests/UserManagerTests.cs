@@ -333,7 +333,7 @@ namespace Overseer.Tests
         }
 
         [Test]
-        public void ShouldChangePasswordByRecreatingUser()
+        public void ShouldChangePasswordUser()
         {
             _userManager.CreateUser(new UserDisplay
             {
@@ -346,7 +346,7 @@ namespace Overseer.Tests
             Assert.NotNull(first);
             Assert.NotNull(_authenticationManager.AuthenticateUser(Username, "Password1"));
 
-            _userManager.UpdateUser(new UserDisplay
+            _userManager.ChangePassword(new UserDisplay
             {
                 Id = first.Id,
                 Username = Username,

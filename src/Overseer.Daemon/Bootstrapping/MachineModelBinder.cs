@@ -5,7 +5,7 @@ using Overseer.Models;
 using System;
 using System.IO;
 
-namespace Overseer.Daemon.Startup
+namespace Overseer.Daemon.Bootstrapping
 {
     public class MachineModelBinder : IModelBinder
     {

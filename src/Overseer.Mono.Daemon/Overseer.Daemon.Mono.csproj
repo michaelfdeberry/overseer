@@ -46,11 +46,11 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.4.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.4.1\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.4.0\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.4.1\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
@@ -80,16 +80,13 @@
       <HintPath>..\packages\Mono.Posix-4.5.4.5.0\lib\net45\Mono.Posix.dll</HintPath>
     </Reference>
     <Reference Include="Nancy, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.2.0.0-clinteastwood\lib\net452\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.MSOwinSecurity, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.MSOwinSecurity.2.0.0\lib\net45\Nancy.MSOwinSecurity.dll</HintPath>
+      <HintPath>..\packages\Nancy.2.0.0\lib\net452\Nancy.dll</HintPath>
     </Reference>
     <Reference Include="Nancy.Owin, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Owin.2.0.0-clinteastwood\lib\net452\Nancy.Owin.dll</HintPath>
+      <HintPath>..\packages\Nancy.Owin.2.0.0\lib\net452\Nancy.Owin.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -109,23 +106,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bootstrapping\OverseerContractResolver.cs" />
     <Compile Include="Hubs\StatusHub.cs" />
-    <Compile Include="Modules\AuthenticationModule.cs" />
-    <Compile Include="Modules\SettingsModule.cs" />
-    <Compile Include="Modules\ControlModule.cs" />
-    <Compile Include="Modules\ModuleExtensions.cs" />
-    <Compile Include="Modules\MachinesModule.cs" />
-    <Compile Include="Modules\UsersModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Startup\ExitSignal.cs" />
-    <Compile Include="Startup\MachineModelBinder.cs" />
-    <Compile Include="Startup\OverseerAuthentication.cs" />
-    <Compile Include="Startup\OverseerBootstrapper.cs" />
-    <Compile Include="Startup\OverseerContentTypeProvider.cs" />
-    <Compile Include="Startup\OverseerContractResolver.cs" />
-    <Compile Include="Startup\OverseerErrorHandler.cs" />
-    <Compile Include="Startup\OverseerStartup.cs" />
+    <Compile Include="ExitSignal.cs" />
+    <Compile Include="Startup.cs" />
+    <Compile Include="Bootstrapping\OverseerAuthentication.cs" />
+    <Compile Include="Bootstrapping\OverseerContentTypeProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -133,6 +121,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Overseer.Daemon\Overseer.Daemon.Common.csproj">
+      <Project>{21f99bef-c613-477c-968d-2dd7d033b31f}</Project>
+      <Name>Overseer.Daemon.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Overseer\Overseer.csproj">
       <Project>{138f8917-33fd-4fae-9d1f-b728504955b2}</Project>
       <Name>Overseer</Name>

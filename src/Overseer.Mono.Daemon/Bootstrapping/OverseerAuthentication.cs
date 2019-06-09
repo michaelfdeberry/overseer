@@ -1,11 +1,12 @@
 ﻿using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
+using Nancy.TinyIoc;
 using Owin;
 using System;
 using System.Threading.Tasks;
 
-namespace Overseer.Daemon.Startup
+namespace Overseer.Daemon.Bootstrapping
 {
     public class OverseerAuthenticationOptions : AuthenticationOptions
     {
@@ -14,15 +15,16 @@ namespace Overseer.Daemon.Startup
         {
             AuthenticationMode = AuthenticationMode.Active;
         }
+
+        public TinyIoCContainer Container { get; set; }
     }
 
     public class OverseerAuthenticationHandler : AuthenticationHandler<OverseerAuthenticationOptions>
     {
         protected override Task<AuthenticationTicket> AuthenticateCoreAsync()
-        {
-            var userManager = OverseerBootstrapper.Container.Resolve<UserManager>();
-
-            var identity = userManager.Authenticate(Context.Request.Headers["Authorization"]);
+        {            
+            var authorizationManager = Options.Container.Resolve<IAuthorizationManager>();
+            var identity = authorizationManager.Authorize(Context.Request.Headers["Authorization"]);
             if (identity == null)
                 return Task.FromResult<AuthenticationTicket>(null);
 
@@ -45,11 +47,11 @@ namespace Overseer.Daemon.Startup
 
     public static class AuthenticationExtensions
     {
-        public static IAppBuilder UseOverseerAuthentication(this IAppBuilder app)
+        public static IAppBuilder UseOverseerAuthentication(this IAppBuilder app, TinyIoCContainer container)
         {
             if(app == null) throw new ArgumentException(nameof(app));
 
-            var options = new OverseerAuthenticationOptions();
+            var options = new OverseerAuthenticationOptions { Container = container };
             return app.Use<OverseerAuthenticationMiddleware>(options);
         }
     }

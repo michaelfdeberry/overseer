@@ -11,7 +11,7 @@ namespace Overseer.Daemon.Modules
         public MachinesModule(IMachineManager machineManager)
             : base("machines")
         {
-            this.RequiresMSOwinAuthentication();
+            this.RequiresAuthentication();
 
             Get("/", p => 
             {
@@ -25,28 +25,28 @@ namespace Overseer.Daemon.Modules
 
             Put("/", async p => 
             {
-                this.RequireAdmin();
+                this.RequiresAdmin();
 
                 return await machineManager.CreateMachine(this.Bind<Machine>());
             });
 
             Post("/", async p => 
             {
-                this.RequireAdmin();
+                this.RequiresAdmin();
 
                 return await machineManager.UpdateMachine(this.Bind<Machine>());
             });
             
             Delete("/{id:int}", p => 
             {
-                this.RequireAdmin();
+                this.RequiresAdmin();
 
                 return machineManager.DeleteMachine((int)p.id);
             });
 
             Post("/sort", p => 
             {
-                this.RequireAdmin();
+                this.RequiresAdmin();
 
                 machineManager.SortMachines(this.Bind<List<int>>());
                 return HttpStatusCode.OK;

@@ -1,5 +1,4 @@
 ﻿using Nancy;
-using Nancy.Security;
 
 namespace Overseer.Daemon.Modules
 {
@@ -8,7 +7,7 @@ namespace Overseer.Daemon.Modules
         public ControlModule(ControlManager controlManager)
             : base("control")
         {
-            this.RequireAdmin();
+            this.RequiresAdmin();
 
             Get("/{id:int}/pause", async (p, ct) => await this.OkAsync(() => controlManager.Pause(p.id)));
 

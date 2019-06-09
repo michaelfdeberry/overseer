@@ -1,48 +1,33 @@
-﻿using Microsoft.AspNet.SignalR;
-using Nancy;
+﻿using Nancy;
 using Nancy.TinyIoc;
-using Newtonsoft.Json;
 using Overseer.Daemon.Hubs;
+using Overseer.Daemon.Modules;
 using Overseer.Data;
 using Overseer.Machines;
 using Overseer.Models;
 using System;
 
-namespace Overseer.Daemon.Startup
+namespace Overseer.Daemon.Bootstrapping
 {
     public class OverseerBootstrapper : DefaultNancyBootstrapper
     {
-        public static TinyIoCContainer Container = new TinyIoCContainer();
+        public TinyIoCContainer Container = new TinyIoCContainer();
 
         CertificateExceptionHandler _certificateExceptionHandler;
+
         readonly IDataContext _context;
         MonitoringService _monitoringService;
 
         public OverseerBootstrapper(IDataContext context)
         {
             _context = context;
-            
-            GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () =>
-            {
-                var serializer = new JsonSerializer();
-                serializer.ContractResolver = new OverseerContractResolver();
-                serializer.Formatting = Formatting.None;
-
-                return serializer;
-            });
-            
-            GlobalHost.DependencyResolver.Register(typeof(StatusHub), () =>
-            {
-                return Container.Resolve<StatusHub>();
-            });
         }
 
         protected override void ConfigureApplicationContainer(TinyIoCContainer container)
         {
             base.ConfigureApplicationContainer(container);
 
-            container.Register((c, n) => _context);
-            
+            container.Register((c, n) => _context);            
             container.Register<Func<Machine, IMachineProvider>>((c, n) => machine =>
             {
                 var machineType = MachineProviderManager.GetProviderType(machine);
@@ -51,6 +36,8 @@ namespace Overseer.Daemon.Startup
                 return provider;
             });
 
+            container.Register<IAuthenticationManager, AuthenticationManager>();
+            container.Register<IAuthorizationManager, AuthorizationManager>();
             container.Register<IConfigurationManager, ConfigurationManager>();
             container.Register<IUserManager, UserManager>();
             container.Register<IMachineManager, MachineManager>();
@@ -65,14 +52,22 @@ namespace Overseer.Daemon.Startup
                         c.Resolve<ConfigurationManager>(), 
                         c.Resolve<MachineProviderManager>());
 
-                    _monitoringService.StatusUpdate += (s, args) =>
+                    _monitoringService.StatusUpdate += (sender, args) =>
                     {
-                        StatusHub.PushStatusUpdate(args.Data);
+                        c.Resolve<Action<MachineStatus>>()?.Invoke(args.Data);
                     };
                 }
 
                 return _monitoringService;
             });
+
+            container.Register<StatusHubService>();
+            container.Register<AuthenticationModule>();
+            container.Register<AuthorizationModule>();
+            container.Register<ConfigurationModule>();
+            container.Register<ControlModule>();
+            container.Register<MachinesModule>();
+            container.Register<UsersModule>();
 
             _certificateExceptionHandler = container.Resolve<CertificateExceptionHandler>();
             _certificateExceptionHandler.Initialize();

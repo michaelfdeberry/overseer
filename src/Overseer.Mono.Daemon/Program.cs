@@ -1,9 +1,4 @@
-﻿using Fclp;
-using log4net;
-using Overseer.Daemon.Startup;
-using Overseer.Data;
-using Overseer.Models;
-using System;
+﻿using log4net;
 using System.Threading;
 
 namespace Overseer.Daemon
@@ -12,25 +7,13 @@ namespace Overseer.Daemon
     {
         static readonly ILog Log = LogManager.GetLogger(typeof(Program));
 
-        static void ExitApplication(int exitCode)
-        {
-            Log.Info("Exiting Overseer");
-            Environment.Exit(exitCode);
-        }
-
         static void Main(string[] args)
         {
             Log.Info("Starting Overseer...");
 
-            if (!UpdateManager.Update())
-            {
-                ExitApplication(1);
-                return;
-            }
-
             var waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
 
-            using (var context = new LiteDataContext())
+            using (var launcher = new Launcher())
             {        
                 var exitSignal = ExitSignal.Create();
                 exitSignal.Exit += (sender, eventArgs) =>
@@ -39,25 +22,10 @@ namespace Overseer.Daemon
                     waitHandle.Set();
                 };
 
-                try
-                {
-                    var valueStore = context.GetValueStore();
-                    var settings = valueStore.GetOrPut(() => new ApplicationSettings());
-                    var parser = new FluentCommandLineParser();
-                    parser.Setup<int>("port").Callback(port => settings.LocalPort = port);
-                    parser.Setup<int>("interval").Callback(interval => settings.Interval = interval);
-                    parser.Parse(args);
-                    
-                    valueStore.Put(settings);
-                    OverseerStartup.Start(context);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Application Failure", ex);
-                }
-
+                Startup.Start(launcher.Launch(args), launcher.Bootstrapper);
                 waitHandle.WaitOne();
-                ExitApplication(0);
+
+                Log.Info("Exiting Overseer");
             }
         }
     }

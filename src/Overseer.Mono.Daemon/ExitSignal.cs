@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace Overseer.Daemon.Startup
+namespace Overseer.Daemon
 {
     /// <summary>
     /// Adapted from code found here https://stackoverflow.com/a/32716784

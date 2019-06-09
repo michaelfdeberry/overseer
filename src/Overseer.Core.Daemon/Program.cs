@@ -1,49 +1,35 @@
-using Fclp;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
-using Overseer.Data;
-using Overseer.Models;
-using System;
+using Microsoft.Extensions.DependencyInjection;
+using Overseer.Daemon.Hubs;
 
 namespace Overseer.Daemon
 {
     public class Program
     {
-        public static IDataContext DataContext { get; private set; }
-
         public static void Main(string[] args)
         {
-            if (!UpdateManager.Update())
+            using (var launcher = new Launcher())
             {
-                Environment.Exit(1);
-                return;
+                var endpoint = launcher.Launch(args);
+                var builder = WebHost.CreateDefaultBuilder(args)
+                    .UseUrls(new[] { endpoint })
+                    .ConfigureLogging((hostingContext, logging) =>
+                    {
+                        logging.AddLog4Net();
+                        logging.SetMinimumLevel(LogLevel.Debug);
+                    })
+                    .ConfigureServices(services => 
+                    {
+                        services.AddSingleton(launcher.Bootstrapper);
+                        services.AddTransient(s => launcher.Bootstrapper.Container.Resolve<IAuthorizationManager>());
+                        services.AddTransient(s => launcher.Bootstrapper.Container.Resolve<StatusHubService>());
+                    })
+                    .UseStartup<Startup>();
+
+                builder.Build().Run();
             }
-
-            using (var context = new LiteDataContext())
-            {
-                DataContext = context;
-                CreateWebHostBuilder(args).Build().Run();
-            }            
-        }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) {            
-            var valueStore = DataContext.GetValueStore();
-            var appSettings = valueStore.GetOrPut(() => new ApplicationSettings());
-            var parser = new FluentCommandLineParser();
-            parser.Setup<int>("port").Callback(port => appSettings.LocalPort = port);
-            parser.Setup<int>("interval").Callback(interval => appSettings.Interval = interval);
-            parser.Parse(args);
-            valueStore.Put(appSettings);
-
-            return WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseUrls(new[] { $"http://localhost:{appSettings.LocalPort}/" })
-                .ConfigureLogging((hostingContext, logging) =>
-                {
-                    logging.AddLog4Net();
-                    logging.SetMinimumLevel(LogLevel.Debug);
-                });
         }
     }
 }

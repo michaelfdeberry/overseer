@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Security.Claims;
-using System.Security.Principal;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
@@ -23,23 +22,23 @@ namespace Overseer.Daemon
 
     public class OverseerAuthenticationHandler : AuthenticationHandler<OverseerAuthenticationOptions>
     {
-        readonly IUserManager _userManager;
+        readonly IAuthorizationManager _authorizationManager;
 
         public OverseerAuthenticationHandler(
             IOptionsMonitor<OverseerAuthenticationOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            IUserManager userManager
+            IAuthorizationManager authorizationManager
         )
             : base(options, logger, encoder, clock)
         {
-            _userManager = userManager;
+            _authorizationManager = authorizationManager;
         }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var identity = _userManager.Authenticate(Context.Request.Headers["Authorization"]);
+            var identity = _authorizationManager.Authorize(Context.Request.Headers["Authorization"]);
             if (identity == null)
                 return Task.FromResult(AuthenticateResult.Fail("invalid_token"));
             

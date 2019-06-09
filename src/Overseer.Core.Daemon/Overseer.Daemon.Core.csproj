@@ -24,8 +24,11 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="2.2.10" />
+    <PackageReference Include="Nancy" Version="2.0.0" />
+    <PackageReference Include="Nancy.Owin" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Overseer.Daemon\Overseer.Daemon.Common.csproj" />
     <ProjectReference Include="..\Overseer\Overseer.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -51,7 +54,7 @@
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
       <DistFiles Include="$(SpaRoot)dist\**" />
-      <ResolvedFileToPublish Include="@(DistFiles-&gt;'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
         <RelativePath>$([System.String]::Copy('%(DistFiles.Identity)').Replace('..\OverseerUI\dist\','OverseerUI\'))</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </ResolvedFileToPublish>
