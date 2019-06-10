@@ -32,7 +32,7 @@ Task("Version")
         // update the csproj xml files
         var csprojFiles = new [] {
             overseerProjectFile, 
-            "../src/Overseer.Core.Daemon/Overseer.Core.Daemon.csproj",
+            "../src/Overseer.Daemon.Core/Overseer.Daemon.Core.csproj",
             "../src/Overseer.Tests/Overseer.Tests.csproj"
         };
         foreach (var csprojFile in csprojFiles)
