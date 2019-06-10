@@ -17,7 +17,7 @@
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
     <RootNamespace>Overseer.Daemon</RootNamespace>
     <AssemblyName>Overseer.Daemon</AssemblyName>
-    <Version>1.0.8</Version>
+    <Version>1.0.10</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentCommandLineParser-netstandard" Version="1.4.3.13" />
@@ -54,7 +54,7 @@
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
       <DistFiles Include="$(SpaRoot)dist\**" />
-      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+      <ResolvedFileToPublish Include="@(DistFiles-&gt;'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
         <RelativePath>$([System.String]::Copy('%(DistFiles.Identity)').Replace('..\OverseerUI\dist\','OverseerUI\'))</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </ResolvedFileToPublish>
