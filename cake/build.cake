@@ -139,7 +139,7 @@ Task("PublishMono")
 Task("PublishCoreXPlat")
     .Does(() => {
         //publish the app for cross platform
-        DotNetCorePublish("../src/Overseer.Daemon.Core/Overseer.Daemon.csproj", new DotNetCorePublishSettings
+        DotNetCorePublish("../src/Overseer.Daemon.Core/Overseer.Daemon.Core.csproj", new DotNetCorePublishSettings
         {
             Framework = "netcoreapp2.1",
             Configuration = "Release",
