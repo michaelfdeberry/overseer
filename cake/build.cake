@@ -33,7 +33,8 @@ Task("Version")
         var csprojFiles = new [] {
             overseerProjectFile, 
             "../src/Overseer.Daemon.Core/Overseer.Daemon.Core.csproj",
-            "../src/Overseer.Tests/Overseer.Tests.csproj"
+            "../src/Overseer.Tests/Overseer.Tests.csproj",
+            "../src/Overseer.Daemon.Common/Overseer.Daemon.Common.csproj"
         };
         foreach (var csprojFile in csprojFiles)
         {     
