@@ -12,9 +12,9 @@ namespace Overseer.Daemon
         {
             using (var launcher = new Launcher())
             {
-                var endpoint = launcher.Launch(args);
-                var builder = WebHost.CreateDefaultBuilder(args)
-                    .UseUrls(new[] { endpoint })
+                WebHost
+                    .CreateDefaultBuilder(args)
+                    .UseUrls(new[] { launcher.Launch(args) })
                     .ConfigureLogging((hostingContext, logging) =>
                     {
                         logging.AddLog4Net();
@@ -26,9 +26,9 @@ namespace Overseer.Daemon
                         services.AddTransient(s => launcher.Bootstrapper.Container.Resolve<IAuthorizationManager>());
                         services.AddTransient(s => launcher.Bootstrapper.Container.Resolve<StatusHubService>());
                     })
-                    .UseStartup<Startup>();
-
-                builder.Build().Run();
+                    .UseStartup<Startup>()
+                    .Build()
+                    .Run();
             }
         }
     }
