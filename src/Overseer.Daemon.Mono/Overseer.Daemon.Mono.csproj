@@ -110,7 +110,7 @@
     <Compile Include="Hubs\StatusHub.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ExitSignal.cs" />
+    <Compile Include="Bootstrapping\ExitSignal.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Bootstrapping\OverseerAuthentication.cs" />
     <Compile Include="Bootstrapping\OverseerContentTypeProvider.cs" />
