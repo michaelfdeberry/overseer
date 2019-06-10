@@ -2,6 +2,7 @@
 using Overseer.Models;
 using System;
 using System.Linq;
+using System.Text;
 
 namespace Overseer
 {
@@ -36,23 +37,7 @@ namespace Overseer
                 throw new OverseerException("invalid_password");
             }
 
-            if (!user.IsTokenExpired())
-            {
-                return user.ToDisplay(includeToken: true);
-            }
-
-            user.Token = BCrypt.Net.BCrypt.GenerateSalt(16);
-            if (user.SessionLifetime.HasValue)
-            {
-                user.TokenExpiration = DateTime.UtcNow.AddDays(user.SessionLifetime.Value);
-            }
-            else
-            {
-                user.TokenExpiration = null;
-            }
-
-            _users.Update(user);
-            return user.ToDisplay(includeToken: true);
+            return AuthenticateUser(user);
         }
 
         public User AuthenticateToken(string token)
@@ -94,7 +79,8 @@ namespace Overseer
             if (user == null) return string.Empty;
             if (user.AccessLevel != AccessLevel.Readonly) return string.Empty;
 
-            user.PreauthenticatedToken = BCrypt.Net.BCrypt.GenerateSalt(16);
+            var token = Encoding.UTF8.GetBytes(BCrypt.Net.BCrypt.GenerateSalt(16));
+            user.PreauthenticatedToken = Convert.ToBase64String(token);
             user.PreauthenticatedTokenExpiration = DateTime.UtcNow.AddMinutes(2);
             _users.Update(user);
 
@@ -106,11 +92,7 @@ namespace Overseer
             var user = _users.Get(u => u.PreauthenticatedToken == token && u.PreauthenticatedTokenExpiration > DateTime.UtcNow);
             if (user == null) return null;
 
-            user.PreauthenticatedToken = null;
-            user.PreauthenticatedTokenExpiration = null;
-            _users.Update(user);
-
-            return user.ToDisplay(true);
+            return AuthenticateUser(user);
         }
         string StripToken(string token)
         {
@@ -134,6 +116,30 @@ namespace Overseer
             _users.Update(user);
 
             return user.ToDisplay();
+        }
+
+        UserDisplay AuthenticateUser(User user)
+        {
+            if (!user.IsTokenExpired())
+            {
+                return user.ToDisplay(includeToken: true);
+            }
+
+            user.Token = BCrypt.Net.BCrypt.GenerateSalt(16);
+            if (user.SessionLifetime.HasValue)
+            {
+                user.TokenExpiration = DateTime.UtcNow.AddDays(user.SessionLifetime.Value);
+            }
+            else
+            {
+                user.TokenExpiration = null;
+            }
+
+            user.PreauthenticatedToken = null;
+            user.PreauthenticatedTokenExpiration = null;
+
+            _users.Update(user);
+            return user.ToDisplay(includeToken: true);
         }
     }
 }

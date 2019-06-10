@@ -24,10 +24,18 @@ export class EditUserComponent implements OnInit {
     user: User;
     users: User[];
     accessLevels = accessLevels;
+    generatedUrl: string;
 
     get activeUser() {
         return this.authenticationService.activeUser;
     }
+
+    get displayPreauthentication() {
+        return this.activeUser.accessLevel === AccessLevel.Administrator &&
+            this.user && this.user.accessLevel === AccessLevel.Readonly &&
+            this.authenticationService.supportsPreauthentication;
+    }
+
     constructor(
         private usersService: UsersService,
         private authenticationService: AuthenticationService,
@@ -55,10 +63,11 @@ export class EditUserComponent implements OnInit {
         this.route.paramMap
             .subscribe((params: ParamMap) => {
                 const userId = parseInt(params.get("id"), 10);
-                this.usersService.getUser(userId).subscribe(user => {
-                    this.user = user;
-                    this.form.patchValue(user);
-                    this.passwordForm.patchValue(user);
+                this.usersService.getUsers().subscribe(users => {
+                    this.user = users.find(u => u.id === userId);
+                    this.users = users;
+                    this.form.patchValue(this.user);
+                    this.passwordForm.patchValue(this.user);
                 });
             })
             .unsubscribe();
@@ -103,6 +112,12 @@ export class EditUserComponent implements OnInit {
 
     changePassword() {
         this.handleNetworkAction(this.usersService.changePassword(this.passwordForm.value));
+    }
+
+    generatePreAuthentication() {
+        this.authenticationService.getPreauthenticatedToken(this.user.id).subscribe(token => {
+            this.generatedUrl = `${window.location.origin}/login?sso=${token}`;
+        });
     }
 
     private handleNetworkAction(observable: Observable<any>) {

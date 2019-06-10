@@ -13,6 +13,8 @@ export class RemoteAuthenticationService implements AuthenticationService {
 
     private getEndpoint = endpointFactory("/api/auth");
 
+    supportsPreauthentication = true;
+
     get activeUser(): User {
         return this.localStorageService.get("activeUser");
     }
@@ -29,10 +31,7 @@ export class RemoteAuthenticationService implements AuthenticationService {
     login(user: User): Observable<User> {
         return this.http
             .post<User>(this.getEndpoint("login"), user)
-            .pipe(tap(activeUser => {
-                this.localStorageService.set("activeUser", activeUser);
-                this.authenticationChangeEvent$.next(activeUser);
-            }));
+            .pipe(tap(activeUser => this.completeAuthentication(activeUser)));
     }
 
     logout(): Observable<Object> {
@@ -50,5 +49,20 @@ export class RemoteAuthenticationService implements AuthenticationService {
 
     createInitialUser(user: User): Observable<User> {
         return this.http.put<User>(this.getEndpoint("setup"), user);
+    }
+
+    getPreauthenticatedToken(userId: number): Observable<string> {
+        return this.http.get(this.getEndpoint("sso", userId), { responseType: "text" });
+    }
+
+    validatePreauthenticatedToken(token: string): Observable<User> {
+        return this.http
+            .post<User>(this.getEndpoint("sso"), token)
+            .pipe(tap(activeUser => this.completeAuthentication(activeUser)));
+    }
+
+    private completeAuthentication(activeUser: User) {
+        this.localStorageService.set("activeUser", activeUser);
+        this.authenticationChangeEvent$.next(activeUser);
     }
 }

@@ -157,7 +157,7 @@ namespace Overseer.Tests
         }
 
         [Test]
-        public void ShouldUseExistingSessionTokenForNewSession()
+        public void ShouldUseExistingSessionTokenForNewLogin()
         {
             _userManager.CreateUser(new UserDisplay
             {
@@ -169,20 +169,6 @@ namespace Overseer.Tests
             var session1 = _authenticationManager.AuthenticateUser(Username, Password);
             var session2 = _authenticationManager.AuthenticateUser(Username, Password);
             Assert.AreEqual(session1.Token, session2.Token);
-        }
-        
-        [Test]
-        public void ShouldAuthenticateIfRequiresAuthenticationIsEnabled()
-        {
-            _userManager.CreateUser(new UserDisplay
-            {
-                Username = Username,
-                Password = Password, 
-                SessionLifetime = 7
-            });
-            var session = _authenticationManager.AuthenticateUser(Username, Password);
-            
-            Assert.IsNotNull(_authenticationManager.AuthenticateToken(session.Token));
         }
         
         [Test]
@@ -374,6 +360,59 @@ namespace Overseer.Tests
 
             var userModel = _users.GetById(user.Id);
             Assert.AreEqual(user.SessionLifetime, userModel.SessionLifetime);
+        }
+
+        [Test]
+        public void ShouldGeneratePreauthenticatedToken()
+        {
+            var user = _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = Password,
+                AccessLevel = AccessLevel.Readonly,
+                SessionLifetime = 1
+            });
+
+            var ssoToken = _authenticationManager.GetPreauthenticatedToken(user.Id);
+            var dbUser = _users.GetById(user.Id);
+
+            Assert.IsNotNull(dbUser.PreauthenticatedToken);
+            Assert.IsNotNull(dbUser.PreauthenticatedTokenExpiration);
+            Assert.AreEqual(ssoToken, dbUser.PreauthenticatedToken);
+            Assert.IsTrue(DateTime.UtcNow.AddMinutes(2) > dbUser.PreauthenticatedTokenExpiration);
+        }
+
+        [Test]
+        public void ShouldFailtToGeneratePreauthenticatedToken()
+        {
+            var user = _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = Password,
+                AccessLevel = AccessLevel.Administrator
+            });
+            var ssoToken = _authenticationManager.GetPreauthenticatedToken(user.Id);
+            Assert.IsTrue(string.IsNullOrWhiteSpace(ssoToken));
+        }
+
+        [Test]
+        public void ShouldValidatedPreauthenticatedToken()
+        {
+            var user = _userManager.CreateUser(new UserDisplay
+            {
+                Username = Username,
+                Password = Password,
+                AccessLevel = AccessLevel.Readonly,
+                SessionLifetime = 1
+            });
+            var ssoToken = _authenticationManager.GetPreauthenticatedToken(user.Id);            
+            var ssoAuthedUser = _authenticationManager.ValidatePreauthenticatedToken(ssoToken);
+            var tokenAuthedUser = _authenticationManager.AuthenticateToken(ssoAuthedUser.Token);
+            var dbUser = _users.GetById(ssoAuthedUser.Id);            
+            Assert.NotNull(tokenAuthedUser);
+            Assert.AreEqual(ssoAuthedUser.Token, tokenAuthedUser.Token);
+            Assert.IsNull(dbUser.PreauthenticatedToken);
+            Assert.IsNull(dbUser.PreauthenticatedTokenExpiration);
         }
     }
 }

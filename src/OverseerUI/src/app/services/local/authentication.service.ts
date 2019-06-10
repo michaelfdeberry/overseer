@@ -14,6 +14,8 @@ import { ErrorHandlerService } from "../error-handler.service";
 
 @Injectable({ providedIn: "root" })
 export class LocalAuthenticationService implements AuthenticationService, UserManager {
+    supportsPreauthentication = false;
+
     public readonly authenticationChangeEvent$ = new Subject<User>();
 
     constructor(
@@ -105,5 +107,12 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
 
     createInitialUser(user: User): Observable<User> {
         return defer(() => createUser(this, user)).pipe(catchError(err => this.errorHandler.handle(err)));
+    }
+
+    getPreauthenticatedToken(userId: number): Observable<string> {
+        throw new Error("Unsupported Functionality.");
+    }
+    validatePreauthenticatedToken(token: string): Observable<User> {
+        throw new Error("Unsupported Functionality.");
     }
 }

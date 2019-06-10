@@ -39,7 +39,8 @@ namespace Overseer.Daemon.Modules
             Delete("/{id:int}", p => 
             {
                 this.RequiresAdmin();
-                return userManager.DeleteUser(p.id);
+                userManager.DeleteUser(p.id);
+                return HttpStatusCode.OK;
             });
 
             Post("/password", p => 

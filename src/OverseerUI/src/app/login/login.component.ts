@@ -1,8 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 
 import { AuthenticationService } from "../services/authentication.service";
+import { User } from "../models/user.model";
+import { Observable } from "rxjs";
 
 @Component({
     templateUrl: "./login.component.html"
@@ -13,7 +15,8 @@ export class LoginComponent implements OnInit {
     constructor(
         private authenticationService: AuthenticationService,
         private formBuilder: FormBuilder,
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute
     ) {}
 
     ngOnInit() {
@@ -21,15 +24,24 @@ export class LoginComponent implements OnInit {
             username: [null, Validators.required],
             password: [null, Validators.required]
         });
+
+        this.route.queryParamMap.subscribe(params => {
+            if (params.has("sso")) {
+                this.handleAuthenticationResult(this.authenticationService.validatePreauthenticatedToken(params.get("sso")));
+            }
+        });
     }
 
     signIn() {
         this.form.disable();
 
-        this.authenticationService.login(this.form.value)
-            .subscribe(
-                () => this.router.navigate(["/"]),
-                () => this.form.enable()
-            );
+        this.handleAuthenticationResult(this.authenticationService.login(this.form.value));
+    }
+
+    handleAuthenticationResult(userObservable: Observable<User>) {
+        userObservable.subscribe(
+            () => this.router.navigate(["/"]),
+            () => this.form.enable()
+        );
     }
 }
