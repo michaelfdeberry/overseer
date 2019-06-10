@@ -1,4 +1,5 @@
 ﻿using Nancy;
+using Nancy.Extensions;
 using Nancy.ModelBinding;
 using Nancy.Security;
 using Overseer.Models;
@@ -26,6 +27,18 @@ namespace Overseer.Daemon.Modules
                 this.RequiresAdmin();
 
                 return authenticationManager.DeauthenticateUser((int)p.id);
+            });
+
+            Get("/sso/{id:int}", p =>
+            {
+                this.RequiresAdmin();
+
+                return authenticationManager.GetPreauthenticatedToken((int)p.id);
+            });
+
+            Post("/sso", p => 
+            {
+                return authenticationManager.ValidatePreauthenticatedToken(Request.Body.AsString());
             });
         }
     }
