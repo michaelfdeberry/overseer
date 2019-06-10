@@ -4,8 +4,8 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var clientBuildDir = Directory("../src/OverseerUI/dist-static");
-var netCoreBuildDir = Directory("../src/Overseer.Core.Daemon/bin") + Directory(configuration);
-var netFrameworkBuildDir = Directory("../src/Overseer.Mono.Daemon/bin") + Directory(configuration);
+var netCoreBuildDir = Directory("../src/Overseer.Daemon.Core/bin") + Directory(configuration);
+var netFrameworkBuildDir = Directory("../src/Overseer.Daemon.Mono/bin") + Directory(configuration);
 var publishDir = "../publish";
 var workingDir = publishDir + "/temp";
 
