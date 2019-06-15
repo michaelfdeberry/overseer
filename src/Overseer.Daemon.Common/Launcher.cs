@@ -14,14 +14,14 @@ namespace Overseer.Daemon
                 
         public Launcher()
         {
+            if (!UpdateManager.Update()) throw new Exception("Update Process Failed");
+
             _context = new LiteDataContext();
             Bootstrapper = new OverseerBootstrapper(_context);
         }
 
         public string Launch(string[] args)
         {
-            if (!UpdateManager.Update()) throw new Exception("Update Process Failed");
-
             var valueStore = _context.GetValueStore();
             var settings = valueStore.GetOrPut(() => new ApplicationSettings());
 
