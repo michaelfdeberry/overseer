@@ -6,6 +6,8 @@ import { Injectable } from "@angular/core";
 export abstract class AuthenticationService {
     readonly authenticationChangeEvent$: Subject<User>;
 
+    abstract readonly supportsPreauthentication: boolean;
+
     abstract readonly activeUser: User;
 
     abstract requiresLogin(): Observable<boolean>;
@@ -17,4 +19,8 @@ export abstract class AuthenticationService {
     abstract logoutUser(userId: number): Observable<User>;
 
     abstract createInitialUser(user: User): Observable<User>;
+
+    abstract getPreauthenticatedToken(userId: number): Observable<string>;
+
+    abstract validatePreauthenticatedToken(token: string): Observable<User>;
 }

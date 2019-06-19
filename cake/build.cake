@@ -4,8 +4,8 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var clientBuildDir = Directory("../src/OverseerUI/dist-static");
-var netCoreBuildDir = Directory("../src/Overseer.Core.Daemon/bin") + Directory(configuration);
-var netFrameworkBuildDir = Directory("../src/Overseer.Mono.Daemon/bin") + Directory(configuration);
+var netCoreBuildDir = Directory("../src/Overseer.Daemon.Core/bin") + Directory(configuration);
+var netFrameworkBuildDir = Directory("../src/Overseer.Daemon.Mono/bin") + Directory(configuration);
 var publishDir = "../publish";
 var workingDir = publishDir + "/temp";
 
@@ -32,8 +32,9 @@ Task("Version")
         // update the csproj xml files
         var csprojFiles = new [] {
             overseerProjectFile, 
-            "../src/Overseer.Core.Daemon/Overseer.Core.Daemon.csproj",
-            "../src/Overseer.Tests/Overseer.Tests.csproj"
+            "../src/Overseer.Daemon.Core/Overseer.Daemon.Core.csproj",
+            "../src/Overseer.Tests/Overseer.Tests.csproj",
+            "../src/Overseer.Daemon.Common/Overseer.Daemon.Common.csproj"
         };
         foreach (var csprojFile in csprojFiles)
         {     
@@ -127,7 +128,7 @@ Task("PublishMono")
         Zip(workingDir, publishDir + "/overseer-linux-armv6.zip");
 
         //copy the install script to the output directory
-        CopyFile("../src/Overseer.Mono.Daemon/overseer-linux-armv6.sh", publishDir + "/overseer-linux-armv6.sh");
+        CopyFile("../src/Overseer.Daemon.Mono/overseer-linux-armv6.sh", publishDir + "/overseer-linux-armv6.sh");
 
         //delete the working directory
         DeleteDirectory(workingDir, new DeleteDirectorySettings {
@@ -139,7 +140,7 @@ Task("PublishMono")
 Task("PublishCoreXPlat")
     .Does(() => {
         //publish the app for cross platform
-        DotNetCorePublish("../src/Overseer.Core.Daemon/Overseer.Core.Daemon.csproj", new DotNetCorePublishSettings
+        DotNetCorePublish("../src/Overseer.Daemon.Core/Overseer.Daemon.Core.csproj", new DotNetCorePublishSettings
         {
             Framework = "netcoreapp2.1",
             Configuration = "Release",
@@ -160,7 +161,7 @@ Task("PublishCoreXPlat")
 Task("PublishCoreLinuxArmv7")
     .Does(() => {
         //publish the app for linux-arm
-        DotNetCorePublish("../src/Overseer.Core.Daemon/Overseer.Core.Daemon.csproj", new DotNetCorePublishSettings
+        DotNetCorePublish("../src/Overseer.Daemon.Core/Overseer.Daemon.Core.csproj", new DotNetCorePublishSettings
         {
             Framework = "netcoreapp2.1",
             Configuration = "Release",
@@ -173,7 +174,7 @@ Task("PublishCoreLinuxArmv7")
         Zip(workingDir, publishDir + "/overseer-linux-armv7.zip");
 
         //copy the install script to the output directory
-        CopyFile("../src/Overseer.Core.Daemon/overseer-linux-armv7.sh", publishDir + "/overseer-linux-armv7.sh");
+        CopyFile("../src/Overseer.Daemon.Core/overseer-linux-armv7.sh", publishDir + "/overseer-linux-armv7.sh");
 
         //delete the working directory
         DeleteDirectory(workingDir, new DeleteDirectorySettings {

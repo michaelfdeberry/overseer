@@ -31,11 +31,7 @@
                         ],
                         "stylePreprocessorOptions": {
                             "includePaths": [ "src/scss/abstracts" ]
-                        },
-                        "scripts": [
-                            "node_modules/jquery/dist/jquery.js",
-                            "node_modules/signalr/jquery.signalR.js"
-                        ]
+                        }
                     },
                     "configurations": {
                         "debugMono": {
@@ -44,6 +40,10 @@
                                     "replace": "src/app/app-providers-remote.ts",
                                     "with": "src/app/app-providers-mono.ts"
                                 }
+                            ],
+                            "scripts": [
+                                "node_modules/jquery/dist/jquery.js",
+                                "node_modules/signalr/jquery.signalR.js"
                             ]
                         },
                         "debugStatic": {
@@ -81,6 +81,10 @@
                                     "replace": "src/app/app-providers-remote.ts",
                                     "with": "src/app/app-providers-mono.ts"
                                 }
+                            ],
+                            "scripts": [
+                                "node_modules/jquery/dist/jquery.js",
+                                "node_modules/signalr/jquery.signalR.js"
                             ],
                             "optimization": true,
                             "outputHashing": "all",

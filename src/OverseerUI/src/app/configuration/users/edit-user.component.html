@@ -40,6 +40,14 @@
                 </mat-select>
             </mat-form-field>
         </form>
+        <div *ngIf="displayPreauthentication">
+            <h5 translate>preauthenticationTitle</h5>
+            <p translate>preauthenticationDescription</p>
+            <div class="flex">
+                <code class="spacer">{{ generatedUrl }}</code>
+                <button color="primary" mat-raised-button (click)="generatePreAuthentication()">{{ 'generate' | translate }}</button>
+            </div>
+        </div>
     </mat-card-content>
     <mat-card-actions>
         <button mat-button color="warn" (click)="delete()">{{ 'delete' | translate }}</button>
