@@ -143,7 +143,10 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
                 status.feedRate = 100;
                 status.flowRates = self.machine.tools
                     .filter(tool => tool.toolType === MachineToolType.Extruder)
-                    .reduce((obj, tool) => obj[tool.index] = 100, {});
+                    .reduce((obj, tool) => {
+                        obj[tool.index] = 100;
+                        return obj;
+                    }, {});
             }
 
             return status;
