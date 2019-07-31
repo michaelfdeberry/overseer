@@ -1,6 +1,6 @@
 #!/bin/bash
 
-overseerVersion='1.0.13'
+overseerVersion='1.0.14'
 overseerDirectory=${PWD}'/overseer'
 overseerExecutable='Overseer.Daemon'
 overseerExecutablePath=${overseerDirectory}'/'${overseerExecutable}
