@@ -25,6 +25,7 @@ import { WindowService } from "./services/remote/window.service";
 import { DurationPipe } from "./shared/duration.pipe";
 import { LetDirective } from "./shared/let.directive";
 import { HiddenForDirective, DisabledForDirective } from "./shared/authorization.directive";
+import { SsoComponent } from "./login/sso.component";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http);
@@ -42,6 +43,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         MonitoringComponent,
         MachineMonitorComponent,
         LoginComponent,
+        SsoComponent,
         DurationPipe,
         MachineMonitorFilterPipe,
         AlertDialogComponent,

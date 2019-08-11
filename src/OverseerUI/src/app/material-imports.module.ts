@@ -19,7 +19,8 @@ import {
     MatSliderModule,
     MatStepperModule,
     MatExpansionModule,
-    MatGridListModule
+    MatGridListModule,
+    MatTooltipModule
  } from "@angular/material";
 
 @NgModule({
@@ -42,7 +43,8 @@ import {
         MatStepperModule,
         MatExpansionModule,
         MatGridListModule,
-        DragDropModule
+        DragDropModule,
+        MatTooltipModule
     ],
     exports: [
         MatButtonModule,
@@ -63,7 +65,8 @@ import {
         MatStepperModule,
         MatExpansionModule,
         MatGridListModule,
-        DragDropModule
+        DragDropModule,
+        MatTooltipModule
     ]
 })
 export class AppMaterialModule {}

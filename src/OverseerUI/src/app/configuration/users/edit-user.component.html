@@ -41,12 +41,15 @@
             </mat-form-field>
         </form>
         <div *ngIf="displayPreauthentication">
-            <h5 translate>preauthenticationTitle</h5>
-            <p translate>preauthenticationDescription</p>
-            <div class="flex">
-                <code class="spacer">{{ generatedUrl }}</code>
-                <button color="primary" mat-raised-button (click)="generatePreAuthentication()">{{ 'generate' | translate }}</button>
-            </div>
+            <mat-form-field matTooltip="{{ 'preauthenticationDescription' | translate }}">
+                <input #generatedUrlInput matInput type="text" placeholder="{{ 'preauthenticationTitle' | translate }}" readonly value="{{ generatedUrl }}" />
+                <button *ngIf="!generatedUrl" matSuffix mat-icon-button (click)="generatePreAuthentication()">
+                    <mat-icon matTooltip="{{ 'generate' | translate }}">cached</mat-icon>
+                </button>
+                <button *ngIf="generatedUrl" matSuffix mat-icon-button (click)="copyToClipboard(generatedUrlInput)">
+                    <mat-icon matTooltip="{{ 'copy' | translate }}">content_copy</mat-icon>
+                </button>
+            </mat-form-field>
         </div>
     </mat-card-content>
     <mat-card-actions>

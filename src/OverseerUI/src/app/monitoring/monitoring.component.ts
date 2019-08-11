@@ -32,10 +32,10 @@ export class MonitoringComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        forkJoin(
+        forkJoin([
             this.settingsService.getSettings(),
             this.machinesService.getMachines()
-        )
+        ])
             .subscribe(results => {
                 this.settings = results[0];
                 this.machines = results[1]

@@ -4,6 +4,7 @@ import { Routes, RouterModule } from "@angular/router";
 import { LoginComponent } from "./login/login.component";
 import { MonitoringComponent } from "./monitoring/monitoring.component";
 import { AuthenticationGuard } from "./shared/authentication-guard";
+import { SsoComponent } from "./login/sso.component";
 
 const appRoutes: Routes = [
     {
@@ -14,6 +15,10 @@ const appRoutes: Routes = [
     {
         path: "login",
         component: LoginComponent
+    },
+    {
+        path: "sso",
+        component: SsoComponent
     },
     {
         path: "configuration",

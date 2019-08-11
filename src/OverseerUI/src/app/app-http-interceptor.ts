@@ -64,6 +64,13 @@ export class OverseerHttpInterceptor implements HttpInterceptor {
                                 }
                             } else {
                                 errorMessage = "unauthorized_access";
+
+                                // the sso component handles redirects if the user
+                                // isn't authenticated.
+                                if (this.router.url.startsWith("/sso")) {
+                                    return throwError(errorMessage);
+                                }
+
                                 if (this.router.url !== "/login") {
                                     this.router.navigate(["login"]);
                                 }

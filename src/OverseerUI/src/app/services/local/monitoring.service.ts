@@ -24,22 +24,21 @@ export class LocalMonitoringService implements MonitoringService {
     enableMonitoring(): void {
         if (this.timer) { return; }
 
-        forkJoin(
+        forkJoin([
             this.settingsService.getSettings(),
             this.machineService.getMachines()
-        )
-        .subscribe(results => {
-            const settings = results[0];
-            const machines = results[1];
+        ])
+            .subscribe(results => {
+                const [settings, machines] = results;
 
-            this.timer = timer(0, settings.interval);
-            this.timerSubscription = this.timer.subscribe(() => {
-                const providers = this.machineProviders.getProviders(machines);
-                merge(...providers.map(provider => provider.getStatus())).subscribe(status => {
-                    this.statusEvent$.next(status);
+                this.timer = timer(0, settings.interval);
+                this.timerSubscription = this.timer.subscribe(() => {
+                    const providers = this.machineProviders.getProviders(machines);
+                    merge(...providers.map(provider => provider.getStatus())).subscribe(status => {
+                        this.statusEvent$.next(status);
+                    });
                 });
             });
-        });
     }
 
     disableMonitoring(): void {

@@ -51,15 +51,13 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider {
     }
 
     acquireStatus(): Observable<MachineStatus> {
-        return forkJoin(
+        return forkJoin([
             this.http.get<any>(this.getUrl("rr_status"), { params: { "type": "2" }}),
             this.http.get<any>(this.getUrl("rr_status"), { params: { "type": "3" }}),
             this.http.get<any>(this.getUrl("rr_fileinfo"))
-        )
+        ])
             .pipe(map(results => {
-                const machineStatus = results[0];
-                const jobStatus = results[1];
-                const fileStatus = results[2];
+                const [machineStatus, jobStatus, fileStatus] = results;
                 const status: MachineStatus = { machineId: this.machine.id, state: MachineState.Idle };
 
                 switch (machineStatus.status) {

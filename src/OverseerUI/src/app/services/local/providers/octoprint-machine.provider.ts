@@ -39,13 +39,12 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
     loadConfiguration(machine: Machine): Observable<any> {
         machine.url = processUrl(machine.url);
 
-        return forkJoin(
+        return forkJoin([
             this.http.get<any>(processUrl(machine.url, "api/settings"), this.httpOptions),
             this.http.get<any>(processUrl(machine.url, "api/printerprofiles"), this.httpOptions)
-        )
+        ])
             .pipe(tap(results => {
-                const settings = results[0];
-                const profiles = results[1];
+                const [settings, profiles] = results;
 
                 if (!machine.webCamUrl) {
                     machine.webCamUrl = processUrl(machine.url, settings.webcam.streamUrl);

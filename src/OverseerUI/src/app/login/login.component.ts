@@ -24,22 +24,11 @@ export class LoginComponent implements OnInit {
             username: [null, Validators.required],
             password: [null, Validators.required]
         });
-
-        this.route.queryParamMap.subscribe(params => {
-            if (params.has("sso")) {
-                this.handleAuthenticationResult(this.authenticationService.validatePreauthenticatedToken(params.get("sso")));
-            }
-        });
     }
 
     signIn() {
         this.form.disable();
-
-        this.handleAuthenticationResult(this.authenticationService.login(this.form.value));
-    }
-
-    handleAuthenticationResult(userObservable: Observable<User>) {
-        userObservable.subscribe(
+        this.authenticationService.login(this.form.value).subscribe(
             () => this.router.navigate(["/"]),
             () => this.form.enable()
         );
