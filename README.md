@@ -2,7 +2,7 @@
 
 # Overseer
 
-Overseer is a small utility that allows for monitoring multiple 3D Printers from a single user interface. There is currently support for [Octoprint](https://github.com/foosel/OctoPrint) and [RepRepFirmware](https://github.com/dc42/RepRapFirmware). 
+Overseer is a small utility that allows for monitoring multiple 3D Printers from a single user interface. There is currently support for [Octoprint](https://github.com/foosel/OctoPrint) and [RepRapFirmware](https://github.com/dc42/RepRapFirmware). 
 
 <span style="color:red">**WARNING:** It is recommended that you do **not** configure Overseer to be accessible outside of your local network.</span>
 
