@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { NGXLogInterface } from "ngx-logger";
-import { openDatabase, logStoreName } from "./open-database-function";
-import { NgxIndexedDB } from "ngx-indexed-db";
+import { NgxIndexedDBService } from "ngx-indexed-db";
 
 export type LogEntry = NGXLogInterface & {
     id?: number
@@ -9,31 +8,38 @@ export type LogEntry = NGXLogInterface & {
 
 @Injectable({ providedIn: "root" })
 export class LogStorageService {
-    private async getAllEntries(db: NgxIndexedDB): Promise<LogEntry[]> {
-        return await db.getAll(logStoreName);
+    constructor(private db: NgxIndexedDBService) {}
+
+    private async getAllEntries(): Promise<LogEntry[]> {
+        return await this.db.getAll();
     }
 
     private async prune(): Promise<void> {
-        const db = await openDatabase();
-        const entries = await this.getAllEntries(db);
+        this.db.currentStore = "logging";
+        const entries = await this.getAllEntries();
+
         // only maintain 2 days of logs max
         const minAge = new Date(Date.now() - (2 * 24 * 60 * 60 * 1000));
+        const promises = entries
+            .map(entry => {
+                const entryDate = new Date(entry.timestamp);
+                if (minAge >= entryDate) {
+                    return this.db.deleteRecord(entry.id);
+                }
+            })
+            .filter(x => x);
 
-        entries.forEach(entry => {
-            const entryDate = new Date(entry.timestamp);
-            if (minAge >= entryDate) {
-                db.delete(logStoreName, entry.id);
-            }
-        });
+        await Promise.all(promises);
     }
 
     async write(entry: LogEntry): Promise<void> {
-        const db = await openDatabase();
+        this.db.currentStore = "logging";
         await this.prune();
-        await db.add(logStoreName, entry);
+        await this.db.add(entry);
     }
 
     async read(): Promise<LogEntry[]> {
-        return await this.getAllEntries(await openDatabase());
+        this.db.currentStore = "logging";
+        return await this.getAllEntries();
     }
 }

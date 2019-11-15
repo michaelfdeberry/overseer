@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { MatDialog } from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import { MachineMonitor } from "./machine-monitor";
 import { TuneDialogComponent } from "./tune-dialog.component";
 

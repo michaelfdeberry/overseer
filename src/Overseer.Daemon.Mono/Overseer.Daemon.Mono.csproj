@@ -145,10 +145,10 @@
   </Target>
   <Target Name="DebugClientBuild" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run buildDebugMono" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run buildArmv6:debug" />
   </Target>
   <Target Name="ReleaseClientBuild" AfterTargets="Build" Condition=" '$(Configuration)' == 'Release' ">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run buildReleaseMono" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run bulldArmv6" />
   </Target>
 </Project>

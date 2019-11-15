@@ -1,7 +1,7 @@
 import { throwError, Observable } from "rxjs";
 import { Injectable, ErrorHandler } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
-import { MatSnackBar } from "@angular/material";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { LoggingService } from "./logging.service";
 
 // Handled exception handler, displays a toast/snackbar

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { PromptDialogOptions, PromptDialogComponent } from "./prompt-dialog.component";
-import { MatDialogRef, MatDialog } from "@angular/material";
+import { MatDialogRef, MatDialog } from "@angular/material/dialog";
 import { AlertDialogOptions, AlertDialogComponent } from "./alert-dialog.component";
 
 @Injectable()

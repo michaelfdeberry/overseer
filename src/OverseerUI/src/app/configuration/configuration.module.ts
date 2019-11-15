@@ -2,7 +2,6 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { TranslateModule } from "@ngx-translate/core";
-import { RouterTabModule } from "@zerohouse/router-tab";
 import { AppMaterialModule } from "../material-imports.module";
 import { AboutComponent } from "./about/about.component";
 import { ConfigurationRoutingModule } from "./configuration-routing.module";
@@ -32,7 +31,6 @@ import { UsersComponent } from "./users/users.component";
         ReactiveFormsModule,
         FormsModule,
         CommonModule,
-        RouterTabModule,
         TranslateModule.forChild()
     ],
     entryComponents: [

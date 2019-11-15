@@ -2,7 +2,7 @@ import { FormGroup, FormBuilder } from "@angular/forms";
 import { AuthenticationService } from "../../services/authentication.service";
 import { Component, ViewChild, AfterViewChecked } from "@angular/core";
 import { machineFormFactory } from "../machines/shared/base-machine.component";
-import { MatHorizontalStepper, MatStep } from "@angular/material";
+import { MatHorizontalStepper, MatStep } from "@angular/material/stepper";
 import { MachinesService } from "../../services/machines.service";
 import { CertificateErrorService } from "../machines/certificate-error.service";
 import { DialogService } from "../../dialogs/dialog.service";
@@ -22,10 +22,10 @@ export class SetupComponent implements AfterViewChecked {
     themeForm: FormGroup;
     screenSize: string;
 
-    @ViewChild("stepper")
+    @ViewChild("stepper", { static: true })
     stepper: MatHorizontalStepper;
 
-    @ViewChild("createMachineStep")
+    @ViewChild("createMachineStep", { static: true })
     createMachineStep: MatStep;
 
     get machineFormDisabled() {

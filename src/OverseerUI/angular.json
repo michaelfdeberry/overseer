@@ -34,11 +34,19 @@
                         }
                     },
                     "configurations": {
-                        "debugMono": {
+                        "debug": {
                             "fileReplacements": [
                                 {
-                                    "replace": "src/app/app-providers-remote.ts",
-                                    "with": "src/app/app-providers-mono.ts"
+                                    "replace": "src/app/app.module.ts",
+                                    "with": "src/app/app.module.remote.ts"
+                                }
+                            ]
+                        },
+                        "debugArmv6": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/app/app.module.ts",
+                                    "with": "src/app/app.module.remote.armv6.ts"
                                 }
                             ],
                             "scripts": [
@@ -46,17 +54,21 @@
                                 "node_modules/signalr/jquery.signalR.js"
                             ]
                         },
-                        "debugStatic": {
+                        "debugLocal": {
                             "fileReplacements": [
                                 {
-                                    "replace": "src/app/app-providers-remote.ts",
-                                    "with": "src/app/app-providers-local.ts"
+                                    "replace": "src/app/app.module.ts",
+                                    "with": "src/app/app.module.local.ts"
                                 }
                             ]
                         },
                         "production": {
                             "fileReplacements": [
                                 {
+                                    "replace": "src/app/app.module.ts",
+                                    "with": "src/app/app.module.remote.ts"
+                                },
+                                {
                                     "replace": "src/environments/environment.ts",
                                     "with": "src/environments/environment.prod.ts"
                                 }
@@ -71,15 +83,15 @@
                             "vendorChunk": false,
                             "buildOptimizer": true
                         },
-                        "productionMono": {
+                        "productionArmv6": {
                             "fileReplacements": [
+                                {
+                                    "replace": "src/app/app.module.ts",
+                                    "with": "src/app/app.module.remote.armv6.ts"
+                                },
                                 {
                                     "replace": "src/environments/environment.ts",
                                     "with": "src/environments/environment.prod.ts"
-                                },
-                                {
-                                    "replace": "src/app/app-providers-remote.ts",
-                                    "with": "src/app/app-providers-mono.ts"
                                 }
                             ],
                             "scripts": [
@@ -96,15 +108,15 @@
                             "vendorChunk": false,
                             "buildOptimizer": true
                         },
-                        "productionStatic": {
+                        "productionLocal": {
                             "fileReplacements": [
+                                {
+                                    "replace": "src/app/app.module.ts",
+                                    "with": "src/app/app.module.local.ts"
+                                },
                                 {
                                     "replace": "src/environments/environment.ts",
                                     "with": "src/environments/environment.prod.ts"
-                                },
-                                {
-                                    "replace": "src/app/app-providers-remote.ts",
-                                    "with": "src/app/app-providers-local.ts"
                                 }
                             ],
                             "optimization": true,

@@ -1,41 +1,41 @@
 import { Injectable } from "@angular/core";
 import { PersistedUser, AccessLevel } from "../../../models/user.model";
-import { openDatabase, usernameIndex, userStoreName } from "./open-database-function";
+import { NgxIndexedDBService } from "ngx-indexed-db";
 
 @Injectable({ providedIn: "root" })
 export class UserStorageService {
+    constructor(private db: NgxIndexedDBService) {
+    }
+
+    executeDbRequest<T>(action: () => T): T {
+        this.db.currentStore = "users";
+        return action();
+    }
 
     async createUser(user: PersistedUser): Promise<PersistedUser> {
-        const db = await openDatabase();
-        await db.add(userStoreName, user);
-
+        this.executeDbRequest(() => this.db.add(user));
         return user;
     }
 
     async getUsers(): Promise<PersistedUser[]> {
-        const db = await openDatabase();
-        return await db.getAll(userStoreName);
+        return await this.executeDbRequest(() => this.db.getAll());
     }
 
     async getUserById(userId: number): Promise<PersistedUser> {
-        const db = await openDatabase();
-        return await  db.getByKey(userStoreName, userId);
+        return await this.executeDbRequest(() => this.db.getByID(userId));
     }
 
     async getUserByUsername(username: string): Promise<PersistedUser> {
-        const db = await openDatabase();
-        return await db.getByIndex(userStoreName, usernameIndex, username);
+        return await this.executeDbRequest(() => this.db.getByIndex("username", username));
     }
 
     async updateUser(user: PersistedUser): Promise<PersistedUser> {
-        const db = await openDatabase();
-        await db.update(userStoreName, user);
+        await this.executeDbRequest(() => this.db.update(user, user.id));
         return user;
     }
 
     async deleteUser(userId: number): Promise<any> {
-        const db = await openDatabase();
-        return await db.delete(userStoreName, userId);
+        return await this.executeDbRequest(() => this.db.deleteRecord(userId));
     }
 
     async getAdminCount(): Promise<number> {

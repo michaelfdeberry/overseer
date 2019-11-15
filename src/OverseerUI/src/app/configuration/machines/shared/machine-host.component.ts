@@ -22,7 +22,7 @@ export class MachineHostComponent implements OnInit, OnDestroy {
 
     @Input() machine: any;
 
-    @ViewChild(MachineHostDirective) machineHost: MachineHostDirective;
+    @ViewChild(MachineHostDirective, { static: true }) machineHost: MachineHostDirective;
 
     private currentMachineType: MachineType;
 

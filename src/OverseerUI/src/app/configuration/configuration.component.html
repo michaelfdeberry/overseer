@@ -1,11 +1,11 @@
 <mat-card class="configuration form-card">
     <mat-card-content>
-        <mat-tab-group routerTabs>
-            <mat-tab routerLink="/configuration/general" label="{{'generalSettings' | translate}}"></mat-tab>
-            <mat-tab routerLink="/configuration/machines" label="{{'machines' | translate}}"></mat-tab>
-            <mat-tab routerLink="/configuration/users" label="{{'users' | translate}}"></mat-tab>
-            <mat-tab routerLink="/configuration/about" label="{{'aboutSettings' | translate}}"></mat-tab>
-        </mat-tab-group>
+        <nav mat-tab-nav-bar>
+            <a mat-tab-link routerLinkActive #appLink="routerLinkActive" [active]="appLink.isActive" routerLink="/configuration/general">{{'generalSettings' | translate}}</a>
+            <a mat-tab-link routerLinkActive #machinesLink="routerLinkActive" [active]="machinesLink.isActive" routerLink="/configuration/machines">{{'machines' | translate}}</a>
+            <a mat-tab-link routerLinkActive #usersLink="routerLinkActive" [active]="usersLink.isActive" routerLink="/configuration/users">{{'users' | translate}}</a>
+            <a mat-tab-link routerLinkActive #aboutLink="routerLinkActive" [active]="aboutLink.isActive" routerLink="/configuration/about">{{'aboutSettings' | translate}}</a>
+        </nav>
         <router-outlet></router-outlet>
     </mat-card-content>
 </mat-card>

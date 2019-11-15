@@ -108,7 +108,7 @@
                     </th>
                     <td *appLet="data.status.flowRates[extruder.index] as flowRate">
                         <mat-slider min="75" max="125" step="1" [disabled]="disabled" thumbsLabel="true" tickInterval="auto"
-                            [(ngModel)]="flowRate" (change)="setFlowRate(extruder.index, $event.value)"></mat-slider>
+                            [ngModel]="flowRate" (change)="setFlowRate(extruder.index, $event.value)"></mat-slider>
                     </td>
                     <td *appLet="data.status.flowRates[extruder.index] as flowRate">
                         {{ flowRate | number }}%
