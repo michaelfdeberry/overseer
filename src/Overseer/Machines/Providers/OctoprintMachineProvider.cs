@@ -89,7 +89,7 @@ namespace Overseer.Machines.Providers
                     if ((bool)profile.current)
                     {
                         var tools = new List<MachineTool>();
-                        updatedMachine.ProfileName = profile.name;
+                        updatedMachine.Profile = profile.name;
 
                         if ((bool)profile.heatedBed)
                         {

@@ -23,7 +23,7 @@ namespace Overseer.Models
 
             return new ConcurrentDictionary<MachineType, Type>(mapping);
         });
-        
+
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -62,11 +62,11 @@ namespace Overseer.Models
 
             throw new InvalidOperationException("Invalid Machine Type");
         }
-     }
+    }
 
     public interface IRestMachine
     {
-        string Url { get; set; }        
+        string Url { get; set; }
 
         string ClientCertificate { get; set; }
 
@@ -79,10 +79,10 @@ namespace Overseer.Models
 
         public string ApiKey { get; set; }
 
-        public string ProfileName { get; set; }
+        public string Profile { get; set; }
 
         public Dictionary<string, string> AvailableProfiles { get; set; } = new Dictionary<string, string>();
-        
+
         public string Url { get; set; }
 
         public string ClientCertificate { get; set; }

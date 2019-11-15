@@ -11,7 +11,7 @@
     </mat-form-field>
 
     <mat-form-field *ngIf="machine">
-        <mat-select id="profiles" placeholder="{{ 'profile' | translate }}" formControlName="profile" [compareWith]="compareProfiles" required>
+        <mat-select id="profiles" placeholder="{{ 'profile' | translate }}" formControlName="profile" [compareWith]="compareProfiles">
             <mat-option *ngFor="let profile of machine.availableProfiles | keyvalue" [value]="profile.value">
                 {{ profile.value }}
             </mat-option>

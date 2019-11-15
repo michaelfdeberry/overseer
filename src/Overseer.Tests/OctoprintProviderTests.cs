@@ -70,9 +70,9 @@ namespace Overseer.Tests
             
             Assert.AreEqual("http://octoprint.local/webcam/?action=stream", _machine.WebCamUrl);
             Assert.AreEqual("http://octoprint.local:8080/?action=snapshot", _machine.SnapshotUrl);                                    
-            Assert.AreEqual("CR10", _machine.ProfileName);
+            Assert.AreEqual("CR10", _machine.Profile);
             Assert.AreEqual(1, _machine.AvailableProfiles.Count);
-            Assert.AreEqual(_machine.ProfileName, _machine.AvailableProfiles.First().Value);
+            Assert.AreEqual(_machine.Profile, _machine.AvailableProfiles.First().Value);
             Assert.AreEqual(3, _machine.Tools.Count());            
             Assert.IsNotNull(_machine.GetHeater(-1)); //bed
             Assert.IsNotNull(_machine.GetHeater(0)); //hotend
