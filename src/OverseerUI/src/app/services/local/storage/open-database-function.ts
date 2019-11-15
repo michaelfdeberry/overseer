@@ -5,6 +5,7 @@ import { AccessLevel } from "../../../models/user.model";
 export const userStoreName = "users";
 export const usernameIndex = "username";
 export const machineStoreName = "machines";
+export const logStoreName = "logging";
 export const databaseName = "overseer";
 
 const keyConfiguration = { keyPath: "id", autoIncrement: true };
@@ -50,6 +51,10 @@ export async function openDatabase(): Promise<NgxIndexedDB> {
 
         if (!context.objectStoreNames.contains(machineStoreName)) {
             context.createObjectStore(machineStoreName, keyConfiguration);
+        }
+
+        if (!context.objectStoreNames.contains(logStoreName)) {
+            context.createObjectStore(logStoreName, keyConfiguration);
         }
 
         handleVersionChange(context.version, event.target.transaction);

@@ -27,6 +27,8 @@ export class MachineMonitor implements Machine {
     }
 
     get isVisible() {
+        if (!this.settings) { return false; }
+
         if (this.settings.hideDisabledMachines && this.disabled) {
             return false;
         }

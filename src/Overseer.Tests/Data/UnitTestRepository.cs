@@ -66,5 +66,10 @@ namespace Overseer.Tests.Data
         {
             entities.ToList().ForEach(Update);
         }
+
+        public int Count(Expression<Func<T, bool>> predicate)
+        {
+            return _entities.Count(predicate.Compile());
+        }
     }
 }

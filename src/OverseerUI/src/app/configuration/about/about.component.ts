@@ -23,4 +23,17 @@ export class AboutComponent implements OnInit {
     getKeys(obj) {
         return Object.keys(obj);
     }
+
+    downloadLog() {
+        this.settingsService.getLog().subscribe(log => {
+            console.log(log);
+            const blob = new Blob([log], { type: "text/plain;charset=utf-8" });
+            const link = document.createElement("a");
+            link.download = "overseer.log";
+            link.href = URL.createObjectURL(blob);
+            link.click();
+
+            URL.revokeObjectURL(link.href);
+        });
+    }
 }

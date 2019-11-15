@@ -4,13 +4,18 @@
         <span translate="about.helpDescription"></span>&nbsp;
         <a class="link" target="_blank" href="https://github.com/michaelfdeberry/overseer/issues" translate>about.issueTracker</a>.
     </p>
-    <h4 translate="about.appSystemDetails"></h4>
-    <table class="about-table">
-        <tr *ngFor="let key of getKeys(applicationInfo)">
-            <th>{{ 'about.info.' + key | translate }}</th>
-            <td>{{ applicationInfo[key] }}</td>
-        </tr>
-    </table>
+    <div class="app-info">
+        <h4 translate="about.appSystemDetails"></h4>
+        <table>
+            <tr *ngFor="let key of getKeys(applicationInfo)">
+                <th>{{ 'about.info.' + key | translate }}</th>
+                <td>{{ applicationInfo[key] }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="logging">
+        <button mat-raised-button color="primary" (click)="downloadLog()">Download Log</button>
+    </div>
     <div class="footer small">
         <span class="copy">&copy;{{ currentYear }} Overseer</span>
         <span class="spacer"></span>

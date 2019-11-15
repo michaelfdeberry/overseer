@@ -17,6 +17,8 @@ import { SettingsService } from "./services/settings.service";
 import { ThemeService } from "./services/theme.service";
 import { UsersService } from "./services/users.service";
 import { AuthenticationGuard, AccessLevelGuard } from "./shared/authentication-guard";
+import { LoggingService } from "./services/logging.service";
+import { RemoteLoggingService } from "./services/remote/logging.service";
 
 export const providers = [
     LoaderService,
@@ -53,5 +55,9 @@ export const providers = [
     {
         provide: UsersService,
         useClass: RemoteUsersService
+    },
+    {
+        provide: LoggingService,
+        useClass: RemoteLoggingService
     }
 ];

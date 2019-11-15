@@ -51,7 +51,7 @@ export class HiddenForDirective extends AuthorizationDirective {
     }
 
     @Input()
-    set appHiddenFor(value: "Readonly" | "Administrator") {
+    set appHiddenFor(value: keyof typeof AccessLevel) {
         this.accessLevel = AccessLevel[value];
     }
 
@@ -73,7 +73,7 @@ export class DisabledForDirective extends AuthorizationDirective {
     }
 
     @Input()
-    set appDisabledFor(value: "Readonly" | "Administrator") {
+    set appDisabledFor(value:  keyof typeof AccessLevel) {
         this.accessLevel = AccessLevel[value];
     }
 

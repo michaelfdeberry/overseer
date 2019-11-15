@@ -1,22 +1,25 @@
 import { Injectable } from "@angular/core";
 import { LocalStorageService } from "ngx-store";
-import { Observable, of, defer } from "rxjs";
+import { defer, Observable, of } from "rxjs";
 import { UAParser } from "ua-parser-js";
 import { environment } from "../../../environments/environment";
 import { Machine } from "../../models/machine.model";
 import { ApplicationSettings } from "../../models/settings.model";
 import { PersistedUser, toUser } from "../../models/user.model";
-import { SettingsService } from "../settings.service";
 import { RequireAdministrator } from "../../shared/require-admin.decorator";
+import { SettingsService } from "../settings.service";
+import { LogStorageService } from "./storage/log-storage.service";
 import { MachineStorageService } from "./storage/machine-storage.service";
 import { UserStorageService } from "./storage/user-storage.service";
+import { NgxLoggerLevel } from "ngx-logger";
 
 @Injectable({ providedIn: "root" })
 export class LocalSettingsService implements SettingsService {
     constructor(
         private localStorage: LocalStorageService,
         private machineStorageService: MachineStorageService,
-        private userStorageService: UserStorageService
+        private userStorageService: UserStorageService,
+        private logStorageService: LogStorageService
     ) {}
 
     createAppSettings(): ApplicationSettings {
@@ -73,6 +76,20 @@ export class LocalSettingsService implements SettingsService {
             operatingSystem: parser.getOS().name,
             machineName: parser.getBrowser().name,
             version: environment.appVersion
+        });
+    }
+
+    getLog(): Observable<string> {
+        const self = this;
+        return defer(async () => {
+            const logEntries = await self.logStorageService.read();
+            return logEntries
+                .map(e => {
+                    let message: any = e.message;
+                    message = typeof message === "string" ? message : message.stack;
+                    return `${e.timestamp} - ${NgxLoggerLevel[e.level]} in ${e.fileName}(${e.lineNumber}): ${message}`;
+                })
+                .join("\n");
         });
     }
 }

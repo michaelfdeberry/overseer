@@ -87,7 +87,7 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
 
                 this.machine = machine;
             }))
-            .pipe(catchError((err: HttpErrorResponse) => {
+            .pipe(catchError((err: Error) => {
                 if (err.message.indexOf("Invalid API key") >= 0) {
                     return throwError(new Error("octoprint_invalid_key"));
                 }

@@ -17,6 +17,8 @@ import { UsersService } from "./services/users.service";
 import { AuthenticationGuard, AccessLevelGuard } from "./shared/authentication-guard";
 import { MonitoringService } from "./services/monitoring.service";
 import { SignalrCoreMonitoringService } from "./services/remote/signalr-core-monitoring.service";
+import { LoggingService } from "./services/logging.service";
+import { RemoteLoggingService } from "./services/remote/logging.service";
 
 export const providers = [
     LoaderService,
@@ -53,5 +55,9 @@ export const providers = [
     {
         provide: UsersService,
         useClass: RemoteUsersService
+    },
+    {
+        provide: LoggingService,
+        useClass: RemoteLoggingService
     }
 ];

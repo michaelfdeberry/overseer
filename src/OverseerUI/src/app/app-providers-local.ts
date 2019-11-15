@@ -19,6 +19,9 @@ import { UsersService } from "./services/users.service";
 import { AuthenticationGuard, AccessLevelGuard } from "./shared/authentication-guard";
 import { UserStorageService } from "./services/local/storage/user-storage.service";
 import { MachineStorageService } from "./services/local/storage/machine-storage.service";
+import { LogStorageService } from "./services/local/storage/log-storage.service";
+import { LoggingService } from "./services/logging.service";
+import { LocalLoggingService } from "./services/local/logging.service";
 
 export const providers = [
     LoaderService,
@@ -29,6 +32,7 @@ export const providers = [
     ThemeService,
     UserStorageService,
     MachineStorageService,
+    LogStorageService,
     {
         provide: HTTP_INTERCEPTORS,
         useClass: OverseerHttpInterceptor,
@@ -57,5 +61,9 @@ export const providers = [
     {
         provide: UsersService,
         useClass: LocalUsersService
+    },
+    {
+        provide: LoggingService,
+        useClass: LocalLoggingService
     }
 ];

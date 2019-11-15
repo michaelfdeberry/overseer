@@ -28,5 +28,7 @@ namespace Overseer.Data
         bool Exist(Expression<Func<T, bool>> predicate);
 
         int Count();
+
+        int Count(Expression<Func<T, bool>> predicate);
     }
 }

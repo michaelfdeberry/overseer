@@ -18,7 +18,7 @@ namespace Overseer
 
         public bool RequiresAuthorization()
         {
-            return _users.GetAll().Count(u => u.AccessLevel == AccessLevel.Administrator) == 0;
+            return _users.Count(u => u.AccessLevel == AccessLevel.Administrator) == 0;
         }
 
         public ClaimsIdentity Authorize(string token)

@@ -59,5 +59,10 @@ namespace Overseer.Data
         {
             return _collection.Count();
         }
+
+        public int Count(Expression<Func<T, bool>> predicate)
+        {
+            return _collection.Count(predicate);
+        }
     }
 }

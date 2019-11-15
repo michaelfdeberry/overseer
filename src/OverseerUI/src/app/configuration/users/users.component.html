@@ -14,7 +14,7 @@
     </thead>
     <tbody>
     <tr *ngFor="let user of users">
-        <td>{{ user.username }}</td>
+        <th>{{ user.username }}</th>
         <td>{{ getUserAccessLevelName(user.accessLevel) }}</td>
         <td>
             <span *ngIf="user.sessionLifetime; else elseBlock">
