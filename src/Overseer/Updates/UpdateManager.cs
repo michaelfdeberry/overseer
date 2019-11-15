@@ -30,8 +30,7 @@ namespace Overseer
             {
                 try
                 {
-                    //find all update implementations that are greater than the last run version
-                    //and less than or equal to the current version
+                    //find all update implementations that are greater than the last run version 
                     var patches = typeof(IPatch).GetAssignableTypes()
                         .Select(updateType => (IPatch)Activator.CreateInstance(updateType))
                         .Where(patch => patch.Version > lastRunVersion)
