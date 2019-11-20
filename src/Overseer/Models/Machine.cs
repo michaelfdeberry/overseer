@@ -14,6 +14,13 @@ namespace Overseer.Models
         RepRapFirmware
     }
 
+    public enum WebCamOrientation
+    {
+        Default,
+        FlippedVertically,
+        FlippedHorizontally
+    }
+
     public abstract class Machine : IEntity
     {
         static readonly Lazy<ConcurrentDictionary<MachineType, Type>> _machineTypeMap = new Lazy<ConcurrentDictionary<MachineType, Type>>(() =>
@@ -31,6 +38,8 @@ namespace Overseer.Models
         public bool Disabled { get; set; }
 
         public string WebCamUrl { get; set; }
+
+        public WebCamOrientation WebCamOrientation { get; set; }
 
         public string SnapshotUrl { get; set; }
 

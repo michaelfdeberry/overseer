@@ -1,6 +1,6 @@
 <div class="machine" [ngClass]="{ 'zoom': zoomState }">
     <div class="zoom-panel">
-        <div class="web-cam" (click)="toggleZoom()" [ngStyle]="{ 'background-image': 'url(' + machine.webCamUrl + ')' }"></div>
+        <div class="web-cam {{machine.webCamOrientationName}}" (click)="toggleZoom()" [ngStyle]="{ 'background-image': 'url(' + machine.webCamUrl + ')' }"></div>
         <mat-progress-bar color="accent" [mode]="progressMode" [value]="machine.status && machine.status.progress"></mat-progress-bar>
         <div class="container">
             <div class="status">

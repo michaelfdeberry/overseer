@@ -3,8 +3,8 @@ import { Observable, throwError, forkJoin, defer, ObservableInput } from "rxjs";
 import { tap, catchError, map } from "rxjs/operators";
 
 import { BaseMachineProvider } from "./machine.provider";
-import { Machine, MachineTool, MachineToolType } from "../../../models/machine.model";
-import { MachineStatus, MachineState, TemperatureStatus } from "../../../models/machine-status.model";
+import { Machine, MachineTool, MachineToolType, WebCamOrientation } from "../../../models/machine.model";
+import { MachineStatus, MachineState } from "../../../models/machine-status.model";
 import { processUrl } from "./url-processor";
 
 export class OctoprintMachineProvider extends BaseMachineProvider {
@@ -48,6 +48,14 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
 
                 if (!machine.webCamUrl) {
                     machine.webCamUrl = processUrl(machine.url, settings.webcam.streamUrl);
+
+                    if (settings.webcam.flipH) {
+                        machine.webCamOrientation = WebCamOrientation.FlippedHorizontally;
+                    } else if (settings.webcam.flipV) {
+                        machine.webCamOrientation = WebCamOrientation.FlippedVertically;
+                    } else {
+                        machine.webCamOrientation = WebCamOrientation.Default;
+                    }
                 }
 
                 if (!machine.snapshotUrl) {

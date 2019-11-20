@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { FormControl, Validators } from "@angular/forms";
 import { BaseMachineComponent } from "./base-machine.component";
 import { MachineType } from "../../../models/machine.model";
+import { webCamOrientations } from "../../display-option.type";
 
 @Component({
     selector: "app-octoprint",
@@ -9,6 +10,8 @@ import { MachineType } from "../../../models/machine.model";
     styleUrls: ["../../configuration.scss"]
 })
 export class OctoprintMachineComponent extends BaseMachineComponent {
+    webCamOrientations = webCamOrientations;
+
     onInit() {
         this.form.addControl("machineType", new FormControl(MachineType.Octoprint));
         this.form.addControl("url", new FormControl(null, Validators.required));
@@ -18,6 +21,7 @@ export class OctoprintMachineComponent extends BaseMachineComponent {
         if (this.machine) {
             this.form.addControl("profile", new FormControl(null, Validators.required));
             this.form.addControl("webCamUrl", new FormControl(null, Validators.required));
+            this.form.addControl("webCamOrientation", new FormControl(null, Validators.required));
             this.form.addControl("snapshotUrl", new FormControl(null, Validators.required));
         }
     }

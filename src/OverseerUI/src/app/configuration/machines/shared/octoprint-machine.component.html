@@ -26,6 +26,14 @@
         <input matInput type="url" id="snapshotUrl" placeholder="{{'snapshotUrl' | translate}}" formControlName="snapshotUrl" required />
     </mat-form-field>
 
+    <mat-form-field *ngIf="machine">
+        <mat-select id="webCamOrientation" placeholder="{{ 'webCamOrientation' | translate }}" formControlName="webCamOrientation">
+            <mat-option *ngFor="let orientation of webCamOrientations" [value]="orientation.value">
+                {{ orientation.translationKey | translate }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
     <div *ngIf="enableAdvancedSettings">
         <mat-form-field *ngIf="advancedSettingsVisible">
             <input type="text" matInput id="pem" placeholder="{{'clientPem' | translate}}" formControlName="clientCertificate" />

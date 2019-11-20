@@ -49,6 +49,7 @@ import { LetDirective } from "./shared/let.directive";
 import { NgxIndexedDBModule } from "ngx-indexed-db";
 import { AccessLevel } from "./models/user.model";
 import { environment } from "../environments/environment";
+import { Machine, WebCamOrientation } from "./models/machine.model";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http);
@@ -136,6 +137,22 @@ export function HttpLoaderFactory(http: HttpClient) {
                             }
 
                             cursor.update(user);
+                            cursor.continue();
+                        }
+                    };
+                },
+                7: (db, transaction) => {
+                    const store = transaction.objectStore("machines");
+                    const request = store.openCursor();
+
+                    request.onsuccess = function(event: any) {
+                        const cursor: IDBCursorWithValue = event.target.result;
+
+                        if (cursor) {
+                            const machine: Machine = cursor.value;
+                            machine.webCamOrientation = WebCamOrientation.Default;
+
+                            cursor.update(machine);
                             cursor.continue();
                         }
                     };

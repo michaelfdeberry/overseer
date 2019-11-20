@@ -71,7 +71,16 @@ namespace Overseer.Machines.Providers
                 var settings = await _connector.Request(updatedMachine, "api/settings");                
                 if (string.IsNullOrWhiteSpace(updatedMachine.WebCamUrl))
                 {
-                    updatedMachine.WebCamUrl = _connector.ProcessUrl(updatedMachine.Url, (string)settings["webcam"]["streamUrl"]);                    
+                    updatedMachine.WebCamUrl = _connector.ProcessUrl(updatedMachine.Url, (string)settings["webcam"]["streamUrl"]);
+
+                    if ((bool)settings["webcam"]["flipH"])
+                    {
+                        updatedMachine.WebCamOrientation = WebCamOrientation.FlippedHorizontally;
+                    }
+                    else if ((bool)settings["webcam"]["flipV"])
+                    {
+                        updatedMachine.WebCamOrientation = WebCamOrientation.FlippedVertically;
+                    }
                 }
 
                 if (string.IsNullOrWhiteSpace(updatedMachine.SnapshotUrl))

@@ -12,6 +12,12 @@ export enum MachineType {
     RepRapFirmware
 }
 
+export enum WebCamOrientation {
+    Default,
+    FlippedVertically,
+    FlippedHorizontally
+}
+
 export interface MachineTool {
     toolType: MachineToolType;
     index: number;
@@ -26,6 +32,7 @@ export interface Machine {
     name: string;
     disabled: boolean;
     webCamUrl: string;
+    webCamOrientation: WebCamOrientation;
     snapshotUrl: string;
     tools: MachineTool[];
     sortIndex: number;

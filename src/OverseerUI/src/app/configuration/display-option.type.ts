@@ -1,4 +1,4 @@
-import { MachineType } from "../models/machine.model";
+import { MachineType, WebCamOrientation } from "../models/machine.model";
 import { AccessLevel } from "../models/user.model";
 
 export class DisplayOption<TValue> {
@@ -32,4 +32,10 @@ export const machineTypes = [
 export const accessLevels = [
     new DisplayOption("readonly", AccessLevel.Readonly),
     new DisplayOption("administrator", AccessLevel.Administrator)
+];
+
+export const webCamOrientations = [
+    new DisplayOption("default", WebCamOrientation.Default),
+    new DisplayOption("flipVertically", WebCamOrientation.FlippedVertically),
+    new DisplayOption("flipHorizontally", WebCamOrientation.FlippedHorizontally)
 ];

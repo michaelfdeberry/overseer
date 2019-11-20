@@ -1,5 +1,5 @@
 import { MachineStatus, idleStates, MachineState } from "../models/machine-status.model";
-import { Machine, MachineType, MachineTool, MachineToolType } from "../models/machine.model";
+import { Machine, MachineType, MachineTool, MachineToolType, WebCamOrientation } from "../models/machine.model";
 import { ApplicationSettings } from "../models/settings.model";
 
 export class MachineMonitor implements Machine {
@@ -10,6 +10,7 @@ export class MachineMonitor implements Machine {
     tools: MachineTool[];
     url: string;
     webCamUrl: string;
+    webCamOrientation: WebCamOrientation;
     snapshotUrl: string;
     apiKey?: string;
     profile: string;
@@ -48,6 +49,10 @@ export class MachineMonitor implements Machine {
 
     get currentStateName() {
         return MachineState[this.currentState];
+    }
+
+    get webCamOrientationName() {
+        return WebCamOrientation[this.webCamOrientation];
     }
 
     get status(): MachineStatus {

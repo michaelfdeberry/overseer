@@ -41,6 +41,14 @@
         background-size: cover;
         background-position: center center;
         cursor: zoom-in;
+
+        &.FlippedHorizontally {
+            transform: scaleX(-1);
+        }
+
+        &.FlippedVertically {
+            transform: scaleY(-1);
+        }
     }
 
     .container {

@@ -1,4 +1,5 @@
 {
+    "default": "Default",
     "add": "Add",
     "edit": "Edit",
     "editing": "Editing",
@@ -34,6 +35,9 @@
     "disableMonitoring": "Disable Monitoring",
     "url": "Url",
     "webcamUrl": "Webcam Url",
+    "webCamOrientation": "Webcam Orientation",
+    "flipVertically": "Flip Vertically",
+    "flipHorizontally": "Flip Horizontally",
     "snapshotUrl": "Snapshot Url",
     "username": "Username",
     "password": "Password",
