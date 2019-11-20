@@ -50,6 +50,7 @@ import { NgxIndexedDBModule } from "ngx-indexed-db";
 import { AccessLevel } from "./models/user.model";
 import { environment } from "../environments/environment";
 import { Machine, WebCamOrientation } from "./models/machine.model";
+import { IndexedStorageService } from "./services/local/indexed-storage.service";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http);
@@ -167,6 +168,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         DialogService,
         TuneDialogService,
         ThemeService,
+        IndexedStorageService,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: OverseerHttpInterceptor,

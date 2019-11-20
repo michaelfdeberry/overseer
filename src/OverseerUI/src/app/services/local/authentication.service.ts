@@ -1,16 +1,14 @@
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-
 import * as bcrypt from "bcryptjs";
 import { LocalStorageService } from "ngx-store";
 import { defer, Observable, Subject } from "rxjs";
-import { tap, catchError } from "rxjs/operators";
-
-import { isTokenExpired, toUser, User } from "../../models/user.model";
+import { catchError, tap } from "rxjs/operators";
+import { isTokenExpired, toUser, User, AccessLevel } from "../../models/user.model";
 import { AuthenticationService } from "../authentication.service";
-import { UserStorageService } from "./storage/user-storage.service";
-import { createUser, UserManager } from "./users.service";
 import { ErrorHandlerService } from "../error-handler.service";
+import { IndexedStorageService } from "./indexed-storage.service";
+import { createUser, UserManager } from "./users.service";
 
 @Injectable({ providedIn: "root" })
 export class LocalAuthenticationService implements AuthenticationService, UserManager {
@@ -19,7 +17,7 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
     public readonly authenticationChangeEvent$ = new Subject<User>();
 
     constructor(
-        public userStorage: UserStorageService,
+        public storage: IndexedStorageService,
         private localStorageService: LocalStorageService,
         private router: Router,
         private errorHandler: ErrorHandlerService
@@ -32,8 +30,10 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
     requiresLogin(): Observable<boolean> {
         const self = this;
         return defer(async function(): Promise<boolean> {
-            const adminCount = await self.userStorage.getAdminCount();
-            if (!adminCount) {
+            const users = await self.storage.users.getAll();
+            const admins = users.filter(u => u.accessLevel === AccessLevel.Administrator);
+
+            if (!admins.length) {
                 self.router.navigate(["/configuration", "setup"]);
                 self.errorHandler.handle("setup_required");
                 return false;
@@ -59,7 +59,7 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
             if (!user.username) { throw new Error("invalid_username"); }
             if (!user.password) { throw new Error("invalid_password"); }
 
-            const pUser = await self.userStorage.getUserByUsername(user.username);
+            const pUser = await self.storage.users.getByIndex("username", user.username);
             if (!pUser) { throw new Error("invalid_username"); }
 
             const hash = bcrypt.hashSync(user.password, pUser.passwordSalt);
@@ -77,7 +77,7 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
                 }
             }
 
-            await self.userStorage.updateUser(pUser);
+            await self.storage.users.update(pUser);
             self.localStorageService.set("activeUser", toUser(pUser, true));
             self.authenticationChangeEvent$.next(self.activeUser);
             return self.activeUser;
@@ -96,7 +96,7 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
     logoutUser(userId: number): Observable<User> {
         const self = this;
         return defer(async function() {
-            const pUser = await self.userStorage.getUserById(userId);
+            const pUser = await self.storage.users.getByID(userId);
             pUser.token = null;
             pUser.tokenExpiration = null;
 

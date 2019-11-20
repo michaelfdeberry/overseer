@@ -6,52 +6,53 @@ import { Observable, defer } from "rxjs";
 import { UsersService } from "../users.service";
 import { PersistedUser, toUser, User, AccessLevel } from "../../models/user.model";
 import { map, catchError } from "rxjs/operators";
-import { UserStorageService } from "./storage/user-storage.service";
 import { ErrorHandlerService } from "../error-handler.service";
 import { RequireAdministrator } from "../../shared/require-admin.decorator";
+import { IndexedStorageService } from "./indexed-storage.service";
 
 export interface UserManager {
-    userStorage: UserStorageService;
+    storage: IndexedStorageService;
 }
 
 export async function createUser(userManager: UserManager, user: User): Promise<User> {
     if (!user) { throw new Error("invalid_user"); }
     if (!user.username) { throw new Error("invalid_username"); }
     if (!user.password) { throw new Error("invalid_password"); }
-    if (await userManager.userStorage.getUserByUsername(user.username)) {
+    if (await userManager.storage.users.getByIndex("username", user.username)) {
         throw new Error("unavailable_username");
     }
 
     const salt = bcrypt.genSaltSync();
     const hash = bcrypt.hashSync(user.password, salt);
-    const pUser = await userManager.userStorage.createUser({
+    const pUser = {
         username: user.username,
         passwordHash: hash,
         passwordSalt: salt,
         sessionLifetime: user.sessionLifetime,
         accessLevel: user.accessLevel
-    });
+    };
 
+    await userManager.storage.users.add(pUser);
     return toUser(pUser);
 }
 
 @Injectable({ providedIn: "root" })
 export class LocalUsersService implements UsersService, UserManager {
     constructor(
-        public userStorage: UserStorageService,
+        public storage: IndexedStorageService,
         private errorHandler: ErrorHandlerService
     ) {}
 
     @RequireAdministrator()
     getUsers(): Observable<User[]> {
-        return defer(() => this.userStorage.getUsers())
+        return defer(() => this.storage.users.getAll())
             .pipe(map(pUsers => pUsers.map((u: PersistedUser) => toUser(u))))
             .pipe(catchError(err => this.errorHandler.handle(err)));
     }
 
     @RequireAdministrator()
     getUser(userId: number): Observable<User> {
-        return defer(() => this.userStorage.getUserById(userId))
+        return defer(() => this.storage.users.getByID(userId))
             .pipe(map(pUser => toUser(pUser)))
             .pipe(catchError(err => this.errorHandler.handle(err)));
     }
@@ -66,13 +67,13 @@ export class LocalUsersService implements UsersService, UserManager {
     updateUser(user: User): Observable<User> {
         const self = this;
         return defer(async function(): Promise<User> {
-            const pUser = await self.userStorage.getUserById(user.id);
+            const pUser = await self.storage.users.getByID(user.id);
 
             pUser.sessionLifetime = user.sessionLifetime;
             pUser.accessLevel = user.accessLevel;
             pUser.token = null;
             pUser.tokenExpiration = null;
-            await self.userStorage.updateUser(pUser);
+            await self.storage.users.update(pUser);
 
             return toUser(pUser);
         })
@@ -83,17 +84,17 @@ export class LocalUsersService implements UsersService, UserManager {
     deleteUser(user: User): Observable<any> {
         const self = this;
         return defer(async function (): Promise<User> {
-            if ((await self.userStorage.getUserCount()) === 1) {
+            const users = await self.storage.users.getAll();
+            if (users.length === 1) {
                 throw new Error("delete_user_unavailable");
             }
 
-            const users = await self.userStorage.getUsers();
             if (user.accessLevel === AccessLevel.Administrator &&
                 users.filter(u => u.accessLevel === AccessLevel.Readonly).length === 1) {
                 throw new Error("delete_user_unavailable");
             }
 
-            await self.userStorage.deleteUser(user.id);
+            await self.storage.users.deleteRecord(user.id);
             return user;
         })
             .pipe(catchError(err => this.errorHandler.handle(err)));
@@ -102,7 +103,7 @@ export class LocalUsersService implements UsersService, UserManager {
     changePassword(user: User): Observable<User> {
         const self = this;
         return defer(async function(): Promise<User> {
-            const pUser = await self.userStorage.getUserById(user.id);
+            const pUser = await self.storage.users.getByID(user.id);
 
             const salt = bcrypt.genSaltSync();
             const hash = bcrypt.hashSync(user.password, salt);
@@ -110,7 +111,7 @@ export class LocalUsersService implements UsersService, UserManager {
             pUser.passwordSalt = salt;
             pUser.token = null;
             pUser.tokenExpiration = null;
-            await self.userStorage.updateUser(pUser);
+            await self.storage.users.update(pUser);
 
             return toUser(pUser);
         })

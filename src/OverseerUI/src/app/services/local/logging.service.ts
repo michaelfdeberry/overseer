@@ -2,15 +2,15 @@ import { Injectable } from "@angular/core";
 import { NGXLogger, NGXLoggerMonitor, NGXLogInterface } from "ngx-logger";
 import { LoggingService } from "../logging.service";
 import { LocalStorage } from "ngx-store";
-import { LogStorageService } from "./storage/log-storage.service";
+import { IndexedStorageService } from "./indexed-storage.service";
 
 
 class OverseerMonitor implements NGXLoggerMonitor {
-    constructor(private logStorage: LogStorageService) {
+    constructor(private storage: IndexedStorageService) {
     }
 
     onLog(logObject: NGXLogInterface): void {
-        this.logStorage.write(logObject);
+        this.storage.logging.add(logObject);
     }
 }
 
@@ -22,7 +22,7 @@ export class LocalLoggingService implements LoggingService {
         return this.ngxLogger;
     }
 
-    constructor(private ngxLogger: NGXLogger, logStorage: LogStorageService) {
-        ngxLogger.registerMonitor(new OverseerMonitor(logStorage));
+    constructor(private ngxLogger: NGXLogger, private storage: IndexedStorageService) {
+        this.ngxLogger.registerMonitor(new OverseerMonitor(this.storage));
     }
 }

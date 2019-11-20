@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { NgxLoggerLevel } from "ngx-logger";
 import { LocalStorageService } from "ngx-store";
 import { defer, Observable, of } from "rxjs";
 import { UAParser } from "ua-parser-js";
@@ -8,18 +9,13 @@ import { ApplicationSettings } from "../../models/settings.model";
 import { PersistedUser, toUser } from "../../models/user.model";
 import { RequireAdministrator } from "../../shared/require-admin.decorator";
 import { SettingsService } from "../settings.service";
-import { LogStorageService } from "./storage/log-storage.service";
-import { MachineStorageService } from "./storage/machine-storage.service";
-import { UserStorageService } from "./storage/user-storage.service";
-import { NgxLoggerLevel } from "ngx-logger";
+import { IndexedStorageService } from "./indexed-storage.service";
 
 @Injectable({ providedIn: "root" })
 export class LocalSettingsService implements SettingsService {
     constructor(
         private localStorage: LocalStorageService,
-        private machineStorageService: MachineStorageService,
-        private userStorageService: UserStorageService,
-        private logStorageService: LogStorageService
+        private indexedStorage: IndexedStorageService
     ) {}
 
     createAppSettings(): ApplicationSettings {
@@ -38,8 +34,8 @@ export class LocalSettingsService implements SettingsService {
 
         const self = this;
         return defer(async function() {
-            const users: PersistedUser[] = await self.userStorageService.getUsers();
-            const machines: Machine[] = await self.machineStorageService.getMachines();
+            const users: PersistedUser[] = await self.indexedStorage.users.getAll();
+            const machines: Machine[] = await self.indexedStorage.machines.getAll();
             const settings: ApplicationSettings = self.localStorage.get("settings") || self.createAppSettings;
 
             return {
@@ -82,7 +78,7 @@ export class LocalSettingsService implements SettingsService {
     getLog(): Observable<string> {
         const self = this;
         return defer(async () => {
-            const logEntries = await self.logStorageService.read();
+            const logEntries = await self.indexedStorage.logging.getAll();
             return logEntries
                 .map(e => {
                     let message: any = e.message;
