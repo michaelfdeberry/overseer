@@ -1,11 +1,11 @@
-import { Injectable, Inject } from "@angular/core";
-import { NgxIndexedDBService, DBConfig, CONFIG_TOKEN } from "ngx-indexed-db";
+import { Inject, Injectable } from "@angular/core";
+import { CONFIG_TOKEN, DBConfig, NgxIndexedDBService } from "ngx-indexed-db";
+import { NGXLogInterface } from "ngx-logger";
 import { Machine } from "../../models/machine.model";
 import { PersistedUser } from "../../models/user.model";
-import { NGXLogInterface } from "ngx-logger";
 
 export class Store<T> {
-    constructor(private storeName: string, private db: NgxIndexedDBService) {
+    constructor(storeName: string, private db: NgxIndexedDBService) {
         db.currentStore = storeName;
     }
 
