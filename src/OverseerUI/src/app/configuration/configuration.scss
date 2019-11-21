@@ -9,13 +9,9 @@
 
     background-color: rgba(202, 202, 202, 0.37);
 
-    td {
+    th, td {
         display: none;
     }
-}
-
-.cdk-drag-placeholder {
-    opacity: 0;
 }
 
 .cdk-drag-animating {
