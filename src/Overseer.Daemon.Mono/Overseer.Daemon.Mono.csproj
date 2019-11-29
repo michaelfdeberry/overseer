@@ -149,6 +149,6 @@
   </Target>
   <Target Name="ReleaseClientBuild" AfterTargets="Build" Condition=" '$(Configuration)' == 'Release' ">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run bulldArmv6" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run buildArmv6" />
   </Target>
 </Project>

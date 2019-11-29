@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import { ErrorHandler, NgModule } from "@angular/core";
+import { ErrorHandler } from "@angular/core";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
@@ -46,17 +46,57 @@ import { AccessLevelGuard, AuthenticationGuard } from "./shared/authentication-g
 import { DisabledForDirective, HiddenForDirective } from "./shared/authorization.directive";
 import { DurationPipe } from "./shared/duration.pipe";
 import { LetDirective } from "./shared/let.directive";
-import { NgxIndexedDBModule } from "ngx-indexed-db";
-import { AccessLevel } from "./models/user.model";
+import { NgxIndexedDBModule } from "../libs/ngx-indexed-db/public_api";
 import { environment } from "../environments/environment";
-import { Machine, WebCamOrientation } from "./models/machine.model";
 import { IndexedStorageService } from "./services/local/indexed-storage.service";
+import { WebCamOrientation, Machine } from "./models/machine.model";
+import { AccessLevel } from "./models/user.model";
+
+export function migrationFactory(): { [key: number]: (db: IDBDatabase, transaction: IDBTransaction) => void } {
+    return {
+        4: (db, transaction) => {
+            const store = transaction.objectStore("users");
+            const request = store.openCursor();
+
+            // convert existing users to admins now that readonly users are supported.
+            request.onsuccess = function(event: any) {
+                const cursor: IDBCursorWithValue = event.target.result;
+
+                if (cursor) {
+                    const user = cursor.value;
+                    if (user.accessLevel === undefined || user.accessLevel === null) {
+                        user.accessLevel = AccessLevel.Administrator;
+                    }
+
+                    cursor.update(user);
+                    cursor.continue();
+                }
+            };
+        },
+        7: (db, transaction) => {
+            const store = transaction.objectStore("machines");
+            const request = store.openCursor();
+
+            request.onsuccess = function(event: any) {
+                const cursor: IDBCursorWithValue = event.target.result;
+
+                if (cursor) {
+                    const machine: Machine = cursor.value;
+                    machine.webCamOrientation = WebCamOrientation.Default;
+
+                    cursor.update(machine);
+                    cursor.continue();
+                }
+            };
+        }
+    };
+}
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http);
 }
 
-@NgModule({
+export const AppModuleConfig = {
     entryComponents: [
         AlertDialogComponent,
         PromptDialogComponent,
@@ -122,43 +162,7 @@ export function HttpLoaderFactory(http: HttpClient) {
                 storeConfig: { keyPath: "id", autoIncrement: true },
                 storeSchema: []
             }],
-            objectStoresMigration: {
-                4: (db, transaction) => {
-                    const store = transaction.objectStore("users");
-                    const request = store.openCursor();
-
-                    // convert existing users to admins now that readonly users are supported.
-                    request.onsuccess = function(event: any) {
-                        const cursor: IDBCursorWithValue = event.target.result;
-
-                        if (cursor) {
-                            const user = cursor.value;
-                            if (user.accessLevel === undefined || user.accessLevel === null) {
-                                user.accessLevel = AccessLevel.Administrator;
-                            }
-
-                            cursor.update(user);
-                            cursor.continue();
-                        }
-                    };
-                },
-                7: (db, transaction) => {
-                    const store = transaction.objectStore("machines");
-                    const request = store.openCursor();
-
-                    request.onsuccess = function(event: any) {
-                        const cursor: IDBCursorWithValue = event.target.result;
-
-                        if (cursor) {
-                            const machine: Machine = cursor.value;
-                            machine.webCamOrientation = WebCamOrientation.Default;
-
-                            cursor.update(machine);
-                            cursor.continue();
-                        }
-                    };
-                }
-            }
+            migrationFactory
         })
     ],
     providers: [
@@ -208,5 +212,4 @@ export function HttpLoaderFactory(http: HttpClient) {
         }
     ],
     bootstrap: [AppComponent]
-})
-export class AppModule { }
+};

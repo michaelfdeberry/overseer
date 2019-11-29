@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@angular/core";
-import { CONFIG_TOKEN, DBConfig, NgxIndexedDBService } from "ngx-indexed-db";
 import { NGXLogInterface } from "ngx-logger";
+import { CONFIG_TOKEN, DBConfig, NgxIndexedDBService } from "../../../libs/ngx-indexed-db/public_api";
 import { Machine } from "../../models/machine.model";
 import { PersistedUser } from "../../models/user.model";
 
@@ -31,6 +31,10 @@ export class Store<T> {
 
     deleteRecord(key: any): Promise<any> {
         return this.db.deleteRecord(key);
+    }
+
+    delete(key: any): Promise<any> {
+        return this.db.delete(key);
     }
 
     clear(): Promise<any> {

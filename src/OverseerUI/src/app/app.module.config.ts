@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import { ErrorHandler, NgModule } from "@angular/core";
+import { ErrorHandler } from "@angular/core";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
@@ -37,7 +37,7 @@ import { RemoteControlService } from "./services/remote/control.service";
 import { RemoteLoggingService } from "./services/remote/logging.service";
 import { RemoteMachinesService } from "./services/remote/machines.service";
 import { RemoteSettingsService } from "./services/remote/settings.service";
-import { SignalrMonitoringService } from "./services/remote/signalr-monitoring.service";
+import { SignalrCoreMonitoringService } from "./services/remote/signalr-core-monitoring.service";
 import { RemoteUsersService } from "./services/remote/users.service";
 import { WindowService } from "./services/remote/window.service";
 import { SettingsService } from "./services/settings.service";
@@ -52,7 +52,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http);
 }
 
-@NgModule({
+export const AppModuleConfig = {
     entryComponents: [
         AlertDialogComponent,
         PromptDialogComponent,
@@ -76,6 +76,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     ],
     imports: [
         AppRoutingModule,
+        NgProgressModule.withConfig({
+            spinner: false,
+            thick: true
+        }),
         RouterModule,
         HttpClientModule,
         BrowserModule,
@@ -85,10 +89,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         FormsModule,
         ReactiveFormsModule,
         FlexLayoutModule,
-        NgProgressModule.withConfig({
-            spinner: false,
-            thick: true
-        }),
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -109,7 +109,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         TuneDialogService,
         ThemeService,
         { provide: HTTP_INTERCEPTORS, useClass: OverseerHttpInterceptor, multi: true },
-        { provide: MonitoringService, useClass: SignalrMonitoringService },
+        { provide: MonitoringService, useClass: SignalrCoreMonitoringService },
         { provide: AuthenticationService, useClass: RemoteAuthenticationService },
         { provide: ControlService, useClass: RemoteControlService },
         { provide: MachinesService, useClass: RemoteMachinesService },
@@ -120,5 +120,4 @@ export function HttpLoaderFactory(http: HttpClient) {
         { provide: WindowService, useValue: window }
     ],
     bootstrap: [AppComponent]
-})
-export class AppModule {}
+};

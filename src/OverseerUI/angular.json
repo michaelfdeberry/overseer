@@ -34,60 +34,40 @@
                         }
                     },
                     "configurations": {
-                        "debug": {
+                        "production": {
                             "fileReplacements": [
                                 {
-                                    "replace": "src/app/app.module.ts",
-                                    "with": "src/app/app.module.remote.ts"
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
                                 }
-                            ]
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "extractCss": true,
+                            "namedChunks": false,
+                            "aot": true,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": true
                         },
                         "debugArmv6": {
                             "fileReplacements": [
                                 {
-                                    "replace": "src/app/app.module.ts",
-                                    "with": "src/app/app.module.remote.armv6.ts"
+                                    "replace": "src/app/app.module.config.ts",
+                                    "with": "src/app/app.module.config.armv6.ts"
                                 }
                             ],
                             "scripts": [
                                 "node_modules/jquery/dist/jquery.js",
                                 "node_modules/signalr/jquery.signalR.js"
                             ]
-                        },
-                        "debugLocal": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "src/app/app.module.ts",
-                                    "with": "src/app/app.module.local.ts"
-                                }
-                            ]
-                        },
-                        "production": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "src/app/app.module.ts",
-                                    "with": "src/app/app.module.remote.ts"
-                                },
-                                {
-                                    "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.prod.ts"
-                                }
-                            ],
-                            "optimization": true,
-                            "outputHashing": "all",
-                            "sourceMap": false,
-                            "extractCss": true,
-                            "namedChunks": false,
-                            "aot": true,
-                            "extractLicenses": true,
-                            "vendorChunk": false,
-                            "buildOptimizer": true
                         },
                         "productionArmv6": {
                             "fileReplacements": [
                                 {
-                                    "replace": "src/app/app.module.ts",
-                                    "with": "src/app/app.module.remote.armv6.ts"
+                                    "replace": "src/app/app.module.config.ts",
+                                    "with": "src/app/app.module.config.armv6.ts"
                                 },
                                 {
                                     "replace": "src/environments/environment.ts",
@@ -108,11 +88,19 @@
                             "vendorChunk": false,
                             "buildOptimizer": true
                         },
+                        "debugLocal": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/app/app.module.config.ts",
+                                    "with": "src/app/app.module.config.local.ts"
+                                }
+                            ]
+                        },
                         "productionLocal": {
                             "fileReplacements": [
                                 {
-                                    "replace": "src/app/app.module.ts",
-                                    "with": "src/app/app.module.local.ts"
+                                    "replace": "src/app/app.module.config.ts",
+                                    "with": "src/app/app.module.config.local.ts"
                                 },
                                 {
                                     "replace": "src/environments/environment.ts",
