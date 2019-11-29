@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Overseer.Daemon</RootNamespace>
-      <Version>1.0.17</Version>
+      <Version>1.0.18</Version>
   </PropertyGroup>
 
   <ItemGroup>
