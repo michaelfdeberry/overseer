@@ -10,7 +10,7 @@ var publishDir = "../publish";
 var workingDir = publishDir + "/temp";
 
 Task("Clean")
-    .Does(() => {        
+    .Does(() => {
         CleanDirectory(netCoreBuildDir);
         CleanDirectory(netFrameworkBuildDir);
     });
@@ -25,20 +25,20 @@ Task("Version")
     .Does(() => {
         var versionPattern = "(\\d+\\.){2,3}(\\d+)";
         var overseerProjectFile = "../src/Overseer/Overseer.csproj";
-        var projectFileVersionPath = "/Project/PropertyGroup/Version";        
+        var projectFileVersionPath = "/Project/PropertyGroup/Version";
         var currentVersion = System.Version.Parse(XmlPeek(overseerProjectFile, projectFileVersionPath));
         var newVersion = new Version(currentVersion.Major, currentVersion.Minor, currentVersion.Build + 1);
 
         // update the csproj xml files
         var csprojFiles = new [] {
-            overseerProjectFile, 
+            overseerProjectFile,
             "../src/Overseer.Daemon.Core/Overseer.Daemon.Core.csproj",
             "../src/Overseer.Tests/Overseer.Tests.csproj",
             "../src/Overseer.Daemon.Common/Overseer.Daemon.Common.csproj"
         };
         foreach (var csprojFile in csprojFiles)
-        {     
-            XmlPoke(csprojFile, projectFileVersionPath, newVersion.ToString());            
+        {
+            XmlPoke(csprojFile, projectFileVersionPath, newVersion.ToString());
         }
 
         // update npm files
@@ -50,20 +50,20 @@ Task("Version")
 
         // update environment files
         ReplaceRegexInFiles("../src/OverseerUI/src/environments/environment*", $"appVersion:.\"{versionPattern}\"", $"appVersion: \"{newVersion}\"");
-        
+
         // update install scripts
         ReplaceRegexInFiles("../src/**/overseer*.sh", $"overseerVersion='{versionPattern}'", $"overseerVersion='{newVersion}'");
 
         // update the assembly info files
         ReplaceRegexInFiles("../src/**/AssemblyInfo.cs", $"AssemblyVersion\\(\"{versionPattern}\"\\)", $"AssemblyVersion(\"{newVersion}\")");
         ReplaceRegexInFiles("../src/**/AssemblyInfo.cs", $"AssemblyFileVersion\\(\"{versionPattern}\"\\)", $"AssemblyFileVersion(\"{newVersion}\")");
-        
+
         Information($"Updated from version {currentVersion} to {newVersion}");
     });
 
-Task("Build")    
+Task("Build")
     .IsDependentOn("NuGet")
-    .Does(() => {                
+    .Does(() => {
         MSBuild("../src/Overseer.sln", settings => settings.SetConfiguration(configuration));
     });
 
@@ -96,9 +96,9 @@ Task("PublishClientApp")
             LogLevel = NpmLogLevel.Verbose
         });
 
-        NpmRunScript(new NpmRunScriptSettings 
+        NpmRunScript(new NpmRunScriptSettings
         {
-            ScriptName = "buildReleaseStatic",
+            ScriptName = "buildLocal",
             WorkingDirectory = "../src/OverseerUI",
             LogLevel = NpmLogLevel.Verbose
         });
@@ -147,7 +147,7 @@ Task("PublishCoreXPlat")
             OutputDirectory = workingDir + "/overseer",
             Verbosity = DotNetCoreVerbosity.Detailed
         });
-        
+
         //create the zip file
         Zip(workingDir, publishDir + "/overseer-xplat.zip");
 
@@ -167,7 +167,7 @@ Task("PublishCoreLinuxArmv7")
             Configuration = "Release",
             Runtime = "linux-arm",
             OutputDirectory = workingDir + "/overseer",
-            Verbosity = DotNetCoreVerbosity.Detailed          
+            Verbosity = DotNetCoreVerbosity.Detailed
         });
 
         //create the zip file
@@ -188,7 +188,7 @@ Task("Publish")
     .IsDependentOn("Version")
     .IsDependentOn("PreparePublish")
     .IsDependentOn("PublishClientApp")
-    .IsDependentOn("PublishMono") 
+    .IsDependentOn("PublishMono")
     .IsDependentOn("PublishCoreXPlat")
     .IsDependentOn("PublishCoreLinuxArmv7");
 

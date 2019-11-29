@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Overseer</AssemblyName>
-    <Version>1.0.15</Version>
+    <Version>1.0.17</Version>
   </PropertyGroup>
 
   <ItemGroup>
