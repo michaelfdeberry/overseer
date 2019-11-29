@@ -21,7 +21,7 @@ export class RemoteLoggingService implements LoggingService {
         });
 
         this.ngxLogger.setCustomHttpHeaders(new HttpHeaders({
-            Authorization: "Bearer " + this.activeUser.token
+            Authorization: "Bearer " + this.activeUser ? this.activeUser.token : ""
         }));
     }
 }
