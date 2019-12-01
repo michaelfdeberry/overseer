@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Overseer.Models
 {
@@ -16,6 +17,7 @@ namespace Overseer.Models
             OperatingSystem = Environment.OSVersion.VersionString;
             MachineName = Environment.MachineName;
             Version = FileVersionInfo.GetVersionInfo(Assembly.GetAssembly(GetType()).Location).ProductVersion;
+            Runtime = RuntimeInformation.FrameworkDescription;
         }
 
         public string Platform { get; }
@@ -25,5 +27,7 @@ namespace Overseer.Models
         public string MachineName { get; }
 
         public string Version { get; }
+
+        public string Runtime { get; set; }
     }
 }

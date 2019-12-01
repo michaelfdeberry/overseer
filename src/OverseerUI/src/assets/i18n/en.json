@@ -132,7 +132,8 @@
             "platform": "Platform Type",
             "operatingSystem": "Operating System",
             "machineName": "Device Name",
-            "version": "Application Version"
+            "version": "Application Version",
+            "runtime": "Runtime Version"
         }
     },
     "themes": {
