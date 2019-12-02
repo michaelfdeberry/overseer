@@ -4,15 +4,26 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var clientBuildDir = Directory("../src/OverseerUI/dist-static");
-var netCoreBuildDir = Directory("../src/Overseer.Daemon.Core/bin") + Directory(configuration);
-var netFrameworkBuildDir = Directory("../src/Overseer.Daemon.Mono/bin") + Directory(configuration);
+var netCoreBuildDir = Directory("../src/Overseer.Daemon.Core/bin");
+var netFrameworkBuildDir = Directory("../src/Overseer.Daemon.Mono/bin");
 var publishDir = "../publish";
 var workingDir = publishDir + "/temp";
 
 Task("Clean")
     .Does(() => {
-        CleanDirectory(netCoreBuildDir);
-        CleanDirectory(netFrameworkBuildDir);
+        // clear seems to be broken, or maybe just isn't recursive so delete the directories instead
+        var deleteSettings = new DeleteDirectorySettings {
+            Recursive = true,
+            Force = true
+        };
+
+        if (DirectoryExists(netCoreBuildDir)) {
+            DeleteDirectory(netCoreBuildDir, deleteSettings);
+        }
+
+        if (DirectoryExists(netFrameworkBuildDir)) {
+            DeleteDirectory(netFrameworkBuildDir, deleteSettings);
+        }
     });
 
 Task("NuGet")
@@ -122,7 +133,7 @@ Task("PublishMono")
         CreateDirectory(workingDir);
 
         //copy the release build to the output directory
-        CopyDirectory(netFrameworkBuildDir, workingDir + "/overseer");
+        CopyDirectory(netFrameworkBuildDir + Directory(configuration), workingDir + "/overseer");
 
         //create the zip file for for overseer-linux-armv6.zip
         Zip(workingDir, publishDir + "/overseer-linux-armv6.zip");
@@ -184,8 +195,8 @@ Task("PublishCoreLinuxArmv7")
     });
 
 Task("Publish")
-    .IsDependentOn("Test")
     .IsDependentOn("Version")
+    .IsDependentOn("Test")
     .IsDependentOn("PreparePublish")
     .IsDependentOn("PublishClientApp")
     .IsDependentOn("PublishMono")
