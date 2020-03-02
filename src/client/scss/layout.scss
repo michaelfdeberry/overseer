@@ -1,0 +1,32 @@
+.header {
+    display: flex;
+
+    .header-title {
+        cursor: pointer;
+        flex: 1;
+    }
+
+    .header-menu-container {
+        flex: 0;
+    }
+}
+
+.header-menu {
+    .MuiPaper-root {
+        margin-top: 35px;
+    }
+
+    ul {
+        width: 250px;
+
+        li {
+            display: flex;
+
+            .header-menu-item-text {
+                flex: 1;
+                padding-top: 8px;
+                padding-bottom: 8px;
+            }
+        }
+    }
+}
