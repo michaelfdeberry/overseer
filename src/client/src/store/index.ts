@@ -10,10 +10,10 @@ import common from './reducer';
 import { CommonState } from './state';
 
 export interface AppState {
-    common?: CommonState;
-    layout?: LayoutState;
-    monitoring?: MonitoringState;
-    configuration?: ConfigurationState;
+  common?: CommonState;
+  layout?: LayoutState;
+  monitoring?: MonitoringState;
+  configuration?: ConfigurationState;
 }
 
 const rootReducer = combineReducers<AppState>({ common, layout, monitoring, configuration });

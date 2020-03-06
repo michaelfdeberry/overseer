@@ -6,11 +6,11 @@ import { LoginContainer } from '../../pages/login';
 import { MonitoringContainer } from '../../pages/monitoring';
 
 export const Content: React.FunctionComponent = () => {
-    return (
-        <Switch>
-            <Route path="/" component={MonitoringContainer} exact />
-            <Route path="/login" component={LoginContainer} />
-            <Route path="/configuration" component={ConfigurationContainer} />
-        </Switch>
-    );
+  return (
+    <Switch>
+      <Route path="/" component={MonitoringContainer} exact />
+      <Route path="/login" component={LoginContainer} />
+      <Route path="/configuration" component={ConfigurationContainer} />
+    </Switch>
+  );
 };

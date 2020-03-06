@@ -10,70 +10,70 @@ import { AppState } from '../../store';
 import { logout } from '../../store/actions';
 
 export const HeaderMenu: React.FunctionComponent = () => {
-    const isAuthenticated = useSelector<AppState>((state) => state.common?.isAuthenticated);
-    // if (!isAuthenticated) return null;
+  const isAuthenticated = useSelector<AppState>(state => state.common?.isAuthenticated);
+  if (!isAuthenticated) return null;
 
-    const dispatch = useDispatch();
-    const history = useHistory();
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const open = !!anchorEl;
-    const configRoute = useRouteMatch('/configuration');
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = !!anchorEl;
+  const configRoute = useRouteMatch('/configuration');
 
-    const openMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+  function openMenu(event: React.MouseEvent<HTMLElement>): void {
+    setAnchorEl(event.currentTarget);
+  }
 
-    const closeMenu = () => {
-        setAnchorEl(null);
-    };
+  function closeMenu(): void {
+    setAnchorEl(null);
+  }
 
-    const navigateToConfiguration = () => {
-        closeMenu();
+  function navigateToConfiguration(): void {
+    closeMenu();
 
-        if (!configRoute?.isExact) {
-            history.push('/configuration');
-        }
-    };
+    if (!configRoute?.isExact) {
+      history.push('/configuration');
+    }
+  }
 
-    const navigateToLogin = () => {
-        closeMenu();
-        dispatch(logout);
-        history.push('/login');
-    };
+  function navigateToLogin(): void {
+    closeMenu();
+    dispatch(logout());
+    history.push('/login');
+  }
 
-    return (
-        <div className="header-menu-container">
-            <IconButton onClick={openMenu} color="inherit">
-                <MenuIcon />
-            </IconButton>
-            <Menu
-                className="header-menu"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                }}
-                keepMounted
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                }}
-                open={open}
-                onClose={closeMenu}
-            >
-                <MenuItem onClick={navigateToConfiguration}>
-                    <span className="header-menu-item-text">Settings</span>
-                    <Icon>
-                        <SettingsIcon />
-                    </Icon>
-                </MenuItem>
-                <MenuItem onClick={navigateToLogin}>
-                    <span className="header-menu-item-text">Sign out</span>
-                    <Icon>
-                        <ExitToAppIcon />
-                    </Icon>
-                </MenuItem>
-            </Menu>
-        </div>
-    );
+  return (
+    <div className="header-menu-container">
+      <IconButton onClick={openMenu} color="inherit">
+        <MenuIcon />
+      </IconButton>
+      <Menu
+        className="header-menu"
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={open}
+        onClose={closeMenu}
+      >
+        <MenuItem onClick={navigateToConfiguration}>
+          <span className="header-menu-item-text">Settings</span>
+          <Icon>
+            <SettingsIcon />
+          </Icon>
+        </MenuItem>
+        <MenuItem onClick={navigateToLogin}>
+          <span className="header-menu-item-text">Sign out</span>
+          <Icon>
+            <ExitToAppIcon />
+          </Icon>
+        </MenuItem>
+      </Menu>
+    </div>
+  );
 };

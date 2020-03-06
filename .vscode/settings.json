@@ -6,5 +6,7 @@
     "typescriptHero.imports.multiLineWrapThreshold": 150,
     "typescriptHero.imports.organizeOnSave": true,
     "eslint.alwaysShowStatus": true,
-    "eslint.run": "onSave"
+    "eslint.run": "onSave",
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.preferences.quoteStyle": "single"
 }
