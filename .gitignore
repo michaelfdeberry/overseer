@@ -13,7 +13,6 @@ publish/**
 *.user
 *.userosscache
 *.sln.docstates
-*.vscode
 *.db
 
 # User-specific files (MonoDevelop/Xamarin Studio)

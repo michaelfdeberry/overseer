@@ -1,0 +1,10 @@
+{
+    "prettier.arrowParens": "always",
+    "prettier.printWidth": 150,
+    "prettier.singleQuote": true,
+    "typescriptHero.imports.multiLineTrailingComma": false,
+    "typescriptHero.imports.multiLineWrapThreshold": 150,
+    "typescriptHero.imports.organizeOnSave": true,
+    "eslint.alwaysShowStatus": true,
+    "eslint.run": "onSave"
+}

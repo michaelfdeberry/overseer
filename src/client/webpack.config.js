@@ -6,6 +6,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = function(env) {
+    const isDev = env.MODE === 'development';
     const serviceTarget = env.SERVICE_TARGET || 'remote';
     let distribution = path.resolve(__dirname, './dist');
     if (serviceTarget === 'remote') {
@@ -41,7 +42,7 @@ module.exports = function(env) {
         },
 
         output: {
-            filename: '[name].[contenthash].js',
+            filename: isDev ? '[name].js' : '[name].[contenthash].js',
             path: distribution
         },
 
@@ -66,8 +67,8 @@ module.exports = function(env) {
                 return resource.request.replace(/service.interface/, `service.${serviceTarget}`);
             }),
             new MiniCssExtractPlugin({
-                filename: 'styles.[contenthash].css',
-                chunkFilename: 'styles.[contenthash].css'
+                filename: isDev ? 'styles.css' : 'styles.[contenthash].css',
+                chunkFilename: isDev ? 'styles.css' : 'styles.[contenthash].css'
             }),
             new webpack.SourceMapDevToolPlugin({
                 filename: '[file].map',
