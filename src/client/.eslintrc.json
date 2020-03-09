@@ -1,25 +1,28 @@
 {
-    "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended",
-      "plugin:@typescript-eslint/recommended",
-      "prettier/@typescript-eslint",
-      "plugin:prettier/recommended"
-    ],
-    "plugins": ["react", "@typescript-eslint", "prettier"],
-    "env": {
-      "browser": true,
-      "jasmine": true,
-      "jest": true
-    },
-    "rules": {
-      "prettier/prettier": ["error", { "singleQuote": true }]
-    },
-    "settings": {
-      "react": {
-        "pragma": "React",
-        "version": "detect"
-      }
-    },
-    "parser": "@typescript-eslint/parser"
-  }
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["react", "@typescript-eslint", "prettier"],
+  "env": {
+    "es6": true,
+    "browser": true,
+    "jasmine": true,
+    "jest": true
+  },
+  "rules": {
+    "prettier/prettier": ["error", { "singleQuote": true }],
+    "@typescript-eslint/explicit-function-return-type": ["warn", { "allowExpressions": true }],
+    "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }]
+  },
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "detect"
+    }
+  },
+  "parser": "@typescript-eslint/parser"
+}

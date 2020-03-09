@@ -1,4 +1,4 @@
-import { LowdbAsync } from 'lowdb';
+import * as lodashId from 'lodash-id';
 
 import { Machine } from '../models/machines/machine.class';
 import { Certificate } from '../models/system/certificate.interface';
@@ -9,29 +9,40 @@ import { Repository } from './repository.class';
 import { ValueStore } from './value-store.class';
 
 export class DataContext {
-    get values() {
-        return new ValueStore(this.db.get('values'));
-    }
+  defaultData: DataContextSchema = {
+    certificates: [],
+    logs: [],
+    machines: [],
+    users: [],
+    values: []
+  };
 
-    get machines() {
-        return this.createRepository<Machine>('machines');
-    }
+  get values() {
+    return new ValueStore(this.db.get('values'));
+  }
 
-    get users() {
-        return this.createRepository<User>('users');
-    }
+  get machines() {
+    return this.createRepository<Machine>('machines');
+  }
 
-    get certificates() {
-        return this.createRepository<Certificate>('certificates');
-    }
+  get users() {
+    return this.createRepository<User>('users');
+  }
 
-    get logs() {
-        return this.createRepository<LogEntry>('logs');
-    }
+  get certificates() {
+    return this.createRepository<Certificate>('certificates');
+  }
 
-    constructor(private db: LowdbAsync<DataContextSchema>) {}
+  get logs() {
+    return this.createRepository<LogEntry>('logs');
+  }
 
-    private createRepository<T>(name: keyof DataContextSchema): Repository<T> {
-        return new Repository<T>(this.db.get(name));
-    }
+  constructor(private db: any) {
+    db._.mixin(lodashId);
+    db.defaults(this.defaultData).write();
+  }
+
+  private createRepository<T>(name: keyof DataContextSchema): Repository<T> {
+    return new Repository<T>(this.db.get(name));
+  }
 }

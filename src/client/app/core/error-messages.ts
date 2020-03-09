@@ -1,0 +1,14 @@
+export const errorMessageMap: { [key: string]: string } = {
+  unknown: 'An Unknown Error Occurred',
+  invalid_user: 'Unable to create user, please try again',
+  invalid_username: 'Invalid Username',
+  invalid_password: 'Invalid Password',
+  unknown_exception: 'An Unknown Error Occurred',
+  certificate_exception: 'Untrusted Certificate Detected',
+  octoprint_invalid_key: 'Octoprint refused the connection because the provided API Key is invalid',
+  machine_connect_failure: 'Failed to establish a connection with the machine',
+  unavailable_username: 'Username is currently in use',
+  unauthorized_access: 'Unauthorized Access Attempted!',
+  setup_required: 'Setup Required',
+  delete_user_unavailable: "This user can't be deleted because at least one user must exist",
+};

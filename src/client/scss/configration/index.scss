@@ -1,0 +1,24 @@
+@import 'setup';
+
+.configuration-form {
+  padding: 10px 35px;
+
+  .MuiFormControl-root {
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+  }
+
+  .configuration-actions {
+    margin-top: 20px;
+    display: flex;
+
+    .configuration-actions-secondary {
+      flex: 1;
+    }
+
+    .configuration-actions-primary {
+      flex: 0;
+    }
+  }
+}
