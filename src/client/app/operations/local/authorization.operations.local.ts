@@ -1,6 +1,6 @@
-import { DisplayUser } from 'overseer_lib';
-import { getLocalStorageDataContext } from 'overseer_lib/data';
-import { AuthorizationService } from 'overseer_lib/services';
+import { getLocalStorageDataContext } from '@overseer/common/data';
+import { DisplayUser } from '@overseer/common/models';
+import { AuthorizationService } from '@overseer/common/services';
 import { defer, Observable } from 'rxjs';
 
 async function withAuthorizationService<T>(execute: (service: AuthorizationService) => Promise<T>): Promise<T> {

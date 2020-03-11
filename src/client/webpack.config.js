@@ -19,7 +19,7 @@ module.exports = function(env) {
     entry: './app/index.tsx',
 
     resolve: {
-      modules: [path.resolve(__dirname, './node_modules'), path.resolve(__dirname, '../lib/node_modules')],
+      modules: [path.resolve(__dirname, './node_modules'), path.resolve(__dirname, '../common/node_modules')],
       extensions: ['.ts', '.tsx', '.js'],
     },
     module: {
@@ -30,7 +30,7 @@ module.exports = function(env) {
         },
         {
           enforce: 'pre',
-          test: /\.js$/,
+          test: /\.(t|j)s$/,
           loader: 'source-map-loader',
         },
         {

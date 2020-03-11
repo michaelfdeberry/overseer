@@ -1,6 +1,6 @@
-import { SystemSettings } from 'overseer_lib';
-import { getLocalStorageDataContext } from 'overseer_lib/data';
-import { SystemConfigurationService } from 'overseer_lib/services';
+import { getLocalStorageDataContext } from '@overseer/common/data';
+import { SystemSettings } from '@overseer/common/models';
+import { SystemConfigurationService } from '@overseer/common/services';
 import { defer, Observable, of } from 'rxjs';
 
 async function withSystemConfigurationService<T>(execute: (service: SystemConfigurationService) => Promise<T>): Promise<T> {

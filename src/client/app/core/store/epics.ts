@@ -1,4 +1,4 @@
-import { DisplayUser } from 'overseer_lib';
+import { DisplayUser } from '@overseer/common/models';
 import { Action } from 'redux';
 import { StateObservable } from 'redux-observable';
 import { Observable } from 'rxjs';

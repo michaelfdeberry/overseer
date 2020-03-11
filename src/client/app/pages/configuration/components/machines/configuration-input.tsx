@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
-import { ContextType, MachineSetting } from 'overseer_lib';
+import { ContextType, MachineSetting } from '@overseer/common/models';
 import * as React from 'react';
 
 import { isRequired } from '../../validators/required.validator';

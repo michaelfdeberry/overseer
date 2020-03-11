@@ -1,5 +1,5 @@
+import { DisplayUser, Machine } from '@overseer/common/models';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DisplayUser, Machine } from 'overseer_lib';
 
 import { CreateUserFormState } from './form-states/create-user-form.state';
 import { MachineConfigurationFormState } from './form-states/machine-configuration-form.state';
@@ -21,7 +21,10 @@ const configurationSlice = createSlice({
       state.setupPageLoaded = true;
       state.setupPageCurrentStep = 0;
     },
-    completeUserStep(state: ConfigurationState, _action: PayloadAction<DisplayUser>): void {
+    completeSetupUserStep(state: ConfigurationState, _action: PayloadAction<DisplayUser>): void {
+      state.setupPageCurrentStep = state.setupPageCurrentStep + 1;
+    },
+    completeSetupMachineStep(state: ConfigurationState, _action: PayloadAction<Machine>): void {
       state.setupPageCurrentStep = state.setupPageCurrentStep + 1;
     },
     updateCreateUserState(state: ConfigurationState, action: PayloadAction<CreateUserFormState>): void {

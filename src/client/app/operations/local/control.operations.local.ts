@@ -1,5 +1,5 @@
-import { getLocalStorageDataContext } from 'overseer_lib/data';
-import { MachineControlService, MachineProviderService } from 'overseer_lib/services';
+import { getLocalStorageDataContext } from '@overseer/common/data';
+import { MachineControlService, MachineProviderService } from '@overseer/common/services';
 import { defer, Observable } from 'rxjs';
 
 async function withMachineControlService<T>(execute: (c: MachineControlService) => Promise<T>): Promise<T> {

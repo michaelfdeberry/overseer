@@ -1,5 +1,5 @@
 {
-  "name": "overseer_client",
+  "name": "@overseer/client",
   "version": "2.0.0",
   "description": "",
   "scripts": {
@@ -18,7 +18,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.45",
     "@reduxjs/toolkit": "^1.2.5",
-    "overseer_lib": "file:../lib",
+    "@overseer/common": "file:../common",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-redux": "^7.2.0",

@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
-import { ContextType, MachineConfiguration, machineConfigurationBuilder, MachineSetting, MachineSettingGroup } from 'overseer_lib';
+import { ContextType, MachineConfiguration, machineConfigurationBuilder, MachineSetting, MachineSettingGroup } from '@overseer/common/models';
 import * as React from 'react';
 
 import { MachineConfigurationFormState } from '../../store/form-states/machine-configuration-form.state';

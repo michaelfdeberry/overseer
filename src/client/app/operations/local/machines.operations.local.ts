@@ -1,6 +1,6 @@
-import { Machine, MachineConfiguration } from 'overseer_lib';
-import { getLocalStorageDataContext } from 'overseer_lib/data';
-import { MachineConfigurationService, MachineProviderService } from 'overseer_lib/services';
+import { getLocalStorageDataContext } from '@overseer/common/data';
+import { Machine, MachineConfiguration } from '@overseer/common/models';
+import { MachineConfigurationService, MachineProviderService } from '@overseer/common/services';
 import { defer, Observable } from 'rxjs';
 
 async function withMachineConfigurationService<T>(execute: (machineService: MachineConfigurationService) => Promise<T>): Promise<T> {

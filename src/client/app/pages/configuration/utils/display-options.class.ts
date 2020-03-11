@@ -1,4 +1,4 @@
-import { AccessLevel } from 'overseer_lib';
+import { AccessLevel } from '@overseer/common/models';
 
 export class DisplayOption<TValue> {
   constructor(public text: string, public value: TValue) {}

@@ -1,4 +1,4 @@
-import { DisplayUser } from 'overseer_lib';
+import { DisplayUser } from '@overseer/common/models';
 
 import { AppState } from '../../store';
 

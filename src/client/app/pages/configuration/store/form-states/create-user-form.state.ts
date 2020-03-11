@@ -1,4 +1,4 @@
-import { AccessLevel } from 'overseer_lib';
+import { AccessLevel } from '@overseer/common/models';
 
 export interface CreateUserFormState {
   isValid?: boolean;

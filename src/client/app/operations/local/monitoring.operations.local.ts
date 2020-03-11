@@ -1,6 +1,6 @@
-import { MachineState } from 'overseer_lib';
-import { getLocalStorageDataContext } from 'overseer_lib/data';
-import { MachineProviderService, MonitoringService } from 'overseer_lib/services';
+import { getLocalStorageDataContext } from '@overseer/common/data';
+import { MachineState } from '@overseer/common/models';
+import { MachineProviderService, MonitoringService } from '@overseer/common/services';
 import { defer, Observable, Subject } from 'rxjs';
 
 let monitoringService: MonitoringService;

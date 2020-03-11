@@ -1,4 +1,4 @@
-import { AccessLevel } from 'overseer_lib';
+import { AccessLevel } from '@overseer/common/models';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, RouteProps } from 'react-router-dom';

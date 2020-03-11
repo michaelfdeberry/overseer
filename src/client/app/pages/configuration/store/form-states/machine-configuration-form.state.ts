@@ -1,4 +1,4 @@
-import { MachineConfiguration } from 'overseer_lib';
+import { MachineConfiguration } from '@overseer/common/models';
 
 export interface MachineConfigurationFormState {
   isValid?: boolean;

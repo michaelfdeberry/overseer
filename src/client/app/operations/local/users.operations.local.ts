@@ -1,6 +1,6 @@
-import { DisplayUser } from 'overseer_lib';
-import { getLocalStorageDataContext } from 'overseer_lib/data';
-import { UserConfigurationService } from 'overseer_lib/services';
+import { getLocalStorageDataContext } from '@overseer/common/data';
+import { DisplayUser } from '@overseer/common/models';
+import { UserConfigurationService } from '@overseer/common/services';
 import { defer, Observable } from 'rxjs';
 
 async function withUserConfigurationService<T>(execute: (service: UserConfigurationService) => Promise<T>): Promise<T> {

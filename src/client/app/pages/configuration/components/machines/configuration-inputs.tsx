@@ -1,4 +1,4 @@
-import { ContextType, MachineConfiguration } from 'overseer_lib';
+import { ContextType, MachineConfiguration } from '@overseer/common/models';
 import * as React from 'react';
 
 import { ConfigurationInput } from './configuration-input';

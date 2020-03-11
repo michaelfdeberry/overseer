@@ -1,6 +1,6 @@
 import { ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Typography } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { ContextType, MachineSetting, MachineSettingGroup } from 'overseer_lib';
+import { ContextType, MachineSetting, MachineSettingGroup } from '@overseer/common/models';
 import * as React from 'react';
 
 import { ConfigurationInput } from './configuration-input';

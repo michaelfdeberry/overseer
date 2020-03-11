@@ -1,5 +1,5 @@
+import { DisplayUser, Machine, SystemSettings } from '@overseer/common/models';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DisplayUser, Machine, SystemSettings } from 'overseer_lib';
 
 export interface CoreState {
   isInitialized: boolean;

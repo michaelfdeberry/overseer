@@ -46,23 +46,21 @@ export const ConfigurationContainer: React.FunctionComponent = () => {
       <Card>
         <CardContent>
           <ConfigurationTabs />
-          <div className="tabs-content">
-            <Switch>
-              <AdminRoute exact path={path}>
-                System Settings
-              </AdminRoute>
-              <AdminRoute path={`${path}/users`}>Users</AdminRoute>
-              <AdminRoute path={`${path}/users/add`}>Add User</AdminRoute>
-              <AdminRoute path={`${path}/users/edit/:id`}>Edit User</AdminRoute>
-              <AdminRoute path={`${path}/machines`}>Machines</AdminRoute>
-              <AdminRoute path={`${path}/machines/add`}>Add Machine</AdminRoute>
-              <AdminRoute path={`${path}/machines/edit/:id`}>Edit Machine</AdminRoute>
-              <AdminRoute path={`${path}/about`}>About</AdminRoute>
-              <Route path={`${path}/setup`}>
-                <SetupPage />
-              </Route>
-            </Switch>
-          </div>
+          <Switch>
+            <AdminRoute exact path={path}>
+              System Settings
+            </AdminRoute>
+            <AdminRoute path={`${path}/users`}>Users</AdminRoute>
+            <AdminRoute path={`${path}/users/add`}>Add User</AdminRoute>
+            <AdminRoute path={`${path}/users/edit/:id`}>Edit User</AdminRoute>
+            <AdminRoute path={`${path}/machines`}>Machines</AdminRoute>
+            <AdminRoute path={`${path}/machines/add`}>Add Machine</AdminRoute>
+            <AdminRoute path={`${path}/machines/edit/:id`}>Edit Machine</AdminRoute>
+            <AdminRoute path={`${path}/about`}>About</AdminRoute>
+            <Route path={`${path}/setup`}>
+              <SetupPage />
+            </Route>
+          </Switch>
         </CardContent>
       </Card>
     </Container>

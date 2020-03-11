@@ -1,5 +1,5 @@
 import { Button, Step, StepLabel, Stepper, Typography } from '@material-ui/core';
-import { AccessLevel, ContextType } from 'overseer_lib';
+import { AccessLevel, ContextType } from '@overseer/common/models';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -28,7 +28,11 @@ export const SetupPage: React.FunctionComponent = () => {
     }
   }
 
-  function saveMachine(): void {}
+  function saveMachine(): void {
+    if (currentStep === 1 && machineState.isValid) {
+      dispatch(configurationActions.startCreateMachine(machineState));
+    }
+  }
 
   function saveMachineAndAddMore(): void {}
 
