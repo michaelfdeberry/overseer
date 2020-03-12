@@ -1,5 +1,5 @@
 import { DataContext } from '../../data/data-context.class';
-import { MachineConfiguration } from '../../models/machines';
+import { MachineConfigurationCollection } from '../../models/machines';
 import { Machine } from '../../models/machines/machine.class';
 import { MachineProviderService } from './provider.service';
 
@@ -14,7 +14,7 @@ export class MachineConfigurationService {
     return this.context.machines.getAll();
   }
 
-  async createMachine(machineType: string, configuration: Map<string, MachineConfiguration>): Promise<Machine> {
+  async createMachine(machineType: string, configuration: MachineConfigurationCollection): Promise<Machine> {
     const provider = this.providerService.createProvider(machineType);
     const machine = await provider.createMachine(configuration);
     await this.context.machines.add(machine);

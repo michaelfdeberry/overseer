@@ -1,6 +1,13 @@
 import Axios, { AxiosRequestConfig } from 'axios';
 
-import { auxiliaryHeaterTypes, Machine, MachineConfiguration, MachineState, MachineStateType, MachineToolType } from '../../models/machines';
+import {
+  auxiliaryHeaterTypes,
+  Machine,
+  MachineConfigurationCollection,
+  MachineState,
+  MachineStateType,
+  MachineToolType
+} from '../../models/machines';
 import { MachineProvider } from '../../models/machines/machine.provider';
 import { ExceptionTimeoutContext, withExceptionTimeout } from '../utilities/exception-timeout.utility';
 import processUrl from '../utilities/process-url.utility';
@@ -11,15 +18,16 @@ export class RepRapFirmwareMachineProvider extends MachineProvider implements Ex
   exceptionCount: number;
   lastException: number;
 
-  private getData(resource: string, options?: AxiosRequestConfig): Promise<any> {
-    return Axios.get(processUrl(this.machine.get('Url'), resource), options);
+  private async getData(resource: string, options?: AxiosRequestConfig): Promise<any> {
+    const response = await Axios.get(processUrl(this.machine.get('Url'), resource), options);
+    return response.data;
   }
 
   executeGcode(command: string): Promise<any> {
     return this.getData('rr_gcode', { params: { gcode: command } });
   }
 
-  async createMachine(configuration: Map<string, MachineConfiguration>): Promise<Machine> {
+  async createMachine(configuration: MachineConfigurationCollection): Promise<Machine> {
     try {
       this.machine = new Machine(configuration);
       const status = await this.getData('rr_status', { params: { type: '2' } });

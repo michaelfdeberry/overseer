@@ -11,6 +11,13 @@ import { AppState } from '../../../store';
 import { MachineConfigurationFormState } from './form-states/machine-configuration-form.state';
 import { configurationActions } from './state';
 
+export const submitUserStepEpic = (action$: Observable<Action>) => {
+  return action$.pipe(
+    filter(configurationActions.submitUserStep.match),
+    map(({ payload }) => configurationActions.startCreateUser(payload))
+  );
+};
+
 export const createUserEpic = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
   return action$.pipe(
     filter(configurationActions.startCreateUser.match),
@@ -18,7 +25,7 @@ export const createUserEpic = (action$: Observable<Action>, state$: StateObserva
     mergeMap(([{ payload }, state]) =>
       createUser(payload as DisplayUser).pipe(
         map(user => {
-          if (state.configuration.setupPageLoaded) {
+          if (state.configuration.completeCurrentStep) {
             return configurationActions.completeSetupUserStep(user);
           }
 
@@ -37,6 +44,13 @@ export const completeUserStepEpic = (action$: Observable<Action>) => {
   );
 };
 
+export const submitMachineStepEpic = (action$: Observable<Action>) => {
+  return action$.pipe(
+    filter(configurationActions.submitMachineStep.match),
+    map(({ payload }) => configurationActions.startCreateMachine(payload))
+  );
+};
+
 export const createMachineEpic = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
   return action$.pipe(
     filter(configurationActions.startCreateMachine.match),
@@ -45,7 +59,7 @@ export const createMachineEpic = (action$: Observable<Action>, state$: StateObse
       const { type, configuration } = payload as MachineConfigurationFormState;
       return createMachine(type, configuration).pipe(
         map(machine => {
-          if (state.configuration.setupPageLoaded) {
+          if (state.configuration.completeCurrentStep) {
             return configurationActions.completeSetupMachineStep(machine);
           }
 

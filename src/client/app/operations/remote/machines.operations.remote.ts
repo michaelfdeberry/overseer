@@ -1,5 +1,5 @@
 import { getLocalStorageDataContext } from '@overseer/common/data';
-import { Machine, MachineConfiguration } from '@overseer/common/models';
+import { Machine, MachineConfigurationCollection } from '@overseer/common/models';
 import { MachineConfigurationService, MachineProviderService } from '@overseer/common/services';
 import { defer, Observable } from 'rxjs';
 
@@ -17,7 +17,7 @@ export function getMachine(machineId: number): Observable<Machine> {
   return defer(() => withMachineConfigurationService(service => service.getMachine(machineId)));
 }
 
-export function createMachine(machineType: string, configuration: Map<string, MachineConfiguration>): Observable<Machine> {
+export function createMachine(machineType: string, configuration: MachineConfigurationCollection): Observable<Machine> {
   return defer(() => withMachineConfigurationService(service => service.createMachine(machineType, configuration)));
 }
 

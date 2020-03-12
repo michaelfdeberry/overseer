@@ -1,4 +1,4 @@
-import { ContextType, MachineConfiguration } from '@overseer/common/models';
+import { ContextType, MachineConfiguration, MachineConfigurationCollection } from '@overseer/common/models';
 import * as React from 'react';
 
 import { ConfigurationInput } from './configuration-input';
@@ -6,8 +6,8 @@ import { ConfigurationInputGroup } from './configuration-input-group';
 
 export type ConfigurationInputsProps = {
   currentContext: ContextType;
-  configuration: Map<string, MachineConfiguration>;
-  updateConfiguration: (configuration: Map<string, MachineConfiguration>) => void;
+  configuration: MachineConfigurationCollection;
+  updateConfiguration: (configuration: MachineConfigurationCollection) => void;
 };
 
 export const ConfigurationInputs: React.FunctionComponent<ConfigurationInputsProps> = (props: ConfigurationInputsProps) => {
@@ -15,30 +15,24 @@ export const ConfigurationInputs: React.FunctionComponent<ConfigurationInputsPro
   if (!configuration) return null;
 
   function updateSetting(name: string, setting: MachineConfiguration): void {
-    updateConfiguration(
-      Array.from(configuration.keys()).reduce((result, key) => {
-        if (key === name) {
-          result.set(key, setting);
-        } else {
-          result.set(key, configuration.get(key));
-        }
-
-        return result;
-      }, new Map<string, MachineConfiguration>())
-    );
+    updateConfiguration({ ...configuration, [name]: setting });
   }
 
   return (
     <React.Fragment>
-      {Array.from(configuration.keys()).map(key => {
-        const configurationItem = configuration.get(key);
+      {Object.keys(configuration).map(key => {
+        const configurationItem = configuration[key];
 
         if (!(configurationItem.contextType & currentContext)) return null;
 
         if (configurationItem.type === 'group') {
-          return <ConfigurationInputGroup name={key} currentContext={currentContext} group={configurationItem} updateGroup={updateSetting} />;
+          return (
+            <ConfigurationInputGroup key={key} name={key} currentContext={currentContext} group={configurationItem} updateGroup={updateSetting} />
+          );
         } else {
-          return <ConfigurationInput name={key} currentContext={currentContext} setting={configurationItem} updateSetting={updateSetting} />;
+          return (
+            <ConfigurationInput key={key} name={key} currentContext={currentContext} setting={configurationItem} updateSetting={updateSetting} />
+          );
         }
       })}
     </React.Fragment>

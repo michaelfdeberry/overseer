@@ -1,4 +1,4 @@
-import { MachineConfiguration } from './machine-config.type';
+import { MachineConfigurationCollection } from './machine-config.type';
 import { MachineState } from './machine-state.interface';
 import { Machine } from './machine.class';
 
@@ -39,7 +39,7 @@ export abstract class MachineProvider {
 
   abstract executeGcode(command: string): Promise<any>;
 
-  abstract createMachine(configuration: Map<string, MachineConfiguration>): Promise<Machine>;
+  abstract createMachine(configuration: MachineConfigurationCollection): Promise<Machine>;
 
   abstract getMachineState(): Promise<MachineState>;
 }

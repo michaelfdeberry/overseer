@@ -9,7 +9,7 @@ export type MachineSetting = {
   type: 'url' | 'text' | 'number' | 'options';
   contextType: ContextType;
   value?: string;
-  options?: { key: string; value: string }[];
+  options?: { text: string; value: string }[];
   isRequired?: boolean;
 };
 
@@ -17,13 +17,15 @@ export type MachineSettingGroup = {
   type: 'group';
   contextType: ContextType;
   isExpanded?: boolean;
-  settings: Map<string, MachineSetting>;
+  settings: { [key: string]: MachineSetting };
 };
 
 export type MachineConfiguration = MachineSetting | MachineSettingGroup;
 
+export type MachineConfigurationCollection = { [key: string]: MachineConfiguration };
+
 export type MachineConfigurationBuilder = {
-  configuration: Map<string, MachineConfiguration>;
+  configuration: MachineConfigurationCollection;
   provider: new () => MachineProvider;
 };
 

@@ -1,11 +1,11 @@
 export enum WebcamOrientationType {
-  Default = '',
+  Default = 'default',
   FlippedVertically = 'flip-vertically',
   FlippedHorizontally = 'flip-horizontally',
 }
 
 export const WebcamOrientationOptions = [
-  { key: WebcamOrientationType.Default, value: '' },
-  { key: WebcamOrientationType.FlippedVertically, value: 'Flipped Vertical' },
-  { key: WebcamOrientationType.FlippedHorizontally, value: 'Flipped Horizontal' },
+  { value: WebcamOrientationType.Default, text: 'Default' },
+  { value: WebcamOrientationType.FlippedVertically, text: 'Flipped Vertical' },
+  { value: WebcamOrientationType.FlippedHorizontally, text: 'Flipped Horizontal' },
 ];

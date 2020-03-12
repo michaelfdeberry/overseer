@@ -7,6 +7,7 @@ import { MachineConfigurationFormState } from './form-states/machine-configurati
 export interface ConfigurationState {
   setupPageLoaded?: boolean;
   setupPageCurrentStep?: number;
+  completeCurrentStep?: boolean;
   createUserState?: CreateUserFormState;
   createMachinesState?: MachineConfigurationFormState;
 }
@@ -19,16 +20,25 @@ const configurationSlice = createSlice({
   reducers: {
     loadSetupPage(state: ConfigurationState): void {
       state.setupPageLoaded = true;
-      state.setupPageCurrentStep = 0;
+      state.setupPageCurrentStep = 1;
+    },
+    submitUserStep(state: ConfigurationState, _action: PayloadAction<CreateUserFormState>): void {
+      state.completeCurrentStep = true;
     },
     completeSetupUserStep(state: ConfigurationState, _action: PayloadAction<DisplayUser>): void {
       state.setupPageCurrentStep = state.setupPageCurrentStep + 1;
+    },
+    submitMachineStep(state: ConfigurationState, _action: PayloadAction<MachineConfigurationFormState>): void {
+      state.completeCurrentStep = true;
     },
     completeSetupMachineStep(state: ConfigurationState, _action: PayloadAction<Machine>): void {
       state.setupPageCurrentStep = state.setupPageCurrentStep + 1;
     },
     updateCreateUserState(state: ConfigurationState, action: PayloadAction<CreateUserFormState>): void {
       state.createUserState = action.payload;
+    },
+    updateCreateMachineState(state: ConfigurationState, action: PayloadAction<MachineConfigurationFormState>): void {
+      state.createMachinesState = action.payload;
     },
     startCreateUser(state: ConfigurationState, action: PayloadAction<CreateUserFormState>): void {
       state.createUserState = action.payload;
@@ -37,6 +47,9 @@ const configurationSlice = createSlice({
       state.createUserState = undefined;
     },
     startCreateMachine(state: ConfigurationState, action: PayloadAction<MachineConfigurationFormState>): void {
+      state.createMachinesState = action.payload;
+    },
+    startCreateMultipleMachines(state: ConfigurationState, action: PayloadAction<MachineConfigurationFormState>): void {
       state.createMachinesState = action.payload;
     },
     completeCreateMachine(state: ConfigurationState, _action: PayloadAction<Machine>): void {

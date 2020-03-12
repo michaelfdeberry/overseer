@@ -2,6 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-
 import { ContextType, MachineSetting } from '@overseer/common/models';
 import * as React from 'react';
 
+import { DisplayOption } from '../../utils/display-options.class';
 import { isRequired } from '../../validators/required.validator';
 
 export type ConfigurationInputProps = {
@@ -12,11 +13,16 @@ export type ConfigurationInputProps = {
 };
 
 export const ConfigurationInput: React.FunctionComponent<ConfigurationInputProps> = (props: ConfigurationInputProps) => {
+  const [touched, setTouched] = React.useState(false);
   const { currentContext, name, setting, updateSetting } = props;
   if (!(setting.contextType & currentContext)) return null;
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
     updateSetting(name, { ...setting, value: event.target.value });
+  }
+
+  function hasError() {
+    return touched && setting.isRequired && !isRequired(setting.value);
   }
 
   switch (setting.type) {
@@ -26,15 +32,16 @@ export const ConfigurationInput: React.FunctionComponent<ConfigurationInputProps
           <InputLabel>{name}</InputLabel>
           <Select
             fullWidth
+            onBlur={() => setTouched(true)}
             required={setting.isRequired}
-            value={setting.value}
+            value={setting.value || setting.options[0].value}
             onChange={handleChange}
-            error={setting.isRequired && isRequired(setting.value)}
+            error={hasError()}
           >
-            {setting.options.map((option: { key: string; value: string }, index: number) => {
+            {setting.options.map((option: DisplayOption<string>, index: number) => {
               return (
                 <MenuItem key={`${name}_${index}`} value={option.value}>
-                  {option.key}
+                  {option.text}
                 </MenuItem>
               );
             })}
@@ -48,11 +55,13 @@ export const ConfigurationInput: React.FunctionComponent<ConfigurationInputProps
       return (
         <TextField
           fullWidth
+          label={name}
+          onBlur={() => setTouched(true)}
           required={setting.isRequired}
-          value={setting.value}
+          value={setting.value || ''}
           onChange={handleChange}
           type={setting.type}
-          error={setting.isRequired && isRequired(setting.value)}
+          error={hasError()}
         />
       );
   }

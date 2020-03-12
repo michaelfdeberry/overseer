@@ -1,7 +1,7 @@
-import { MachineConfiguration } from '@overseer/common/models';
+import { MachineConfigurationCollection } from '@overseer/common/models';
 
 export interface MachineConfigurationFormState {
   isValid?: boolean;
   type?: string;
-  configuration?: Map<string, MachineConfiguration>;
+  configuration?: MachineConfigurationCollection;
 }

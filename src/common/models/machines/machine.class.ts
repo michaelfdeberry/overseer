@@ -1,4 +1,4 @@
-import { MachineConfiguration, MachineSetting, MachineSettingGroup } from './machine-config.type';
+import { MachineConfigurationCollection, MachineSetting, MachineSettingGroup } from './machine-config.type';
 import { MachineTool } from './machine-tool.interface';
 
 export class Machine {
@@ -7,7 +7,7 @@ export class Machine {
   disabled: boolean;
   tools: MachineTool[] = [];
   sortIndex: number;
-  configuration: Map<string, MachineConfiguration>;
+  configuration: MachineConfigurationCollection;
 
   get name() {
     return this.get('Name');
@@ -33,26 +33,26 @@ export class Machine {
     this.patch('Webcam Orientation', value);
   }
 
-  constructor(configuration: Map<string, MachineConfiguration> = new Map()) {
+  constructor(configuration: MachineConfigurationCollection = {}) {
     this.configuration = configuration;
   }
 
   getSetting(settingName: string): MachineSetting {
-    return this.configuration.get(settingName) as MachineSetting;
+    return this.configuration[settingName] as MachineSetting;
   }
 
   patchSetting(settingName: string, setting: MachineSetting): void {
-    this.configuration.set(settingName, setting);
+    this.configuration = { ...this.configuration, [settingName]: setting };
   }
 
   getSettingFromGroup(groupName: string, settingName: string): MachineSetting {
-    const group = this.configuration.get(groupName) as MachineSettingGroup;
-    return group?.settings.get(settingName);
+    const group = this.configuration[groupName] as MachineSettingGroup;
+    return group?.settings[settingName];
   }
 
   patchGroupSetting(groupName: string, settingName: string, setting: MachineSetting) {
-    const group = this.configuration.get(groupName) as MachineSettingGroup;
-    group.settings.set(settingName, setting);
+    const group = this.configuration[groupName] as MachineSettingGroup;
+    group.settings[settingName] = setting;
   }
 
   get(settingName: string): string {

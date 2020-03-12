@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "",
   "scripts": {
-    "start": "node --max_old_space_size=8192 node_modules/webpack-dev-server/bin/webpack-dev-server.js --mode development --open --hot --env.SERVICE_TARGET=local --env.MODE=development",
+    "start": "node --max_old_space_size=8192 node_modules/webpack-dev-server/bin/webpack-dev-server.js --mode development --devtool source-map --open --hot --env.SERVICE_TARGET=local --env.MODE=development",
     "build": "npm run build:local & npm run build:remote",
     "build:local": "webpack --mode production --env.SERVICE_TARGET=local",
     "build:remote": "webpack --mode production --env.SERVER_TARGET=remote",

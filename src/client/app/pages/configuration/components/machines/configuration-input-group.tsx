@@ -16,16 +16,7 @@ export const ConfigurationInputGroup: React.FunctionComponent<ConfigurationInput
   const { currentContext, name, group, updateGroup } = props;
 
   function updateGroupSetting(settingName: string, setting: MachineSetting): void {
-    const settings = Array.from(group.settings.keys()).reduce((result, key) => {
-      if (settingName === key) {
-        result.set(key, setting);
-      } else {
-        result.set(key, group.settings.get(key));
-      }
-      return result;
-    }, new Map<string, MachineSetting>());
-
-    updateGroup(name, { ...group, settings });
+    updateGroup(name, { ...group, settings: { ...group.settings, [settingName]: setting } });
   }
 
   return (
@@ -34,8 +25,16 @@ export const ConfigurationInputGroup: React.FunctionComponent<ConfigurationInput
         <Typography>{name}</Typography>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails>
-        {Array.from(group.settings.keys()).map(key => {
-          <ConfigurationInput currentContext={currentContext} name={key} setting={group.settings.get(key)} updateSetting={updateGroupSetting} />;
+        {Object.keys(group.settings).map(key => {
+          return (
+            <ConfigurationInput
+              key={key}
+              currentContext={currentContext}
+              name={key}
+              setting={group.settings[key]}
+              updateSetting={updateGroupSetting}
+            />
+          );
         })}
       </ExpansionPanelDetails>
     </ExpansionPanel>

@@ -33,7 +33,9 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
     };
   }
 
-  React.useEffect(() => updateState({ ...state, isValid: validate() }), [validate()]);
+  React.useEffect(() => {
+    updateState({ ...state, isValid: validate() });
+  }, [validate()]);
 
   return (
     <React.Fragment>

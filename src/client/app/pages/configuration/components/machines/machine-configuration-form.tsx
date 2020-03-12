@@ -1,8 +1,15 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
-import { ContextType, MachineConfiguration, machineConfigurationBuilder, MachineSetting, MachineSettingGroup } from '@overseer/common/models';
+import {
+  ContextType,
+  machineConfigurationBuilder,
+  MachineConfigurationCollection,
+  MachineSetting,
+  MachineSettingGroup
+} from '@overseer/common/models';
 import * as React from 'react';
 
 import { MachineConfigurationFormState } from '../../store/form-states/machine-configuration-form.state';
+import { DisplayOption } from '../../utils/display-options.class';
 import { isRequired } from '../../validators/required.validator';
 import { ConfigurationInputs } from './configuration-inputs';
 
@@ -14,18 +21,18 @@ export type MachineConfigurationFormProps = {
 
 export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurationFormProps> = (props: MachineConfigurationFormProps) => {
   const { currentContext, state, updateState } = props;
-  const machineTypes = Array.from(machineConfigurationBuilder.keys());
+  const machineTypes = Array.from(machineConfigurationBuilder.keys()).map(key => new DisplayOption(key, key));
 
-  if ((!state || !state.configuration) && state.type) {
+  React.useEffect(() => {
     const currentBuilder = machineConfigurationBuilder.get(state.type);
-    updateState({ ...state, configuration: currentBuilder.configuration });
-  }
+    updateConfiguration(currentBuilder?.configuration);
+  }, [state.type]);
 
   function setMachineType(event: React.ChangeEvent<HTMLInputElement>): void {
     updateState({ ...state, type: event.target.value });
   }
 
-  function updateConfiguration(configuration: Map<string, MachineConfiguration>): void {
+  function updateConfiguration(configuration: MachineConfigurationCollection): void {
     updateState({ ...state, configuration });
   }
 
@@ -36,13 +43,12 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
   function validate(): boolean {
     if (!state.configuration) return false;
 
-    for (let key in state.configuration.keys()) {
-      const config = state.configuration.get(key);
+    for (const config of Object.values(state.configuration)) {
       if (!(config.contextType & currentContext)) continue;
 
       if (config.type === 'group') {
         const group = config as MachineSettingGroup;
-        if (!Array.from(group.settings.keys()).every(settingKey => validateSetting(group.settings.get(settingKey)))) {
+        if (!Object.values(group.settings).every(setting => validateSetting(setting))) {
           return false;
         }
       } else {
@@ -56,7 +62,9 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
     return true;
   }
 
-  React.useEffect(() => updateState({ ...state, isValid: validate() }), [validate()]);
+  React.useEffect(() => {
+    updateState({ ...state, isValid: validate() });
+  }, [validate()]);
 
   return (
     <React.Fragment>
@@ -65,16 +73,17 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
         <Select
           fullWidth
           required
-          value={state.type}
+          value={state.type || ''}
           onChange={setMachineType}
           inputProps={{
             name: 'accessLevel',
             id: 'access-level',
           }}
         >
-          {machineTypes.map((type: string, index: number) => (
-            <MenuItem key={`machine_type_${index}`} value={type}>
-              {type}
+          <MenuItem value={''}>Select Machine...</MenuItem>
+          {machineTypes.map((type: DisplayOption<string>, index: number) => (
+            <MenuItem key={`machine_type_${index}`} value={type.value}>
+              {type.text}
             </MenuItem>
           ))}
         </Select>

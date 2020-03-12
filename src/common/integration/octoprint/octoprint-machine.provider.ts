@@ -1,7 +1,7 @@
 import Axios, { AxiosRequestConfig } from 'axios';
 
 import { MachineState, MachineStateType } from '../../models/machines';
-import { MachineConfiguration, MachineSetting } from '../../models/machines/machine-config.type';
+import { MachineConfigurationCollection, MachineSetting } from '../../models/machines/machine-config.type';
 import { MachineToolType } from '../../models/machines/machine-tool.enum';
 import { Machine } from '../../models/machines/machine.class';
 import { MachineProvider } from '../../models/machines/machine.provider';
@@ -31,11 +31,11 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
     this.machine.patchSetting('Profiles', profiles);
   }
 
-  private get profileOptions(): { key: string; value: string }[] {
+  private get profileOptions(): { text: string; value: string }[] {
     return this.profiles.options || [];
   }
 
-  private set profileOptions(options: { key: string; value: string }[]) {
+  private set profileOptions(options: { text: string; value: string }[]) {
     this.profiles = { ...this.profiles, options };
   }
 
@@ -47,8 +47,9 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
     return Axios.post(processUrl(this.url, resource), data, this.getHttpOptions());
   }
 
-  private getData(resource: string): Promise<any> {
-    return Axios.get(processUrl(this.url, resource), this.getHttpOptions());
+  private async getData(resource: string): Promise<any> {
+    const response = await Axios.get(processUrl(this.url, resource), this.getHttpOptions());
+    return response.data;
   }
 
   pauseJob(): Promise<any> {
@@ -67,7 +68,7 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
     return this.sendData('api/printer/command', { command: command });
   }
 
-  async createMachine(configuration: Map<string, MachineConfiguration>): Promise<Machine> {
+  async createMachine(configuration: MachineConfigurationCollection): Promise<Machine> {
     try {
       this.machine = new Machine(configuration);
 
@@ -93,7 +94,7 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
         }
 
         const profile = profiles.profiles[profileKey];
-        profileOptions.push({ key: profile.id, value: profile.name });
+        profileOptions.push({ text: profile.name, value: profile.id });
 
         if (profile.current) {
           if (profile.heatedBed) {
