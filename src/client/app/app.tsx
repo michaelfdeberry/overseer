@@ -1,4 +1,3 @@
-import { CssBaseline } from '@material-ui/core';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -15,8 +14,7 @@ const App: React.FunctionComponent = () => {
 
   return (
     <Router>
-      <CssBaseline />
-      <Layout></Layout>
+      <Layout />
     </Router>
   );
 };
