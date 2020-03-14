@@ -7,14 +7,13 @@ import { AdminRoute } from '../../core/components/admin-route';
 import { SetupPage } from './components/setup';
 
 const ConfigurationTabs: React.FunctionComponent = () => {
+  const history = useHistory();
   const { pathname } = useLocation();
+  const [tabValue, setTabValue] = useState(pathname);
 
   if (pathname.indexOf('add') >= 0) return null;
   if (pathname.indexOf('edit') >= 0) return null;
   if (pathname.indexOf('setup') >= 0) return null;
-
-  const [tabValue, setTabValue] = useState(pathname);
-  const history = useHistory();
 
   useEffect(() => {
     return history.listen(location => setTabValue(location.pathname));
@@ -42,7 +41,7 @@ export const ConfigurationContainer: React.FunctionComponent = () => {
   const { path } = useRouteMatch();
 
   return (
-    <Container>
+    <Container className="configuration">
       <Card>
         <CardContent>
           <ConfigurationTabs />

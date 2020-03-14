@@ -14,8 +14,8 @@ export class AuthorizationService {
 
     const user: User = await this.context.users.getByKey(u => user.token === token.replace('Bearer ', ''));
     if (!token) return null;
-    if (user.isTokenExpired()) return null;
+    if (User.isTokenExpired(user)) return null;
 
-    return user.toDisplay();
+    return User.toDisplay(user);
   }
 }

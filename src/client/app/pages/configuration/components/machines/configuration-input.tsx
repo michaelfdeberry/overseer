@@ -3,7 +3,7 @@ import { ContextType, MachineSetting } from '@overseer/common/models';
 import * as React from 'react';
 
 import { DisplayOption } from '../../utils/display-options.class';
-import { isRequired } from '../../validators/required.validator';
+import { isRequiredFieldValid } from '../../validators/required.validator';
 
 export type ConfigurationInputProps = {
   currentContext: ContextType;
@@ -22,7 +22,7 @@ export const ConfigurationInput: React.FunctionComponent<ConfigurationInputProps
   }
 
   function hasError() {
-    return touched && setting.isRequired && !isRequired(setting.value);
+    return touched && setting.isRequired && !isRequiredFieldValid(setting.value);
   }
 
   switch (setting.type) {

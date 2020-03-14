@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 
 import { PrivateRoute } from '../../core/components/private-route';
+import { coreActions } from '../../core/store/actions';
 import { selectIsAppInitialized } from '../../core/store/selectors';
-import { coreActions } from '../../core/store/state';
 import { ConfigurationContainer } from '../../pages/configuration';
 import { LoginContainer } from '../../pages/login';
 import { MonitoringContainer } from '../../pages/monitoring';
@@ -22,7 +22,7 @@ export const Content: React.FunctionComponent = () => {
   }
 
   function onErrorClose() {
-    dispatch(coreActions.hideError());
+    dispatch(coreActions.clearLastError());
   }
 
   return (

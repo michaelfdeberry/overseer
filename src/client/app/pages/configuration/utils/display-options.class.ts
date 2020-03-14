@@ -1,5 +1,7 @@
 import { AccessLevel } from '@overseer/common/models';
 
+import { themeMap } from '../../../themes';
+
 export class DisplayOption<TValue> {
   constructor(public text: string, public value: TValue) {}
 }
@@ -21,3 +23,5 @@ export const pollIntervals = [
 ];
 
 export const accessLevels = [new DisplayOption('Readonly', AccessLevel.Readonly), new DisplayOption('Administrator', AccessLevel.Administrator)];
+
+export const themeOptions = Object.keys(themeMap).map(theme => new DisplayOption(theme, theme));

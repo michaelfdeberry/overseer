@@ -1,10 +1,11 @@
+import { errorMessageMap } from '@overseer/common/error-messages';
 import { AccessLevel } from '@overseer/common/models';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
-import { selectActiveUser, selectIsAuthenticated, selectIsInitialSetupRequired } from '../../store/selectors';
-import { coreActions } from '../../store/state';
+import { coreActions } from '../store/actions';
+import { selectActiveUser, selectIsAuthenticated, selectIsInitialSetupRequired } from '../store/selectors';
 
 export const AdminRoute: React.FunctionComponent<RouteProps> = ({ children, ...rest }: RouteProps) => {
   const dispatch = useDispatch();
@@ -14,12 +15,12 @@ export const AdminRoute: React.FunctionComponent<RouteProps> = ({ children, ...r
 
   function renderRoute(): React.ReactNode {
     if (isInitialSetupRequired) {
-      dispatch(coreActions.displayError('setup Required!'));
+      dispatch(coreActions.logError(errorMessageMap.setup_required));
       return <Redirect to="/configuration/setup" />;
     }
 
     if (!isAuthenticated) {
-      dispatch(coreActions.displayError('Unauthorized Access Attempted!'));
+      dispatch(coreActions.logError(errorMessageMap.unauthorized_access));
       return <Redirect to="/login" />;
     }
 

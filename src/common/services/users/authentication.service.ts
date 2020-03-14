@@ -31,6 +31,7 @@ export class AuthenticationService {
 
   async authenticatePreauthorization(token: string): Promise<DisplayUser | undefined> {
     const user = await this.context.users.getByKey(u => u.preauthenticatedToken === token);
+    ``;
     if (!user) return;
     if (user.preauthenticatedTokeExpiration < Date.now()) return;
 
@@ -46,7 +47,7 @@ export class AuthenticationService {
   }
 
   private async authenticate(user: User): Promise<DisplayUser> {
-    if (!user.isTokenExpired()) return user.toDisplay(true);
+    if (!User.isTokenExpired(user)) return User.toDisplay(user, true);
 
     user.token = await bcrypt.genSalt(16);
     user.tokenExpiration = user.sessionLifetime ? Date.now() + user.sessionLifetime * 86400 : undefined;
@@ -54,7 +55,7 @@ export class AuthenticationService {
     user.preauthenticatedTokeExpiration = undefined;
 
     this.context.users.update(user);
-    return user.toDisplay(true);
+    return User.toDisplay(user, true);
   }
 
   private async deauthenticate(user: User): Promise<DisplayUser> {
@@ -64,6 +65,6 @@ export class AuthenticationService {
     user.tokenExpiration = undefined;
     this.context.users.update(user);
 
-    return user.toDisplay();
+    return User.toDisplay(user);
   }
 }

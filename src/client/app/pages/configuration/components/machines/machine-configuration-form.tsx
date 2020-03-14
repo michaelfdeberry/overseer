@@ -8,9 +8,9 @@ import {
 } from '@overseer/common/models';
 import * as React from 'react';
 
-import { MachineConfigurationFormState } from '../../store/form-states/machine-configuration-form.state';
+import { MachineConfigurationFormState } from '../../types/machine-configuration-form.state';
 import { DisplayOption } from '../../utils/display-options.class';
-import { isRequired } from '../../validators/required.validator';
+import { isRequiredFieldValid } from '../../validators/required.validator';
 import { ConfigurationInputs } from './configuration-inputs';
 
 export type MachineConfigurationFormProps = {
@@ -24,12 +24,12 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
   const machineTypes = Array.from(machineConfigurationBuilder.keys()).map(key => new DisplayOption(key, key));
 
   React.useEffect(() => {
-    const currentBuilder = machineConfigurationBuilder.get(state.type);
+    const currentBuilder = machineConfigurationBuilder.get(state.machineType);
     updateConfiguration(currentBuilder?.configuration);
-  }, [state.type]);
+  }, [state.machineType]);
 
   function setMachineType(event: React.ChangeEvent<HTMLInputElement>): void {
-    updateState({ ...state, type: event.target.value });
+    updateState({ ...state, machineType: event.target.value });
   }
 
   function updateConfiguration(configuration: MachineConfigurationCollection): void {
@@ -37,7 +37,7 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
   }
 
   function validateSetting(setting: MachineSetting): boolean {
-    return !setting.isRequired || isRequired(setting.value);
+    return !setting.isRequired || isRequiredFieldValid(setting.value);
   }
 
   function validate(): boolean {
@@ -73,7 +73,7 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
         <Select
           fullWidth
           required
-          value={state.type || ''}
+          value={state.machineType || ''}
           onChange={setMachineType}
           inputProps={{
             name: 'accessLevel',

@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
-import { selectIsAuthenticated, selectIsInitialSetupRequired } from '../../store/selectors';
-import { coreActions } from '../../store/state';
+import { coreActions } from '../store/actions';
+import { selectIsAuthenticated, selectIsInitialSetupRequired } from '../store/selectors';
 
 export const PrivateRoute: React.FunctionComponent<RouteProps> = ({ children, ...rest }: RouteProps) => {
   const dispatch = useDispatch();
@@ -12,12 +12,12 @@ export const PrivateRoute: React.FunctionComponent<RouteProps> = ({ children, ..
 
   function renderRoute(): React.ReactNode {
     if (isInitialSetupRequired) {
-      dispatch(coreActions.displayError('setup Required!'));
+      dispatch(coreActions.logError('setup_required'));
       return <Redirect to="/configuration/setup" />;
     }
 
     if (!isAuthenticated) {
-      dispatch(coreActions.displayError('Unauthorized Access Attempted!'));
+      dispatch(coreActions.logError('unauthorized_access'));
       return <Redirect to="/login" />;
     }
 

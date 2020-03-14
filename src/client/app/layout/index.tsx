@@ -14,10 +14,8 @@ const Layout: React.FunctionComponent = () => {
   return (
     <ThemeProvider theme={themeMap[themeName]}>
       <CssBaseline />
-      <div className="layout">
-        <Header></Header>
-        <Content></Content>
-      </div>
+      <Header></Header>
+      <Content></Content>
     </ThemeProvider>
   );
 };

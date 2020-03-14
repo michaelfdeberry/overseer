@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcryptjs';
 
 import { DataContext } from '../../data/data-context.class';
-import { AccessLevel, DisplayUser } from '../../models/users';
+import { AccessLevel, DisplayUser, User } from '../../models/users';
 import { createUser } from './create-user.function';
 
 export class UserConfigurationService {
@@ -9,12 +9,12 @@ export class UserConfigurationService {
 
   async getUsers(): Promise<DisplayUser[]> {
     const users = await this.context.users.getAll();
-    return users.map(u => u.toDisplay());
+    return users.map(u => User.toDisplay(u));
   }
 
   async getUser(userId: number): Promise<DisplayUser> {
     const user = await this.context.users.getById(userId);
-    return user.toDisplay();
+    return User.toDisplay(user);
   }
 
   async createUser(user: DisplayUser): Promise<DisplayUser> {
@@ -31,7 +31,7 @@ export class UserConfigurationService {
     });
 
     await this.context.users.update(pUser);
-    return pUser.toDisplay();
+    return User.toDisplay(pUser);
   }
 
   async deleteUser(user: DisplayUser): Promise<DisplayUser> {
@@ -54,6 +54,6 @@ export class UserConfigurationService {
     pUser.tokenExpiration = undefined;
 
     await this.context.users.update(pUser);
-    return pUser.toDisplay();
+    return User.toDisplay(pUser);
   }
 }

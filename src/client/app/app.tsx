@@ -1,15 +1,19 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { coreActions } from './core/store/state';
+import { coreActions } from './core/store/actions';
+import { selectIsAppInitialized } from './core/store/selectors';
 import Layout from './layout';
 
 const App: React.FunctionComponent = () => {
+  const isInitialized = useSelector(selectIsAppInitialized);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    dispatch(coreActions.initialize());
+    if (!isInitialized) {
+      dispatch(coreActions.initialize());
+    }
   }, []);
 
   return (

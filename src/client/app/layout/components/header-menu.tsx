@@ -6,14 +6,12 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 
+import { coreActions } from '../../core/store/actions';
 import { selectIsAuthenticated } from '../../core/store/selectors';
-import { coreActions } from '../../core/store/state';
 import { AppState } from '../../store';
 
 export const HeaderMenu: React.FunctionComponent = () => {
   const isAuthenticated = useSelector<AppState>(selectIsAuthenticated);
-  if (!isAuthenticated) return null;
-
   const dispatch = useDispatch();
   const history = useHistory();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -38,8 +36,12 @@ export const HeaderMenu: React.FunctionComponent = () => {
 
   function navigateToLogin(): void {
     closeMenu();
-    dispatch(coreActions.startLogout());
+    dispatch(coreActions.signOut());
     history.push('/login');
+  }
+
+  if (!isAuthenticated) {
+    return null;
   }
 
   return (

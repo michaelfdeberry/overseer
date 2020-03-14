@@ -1,7 +1,7 @@
 import { ContextType, MachineConfigurationBuilder, WebcamOrientationOptions } from '../../models/machines';
 import { RepRapFirmwareMachineProvider } from './reprapfirmware-machine.provider';
 
-export function RepRapFirmwareConfigFactory(): [string, MachineConfigurationBuilder] {
+export function repRapFirmwareConfigFactory(): [string, MachineConfigurationBuilder] {
   return [
     'RepRapFirmware',
     {

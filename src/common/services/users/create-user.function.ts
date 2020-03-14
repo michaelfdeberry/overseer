@@ -19,5 +19,5 @@ export async function createUser(users: Repository<User>, user: DisplayUser): Pr
     accessLevel: user.accessLevel,
   });
   await users.add(pUser);
-  return pUser.toDisplay();
+  return User.toDisplay(pUser);
 }

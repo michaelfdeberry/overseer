@@ -2,103 +2,147 @@ import { Button, Step, StepLabel, Stepper, Typography } from '@material-ui/core'
 import { AccessLevel, ContextType } from '@overseer/common/models';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import { AppState } from '../../../../store';
-import { CreateUserFormState } from '../../store/form-states/create-user-form.state';
-import { MachineConfigurationFormState } from '../../store/form-states/machine-configuration-form.state';
-import { configurationActions } from '../../store/state';
+import { configurationActions } from '../../store/actions';
+import { CreateUserFormState } from '../../types/create-user-form.state';
+import { MachineConfigurationFormState } from '../../types/machine-configuration-form.state';
 import { MachineConfigurationForm } from '../machines/machine-configuration-form';
+import { ThemeSelector } from '../system/theme-selector';
 import { CreateUserForm } from '../users/create-user-form';
 
 export const SetupPage: React.FunctionComponent = () => {
   const dispatch = useDispatch();
-  const isSetupPageLoaded = useSelector((state: AppState) => state.configuration?.setupPageLoaded);
-  const currentStep = useSelector((state: AppState) => state.configuration?.setupPageCurrentStep);
-  const userState = useSelector((state: AppState) => state.configuration.createUserState);
-  const machineState = useSelector((state: AppState) => state.configuration.createMachinesState);
-  const updateUserState = (userState: CreateUserFormState) => dispatch(configurationActions.updateCreateUserState(userState));
-  const updateMachineState = (machineState: MachineConfigurationFormState) => dispatch(configurationActions.updateCreateMachineState(machineState));
+  const isSetupPageLoaded = useSelector((state: AppState) => state.configuration.setup?.loaded);
+  const currentStep = useSelector((state: AppState) => state.configuration.setup?.currentStep);
+  const userState = useSelector((state: AppState) => state.configuration.users?.createState);
+  const machineState = useSelector((state: AppState) => state.configuration.machines?.formState);
+  const updateUserState = (userState: CreateUserFormState) => dispatch(configurationActions.users.updateCreateState(userState));
+  const updateMachineState = (machineState: MachineConfigurationFormState) => dispatch(configurationActions.machines.updateState(machineState));
 
   if (!isSetupPageLoaded) {
-    dispatch(configurationActions.loadSetupPage());
+    dispatch(configurationActions.setup.load());
     return null;
   }
 
-  function saveUser(): void {
+  function saveAdmin(): void {
     if (currentStep === 0 && userState.isValid) {
-      dispatch(configurationActions.submitUserStep(userState));
+      dispatch(configurationActions.setup.submitAdminStep());
     }
   }
 
   function saveMachine(): void {
     if (currentStep === 1 && machineState.isValid) {
-      dispatch(configurationActions.submitMachineStep(machineState));
+      dispatch(configurationActions.setup.submitMachineStep());
     }
   }
 
   function saveMachineAndAddMore(): void {
     if (currentStep === 1 && machineState.isValid) {
-      dispatch(configurationActions.startCreateMachine(machineState));
+      dispatch(configurationActions.machines.create());
     }
   }
 
-  function applyTheme(): void {}
+  function completeSelectTheme(): void {
+    dispatch(configurationActions.setup.completeThemeStep());
+  }
+
+  function completeSetup() {
+    dispatch(configurationActions.setup.complete());
+  }
 
   function renderStep() {
-    if (currentStep === 0) {
-      if (!userState) {
-        updateUserState({ accessLevel: AccessLevel.Administrator });
+    switch (currentStep) {
+      case 0:
+        if (!userState) {
+          updateUserState({ accessLevel: AccessLevel.Administrator });
+          return null;
+        }
+
+        return (
+          <form className="configuration-form" onSubmit={saveAdmin}>
+            <Typography variant="h6">Please create an administrator account...</Typography>
+            <CreateUserForm disableAccessLevel state={userState} updateState={updateUserState} />
+            <div className="configuration-actions">
+              <div className="configuration-actions-secondary"></div>
+              <div className="configuration-actions-primary">
+                <Button disabled={!userState.isValid} variant="contained" color="primary" onClick={saveAdmin}>
+                  Next
+                </Button>
+              </div>
+            </div>
+          </form>
+        );
+      case 1:
+        if (!machineState) {
+          updateMachineState({});
+          return null;
+        }
+
+        return (
+          <form className="configuration-form" onSubmit={saveMachine}>
+            <Typography variant="h6">Please add at least one machine...</Typography>
+            <MachineConfigurationForm currentContext={ContextType.add} state={machineState} updateState={updateMachineState} />
+            <div className="configuration-actions">
+              <div className="configuration-actions-secondary">
+                <Button disabled={!machineState.isValid} variant="contained" onClick={saveMachineAndAddMore}>
+                  Save &amp; Add More...
+                </Button>
+              </div>
+              <div className="configuration-actions-primary">
+                <Button disabled={!machineState.isValid} variant="contained" color="primary" onClick={saveMachine}>
+                  Next
+                </Button>
+              </div>
+            </div>
+          </form>
+        );
+      case 2:
+        return (
+          <form className="configuration-form">
+            <Typography variant="h6">Please select your preferred theme...</Typography>
+            <ThemeSelector />
+            <div className="configuration-actions">
+              <div className="configuration-actions-secondary"></div>
+              <div className="configuration-actions-primary">
+                <Button variant="contained" color="primary" onClick={completeSelectTheme}>
+                  Next
+                </Button>
+              </div>
+            </div>
+          </form>
+        );
+      case 3:
+        return (
+          <form className="configuration-form">
+            <Typography variant="h6">The initial setup for Overseer is now complete, what would you like to do next?</Typography>
+            <div className="setup-next-steps">
+              <Button color="primary" onClick={completeSetup} component={Link} to="/">
+                Start Monitoring
+              </Button>
+              <Button color="primary" onClick={completeSetup} component={Link} to="/configuration/machines/add">
+                Add Machines
+              </Button>
+              <Button color="primary" onClick={completeSetup} component={Link} to="/configuration/users/add">
+                Add Users
+              </Button>
+            </div>
+          </form>
+        );
+      default:
         return null;
-      }
-
-      return (
-        <form className="configuration-form" onSubmit={saveUser}>
-          <Typography variant="h6">Please create a user account...</Typography>
-          <CreateUserForm disableAccessLevel state={userState} updateState={updateUserState} />
-          <div className="configuration-actions">
-            <div className="configuration-actions-secondary"></div>
-            <div className="configuration-actions-primary">
-              <Button disabled={!userState.isValid} variant="contained" color="primary" onClick={saveUser}>
-                Next
-              </Button>
-            </div>
-          </div>
-        </form>
-      );
-    }
-
-    if (currentStep === 1) {
-      if (!machineState) {
-        updateMachineState({});
-        return null;
-      }
-
-      return (
-        <form className="configuration-form" onSubmit={saveMachine}>
-          <MachineConfigurationForm currentContext={ContextType.add} state={machineState} updateState={updateMachineState} />
-          <div className="configuration-actions">
-            <div className="configuration-actions-secondary">
-              <Button disabled={!machineState.isValid} variant="contained" onClick={saveMachineAndAddMore}>
-                Save &amp; Add More...
-              </Button>
-            </div>
-            <div className="configuration-actions-primary">
-              <Button disabled={!machineState.isValid} variant="contained" color="primary" onClick={saveMachine}>
-                Next
-              </Button>
-            </div>
-          </div>
-        </form>
-      );
     }
   }
 
   return (
     <React.Fragment>
-      <Typography variant="h5">Before you begin let's setup Overseer!</Typography>
+      <Typography align="center" variant="h5">
+        Before you begin let's setup Overseer!
+      </Typography>
       <Stepper activeStep={currentStep}>
         <Step>
-          <StepLabel>Create User</StepLabel>
+          <StepLabel>Create Administrator</StepLabel>
         </Step>
         <Step>
           <StepLabel>Add Machine(s)</StepLabel>

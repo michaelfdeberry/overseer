@@ -1,79 +1,95 @@
-import { DisplayUser } from '@overseer/common/models';
+import { DisplayUser, Machine } from '@overseer/common/models';
 import { Action } from 'redux';
-import { StateObservable } from 'redux-observable';
-import { Observable, of } from 'rxjs';
-import { catchError, filter, map, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { ofType, StateObservable } from 'redux-observable';
+import { Observable } from 'rxjs';
+import { map, mergeMap, tap, withLatestFrom } from 'rxjs/operators';
 
-import { coreActions } from '../../../core/store/state';
+import { coreActions } from '../../../core/store/actions';
+import { logError } from '../../../core/store/operators';
+import { setActiveUser } from '../../../operations/active-user.operations';
+import { login } from '../../../operations/local/authentication.operations.local';
 import { createMachine } from '../../../operations/local/machines.operations.local';
 import { createUser } from '../../../operations/local/users.operations.local';
 import { AppState } from '../../../store';
-import { MachineConfigurationFormState } from './form-states/machine-configuration-form.state';
-import { configurationActions } from './state';
+import { TypedAction } from '../../../store/action.type';
+import { configurationActions, ConfigurationActionTypes } from './actions';
 
-export const submitUserStepEpic = (action$: Observable<Action>) => {
+export const setupSubmitAdminStep = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
   return action$.pipe(
-    filter(configurationActions.submitUserStep.match),
-    map(({ payload }) => configurationActions.startCreateUser(payload))
-  );
-};
-
-export const createUserEpic = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
-  return action$.pipe(
-    filter(configurationActions.startCreateUser.match),
+    ofType(ConfigurationActionTypes.setupSubmitAdminStep),
     withLatestFrom(state$),
-    mergeMap(([{ payload }, state]) =>
-      createUser(payload as DisplayUser).pipe(
-        map(user => {
-          if (state.configuration.completeCurrentStep) {
-            return configurationActions.completeSetupUserStep(user);
-          }
-
-          return configurationActions.completeCreateUser(user);
-        }),
-        catchError((error: Error) => of(coreActions.handleError({ error: error.message, stack: error.stack })))
+    mergeMap(([, { configuration: { users: { createState } } }]) =>
+      createUser(createState as DisplayUser).pipe(
+        mergeMap(() =>
+          login(createState as DisplayUser).pipe(
+            tap(activeUser => setActiveUser(activeUser)),
+            map(() => configurationActions.setup.completeAdminStep())
+          )
+        ),
+        logError()
       )
     )
   );
 };
 
-export const completeUserStepEpic = (action$: Observable<Action>) => {
+export const setupSubmitMachineStep = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
   return action$.pipe(
-    filter(configurationActions.completeSetupUserStep.match),
-    map(({ payload }) => configurationActions.completeCreateUser(payload))
-  );
-};
-
-export const submitMachineStepEpic = (action$: Observable<Action>) => {
-  return action$.pipe(
-    filter(configurationActions.submitMachineStep.match),
-    map(({ payload }) => configurationActions.startCreateMachine(payload))
-  );
-};
-
-export const createMachineEpic = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
-  return action$.pipe(
-    filter(configurationActions.startCreateMachine.match),
+    ofType(ConfigurationActionTypes.setupSubmitMachineStep),
     withLatestFrom(state$),
-    mergeMap(([{ payload }, state]) => {
-      const { type, configuration } = payload as MachineConfigurationFormState;
-      return createMachine(type, configuration).pipe(
-        map(machine => {
-          if (state.configuration.completeCurrentStep) {
-            return configurationActions.completeSetupMachineStep(machine);
-          }
-
-          return configurationActions.completeCreateMachine(machine);
-        }),
-        catchError((error: Error) => of(coreActions.handleError({ error: error.message, stack: error.stack })))
-      );
-    })
+    mergeMap(([, { configuration: { machines: { formState } } }]) =>
+      createMachine(formState.machineType, formState.configuration).pipe(
+        map(() => configurationActions.setup.completeMachineStep()),
+        logError()
+      )
+    )
   );
 };
 
-export const completeSetupMachineStepEpic = (action$: Observable<Action>, state$: StateObservable<Action>) => {
+export const setupComplete = (action$: Observable<Action>) => {
   return action$.pipe(
-    filter(configurationActions.completeSetupMachineStep.match),
-    map(({ payload }) => configurationActions.completeCreateMachine(payload))
+    ofType(ConfigurationActionTypes.setupComplete),
+    map(() => coreActions.initialize())
+  );
+};
+
+export const usersCreateEpic = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
+  return action$.pipe(
+    ofType(ConfigurationActionTypes.usersCreate),
+    withLatestFrom(state$),
+    mergeMap(([, { configuration: { users: { createState } } }]) =>
+      createUser(createState as DisplayUser).pipe(
+        map(user => configurationActions.users.createComplete(user)),
+        logError()
+      )
+    )
+  );
+};
+
+export const usersCreateCompleteEpic = (action$: Observable<TypedAction<DisplayUser>>, state$: StateObservable<AppState>) => {
+  return action$.pipe(
+    ofType(ConfigurationActionTypes.usersCreateComplete),
+    withLatestFrom(state$),
+    map(([{ type, ...user }, { core: { users } }]) => coreActions.usersOperationComplete([user, ...users.filter(u => u.id !== user.id)]))
+  );
+};
+
+export const machineCreateEpic = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
+  return action$.pipe(
+    ofType(ConfigurationActionTypes.machinesCreate),
+    withLatestFrom(state$),
+    mergeMap(([, { configuration: { machines: { formState } } }]) =>
+      createMachine(formState.machineType, formState.configuration).pipe(
+        map(machine => configurationActions.machines.createComplete(machine)),
+        logError()
+      )
+    )
+  );
+};
+
+export const machineCreateCompleteEpic = (action$: Observable<TypedAction<Machine>>, state$: StateObservable<AppState>) => {
+  return action$.pipe(
+    ofType(ConfigurationActionTypes.machinesCreateComplete),
+    withLatestFrom(state$),
+    map(([machine, { core: { machines } }]) => coreActions.machinesOperationComplete([machine, ...machines.filter(m => m.id !== machine.id)]))
   );
 };

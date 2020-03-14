@@ -1,7 +1,7 @@
 import { ContextType, MachineConfigurationBuilder, WebcamOrientationOptions } from '../../models/machines';
 import { OctoprintMachineProvider } from './octoprint-machine.provider';
 
-export function OctoprintConfigFactory(): [string, MachineConfigurationBuilder] {
+export function octoprintConfigFactory(): [string, MachineConfigurationBuilder] {
   return [
     'Octoprint',
     {

@@ -1,11 +1,11 @@
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import * as React from 'react';
 
-import { CreateUserFormState } from '../../store/form-states/create-user-form.state';
+import { CreateUserFormState } from '../../types/create-user-form.state';
 import { accessLevels, sessionLifetimes } from '../../utils/display-options.class';
 import { isConfirmPasswordValid } from '../../validators/confirm-password.validator';
 import { isPasswordValid } from '../../validators/password.validator';
-import { isRequired } from '../../validators/required.validator';
+import { isRequiredFieldValid } from '../../validators/required.validator';
 import { isUsernameValid } from '../../validators/username.validator';
 
 export type CreateUserFormProps = {
@@ -20,7 +20,7 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
   function validate(): boolean {
     const excludeUndefined = false;
     return (
-      isRequired(state.accessLevel) &&
+      isRequiredFieldValid(state.accessLevel) &&
       isUsernameValid(state.username, excludeUndefined) &&
       isPasswordValid(state.password, excludeUndefined) &&
       isConfirmPasswordValid(state.password, state.confirmPassword, excludeUndefined)
@@ -48,7 +48,7 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
           disabled={disableAccessLevel}
           value={state.accessLevel}
           onChange={handleChange('accessLevel')}
-          error={!isRequired(state.accessLevel)}
+          error={!isRequiredFieldValid(state.accessLevel)}
         >
           {accessLevels.map((item, index) => (
             <MenuItem key={`access_level_${index}`} value={item.value}>
