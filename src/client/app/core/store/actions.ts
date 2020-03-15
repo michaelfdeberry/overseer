@@ -18,8 +18,10 @@ export enum CoreActionTypes {
   fetchSettings = '@overseer/client/core/fetchSettings',
   updateSettings = '@overseer/client/core/updateSettings',
   settingsOperationComplete = '@overseer/client/core/settingsOperationComplete',
+  signIn = '@overseer/client/core/signIn',
+  signInComplete = '@overseer/client/core/signInComplete',
   signOut = '@overseer/client/core/signOut',
-  signOutComplete = '@overseer/client/core/signOutComplete',
+  invalidSession = '@overseer/client/core/invalidSession',
 }
 
 export type InitializeCompletePayload = {
@@ -71,7 +73,16 @@ export const coreActions = {
   settingsOperationComplete(settings: SystemSettings): TypedAction<{ settings: SystemSettings }> {
     return { type: CoreActionTypes.settingsOperationComplete, settings };
   },
+  signIn(user: DisplayUser): TypedAction<{ user: DisplayUser }> {
+    return { type: CoreActionTypes.signIn, user };
+  },
+  signInComplete(activeUser: DisplayUser): TypedAction<{ activeUser: DisplayUser }> {
+    return { type: CoreActionTypes.signInComplete, activeUser };
+  },
   signOut(user?: DisplayUser): TypedAction<{ user?: DisplayUser }> {
     return { type: CoreActionTypes.signOut, user };
+  },
+  invalidSession(): Action<string> {
+    return { type: CoreActionTypes.invalidSession };
   },
 };

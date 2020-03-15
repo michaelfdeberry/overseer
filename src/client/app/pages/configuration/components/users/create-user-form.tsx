@@ -6,7 +6,6 @@ import { accessLevels, sessionLifetimes } from '../../utils/display-options.clas
 import { isConfirmPasswordValid } from '../../validators/confirm-password.validator';
 import { isPasswordValid } from '../../validators/password.validator';
 import { isRequiredFieldValid } from '../../validators/required.validator';
-import { isUsernameValid } from '../../validators/username.validator';
 
 export type CreateUserFormProps = {
   disableAccessLevel: boolean;
@@ -16,14 +15,19 @@ export type CreateUserFormProps = {
 
 export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (props: CreateUserFormProps) => {
   const { disableAccessLevel, state, updateState } = props;
+  const [touched, setTouched] = React.useState({
+    accessLevel: false,
+    username: false,
+    password: false,
+    confirmPassword: false,
+  });
 
   function validate(): boolean {
-    const excludeUndefined = false;
     return (
       isRequiredFieldValid(state.accessLevel) &&
-      isUsernameValid(state.username, excludeUndefined) &&
-      isPasswordValid(state.password, excludeUndefined) &&
-      isConfirmPasswordValid(state.password, state.confirmPassword, excludeUndefined)
+      isRequiredFieldValid(state.username) &&
+      isPasswordValid(state.password) &&
+      isConfirmPasswordValid(state.password, state.confirmPassword)
     );
   }
 
@@ -31,6 +35,10 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
     return (event: React.ChangeEvent<HTMLInputElement>): void => {
       updateState({ ...state, [name]: event.target.value });
     };
+  }
+
+  function handleTouch(name: keyof CreateUserFormState): void {
+    setTouched({ ...touched, [name]: true });
   }
 
   React.useEffect(() => {
@@ -47,8 +55,9 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
           labelId="access-level-label"
           disabled={disableAccessLevel}
           value={state.accessLevel}
+          onBlur={() => handleTouch('accessLevel')}
           onChange={handleChange('accessLevel')}
-          error={!isRequiredFieldValid(state.accessLevel)}
+          error={touched.accessLevel && !isRequiredFieldValid(state.accessLevel)}
         >
           {accessLevels.map((item, index) => (
             <MenuItem key={`access_level_${index}`} value={item.value}>
@@ -63,9 +72,10 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
         id="username"
         label="Username"
         value={state.username || ''}
+        onBlur={() => handleTouch('username')}
         onChange={handleChange('username')}
         type="text"
-        error={!isUsernameValid(state.username)}
+        error={touched.username && !isRequiredFieldValid(state.username)}
       />
       <TextField
         fullWidth
@@ -73,9 +83,10 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
         id="password"
         label="Password"
         value={state.password || ''}
+        onBlur={() => handleTouch('password')}
         onChange={handleChange('password')}
         type="password"
-        error={!isPasswordValid(state.password)}
+        error={touched.password && !isPasswordValid(state.password)}
       />
       <TextField
         fullWidth
@@ -83,9 +94,10 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
         id="confirm-password"
         label="Confirm Password"
         value={state.confirmPassword || ''}
+        onBlur={() => handleTouch('confirmPassword')}
         onChange={handleChange('confirmPassword')}
         type="password"
-        error={!isConfirmPasswordValid(state.password, state.confirmPassword)}
+        error={touched.confirmPassword && !isConfirmPasswordValid(state.password, state.confirmPassword)}
       />
       <FormControl>
         <InputLabel id="session-lifetime-label">Session Lifetime</InputLabel>

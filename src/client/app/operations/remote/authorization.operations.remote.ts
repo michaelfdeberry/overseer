@@ -10,7 +10,7 @@ async function withAuthorizationService<T>(execute: (service: AuthorizationServi
 }
 
 export function requiresAuthorization(): Observable<boolean> {
-  return defer(() => withAuthorizationService(service => service.requiresIntialSetup()));
+  return defer(() => withAuthorizationService(service => service.requiresInitialSetup()));
 }
 
 export function authorize(token: string): Observable<DisplayUser | null> {

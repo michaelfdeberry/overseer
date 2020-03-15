@@ -2,31 +2,31 @@ import { DisplayUser, Machine } from '@overseer/common/models';
 import { Action } from 'redux';
 import { ofType, StateObservable } from 'redux-observable';
 import { Observable } from 'rxjs';
-import { map, mergeMap, tap, withLatestFrom } from 'rxjs/operators';
+import { map, mergeMap, pluck, tap, withLatestFrom } from 'rxjs/operators';
 
 import { coreActions } from '../../../core/store/actions';
-import { logError } from '../../../core/store/operators';
 import { setActiveUser } from '../../../operations/active-user.operations';
 import { login } from '../../../operations/local/authentication.operations.local';
 import { createMachine } from '../../../operations/local/machines.operations.local';
 import { createUser } from '../../../operations/local/users.operations.local';
 import { AppState } from '../../../store';
 import { TypedAction } from '../../../store/action.type';
+import { authorizingMergeMap, catchAndLogError } from '../../../store/operators';
 import { configurationActions, ConfigurationActionTypes } from './actions';
 
 export const setupSubmitAdminStep = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
   return action$.pipe(
     ofType(ConfigurationActionTypes.setupSubmitAdminStep),
-    withLatestFrom(state$),
-    mergeMap(([, { configuration: { users: { createState } } }]) =>
-      createUser(createState as DisplayUser).pipe(
+    withLatestFrom(state$.pipe(pluck('configuration', 'users', 'createState'))),
+    mergeMap(([, { isValid, ...createdUser }]) =>
+      createUser(createdUser).pipe(
         mergeMap(() =>
-          login(createState as DisplayUser).pipe(
+          login(createdUser).pipe(
             tap(activeUser => setActiveUser(activeUser)),
             map(() => configurationActions.setup.completeAdminStep())
           )
         ),
-        logError()
+        catchAndLogError()
       )
     )
   );
@@ -35,11 +35,11 @@ export const setupSubmitAdminStep = (action$: Observable<Action>, state$: StateO
 export const setupSubmitMachineStep = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
   return action$.pipe(
     ofType(ConfigurationActionTypes.setupSubmitMachineStep),
-    withLatestFrom(state$),
-    mergeMap(([, { configuration: { machines: { formState } } }]) =>
-      createMachine(formState.machineType, formState.configuration).pipe(
+    withLatestFrom(state$.pipe(pluck('configuration', 'machines', 'formState'))),
+    authorizingMergeMap(([, { machineType, configuration }]) =>
+      createMachine(machineType, configuration).pipe(
         map(() => configurationActions.setup.completeMachineStep()),
-        logError()
+        catchAndLogError()
       )
     )
   );
@@ -55,11 +55,11 @@ export const setupComplete = (action$: Observable<Action>) => {
 export const usersCreateEpic = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
   return action$.pipe(
     ofType(ConfigurationActionTypes.usersCreate),
-    withLatestFrom(state$),
-    mergeMap(([, { configuration: { users: { createState } } }]) =>
-      createUser(createState as DisplayUser).pipe(
+    withLatestFrom(state$.pipe(pluck('configuration', 'users', 'createState'))),
+    authorizingMergeMap(([, { isValid, ...createdUser }]) =>
+      createUser(createdUser).pipe(
         map(user => configurationActions.users.createComplete(user)),
-        logError()
+        catchAndLogError()
       )
     )
   );
@@ -76,11 +76,11 @@ export const usersCreateCompleteEpic = (action$: Observable<TypedAction<DisplayU
 export const machineCreateEpic = (action$: Observable<Action>, state$: StateObservable<AppState>) => {
   return action$.pipe(
     ofType(ConfigurationActionTypes.machinesCreate),
-    withLatestFrom(state$),
-    mergeMap(([, { configuration: { machines: { formState } } }]) =>
-      createMachine(formState.machineType, formState.configuration).pipe(
+    withLatestFrom(state$.pipe(pluck('configuration', 'machines', 'formState'))),
+    authorizingMergeMap(([, { machineType, configuration }]) =>
+      createMachine(machineType, configuration).pipe(
         map(machine => configurationActions.machines.createComplete(machine)),
-        logError()
+        catchAndLogError()
       )
     )
   );

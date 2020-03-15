@@ -21,6 +21,8 @@ export function coreReducer(state: CoreState = initialState, action: AnyAction):
       return { ...state, users: payload.users };
     case CoreActionTypes.settingsOperationComplete:
       return { ...state, settings: payload.settings };
+    case CoreActionTypes.signInComplete:
+      return { ...state, activeUser: payload.activeUser };
     default:
       return state;
   }

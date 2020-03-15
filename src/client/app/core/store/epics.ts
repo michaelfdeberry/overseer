@@ -2,33 +2,48 @@ import { errorMessageMap } from '@overseer/common/error-messages';
 import { DisplayUser, Machine, SystemSettings } from '@overseer/common/models';
 import { Action } from 'redux';
 import { ofType, StateObservable } from 'redux-observable';
-import { Observable } from 'rxjs';
-import { map, mergeMap, tap, withLatestFrom } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, mergeMap, pluck, tap, withLatestFrom } from 'rxjs/operators';
 
-import { clearActiveUser, getActiveUser } from '../../operations/active-user.operations';
-import { logout, logoutUser } from '../../operations/local/authentication.operations.local';
-import { requiresInitialSetup } from '../../operations/local/authorization.operations.local';
+import { clearActiveUser, getActiveUser, setActiveUser } from '../../operations/active-user.operations';
+import { login, logout, logoutUser } from '../../operations/local/authentication.operations.local';
+import { authorize, requiresInitialSetup } from '../../operations/local/authorization.operations.local';
 import { getSettings, updateSettings } from '../../operations/local/configuration.operations.local';
 import { getMachines, updateMachine } from '../../operations/local/machines.operations.local';
 import { getUsers, updateUser } from '../../operations/local/users.operations.local';
 import { AppState } from '../../store';
 import { TypedAction } from '../../store/action.type';
+import { authorizingMergeMap, catchAndLogError } from '../../store/operators';
 import { coreActions, CoreActionTypes } from './actions';
-import { logError } from './operators';
 
 export const initializeEpic = (action$: Observable<Action>) => {
   return action$.pipe(
     ofType(CoreActionTypes.initialize),
     mergeMap(() =>
       requiresInitialSetup().pipe(
-        map(requiresSetup =>
-          coreActions.initializeComplete({
-            requiresSetup,
-            isLocalApp: true,
-            activeUser: getActiveUser(),
-          })
-        ),
-        logError()
+        mergeMap(requiresSetup => {
+          const activeUser = getActiveUser();
+          if (!activeUser) {
+            return of(
+              coreActions.initializeComplete({
+                requiresSetup,
+                isLocalApp: true,
+                activeUser,
+              })
+            );
+          }
+
+          return authorize(activeUser.token).pipe(
+            map(authorizedUser =>
+              coreActions.initializeComplete({
+                requiresSetup,
+                isLocalApp: true,
+                activeUser: authorizedUser,
+              })
+            )
+          );
+        }),
+        catchAndLogError()
       )
     )
   );
@@ -37,10 +52,10 @@ export const initializeEpic = (action$: Observable<Action>) => {
 export const fetchMachinesEpic = (action$: Observable<Action>) => {
   return action$.pipe(
     ofType(CoreActionTypes.fetchMachines),
-    mergeMap(() =>
+    authorizingMergeMap(() =>
       getMachines().pipe(
         map(machines => coreActions.machinesOperationComplete(machines)),
-        logError()
+        catchAndLogError()
       )
     )
   );
@@ -49,11 +64,11 @@ export const fetchMachinesEpic = (action$: Observable<Action>) => {
 export const updateMachineEpic = (action$: Observable<TypedAction<{ machine: Machine }>>, state$: StateObservable<AppState>) => {
   return action$.pipe(
     ofType(CoreActionTypes.updateMachine),
-    withLatestFrom(state$),
-    mergeMap(([{ machine }, { core: { machines } }]) =>
+    withLatestFrom(state$.pipe(pluck('core', 'machines'))),
+    authorizingMergeMap(([{ machine }, machines]) =>
       updateMachine(machine).pipe(
         map(updatedMachine => coreActions.machinesOperationComplete([updatedMachine, ...machines.filter(m => m.id !== updatedMachine.id)])),
-        logError()
+        catchAndLogError()
       )
     )
   );
@@ -62,10 +77,10 @@ export const updateMachineEpic = (action$: Observable<TypedAction<{ machine: Mac
 export const fetchUsersEpic = (action$: Observable<Action>) => {
   return action$.pipe(
     ofType(CoreActionTypes.fetchUsers),
-    mergeMap(() =>
+    authorizingMergeMap(() =>
       getUsers().pipe(
         map(users => coreActions.usersOperationComplete(users)),
-        logError()
+        catchAndLogError()
       )
     )
   );
@@ -74,11 +89,11 @@ export const fetchUsersEpic = (action$: Observable<Action>) => {
 export const updateUserEpic = (action$: Observable<TypedAction<{ user: DisplayUser }>>, state$: StateObservable<AppState>) => {
   return action$.pipe(
     ofType(CoreActionTypes.updateUser),
-    withLatestFrom(state$),
-    mergeMap(([{ user }, { core: { users } }]) =>
+    withLatestFrom(state$.pipe(pluck('core', 'users'))),
+    authorizingMergeMap(([{ user }, users]) =>
       updateUser(user).pipe(
         map(updatedUser => coreActions.usersOperationComplete([updatedUser, ...users.filter(u => u.id !== updatedUser.id)])),
-        logError()
+        catchAndLogError()
       )
     )
   );
@@ -87,10 +102,10 @@ export const updateUserEpic = (action$: Observable<TypedAction<{ user: DisplayUs
 export const fetchSettingsEpic = (action$: Observable<Action>) => {
   return action$.pipe(
     ofType(CoreActionTypes.fetchSettings),
-    mergeMap(() =>
+    authorizingMergeMap(() =>
       getSettings().pipe(
         map(settings => coreActions.settingsOperationComplete(settings)),
-        logError()
+        catchAndLogError()
       )
     )
   );
@@ -99,10 +114,23 @@ export const fetchSettingsEpic = (action$: Observable<Action>) => {
 export const updateSettingsEpic = (action$: Observable<TypedAction<{ settings: SystemSettings }>>) => {
   return action$.pipe(
     ofType(CoreActionTypes.updateSettings),
-    mergeMap(({ settings }) =>
+    authorizingMergeMap(({ settings }) =>
       updateSettings(settings).pipe(
         map(() => coreActions.settingsOperationComplete(settings)),
-        logError()
+        catchAndLogError()
+      )
+    )
+  );
+};
+
+export const signInEpic = (action$: Observable<TypedAction<{ user: DisplayUser }>>) => {
+  return action$.pipe(
+    ofType(CoreActionTypes.signIn),
+    mergeMap(({ user }) =>
+      login(user).pipe(
+        tap(activeUser => setActiveUser(activeUser)),
+        map(activeUser => coreActions.signInComplete(activeUser)),
+        catchAndLogError()
       )
     )
   );
@@ -111,28 +139,21 @@ export const updateSettingsEpic = (action$: Observable<TypedAction<{ settings: S
 export const signOutEpic = (action$: Observable<TypedAction<{ user: DisplayUser }>>, state$: StateObservable<AppState>) => {
   return action$.pipe(
     ofType(CoreActionTypes.signOut),
-    withLatestFrom(state$),
-    mergeMap(
-      ([
-        { user },
-        {
-          core: { activeUser, users },
-        },
-      ]) => {
-        if (user) {
-          return logoutUser(user.id).pipe(
-            map(updatedUser => coreActions.usersOperationComplete([updatedUser, ...users.filter(u => u.id !== user.id)])),
-            logError()
-          );
-        } else {
-          return logout(activeUser.token).pipe(
-            tap(() => clearActiveUser()),
-            map(() => coreActions.initialize()),
-            logError()
-          );
-        }
+    withLatestFrom(state$.pipe(pluck('core'))),
+    mergeMap(([{ user }, { activeUser, users }]) => {
+      if (user) {
+        return logoutUser(user.id).pipe(
+          map(updatedUser => coreActions.usersOperationComplete([updatedUser, ...users.filter(u => u.id !== user.id)])),
+          catchAndLogError()
+        );
+      } else {
+        return logout(activeUser.token).pipe(
+          tap(() => clearActiveUser()),
+          map(() => coreActions.initialize()),
+          catchAndLogError()
+        );
       }
-    )
+    })
   );
 };
 

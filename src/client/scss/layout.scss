@@ -1,32 +1,41 @@
 .header {
-    display: flex;
+  display: flex;
 
-    .header-title {
-        cursor: pointer;
-        flex: 1;
-    }
+  .header-title {
+    flex: 1;
 
-    .header-menu-container {
-        flex: 0;
+    a {
+      text-decoration: none;
+
+      &:hover,
+      &:visited {
+        color: inherit;
+        text-decoration: none;
+      }
     }
+  }
+
+  .header-menu-container {
+    flex: 0;
+  }
 }
 
 .header-menu {
-    .MuiPaper-root {
-        margin-top: 35px;
+  .MuiPaper-root {
+    margin-top: 35px;
+  }
+
+  ul {
+    width: 250px;
+
+    li {
+      display: flex;
+
+      .header-menu-item-text {
+        flex: 1;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
     }
-
-    ul {
-        width: 250px;
-
-        li {
-            display: flex;
-
-            .header-menu-item-text {
-                flex: 1;
-                padding-top: 8px;
-                padding-bottom: 8px;
-            }
-        }
-    }
+  }
 }
