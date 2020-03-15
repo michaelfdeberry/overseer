@@ -1,11 +1,13 @@
 import { Button, Step, StepLabel, Stepper, Typography } from '@material-ui/core';
-import { AccessLevel, ContextType } from '@overseer/common/models';
+import { AccessLevel, PersistenceModeType } from '@overseer/common/models';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
+import { selectActiveUser } from '../../../../core/store/selectors';
 import { AppState } from '../../../../store';
 import { configurationActions } from '../../store/actions';
+import { selectRestrictionType } from '../../store/selectors';
 import { CreateUserFormState } from '../../types/create-user-form.state';
 import { MachineConfigurationFormState } from '../../types/machine-configuration-form.state';
 import { MachineConfigurationForm } from '../machines/machine-configuration-form';
@@ -13,13 +15,21 @@ import { ThemeSelector } from '../system/theme-selector';
 import { CreateUserForm } from '../users/create-user-form';
 
 export const SetupPage: React.FunctionComponent = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
+  const activeUser = useSelector(selectActiveUser);
+  const restriction = useSelector(selectRestrictionType);
   const isSetupPageLoaded = useSelector((state: AppState) => state.configuration.setup?.loaded);
   const currentStep = useSelector((state: AppState) => state.configuration.setup?.currentStep);
   const userState = useSelector((state: AppState) => state.configuration.users?.createState);
   const machineState = useSelector((state: AppState) => state.configuration.machines?.formState);
   const updateUserState = (userState: CreateUserFormState) => dispatch(configurationActions.users.updateCreateState(userState));
   const updateMachineState = (machineState: MachineConfigurationFormState) => dispatch(configurationActions.machines.updateState(machineState));
+
+  if (activeUser) {
+    history.replace('/');
+    return null;
+  }
 
   if (!isSetupPageLoaded) {
     dispatch(configurationActions.setup.load());
@@ -83,7 +93,12 @@ export const SetupPage: React.FunctionComponent = () => {
         return (
           <form className="configuration-form" onSubmit={saveMachine}>
             <Typography variant="h6">Please add at least one machine...</Typography>
-            <MachineConfigurationForm currentContext={ContextType.add} state={machineState} updateState={updateMachineState} />
+            <MachineConfigurationForm
+              mode={PersistenceModeType.add}
+              restriction={restriction}
+              state={machineState}
+              updateState={updateMachineState}
+            />
             <div className="configuration-actions">
               <div className="configuration-actions-secondary">
                 <Button disabled={!machineState.isValid} variant="contained" onClick={saveMachineAndAddMore}>

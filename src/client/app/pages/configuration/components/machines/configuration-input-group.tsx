@@ -1,19 +1,20 @@
 import { ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Typography } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { ContextType, MachineSetting, MachineSettingGroup } from '@overseer/common/models';
+import { BuildRestrictionType, MachineSetting, MachineSettingGroup, PersistenceModeType } from '@overseer/common/models';
 import * as React from 'react';
 
 import { ConfigurationInput } from './configuration-input';
 
 export type ConfigurationInputGroupProps = {
-  currentContext: ContextType;
   name: string;
+  mode: PersistenceModeType;
   group: MachineSettingGroup;
+  restriction: BuildRestrictionType;
   updateGroup: (name: string, setting: MachineSettingGroup) => void;
 };
 
 export const ConfigurationInputGroup: React.FunctionComponent<ConfigurationInputGroupProps> = (props: ConfigurationInputGroupProps) => {
-  const { currentContext, name, group, updateGroup } = props;
+  const { mode, name, group, updateGroup, restriction } = props;
 
   function updateGroupSetting(settingName: string, setting: MachineSetting): void {
     updateGroup(name, { ...group, settings: { ...group.settings, [settingName]: setting } });
@@ -26,15 +27,11 @@ export const ConfigurationInputGroup: React.FunctionComponent<ConfigurationInput
       </ExpansionPanelSummary>
       <ExpansionPanelDetails>
         {Object.keys(group.settings).map(key => {
-          return (
-            <ConfigurationInput
-              key={key}
-              currentContext={currentContext}
-              name={key}
-              setting={group.settings[key]}
-              updateSetting={updateGroupSetting}
-            />
-          );
+          const setting = group.settings[key];
+          if (!(setting.mode & mode)) return null;
+          if (setting.restriction && setting.restriction !== restriction) return null;
+
+          return <ConfigurationInput key={key} name={key} setting={setting} updateSetting={updateGroupSetting} />;
         })}
       </ExpansionPanelDetails>
     </ExpansionPanel>

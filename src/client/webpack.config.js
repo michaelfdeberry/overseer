@@ -7,10 +7,10 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = function(env) {
   const isDev = env.MODE === 'development';
-  const serviceTarget = env.SERVICE_TARGET || 'remote';
+  const buildTarget = env.BUILD_TARGET || 'remote';
   let distribution = path.resolve(__dirname, './dist');
 
-  if (serviceTarget === 'remote') {
+  if (buildTarget === 'remote') {
     distribution = path.resolve(__dirname, '../server/public');
   }
 
@@ -69,7 +69,7 @@ module.exports = function(env) {
       new HtmlWebpackPlugin({ template: './index.html' }),
       new CopyPlugin([{ from: './public', to: distribution }]),
       new webpack.NormalModuleReplacementPlugin(/(.*)operations(.*)/, function(resource) {
-        if (serviceTarget === 'remote') {
+        if (buildTarget === 'remote') {
           return resource.request.replace('local', `remote`);
         }
         return resource;

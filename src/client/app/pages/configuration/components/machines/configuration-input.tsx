@@ -1,12 +1,11 @@
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
-import { ContextType, MachineSetting } from '@overseer/common/models';
+import { MachineSetting } from '@overseer/common/models';
 import * as React from 'react';
 
 import { DisplayOption } from '../../utils/display-options.class';
 import { isRequiredFieldValid } from '../../validators/required.validator';
 
 export type ConfigurationInputProps = {
-  currentContext: ContextType;
   name: string;
   setting: MachineSetting;
   updateSetting: (name: string, setting: MachineSetting) => void;
@@ -14,8 +13,7 @@ export type ConfigurationInputProps = {
 
 export const ConfigurationInput: React.FunctionComponent<ConfigurationInputProps> = (props: ConfigurationInputProps) => {
   const [touched, setTouched] = React.useState(false);
-  const { currentContext, name, setting, updateSetting } = props;
-  if (!(setting.contextType & currentContext)) return null;
+  const { name, setting, updateSetting } = props;
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
     updateSetting(name, { ...setting, value: event.target.value });

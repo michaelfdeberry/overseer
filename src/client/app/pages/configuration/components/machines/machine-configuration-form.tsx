@@ -1,10 +1,11 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import {
-  ContextType,
+  BuildRestrictionType,
   machineConfigurationBuilder,
   MachineConfigurationCollection,
   MachineSetting,
-  MachineSettingGroup
+  MachineSettingGroup,
+  PersistenceModeType
 } from '@overseer/common/models';
 import * as React from 'react';
 
@@ -14,19 +15,24 @@ import { isRequiredFieldValid } from '../../validators/required.validator';
 import { ConfigurationInputs } from './configuration-inputs';
 
 export type MachineConfigurationFormProps = {
-  currentContext: ContextType;
+  mode: PersistenceModeType;
+  restriction: BuildRestrictionType;
   state: MachineConfigurationFormState;
   updateState: (state: MachineConfigurationFormState) => void;
 };
 
 export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurationFormProps> = (props: MachineConfigurationFormProps) => {
-  const { currentContext, state, updateState } = props;
+  const { mode, state, updateState, restriction = BuildRestrictionType.none } = props;
   const machineTypes = Array.from(machineConfigurationBuilder.keys()).map(key => new DisplayOption(key, key));
 
   React.useEffect(() => {
     const currentBuilder = machineConfigurationBuilder.get(state.machineType);
     updateConfiguration(currentBuilder?.configuration);
   }, [state.machineType]);
+
+  React.useEffect(() => {
+    updateState({ ...state, isValid: validate() });
+  }, [validate()]);
 
   function setMachineType(event: React.ChangeEvent<HTMLInputElement>): void {
     updateState({ ...state, machineType: event.target.value });
@@ -44,7 +50,8 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
     if (!state.configuration) return false;
 
     for (const config of Object.values(state.configuration)) {
-      if (!(config.contextType & currentContext)) continue;
+      if (!(config.mode & mode)) continue;
+      if (config.restriction && config.restriction !== restriction) continue;
 
       if (config.type === 'group') {
         const group = config as MachineSettingGroup;
@@ -61,10 +68,6 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
 
     return true;
   }
-
-  React.useEffect(() => {
-    updateState({ ...state, isValid: validate() });
-  }, [validate()]);
 
   return (
     <React.Fragment>
@@ -88,7 +91,7 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
           ))}
         </Select>
       </FormControl>
-      <ConfigurationInputs currentContext={currentContext} configuration={state.configuration} updateConfiguration={updateConfiguration} />
+      <ConfigurationInputs mode={mode} restriction={restriction} configuration={state.configuration} updateConfiguration={updateConfiguration} />
     </React.Fragment>
   );
 };

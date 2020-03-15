@@ -1,23 +1,34 @@
 import { MachineProvider } from './machine.provider';
 
-export enum ContextType {
-  add = 1 << 0,
-  edit = 1 << 1,
+//used to determine if the input should display for add, edit, or both
+export enum PersistenceModeType {
+  add = 1,
+  edit = 2,
+  any = 3,
+}
+
+// used to restrict certain settings to either the local or remote builds
+export enum BuildRestrictionType {
+  none,
+  local,
+  remote,
 }
 
 export type MachineSetting = {
   type: 'url' | 'text' | 'number' | 'options';
-  contextType: ContextType;
   value?: string;
-  options?: { text: string; value: string }[];
   isRequired?: boolean;
+  options?: { text: string; value: string }[];
+  mode: PersistenceModeType;
+  restriction?: BuildRestrictionType;
 };
 
 export type MachineSettingGroup = {
   type: 'group';
-  contextType: ContextType;
   isExpanded?: boolean;
   settings: { [key: string]: MachineSetting };
+  mode: PersistenceModeType;
+  restriction?: BuildRestrictionType;
 };
 
 export type MachineConfiguration = MachineSetting | MachineSettingGroup;

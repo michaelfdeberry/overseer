@@ -1,4 +1,4 @@
-import { ContextType, MachineConfigurationBuilder, WebcamOrientationOptions } from '../../models/machines';
+import { BuildRestrictionType, MachineConfigurationBuilder, PersistenceModeType, WebcamOrientationOptions } from '../../models/machines';
 import { OctoprintMachineProvider } from './octoprint-machine.provider';
 
 export function octoprintConfigFactory(): [string, MachineConfigurationBuilder] {
@@ -6,20 +6,21 @@ export function octoprintConfigFactory(): [string, MachineConfigurationBuilder] 
     'Octoprint',
     {
       configuration: {
-        Name: { type: 'text', contextType: ContextType.add | ContextType.edit, isRequired: true },
-        Url: { type: 'url', contextType: ContextType.add | ContextType.edit, isRequired: true },
-        'Api Key': { type: 'text', contextType: ContextType.add | ContextType.edit, isRequired: true },
-        Profiles: { type: 'options', contextType: ContextType.edit },
-        'Webcam Url': { type: 'url', contextType: ContextType.edit, isRequired: true },
+        Name: { type: 'text', mode: PersistenceModeType.any, isRequired: true },
+        Url: { type: 'url', mode: PersistenceModeType.any, isRequired: true },
+        'Api Key': { type: 'text', mode: PersistenceModeType.any, isRequired: true },
+        Profiles: { type: 'options', mode: PersistenceModeType.edit },
+        'Webcam Url': { type: 'url', mode: PersistenceModeType.edit, isRequired: true },
         'Webcam Orientation': {
           type: 'options',
-          contextType: ContextType.edit,
+          mode: PersistenceModeType.edit,
           options: WebcamOrientationOptions,
         },
         'Advanced Settings': {
           type: 'group',
-          contextType: ContextType.add | ContextType.edit,
-          settings: { 'Client Certificate': { type: 'text', contextType: ContextType.add | ContextType.edit } },
+          mode: PersistenceModeType.any,
+          restriction: BuildRestrictionType.remote,
+          settings: { 'Client Certificate': { type: 'text', mode: PersistenceModeType.any } },
         },
       },
       provider: OctoprintMachineProvider,
