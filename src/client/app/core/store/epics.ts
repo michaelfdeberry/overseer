@@ -168,3 +168,13 @@ export const logErrorEpic = (action$: Observable<TypedAction<{ message: string; 
     })
   );
 };
+
+export const invalidSessionEpic = (action$: Observable<Action>) => {
+  return action$.pipe(
+    ofType(CoreActionTypes.invalidSession),
+    map(() => {
+      clearActiveUser();
+      return coreActions.initialize();
+    })
+  );
+};

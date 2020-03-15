@@ -23,6 +23,8 @@ export function coreReducer(state: CoreState = initialState, action: AnyAction):
       return { ...state, settings: payload.settings };
     case CoreActionTypes.signInComplete:
       return { ...state, activeUser: payload.activeUser };
+    case CoreActionTypes.invalidSession:
+      return { ...state, activeUser: undefined };
     default:
       return state;
   }
