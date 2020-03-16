@@ -54,7 +54,7 @@ export const LoginContainer: React.FunctionComponent = () => {
             <div className="configuration-actions">
               <div className="configuration-actions-secondary"></div>
               <div className="configuration-actions-primary">
-                <Button disabled={!isValid()} variant="contained" color="primary" onClick={signIn}>
+                <Button disabled={!isValid()} color="primary" onClick={signIn}>
                   Sign In
                 </Button>
               </div>

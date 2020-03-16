@@ -12,7 +12,7 @@ export const defaultSystemSettings: SystemSettings = {
 export interface SystemSettings {
   interval: number;
   localPort: number;
-  sortByTimeRemaining?: boolean;
-  hideIdleMachines?: boolean;
-  hideDisabledMachines?: boolean;
+  sortByTimeRemaining: boolean;
+  hideIdleMachines: boolean;
+  hideDisabledMachines: boolean;
 }

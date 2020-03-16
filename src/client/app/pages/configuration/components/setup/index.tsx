@@ -77,7 +77,7 @@ export const SetupPage: React.FunctionComponent = () => {
             <div className="configuration-actions">
               <div className="configuration-actions-secondary"></div>
               <div className="configuration-actions-primary">
-                <Button disabled={!userState.isValid} variant="contained" color="primary" onClick={saveAdmin}>
+                <Button disabled={!userState.isValid} color="primary" onClick={saveAdmin}>
                   Next
                 </Button>
               </div>
@@ -101,12 +101,12 @@ export const SetupPage: React.FunctionComponent = () => {
             />
             <div className="configuration-actions">
               <div className="configuration-actions-secondary">
-                <Button disabled={!machineState.isValid} variant="contained" onClick={saveMachineAndAddMore}>
+                <Button disabled={!machineState.isValid} onClick={saveMachineAndAddMore}>
                   Save &amp; Add More...
                 </Button>
               </div>
               <div className="configuration-actions-primary">
-                <Button disabled={!machineState.isValid} variant="contained" color="primary" onClick={saveMachine}>
+                <Button disabled={!machineState.isValid} color="primary" onClick={saveMachine}>
                   Next
                 </Button>
               </div>
@@ -121,7 +121,7 @@ export const SetupPage: React.FunctionComponent = () => {
             <div className="configuration-actions">
               <div className="configuration-actions-secondary"></div>
               <div className="configuration-actions-primary">
-                <Button variant="contained" color="primary" onClick={completeSelectTheme}>
+                <Button color="primary" onClick={completeSelectTheme}>
                   Next
                 </Button>
               </div>

@@ -1,0 +1,134 @@
+.configuration {
+  margin-top: 10px;
+
+  .configuration-form {
+    padding: 30px 30px 10px;
+
+    .MuiFormControl-root {
+      margin-top: 10px;
+      display: block;
+      width: 100%;
+    }
+
+    .switch-container {
+      margin: 10px 0;
+    }
+
+    .MuiExpansionPanel-root {
+      margin-top: 10px;
+    }
+
+    .configuration-actions {
+      margin-top: 20px;
+      display: flex;
+
+      .configuration-actions-secondary {
+        flex: 0 0 50%;
+
+        button {
+          margin-right: 10px;
+        }
+      }
+
+      .configuration-actions-primary {
+        text-align: right;
+        flex: 0 0 50%;
+
+        button {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+
+  .config-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    .cdk-drop-list-dragging tr:not(.cdk-drag-placeholder) {
+      transition: all 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    &.drag-drop {
+      cursor: move;
+    }
+
+    tr {
+      .sort-column {
+        width: 100px;
+        padding-left: 0;
+
+        @media (max-width: 480px) {
+          display: none;
+        }
+
+        .mat-button {
+          padding: 0 8px;
+          min-width: auto;
+        }
+      }
+
+      th {
+        .mat-button {
+          font-weight: bold;
+        }
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding-left: 20px;
+        height: 38px;
+
+        @media (max-width: 480px) {
+          padding-left: 0;
+        }
+
+        &.centered {
+          text-align: center;
+        }
+
+        &.action {
+          text-align: right;
+          width: 100px;
+          padding: 0;
+
+          .MuiButtonBase-root {
+            text-align: center;
+
+            .MuiIcon-root {
+              line-height: 22px;
+
+              .MuiSvgIcon-root {
+                $icon-size: 16px;
+                font-size: $icon-size;
+                line-height: $icon-size - 2;
+                height: $icon-size;
+                width: $icon-size;
+                font-weight: bolder;
+              }
+            }
+          }
+        }
+
+        &.empty {
+          @extend .centered;
+          padding: 10px 0;
+        }
+      }
+
+      &:last-child > td {
+        border: none;
+      }
+    }
+  }
+  .setup-next-steps {
+    padding: 10px;
+    text-align: center;
+
+    .MuiButton-root {
+      margin: 10px;
+    }
+  }
+}

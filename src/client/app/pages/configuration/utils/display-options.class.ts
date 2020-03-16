@@ -15,11 +15,11 @@ export const sessionLifetimes = [
 ];
 
 export const pollIntervals = [
-  new DisplayOption('Second', 1000),
-  new DisplayOption('Seconds', 5000),
-  new DisplayOption('Seconds', 10000),
-  new DisplayOption('Seconds', 20000),
-  new DisplayOption('Seconds', 30000),
+  new DisplayOption('1 Second', 1000),
+  new DisplayOption('5 Seconds', 5000),
+  new DisplayOption('10 Seconds', 10000),
+  new DisplayOption('20 Seconds', 20000),
+  new DisplayOption('30 Seconds', 30000),
 ];
 
 export const accessLevels = [new DisplayOption('Readonly', AccessLevel.Readonly), new DisplayOption('Administrator', AccessLevel.Administrator)];

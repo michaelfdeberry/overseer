@@ -6,14 +6,11 @@ export interface CoreState {
   requiresSetup?: boolean;
   activeUser?: DisplayUser;
   lastErrorMessage?: string;
-  users: DisplayUser[];
-  machines: Machine[];
-  settings: SystemSettings;
+  users?: DisplayUser[];
+  machines?: Machine[];
+  settings?: SystemSettings;
 }
 
 export const initialState: CoreState = {
   isInitialized: false,
-  users: [],
-  machines: [],
-  settings: undefined,
 };

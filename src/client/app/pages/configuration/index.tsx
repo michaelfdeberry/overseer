@@ -5,19 +5,30 @@ import { Route, Switch, useHistory, useLocation, useRouteMatch } from 'react-rou
 
 import { AdminRoute } from '../../core/components/admin-route';
 import { SetupPage } from './components/setup';
+import { SystemSettingsContainer } from './components/system';
+import { UsersContainer } from './components/users';
 
 const ConfigurationTabs: React.FunctionComponent = () => {
   const history = useHistory();
   const { pathname } = useLocation();
   const [tabValue, setTabValue] = useState(pathname);
 
-  if (pathname.indexOf('add') >= 0) return null;
-  if (pathname.indexOf('edit') >= 0) return null;
-  if (pathname.indexOf('setup') >= 0) return null;
+  function isValidTabPath(path) {
+    if (path.indexOf('add') >= 0) return false;
+    if (path.indexOf('edit') >= 0) return false;
+    if (path.indexOf('setup') >= 0) return false;
+    return true;
+  }
 
   useEffect(() => {
-    return history.listen(location => setTabValue(location.pathname));
+    return history.listen(location => {
+      if (isValidTabPath(location.pathname)) {
+        setTabValue(location.pathname);
+      }
+    });
   }, []);
+
+  if (!isValidTabPath(pathname)) return null;
 
   function navigate(_: React.MouseEvent, value: string): void {
     setTabValue(value);
@@ -47,14 +58,16 @@ export const ConfigurationContainer: React.FunctionComponent = () => {
           <ConfigurationTabs />
           <Switch>
             <AdminRoute exact path={path}>
-              System Settings
+              <SystemSettingsContainer />
             </AdminRoute>
-            <AdminRoute path={`${path}/users`}>Users</AdminRoute>
-            <AdminRoute path={`${path}/users/add`}>Add User</AdminRoute>
-            <AdminRoute path={`${path}/users/edit/:id`}>Edit User</AdminRoute>
-            <AdminRoute path={`${path}/machines`}>Machines</AdminRoute>
             <AdminRoute path={`${path}/machines/add`}>Add Machine</AdminRoute>
             <AdminRoute path={`${path}/machines/edit/:id`}>Edit Machine</AdminRoute>
+            <AdminRoute path={`${path}/machines`}>Machines</AdminRoute>
+            <AdminRoute path={`${path}/users/add`}>Add User</AdminRoute>
+            <AdminRoute path={`${path}/users/edit/:id`}>Edit User</AdminRoute>
+            <AdminRoute path={`${path}/users`}>
+              <UsersContainer />
+            </AdminRoute>
             <AdminRoute path={`${path}/about`}>About</AdminRoute>
             <Route path={`${path}/setup`}>
               <SetupPage />
