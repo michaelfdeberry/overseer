@@ -14,7 +14,7 @@ export class ValueStore {
     let entry = this.chain.find({ key }).value();
     if (!entry) {
       entry = { key: key, value: setFunc() };
-      await this.chain.push(entry).write();
+      await this.chain.insert(entry).write();
     }
 
     return entry.value;

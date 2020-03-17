@@ -17,11 +17,11 @@ export function logout(token: string): Observable<DisplayUser> {
   return defer(() => withAuthenticationService(service => service.deauthenticateToken(token)));
 }
 
-export function logoutUser(userId: number): Observable<DisplayUser> {
+export function logoutUser(userId: string): Observable<DisplayUser> {
   return defer(() => withAuthenticationService(service => service.deauthenticateUser(userId)));
 }
 
-export function getPreauthenticatedToken(userId: number): Observable<string> {
+export function getPreauthenticatedToken(userId: string): Observable<string> {
   throw new Error('Unsupported for this solution');
 }
 

@@ -2,7 +2,7 @@ import { Machine, machineConfigurationBuilder } from '../../models/machines';
 import { MachineProvider } from '../../models/machines/machine.provider';
 
 export class MachineProviderService {
-  private static providerCache: Map<number, MachineProvider> = new Map();
+  private static providerCache: Map<string, MachineProvider> = new Map();
 
   createProvider(machineType: string): MachineProvider {
     const builder = machineConfigurationBuilder.get(machineType);

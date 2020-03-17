@@ -13,7 +13,7 @@ export function getUsers(): Observable<DisplayUser[]> {
   return defer(() => withUserConfigurationService(service => service.getUsers()));
 }
 
-export function getUser(userId: number): Observable<DisplayUser> {
+export function getUser(userId: string): Observable<DisplayUser> {
   return defer(() => withUserConfigurationService(service => service.getUser(userId)));
 }
 

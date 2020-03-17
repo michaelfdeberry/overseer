@@ -12,7 +12,7 @@ export class UserConfigurationService {
     return users.map(u => User.toDisplay(u));
   }
 
-  async getUser(userId: number): Promise<DisplayUser> {
+  async getUser(userId: string): Promise<DisplayUser> {
     const user = await this.context.users.getById(userId);
     return User.toDisplay(user);
   }

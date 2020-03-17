@@ -1,5 +1,5 @@
 export interface Certificate {
-  id: number;
+  id: string;
   issuedTo: string;
   issuedBy: string;
   issueDate: string;

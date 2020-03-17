@@ -13,9 +13,11 @@ export enum ConfigurationActionTypes {
   setupCompleteMachineStep = '@overseer/client/configuration/setup/completeMachineStep',
   setupCompleteThemeStep = '@overseer/client/configuration/setup/completeThemeStep',
   setupComplete = '@overseer/client/configuration/setup/complete',
-  usersUpdateCreateState = '@overseer/client/configuration/users/updateCreateState',
+  usersLoad = '@overseer/client/configuration/users/load',
+  usersComplete = '@overseer/client/configuration/users/complete',
+  usersCancel = '@overseer/client/configuration/users/cancel',
   usersCreate = '@overseer/client/configuration/users/create',
-  usersCreateComplete = '@overseer/client/configuration/users/createComplete',
+  usersUpdateCreateState = '@overseer/client/configuration/users/updateCreateState',
   machinesUpdateState = '@overseer/client/configuration/machines/updateState',
   machinesCreate = '@overseer/client/configuration/machines/create',
   machinesCreateComplete = '@overseer/client/configuration/machines/createComplete',
@@ -48,14 +50,20 @@ export const configurationActions = {
     },
   },
   users: {
-    updateCreateState(state: CreateUserFormState): TypedAction<CreateUserFormState> {
-      return { type: ConfigurationActionTypes.usersUpdateCreateState, ...state };
+    load(): Action<string> {
+      return { type: ConfigurationActionTypes.usersLoad };
+    },
+    complete(user: DisplayUser): TypedAction<DisplayUser> {
+      return { type: ConfigurationActionTypes.usersComplete, ...user };
+    },
+    cancel(): Action<string> {
+      return { type: ConfigurationActionTypes.usersCancel };
     },
     create(): Action<string> {
       return { type: ConfigurationActionTypes.usersCreate };
     },
-    createComplete(user: DisplayUser): TypedAction<DisplayUser> {
-      return { type: ConfigurationActionTypes.usersCreateComplete, ...user };
+    updateCreateState(state: CreateUserFormState): TypedAction<CreateUserFormState> {
+      return { type: ConfigurationActionTypes.usersUpdateCreateState, ...state };
     },
   },
   machines: {

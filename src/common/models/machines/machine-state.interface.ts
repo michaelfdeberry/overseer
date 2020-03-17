@@ -1,7 +1,7 @@
 import { MachineStateType } from './machine-state.enum';
 
 export interface MachineState {
-  machineId: number;
+  machineId: string;
   type: MachineStateType;
   temperatures?: { [key: number]: { actual: number; target: number } };
   elapsedTime?: number;

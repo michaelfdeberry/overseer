@@ -17,7 +17,7 @@ export function logout(token: string): Observable<DisplayUser> {
   return defer(() => withAuthenticationService(service => service.deauthenticateToken(token)));
 }
 
-export function logoutUser(userId: number): Observable<DisplayUser> {
+export function logoutUser(userId: string): Observable<DisplayUser> {
   return defer(() => withAuthenticationService(service => service.deauthenticateUser(userId)));
 }
 

@@ -13,7 +13,7 @@ export function getMachines(): Observable<Machine[]> {
   return defer(() => withMachineConfigurationService(service => service.getMachines()));
 }
 
-export function getMachine(machineId: number): Observable<Machine> {
+export function getMachine(machineId: string): Observable<Machine> {
   return defer(() => withMachineConfigurationService(service => service.getMachine(machineId)));
 }
 
@@ -29,6 +29,6 @@ export function deleteMachine(machine: Machine): Observable<void> {
   return defer(() => withMachineConfigurationService(service => service.deleteMachine(machine.id)));
 }
 
-export function sortMachines(sortOrder: number[]): Observable<void> {
+export function sortMachines(sortOrder: string[]): Observable<void> {
   return defer(() => withMachineConfigurationService(service => service.sortMachines(sortOrder)));
 }

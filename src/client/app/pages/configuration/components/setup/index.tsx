@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 
-import { selectActiveUser } from '../../../../core/store/selectors';
+import { selectIsInitialSetupRequired } from '../../../../core/store/selectors';
 import { AppState } from '../../../../store';
 import { configurationActions } from '../../store/actions';
 import { selectRestrictionType } from '../../store/selectors';
@@ -17,8 +17,8 @@ import { CreateUserForm } from '../users/create-user-form';
 export const SetupPage: React.FunctionComponent = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const activeUser = useSelector(selectActiveUser);
   const restriction = useSelector(selectRestrictionType);
+  const isSetupRequired = useSelector(selectIsInitialSetupRequired);
   const isSetupPageLoaded = useSelector((state: AppState) => state.configuration.setup?.loaded);
   const currentStep = useSelector((state: AppState) => state.configuration.setup?.currentStep);
   const userState = useSelector((state: AppState) => state.configuration.users?.createState);
@@ -26,7 +26,7 @@ export const SetupPage: React.FunctionComponent = () => {
   const updateUserState = (userState: CreateUserFormState) => dispatch(configurationActions.users.updateCreateState(userState));
   const updateMachineState = (machineState: MachineConfigurationFormState) => dispatch(configurationActions.machines.updateState(machineState));
 
-  if (activeUser) {
+  if (!isSetupRequired) {
     history.replace('/');
     return null;
   }

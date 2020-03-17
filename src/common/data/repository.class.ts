@@ -1,13 +1,13 @@
-export class Repository<T extends { id?: number }> {
+export class Repository<T extends { id?: string }> {
   constructor(private chain: any) {}
 
-  async add(value: T): Promise<number> {
-    const result: any = await this.chain.push(value).write();
+  async add(value: T): Promise<string> {
+    const result: any = await this.chain.insert(value).write();
     return result.id;
   }
 
-  getById(id: number): Promise<T> {
-    return Promise.resolve<T>(this.chain.find({ id }).value());
+  getById(id: string): Promise<T> {
+    return Promise.resolve<T>(this.chain.getById(id).value());
   }
 
   getByKey(predicate: (value: T) => boolean): Promise<T> {
@@ -24,23 +24,16 @@ export class Repository<T extends { id?: number }> {
 
   update(value: T): Promise<T> {
     return this.chain
-      .find({ id: value.id })
-      .assign(value)
+      .getById(value.id)
+      .assign(value, { id: value.id })
       .write();
   }
 
   updateAll(value: T[]): Promise<T[]> {
-    return Promise.all(
-      value.map(v =>
-        this.chain
-          .find({ id: v.id })
-          .assign(v)
-          .write()
-      )
-    );
+    return Promise.all(value.map(v => this.update(v)));
   }
 
-  delete(id: number): Promise<any> {
-    return this.chain.remove({ id }).write();
+  delete(id: string): Promise<any> {
+    return this.chain.removeById(id).write();
   }
 }

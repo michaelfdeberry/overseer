@@ -8,7 +8,7 @@ import { isPasswordValid } from '../../validators/password.validator';
 import { isRequiredFieldValid } from '../../validators/required.validator';
 
 export type CreateUserFormProps = {
-  disableAccessLevel: boolean;
+  disableAccessLevel?: boolean;
   state: CreateUserFormState;
   updateState: (user: CreateUserFormState) => void;
 };
@@ -54,7 +54,7 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
           required
           labelId="access-level-label"
           disabled={disableAccessLevel}
-          value={state.accessLevel}
+          value={state.accessLevel || ''}
           onBlur={() => handleTouch('accessLevel')}
           onChange={handleChange('accessLevel')}
           error={touched.accessLevel && !isRequiredFieldValid(state.accessLevel)}

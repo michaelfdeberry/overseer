@@ -1,4 +1,4 @@
 export enum AccessLevel {
-  Readonly = 0,
+  Readonly = 1,
   Administrator = 2,
 }

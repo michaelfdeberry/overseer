@@ -2,7 +2,7 @@ import { MachineConfigurationCollection, MachineSetting, MachineSettingGroup } f
 import { MachineTool } from './machine-tool.interface';
 
 export class Machine {
-  id: number;
+  id: string;
   type: string;
   disabled: boolean;
   tools: MachineTool[] = [];

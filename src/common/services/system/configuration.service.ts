@@ -13,7 +13,7 @@ export class SystemConfigurationService {
     return this.context.values.set('SystemSettings', settings);
   }
 
-  addCertificateExclusion(certificate: Certificate): Promise<number> {
+  addCertificateExclusion(certificate: Certificate): Promise<string> {
     return this.context.certificates.add(certificate);
   }
 

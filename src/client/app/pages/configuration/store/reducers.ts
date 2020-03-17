@@ -17,15 +17,19 @@ export function configurationReducer(state: ConfigurationState = initialState, a
       return { ...state, setup: { ...state.setup, themeStepComplete: true, currentStep: state.setup.currentStep + 1 } };
     case ConfigurationActionTypes.setupComplete:
       return { ...state, setup: undefined };
+    case ConfigurationActionTypes.usersLoad:
+      return { ...state, users: { ...state.users, loaded: true } };
     case ConfigurationActionTypes.usersUpdateCreateState:
-      return { ...state, users: { createState: payload } };
-    case ConfigurationActionTypes.usersCreateComplete:
-      return { ...state, users: { createState: undefined } };
+      return { ...state, users: { ...state.users, createState: payload } };
+    case ConfigurationActionTypes.usersComplete:
+      return { ...state, users: { ...state.users, createState: undefined, complete: true } };
+    case ConfigurationActionTypes.usersCancel:
+      return { ...state, users: {} };
     case ConfigurationActionTypes.machinesUpdateState:
-      return { ...state, machines: { formState: payload } };
+      return { ...state, machines: { ...state.machines, formState: payload } };
     case ConfigurationActionTypes.machinesCreateComplete:
     case ConfigurationActionTypes.machinesUpdateComplete:
-      return { ...state, machines: { formState: undefined } };
+      return { ...state, machines: { ...state.machines, formState: undefined } };
     default:
       return state;
   }

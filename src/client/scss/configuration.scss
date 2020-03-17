@@ -2,7 +2,14 @@
   margin-top: 10px;
 
   .configuration-form {
-    padding: 30px 30px 10px;
+    padding: 20px 20px 10px;
+
+    h6 {
+      .MuiIcon-root svg {
+        margin-right: 10px;
+        margin-bottom: -4px;
+      }
+    }
 
     .MuiFormControl-root {
       margin-top: 10px;

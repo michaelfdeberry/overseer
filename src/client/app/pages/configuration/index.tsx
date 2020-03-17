@@ -7,6 +7,7 @@ import { AdminRoute } from '../../core/components/admin-route';
 import { SetupPage } from './components/setup';
 import { SystemSettingsContainer } from './components/system';
 import { UsersContainer } from './components/users';
+import { CreateUserContainer } from './components/users/create-user';
 
 const ConfigurationTabs: React.FunctionComponent = () => {
   const history = useHistory();
@@ -63,7 +64,9 @@ export const ConfigurationContainer: React.FunctionComponent = () => {
             <AdminRoute path={`${path}/machines/add`}>Add Machine</AdminRoute>
             <AdminRoute path={`${path}/machines/edit/:id`}>Edit Machine</AdminRoute>
             <AdminRoute path={`${path}/machines`}>Machines</AdminRoute>
-            <AdminRoute path={`${path}/users/add`}>Add User</AdminRoute>
+            <AdminRoute path={`${path}/users/add`}>
+              <CreateUserContainer />
+            </AdminRoute>
             <AdminRoute path={`${path}/users/edit/:id`}>Edit User</AdminRoute>
             <AdminRoute path={`${path}/users`}>
               <UsersContainer />

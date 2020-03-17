@@ -6,42 +6,42 @@ import { MachineProviderService } from './provider.service';
 export class MachineControlService {
   constructor(private context: DataContext, private providerService: MachineProviderService) {}
 
-  async getProvider(machineId: number): Promise<MachineProvider> {
+  async getProvider(machineId: string): Promise<MachineProvider> {
     const machine = await this.context.machines.getById(machineId);
     return this.providerService.getProvider(machine);
   }
 
-  async pauseJob(machineId: number): Promise<void> {
+  async pauseJob(machineId: string): Promise<void> {
     const provider = await this.getProvider(machineId);
     return await provider.pauseJob();
   }
 
-  async resumeJob(machineId: number): Promise<void> {
+  async resumeJob(machineId: string): Promise<void> {
     const provider = await this.getProvider(machineId);
     return await provider.resumeJob();
   }
 
-  async cancelJob(machineId: number): Promise<void> {
+  async cancelJob(machineId: string): Promise<void> {
     const provider = await this.getProvider(machineId);
     return await provider.cancelJob();
   }
 
-  async setFanSpeed(machineId: number, speedPercentage: number): Promise<void> {
+  async setFanSpeed(machineId: string, speedPercentage: number): Promise<void> {
     const provider = await this.getProvider(machineId);
     return await provider.setFanSpeed(speedPercentage);
   }
 
-  async setFeedRate(machineId: number, speedPercentage: number): Promise<void> {
+  async setFeedRate(machineId: string, speedPercentage: number): Promise<void> {
     const provider = await this.getProvider(machineId);
     return await provider.setFeedRate(speedPercentage);
   }
 
-  async setFlowRate(machineId: number, extruderIndex: number, flowRatePercentage: number): Promise<void> {
+  async setFlowRate(machineId: string, extruderIndex: number, flowRatePercentage: number): Promise<void> {
     const provider = await this.getProvider(machineId);
     return await provider.setFlowRate(extruderIndex, flowRatePercentage);
   }
 
-  async setTemperature(machineId: number, heaterIndex: number, temperature: number): Promise<void> {
+  async setTemperature(machineId: string, heaterIndex: number, temperature: number): Promise<void> {
     const machine = await this.context.machines.getById(machineId);
     const provider = this.providerService.getProvider(machine);
 

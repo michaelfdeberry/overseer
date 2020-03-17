@@ -58,18 +58,18 @@ export const usersCreateEpic = (action$: Observable<Action>, state$: StateObserv
     withLatestFrom(state$.pipe(pluck('configuration', 'users', 'createState'))),
     authorizingMergeMap(([, { isValid, ...createdUser }]) =>
       createUser(createdUser).pipe(
-        map(user => configurationActions.users.createComplete(user)),
+        map(user => configurationActions.users.complete(user)),
         catchAndLogError()
       )
     )
   );
 };
 
-export const usersCreateCompleteEpic = (action$: Observable<TypedAction<DisplayUser>>, state$: StateObservable<AppState>) => {
+export const usersCompleteEpic = (action$: Observable<TypedAction<DisplayUser>>, state$: StateObservable<AppState>) => {
   return action$.pipe(
-    ofType(ConfigurationActionTypes.usersCreateComplete),
+    ofType(ConfigurationActionTypes.usersComplete),
     withLatestFrom(state$),
-    map(([{ type, ...user }, { core: { users } }]) => coreActions.usersOperationComplete([user, ...users.filter(u => u.id !== user.id)]))
+    map(([{ type, ...user }, { core: { users } }]) => coreActions.usersOperationComplete([...users.filter(u => u.id !== user.id), user]))
   );
 };
 

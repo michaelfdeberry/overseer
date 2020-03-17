@@ -17,7 +17,7 @@ export class AuthenticationService {
     return await this.authenticate(user);
   }
 
-  async preauthenticate(userId: number): Promise<string | undefined> {
+  async preauthenticate(userId: string): Promise<string | undefined> {
     const user = await this.context.users.getById(userId);
     if (!user) return;
     if (user.accessLevel !== AccessLevel.Readonly) return;
@@ -38,7 +38,7 @@ export class AuthenticationService {
     return this.authenticate(user);
   }
 
-  async deauthenticateUser(userId: number): Promise<DisplayUser | undefined> {
+  async deauthenticateUser(userId: string): Promise<DisplayUser | undefined> {
     return await this.deauthenticate(await this.context.users.getById(userId));
   }
 

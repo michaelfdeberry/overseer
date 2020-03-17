@@ -10,6 +10,8 @@ export interface ConfigurationState {
     themeStepComplete?: boolean;
   };
   users: {
+    loaded?: boolean;
+    complete?: boolean;
     createState?: CreateUserFormState;
   };
   machines: {

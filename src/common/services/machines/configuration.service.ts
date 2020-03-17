@@ -6,7 +6,7 @@ import { MachineProviderService } from './provider.service';
 export class MachineConfigurationService {
   constructor(private context: DataContext, private providerService: MachineProviderService) {}
 
-  getMachine(id: number): Promise<Machine> {
+  getMachine(id: string): Promise<Machine> {
     return this.context.machines.getById(id);
   }
 
@@ -34,11 +34,11 @@ export class MachineConfigurationService {
     return machine;
   }
 
-  async deleteMachine(machineId: number): Promise<void> {
+  async deleteMachine(machineId: string): Promise<void> {
     await this.context.machines.delete(machineId);
   }
 
-  async sortMachines(sortOrder: number[]): Promise<void> {
+  async sortMachines(sortOrder: string[]): Promise<void> {
     const machines = await this.getMachines();
     await this.context.machines.updateAll(
       machines.map(m => {

@@ -2,7 +2,7 @@ import { AccessLevel } from './access-level.enum';
 import { DisplayUser } from './display-user.interface';
 
 export class User {
-  id?: number;
+  id?: string;
   username: string;
   passwordHash: string;
   passwordSalt: string;
