@@ -9,7 +9,6 @@ import {
 } from '@overseer/common/models';
 import * as React from 'react';
 
-import { MachineConfigurationFormState } from '../../types/machine-configuration-form.state';
 import { DisplayOption } from '../../utils/display-options.class';
 import { isRequiredFieldValid } from '../../validators/required.validator';
 import { ConfigurationInputs } from './configuration-inputs';
@@ -20,6 +19,12 @@ export type MachineConfigurationFormProps = {
   state: MachineConfigurationFormState;
   updateState: (state: MachineConfigurationFormState) => void;
 };
+
+export interface MachineConfigurationFormState {
+  isValid?: boolean;
+  machineType?: string;
+  configuration?: MachineConfigurationCollection;
+}
 
 export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurationFormProps> = (props: MachineConfigurationFormProps) => {
   const { mode, state, updateState, restriction = BuildRestrictionType.none } = props;

@@ -1,6 +1,3 @@
-import { CreateUserFormState } from '../types/create-user-form.state';
-import { MachineConfigurationFormState } from '../types/machine-configuration-form.state';
-
 export interface ConfigurationState {
   setup?: {
     loaded: boolean;
@@ -12,10 +9,10 @@ export interface ConfigurationState {
   users: {
     loaded?: boolean;
     complete?: boolean;
-    createState?: CreateUserFormState;
   };
   machines: {
-    formState?: MachineConfigurationFormState;
+    loaded?: boolean;
+    complete?: boolean;
   };
 }
 

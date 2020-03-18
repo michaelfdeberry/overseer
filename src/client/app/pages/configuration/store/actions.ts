@@ -2,8 +2,7 @@ import { DisplayUser, Machine } from '@overseer/common/models';
 import { Action } from 'redux';
 
 import { TypedAction } from '../../../store/action.type';
-import { CreateUserFormState } from '../types/create-user-form.state';
-import { MachineConfigurationFormState } from '../types/machine-configuration-form.state';
+import { MachineConfigurationFormState } from '../components/machines/machine-configuration-form';
 
 export enum ConfigurationActionTypes {
   setupLoad = '@overseer/client/configuration/setup/load',
@@ -13,16 +12,15 @@ export enum ConfigurationActionTypes {
   setupCompleteMachineStep = '@overseer/client/configuration/setup/completeMachineStep',
   setupCompleteThemeStep = '@overseer/client/configuration/setup/completeThemeStep',
   setupComplete = '@overseer/client/configuration/setup/complete',
-  usersLoad = '@overseer/client/configuration/users/load',
+  usersLoad = '@overseer/client/configuration/load',
   usersComplete = '@overseer/client/configuration/users/complete',
-  usersCancel = '@overseer/client/configuration/users/cancel',
   usersCreate = '@overseer/client/configuration/users/create',
-  usersUpdateCreateState = '@overseer/client/configuration/users/updateCreateState',
-  machinesUpdateState = '@overseer/client/configuration/machines/updateState',
+  usersChangePassword = '@overseer/client/configuration/users/changePassword',
+  usersUpdate = '@overseer/client/configuration/users/update',
+  machinesLoad = '@overseer/client/configuration/machines/load',
+  machinesComplete = '@overseer/client/configuration/machines/complete',
   machinesCreate = '@overseer/client/configuration/machines/create',
-  machinesCreateComplete = '@overseer/client/configuration/machines/createComplete',
   machinesUpdate = '@overseer/client/configuration/machines/update',
-  machinesUpdateComplete = '@overseer/client/configuration/machines/updateComplete',
 }
 
 export const configurationActions = {
@@ -30,14 +28,14 @@ export const configurationActions = {
     load(): Action<string> {
       return { type: ConfigurationActionTypes.setupLoad };
     },
-    submitAdminStep(): Action<string> {
-      return { type: ConfigurationActionTypes.setupSubmitAdminStep };
+    submitAdminStep(user: DisplayUser): TypedAction<DisplayUser> {
+      return { type: ConfigurationActionTypes.setupSubmitAdminStep, ...user };
     },
-    completeAdminStep(): Action<string> {
-      return { type: ConfigurationActionTypes.setupCompleteAdminStep };
+    completeAdminStep(user: DisplayUser): TypedAction<DisplayUser> {
+      return { type: ConfigurationActionTypes.setupCompleteAdminStep, ...user };
     },
-    submitMachineStep(): Action<string> {
-      return { type: ConfigurationActionTypes.setupSubmitMachineStep };
+    submitMachineStep(state: MachineConfigurationFormState): TypedAction<MachineConfigurationFormState> {
+      return { type: ConfigurationActionTypes.setupSubmitMachineStep, ...state };
     },
     completeMachineStep(): Action<string> {
       return { type: ConfigurationActionTypes.setupCompleteMachineStep };
@@ -56,25 +54,19 @@ export const configurationActions = {
     complete(user: DisplayUser): TypedAction<DisplayUser> {
       return { type: ConfigurationActionTypes.usersComplete, ...user };
     },
-    cancel(): Action<string> {
-      return { type: ConfigurationActionTypes.usersCancel };
-    },
-    create(): Action<string> {
-      return { type: ConfigurationActionTypes.usersCreate };
-    },
-    updateCreateState(state: CreateUserFormState): TypedAction<CreateUserFormState> {
-      return { type: ConfigurationActionTypes.usersUpdateCreateState, ...state };
+    createUser(user: DisplayUser): TypedAction<DisplayUser> {
+      return { type: ConfigurationActionTypes.usersCreate, ...user };
     },
   },
   machines: {
-    updateState(state: MachineConfigurationFormState): TypedAction<MachineConfigurationFormState> {
-      return { type: ConfigurationActionTypes.machinesUpdateState, ...state };
+    load(): Action<string> {
+      return { type: ConfigurationActionTypes.machinesLoad };
     },
-    create(): Action<string> {
-      return { type: ConfigurationActionTypes.machinesCreate };
+    complete(machine: Machine): TypedAction<{ machine: Machine }> {
+      return { type: ConfigurationActionTypes.machinesComplete, machine };
     },
-    createComplete(machine: Machine): TypedAction<{ machine: Machine }> {
-      return { type: ConfigurationActionTypes.machinesCreateComplete, machine };
+    createMachine(state): TypedAction<MachineConfigurationFormState> {
+      return { type: ConfigurationActionTypes.machinesCreate, ...state };
     },
   },
 };

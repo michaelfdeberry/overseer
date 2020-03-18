@@ -6,16 +6,14 @@ import { Link, useHistory } from 'react-router-dom';
 
 import { AppState } from '../../../../store';
 import { configurationActions } from '../../store/actions';
-import { CreateUserFormState } from '../../types/create-user-form.state';
-import { CreateUserForm } from './create-user-form';
+import { CreateUserForm, CreateUserFormState } from './create-user-form';
 
 export const CreateUserContainer: React.FunctionComponent = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const loaded = useSelector<AppState, boolean>(state => state.configuration.users.loaded);
   const complete = useSelector<AppState, boolean>(state => state.configuration.users.complete);
-  const state = useSelector<AppState, CreateUserFormState>(state => state.configuration.users.createState);
-  const updateState = (s: CreateUserFormState) => dispatch(configurationActions.users.updateCreateState(s));
+  const [state, updateState] = React.useState<CreateUserFormState>({});
 
   React.useEffect(() => {
     if (!loaded) {
@@ -24,18 +22,17 @@ export const CreateUserContainer: React.FunctionComponent = () => {
   }, [loaded]);
 
   React.useEffect(() => {
-    if (!state) {
-      updateState({});
+    if (complete) {
+      history.push('/configuration/users');
     }
-  }, [!!state]);
+  }, [complete]);
 
-  if (!loaded) {
-    return null;
-  }
+  function save() {
+    const { isValid, ...user } = state;
 
-  if (complete) {
-    history.push('/configuration/users');
-    return null;
+    if (isValid) {
+      dispatch(configurationActions.users.createUser(user));
+    }
   }
 
   return (
@@ -53,7 +50,7 @@ export const CreateUserContainer: React.FunctionComponent = () => {
           <Button onClick={() => updateState(undefined)} component={Link} to="/configuration/users">
             Cancel
           </Button>
-          <Button disabled={!state.isValid} onClick={() => dispatch(configurationActions.users.create())}>
+          <Button color="primary" disabled={!state.isValid} onClick={save}>
             Save
           </Button>
         </div>

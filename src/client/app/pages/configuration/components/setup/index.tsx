@@ -8,11 +8,9 @@ import { selectIsInitialSetupRequired } from '../../../../core/store/selectors';
 import { AppState } from '../../../../store';
 import { configurationActions } from '../../store/actions';
 import { selectRestrictionType } from '../../store/selectors';
-import { CreateUserFormState } from '../../types/create-user-form.state';
-import { MachineConfigurationFormState } from '../../types/machine-configuration-form.state';
-import { MachineConfigurationForm } from '../machines/machine-configuration-form';
+import { MachineConfigurationForm, MachineConfigurationFormState } from '../machines/machine-configuration-form';
 import { ThemeSelector } from '../system/theme-selector';
-import { CreateUserForm } from '../users/create-user-form';
+import { CreateUserForm, CreateUserFormState } from '../users/create-user-form';
 
 export const SetupPage: React.FunctionComponent = () => {
   const history = useHistory();
@@ -21,10 +19,8 @@ export const SetupPage: React.FunctionComponent = () => {
   const isSetupRequired = useSelector(selectIsInitialSetupRequired);
   const isSetupPageLoaded = useSelector((state: AppState) => state.configuration.setup?.loaded);
   const currentStep = useSelector((state: AppState) => state.configuration.setup?.currentStep);
-  const userState = useSelector((state: AppState) => state.configuration.users?.createState);
-  const machineState = useSelector((state: AppState) => state.configuration.machines?.formState);
-  const updateUserState = (userState: CreateUserFormState) => dispatch(configurationActions.users.updateCreateState(userState));
-  const updateMachineState = (machineState: MachineConfigurationFormState) => dispatch(configurationActions.machines.updateState(machineState));
+  const [userState, updateUserState] = React.useState<CreateUserFormState>({ accessLevel: AccessLevel.Administrator });
+  const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
 
   if (!isSetupRequired) {
     history.replace('/');
@@ -37,20 +33,21 @@ export const SetupPage: React.FunctionComponent = () => {
   }
 
   function saveAdmin(): void {
-    if (currentStep === 0 && userState.isValid) {
-      dispatch(configurationActions.setup.submitAdminStep());
+    const { isValid, ...user } = userState;
+    if (currentStep === 0 && isValid) {
+      dispatch(configurationActions.setup.submitAdminStep(user));
     }
   }
 
   function saveMachine(): void {
     if (currentStep === 1 && machineState.isValid) {
-      dispatch(configurationActions.setup.submitMachineStep());
+      dispatch(configurationActions.setup.submitMachineStep(machineState));
     }
   }
 
   function saveMachineAndAddMore(): void {
     if (currentStep === 1 && machineState.isValid) {
-      dispatch(configurationActions.machines.create());
+      dispatch(configurationActions.machines.createMachine(machineState));
     }
   }
 

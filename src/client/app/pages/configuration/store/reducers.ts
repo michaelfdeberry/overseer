@@ -18,18 +18,11 @@ export function configurationReducer(state: ConfigurationState = initialState, a
     case ConfigurationActionTypes.setupComplete:
       return { ...state, setup: undefined };
     case ConfigurationActionTypes.usersLoad:
-      return { ...state, users: { ...state.users, loaded: true } };
-    case ConfigurationActionTypes.usersUpdateCreateState:
-      return { ...state, users: { ...state.users, createState: payload } };
+      return { ...state, users: { ...state.users, loaded: true, complete: false } };
     case ConfigurationActionTypes.usersComplete:
-      return { ...state, users: { ...state.users, createState: undefined, complete: true } };
-    case ConfigurationActionTypes.usersCancel:
-      return { ...state, users: {} };
-    case ConfigurationActionTypes.machinesUpdateState:
-      return { ...state, machines: { ...state.machines, formState: payload } };
-    case ConfigurationActionTypes.machinesCreateComplete:
-    case ConfigurationActionTypes.machinesUpdateComplete:
-      return { ...state, machines: { ...state.machines, formState: undefined } };
+      return { ...state, users: { ...state.users, loaded: false, complete: true } };
+    case ConfigurationActionTypes.machinesComplete:
+      return { ...state, machines: { ...state.machines, complete: true } };
     default:
       return state;
   }

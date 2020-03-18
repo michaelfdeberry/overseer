@@ -1,7 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
+import { AccessLevel } from '@overseer/common/models';
 import * as React from 'react';
 
-import { CreateUserFormState } from '../../types/create-user-form.state';
 import { accessLevels, sessionLifetimes } from '../../utils/display-options.class';
 import { isConfirmPasswordValid } from '../../validators/confirm-password.validator';
 import { isPasswordValid } from '../../validators/password.validator';
@@ -12,6 +12,15 @@ export type CreateUserFormProps = {
   state: CreateUserFormState;
   updateState: (user: CreateUserFormState) => void;
 };
+
+export interface CreateUserFormState {
+  isValid?: boolean;
+  username?: string;
+  password?: string;
+  confirmPassword?: string;
+  sessionLifetime?: number;
+  accessLevel?: AccessLevel;
+}
 
 export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (props: CreateUserFormProps) => {
   const { disableAccessLevel, state, updateState } = props;
