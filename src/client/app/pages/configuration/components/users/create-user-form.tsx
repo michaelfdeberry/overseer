@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
+import { FormControl, InputLabel, MenuItem, Select, TextField, Tooltip } from '@material-ui/core';
 import { AccessLevel } from '@overseer/common/models';
 import * as React from 'react';
 
@@ -6,6 +6,7 @@ import { accessLevels, sessionLifetimes } from '../../utils/display-options.clas
 import { isConfirmPasswordValid } from '../../validators/confirm-password.validator';
 import { isPasswordValid } from '../../validators/password.validator';
 import { isRequiredFieldValid } from '../../validators/required.validator';
+import { PasswordRequirements } from './password-requirements';
 
 export type CreateUserFormProps = {
   disableAccessLevel?: boolean;
@@ -86,17 +87,19 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
         type="text"
         error={touched.username && !isRequiredFieldValid(state.username)}
       />
-      <TextField
-        fullWidth
-        required
-        id="password"
-        label="Password"
-        value={state.password || ''}
-        onBlur={() => handleTouch('password')}
-        onChange={handleChange('password')}
-        type="password"
-        error={touched.password && !isPasswordValid(state.password)}
-      />
+      <Tooltip arrow placement="bottom-end" title={<PasswordRequirements />}>
+        <TextField
+          fullWidth
+          required
+          id="password"
+          label="Password"
+          value={state.password || ''}
+          onFocus={() => handleTouch('password')}
+          onChange={handleChange('password')}
+          type="password"
+          error={touched.password && !isPasswordValid(state.password)}
+        />
+      </Tooltip>
       <TextField
         fullWidth
         required
