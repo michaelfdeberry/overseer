@@ -1,18 +1,30 @@
-import { iif, of, OperatorFunction } from 'rxjs';
-import { catchError, mergeMap } from 'rxjs/operators';
+import { errorMessageMap } from '@overseer/common/error-messages';
+import * as React from 'react';
+import { ObservableInput, ObservedValueOf, OperatorFunction, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
-import { coreActions } from '../core/store/actions';
-import { getActiveUser } from '../operations/active-user.operations';
-import { authorize } from '../operations/local/authorization.operations.local';
+import { AnyAction } from './action.type';
+import { actions } from './actions';
 
-export function catchAndLogError(): OperatorFunction<any, any> {
-  return catchError((error: Error) => of(coreActions.logError(error.message, error.stack)));
+export function catchLogNotify<T, O extends ObservableInput<any>>(dispatch: React.Dispatch<AnyAction>): OperatorFunction<T, T | ObservedValueOf<O>> {
+  return catchError((error: Error) => {
+    const errorMessage = errorMessageMap.hasOwnProperty(error.message) ? errorMessageMap[error.message] : errorMessageMap['unknown'];
+
+    dispatch(actions.layout.notifyError(errorMessage));
+    return throwError(error);
+  });
 }
 
-export function authorizingMergeMap(project: (value: any) => any): OperatorFunction<any, any> {
-  return mergeMap((incomingValue: any) =>
-    authorize(getActiveUser()?.token).pipe(
-      mergeMap(authenticatedUser => iif(() => !!authenticatedUser, project(incomingValue), of(coreActions.invalidSession())))
-    )
-  );
+export function catchLogThrow<T, O extends ObservableInput<any>>(): OperatorFunction<T, T | ObservedValueOf<O>> {
+  return catchError((error: Error) => {
+    return throwError(error);
+  });
 }
+
+// export function authorizingMergeMap(project: (value: any) => any): OperatorFunction<any, any> {
+//   return mergeMap((incomingValue: any) =>
+//     authorize(getActiveUser()?.token).pipe(
+//       mergeMap(authenticatedUser => iif(() => !!authenticatedUser, project(incomingValue), of(coreActions.invalidSession())))
+//     )
+//   );
+// }

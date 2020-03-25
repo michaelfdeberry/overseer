@@ -1,4 +1,4 @@
-import { defaultTheme } from '../themes';
+import { defaultTheme } from '../ui/layout/themes';
 
 export function getCurrentTheme(): string {
   return localStorage.getItem('current_theme') || defaultTheme;

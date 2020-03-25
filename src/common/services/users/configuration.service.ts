@@ -40,7 +40,7 @@ export class UserConfigurationService {
     const admins = users.filter(u => u.accessLevel === AccessLevel.Administrator);
 
     if (users.length === 1) throw new Error('delete_user_unavailable');
-    if (isAdmin && admins.length === 1) throw new Error('delete_user_unavailable');
+    if (isAdmin && admins.length === 1) throw new Error('delete_admin_unavailable');
 
     await this.context.users.delete(user.id);
     return user;

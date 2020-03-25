@@ -4,17 +4,39 @@
   .configuration-form {
     padding: 20px 20px 10px;
 
+    .MuiTypography-caption {
+      margin-bottom: 10px;
+      display: block;
+    }
+
     h6 {
-      .MuiIcon-root svg {
-        margin-right: 10px;
-        margin-bottom: -4px;
+      margin-bottom: 10px;
+      .MuiIcon-root {
+        &.sub-icon {
+          position: relative;
+
+          svg {
+            font-size: 12px;
+            position: absolute;
+            left: -7px;
+            top: 7px;
+          }
+        }
+
+        svg {
+          margin-right: 10px;
+          margin-bottom: -4px;
+        }
       }
     }
 
     .MuiFormControl-root {
-      margin-top: 10px;
-      display: block;
-      width: 100%;
+      margin-bottom: 10px;
+
+      .input-actions {
+        position: absolute;
+        right: -10px;
+      }
     }
 
     .switch-container {

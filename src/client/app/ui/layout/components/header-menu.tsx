@@ -1,0 +1,73 @@
+import { Icon, IconButton, Menu, MenuItem } from '@material-ui/core';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import MenuIcon from '@material-ui/icons/Menu';
+import SettingsIcon from '@material-ui/icons/Settings';
+import { AccessLevel } from '@overseer/common/models';
+import * as React from 'react';
+import { Link, useHistory } from 'react-router-dom';
+
+import { useDispatch, useSelector } from '../../../hooks';
+import { actions } from '../../../store/actions';
+
+export const HeaderMenu: React.FunctionComponent = () => {
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const activeUser = useSelector(state => state.activeUser);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const openMenu = (event: React.MouseEvent<HTMLElement>): void => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const closeMenu = (): void => {
+    setAnchorEl(null);
+  }
+
+  const signOut = (): void => {
+    closeMenu();
+    dispatch(actions.common.clearActiveUser());
+    history.push('/login');
+  }
+
+  if (!activeUser) {
+    return null;
+  }
+
+  return (
+    <div className="header-menu-container">
+      <IconButton onClick={openMenu} color="inherit">
+        <MenuIcon />
+      </IconButton>
+      <Menu
+        className="header-menu"
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={!!anchorEl}
+        onClose={closeMenu}
+      >
+        {activeUser.accessLevel === AccessLevel.Administrator ? (
+          <MenuItem component={Link} to="/configuration">
+            <span className="header-menu-item-text">Settings</span>
+            <Icon>
+              <SettingsIcon />
+            </Icon>
+          </MenuItem>
+        ) : null}
+        <MenuItem onClick={signOut}>
+          <span className="header-menu-item-text">Sign out</span>
+          <Icon>
+            <ExitToAppIcon />
+          </Icon>
+        </MenuItem>
+      </Menu>
+    </div>
+  );
+};

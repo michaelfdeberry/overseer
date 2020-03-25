@@ -6,3 +6,43 @@ html,
 body {
   font: 'Roboto';
 }
+
+.MuiButton-root.danger-button > .MuiButton-label {
+  color: #f44336;
+}
+
+.password-requirements {
+  font-size: 14px;
+  padding: 10px;
+
+  .success,
+  .error {
+    position: relative;
+    padding: 5px 0;
+    margin-left: 20px;
+
+    .check,
+    .close {
+      display: none;
+      position: absolute;
+      top: -1px;
+      left: -25px;
+    }
+  }
+
+  .success {
+    color: #4caf50;
+
+    .check {
+      display: inline;
+    }
+  }
+
+  .error {
+    color: #f44336;
+
+    .close {
+      display: inline;
+    }
+  }
+}
