@@ -9,10 +9,10 @@ export interface AppState {
   isInitialized: boolean;
   isSetup?: boolean;
   isLocalApp?: boolean;
-  isLoading?: boolean;
+  loading?: number;
   currentTheme?: string;
   lastNotification?: Notification;
-  activeUser: DisplayUser;
+  activeUser?: DisplayUser;
   users?: DisplayUser[];
   settings?: SystemSettings;
   machines?: Machine[];

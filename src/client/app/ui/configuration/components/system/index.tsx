@@ -1,9 +1,11 @@
 import { Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, Typography } from '@material-ui/core';
 import { SystemSettings } from '@overseer/common/models';
+import { isEqual } from 'lodash/fp';
 import * as React from 'react';
 
 import { useDispatch, useSelector } from '../../../../hooks';
 import { getSettings, updateSettings } from '../../../../operations/local/configuration.operations.local';
+import { invokeOperation } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
 import { pollIntervals } from '../../utils/display-options.class';
 import { ThemeSelector } from './theme-selector';
@@ -18,7 +20,9 @@ export const SystemSettingsContainer: React.FunctionComponent = () => {
   };
 
   const saveForm = (): void => {
-    updateSettings(formState).subscribe(() => dispatch(actions.common.updateSettings(formState)));
+    invokeOperation(dispatch, updateSettings(formState), 'Settings Updated!').subscribe(() => {
+      dispatch(actions.common.updateSettings(formState));
+    });
   };
 
   const resetForm = (): void => {
@@ -78,10 +82,10 @@ export const SystemSettingsContainer: React.FunctionComponent = () => {
         <div className="configuration-actions">
           <div className="configuration-actions-secondary"></div>
           <div className="configuration-actions-primary">
-            <Button disabled={settings == formState} onClick={resetForm}>
+            <Button disabled={isEqual(settings, formState)} onClick={resetForm}>
               Cancel
             </Button>
-            <Button disabled={settings == formState} color="primary" onClick={saveForm}>
+            <Button disabled={isEqual(settings, formState)} color="primary" onClick={saveForm}>
               Save
             </Button>
           </div>

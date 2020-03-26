@@ -38,8 +38,8 @@ export const Content: React.FunctionComponent = () => {
         onClose={onNotificationClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert onClose={onNotificationClose} severity={lastNotification.severity} variant="filled" elevation={6}>
-          {lastNotification.message}
+        <Alert onClose={onNotificationClose} severity={lastNotification?.severity} variant="filled" elevation={6}>
+          {lastNotification?.message}
         </Alert>
       </Snackbar>
     </React.Fragment>

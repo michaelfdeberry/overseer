@@ -12,8 +12,8 @@ export function useAppState() {
   return React.useContext(StateContext);
 }
 
-export function useSelector<T>(expression: (state: AppState) => T): T {
+export function useSelector<T>(predicate: (state: AppState) => T): T {
   const state = useAppState();
-  const memo = React.useMemo(() => expression(state), [state]);
+  const memo = React.useMemo(() => predicate(state), [state]);
   return memo;
 }

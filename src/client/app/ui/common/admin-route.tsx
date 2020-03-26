@@ -11,7 +11,7 @@ export const AdminRoute: React.FunctionComponent<RouteProps> = ({ children, ...r
   const isSetup = useSelector(state => state.isSetup);
   const activeUser = useSelector(state => state.activeUser);
 
-  function renderRoute(): React.ReactNode {
+  const renderRoute = (): React.ReactNode => {
     if (!isSetup) {
       dispatch(actions.layout.notifyError('setup_required'));
       return <Redirect to="/configuration/setup" />;
@@ -27,7 +27,7 @@ export const AdminRoute: React.FunctionComponent<RouteProps> = ({ children, ...r
     }
 
     return children;
-  }
+  };
 
   return <Route {...rest} render={renderRoute} />;
 };

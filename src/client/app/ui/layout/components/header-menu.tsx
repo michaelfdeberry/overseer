@@ -14,6 +14,7 @@ export const HeaderMenu: React.FunctionComponent = () => {
   const dispatch = useDispatch();
   const activeUser = useSelector(state => state.activeUser);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = !!anchorEl;
 
   const openMenu = (event: React.MouseEvent<HTMLElement>): void => {
     setAnchorEl(event.currentTarget);
@@ -42,7 +43,7 @@ export const HeaderMenu: React.FunctionComponent = () => {
         className="header-menu"
         anchorEl={anchorEl}
         anchorOrigin={{
-          vertical: 'bottom',
+          vertical: 'top',
           horizontal: 'right',
         }}
         keepMounted
@@ -50,15 +51,17 @@ export const HeaderMenu: React.FunctionComponent = () => {
           vertical: 'top',
           horizontal: 'right',
         }}
-        open={!!anchorEl}
+        open={open}
         onClose={closeMenu}
       >
         {activeUser.accessLevel === AccessLevel.Administrator ? (
-          <MenuItem component={Link} to="/configuration">
-            <span className="header-menu-item-text">Settings</span>
-            <Icon>
-              <SettingsIcon />
-            </Icon>
+          <MenuItem>
+            <Link to="/configuration">
+              <span className="header-menu-item-text">Settings</span>
+              <Icon>
+                <SettingsIcon />
+              </Icon>
+            </Link>
           </MenuItem>
         ) : null}
         <MenuItem onClick={signOut}>

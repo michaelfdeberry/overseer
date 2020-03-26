@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useSelector } from '../../hooks';
 import { Content } from './components/content';
 import { Header } from './components/header';
+import { Loader } from './components/loader';
 import { defaultTheme, themeMap } from './themes';
 
 const Layout: React.FunctionComponent = () => {
@@ -12,6 +13,7 @@ const Layout: React.FunctionComponent = () => {
   return (
     <ThemeProvider theme={themeMap[themeName || defaultTheme]}>
       <CssBaseline />
+      <Loader />
       <Header></Header>
       <Content></Content>
     </ThemeProvider>

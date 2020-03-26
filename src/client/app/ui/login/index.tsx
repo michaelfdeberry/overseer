@@ -10,11 +10,11 @@ import { catchLogNotify } from '../../store/operators';
 import { isRequiredFieldValid } from '../configuration/validators/required.validator';
 
 export const LoginPage: React.FunctionComponent = () => {
+  const history = useHistory();
+  const dispatch = useDispatch();
   const activeUser = useSelector(state => state.activeUser);
   const [loginFormState, setLoginFormState] = React.useState<DisplayUser>({});
   const [touched, setTouched] = React.useState({ username: false, password: false });
-  const dispatch = useDispatch();
-  const history = useHistory();
 
   const isValid = (): boolean => {
     return isRequiredFieldValid(loginFormState.username) && isRequiredFieldValid(loginFormState.password);
