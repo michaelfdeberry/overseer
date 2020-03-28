@@ -9,7 +9,7 @@ cake/tools/**
 publish/**
 
 # Exclude generated public files 
-server/public/**
+src/server/public/**
 
 # User-specific files
 *.suo
