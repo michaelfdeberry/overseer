@@ -1,5 +1,5 @@
 import { DataContext } from '../../data/data-context.class';
-import { Certificate } from '../../models/system/certificate.interface';
+import { Certificate } from '../../models/system/certificate.class';
 import { defaultSystemSettings, SystemSettings } from '../../models/system/settings.interface';
 
 export class SystemConfigurationService {

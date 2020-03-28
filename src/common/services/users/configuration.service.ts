@@ -2,23 +2,38 @@ import * as bcrypt from 'bcryptjs';
 
 import { DataContext } from '../../data/data-context.class';
 import { AccessLevel, DisplayUser, User } from '../../models/users';
-import { createUser } from './create-user.function';
 
 export class UserConfigurationService {
   constructor(private context: DataContext) {}
 
   async getUsers(): Promise<DisplayUser[]> {
     const users = await this.context.users.getAll();
-    return users.map(u => User.toDisplay(u));
+    return users.map(u => u.toDisplay());
   }
 
   async getUser(userId: string): Promise<DisplayUser> {
     const user = await this.context.users.getById(userId);
-    return User.toDisplay(user);
+    return user.toDisplay();
   }
 
   async createUser(user: DisplayUser): Promise<DisplayUser> {
-    return await createUser(this.context.users, user);
+    if (!user) throw new Error('invalid_user');
+    if (!user.username) throw new Error('invalid_username');
+    if (!user.password) throw new Error('invalid_password');
+    if (await this.context.users.getByKey(u => u.username.toLowerCase() === user.username.toLowerCase())) throw new Error('unavailable_username');
+
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(user.password, salt);
+    const pUser = new User({
+      username: user.username,
+      passwordHash: hash,
+      passwordSalt: salt,
+      sessionLifetime: user.sessionLifetime,
+      accessLevel: user.accessLevel,
+    });
+
+    await this.context.users.add(pUser);
+    return pUser.toDisplay();
   }
 
   async updateUser(user: DisplayUser): Promise<DisplayUser> {
@@ -31,7 +46,7 @@ export class UserConfigurationService {
     });
 
     await this.context.users.update(pUser);
-    return User.toDisplay(pUser);
+    return pUser.toDisplay();
   }
 
   async deleteUser(user: DisplayUser): Promise<DisplayUser> {
@@ -54,6 +69,6 @@ export class UserConfigurationService {
     pUser.tokenExpiration = undefined;
 
     await this.context.users.update(pUser);
-    return User.toDisplay(pUser);
+    return pUser.toDisplay();
   }
 }

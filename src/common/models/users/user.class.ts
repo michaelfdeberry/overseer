@@ -17,26 +17,26 @@ export class User {
     Object.assign(this, options || {});
   }
 
-  static toDisplay(user: User, includeToken = false): DisplayUser {
+  toDisplay(includeToken = false): DisplayUser {
     return {
-      id: user.id,
-      username: user.username,
-      sessionLifetime: user.sessionLifetime,
-      accessLevel: user.accessLevel,
-      isLoggedIn: !User.isTokenExpired(user),
-      token: includeToken ? user.token : undefined,
+      id: this.id,
+      username: this.username,
+      sessionLifetime: this.sessionLifetime,
+      accessLevel: this.accessLevel,
+      isLoggedIn: !this.isTokenExpired(),
+      token: includeToken ? this.token : undefined,
     };
   }
 
-  static isTokenExpired(user: User): boolean {
+  isTokenExpired(): boolean {
     // if the user or token is null it's considered expired
-    if (!user.token || user.token === '') return true;
+    if (!this.token || this.token === '') return true;
 
     // if there is no expiration set the, with the presence of a token, the user
     // is configured for indefinite session length
-    if (!user.tokenExpiration) return false;
+    if (!this.tokenExpiration) return false;
 
     // otherwise the tokens is expired if it's expiration date is less than the current date
-    return user.tokenExpiration < Date.now();
+    return this.tokenExpiration < Date.now();
   }
 }

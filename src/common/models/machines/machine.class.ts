@@ -33,7 +33,8 @@ export class Machine {
     this.patch('Webcam Orientation', value);
   }
 
-  constructor(configuration: MachineConfigurationCollection = {}) {
+  constructor(type?: string, configuration: MachineConfigurationCollection = {}) {
+    this.type = type;
     this.configuration = configuration;
   }
 

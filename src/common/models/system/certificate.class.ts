@@ -1,4 +1,4 @@
-export interface Certificate {
+export class Certificate {
   id: string;
   issuedTo: string;
   issuedBy: string;

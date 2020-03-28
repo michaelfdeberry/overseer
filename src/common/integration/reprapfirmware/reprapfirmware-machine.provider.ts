@@ -29,7 +29,7 @@ export class RepRapFirmwareMachineProvider extends MachineProvider implements Ex
 
   async createMachine(configuration: MachineConfigurationCollection): Promise<Machine> {
     try {
-      this.machine = new Machine(configuration);
+      this.machine = new Machine('RepRapFirmware', configuration);
       const status = await this.getData('rr_status', { params: { type: '2' } });
 
       auxiliaryHeaterTypes.forEach((auxToolType: string) => {

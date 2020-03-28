@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Route, Switch, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 
 import { AdminRoute } from '../common/admin-route';
+import { MachinesPage } from './components/machines';
 import { SetupPage } from './components/setup';
 import { SystemSettingsContainer } from './components/system';
 import { UsersPage } from './components/users';
@@ -64,7 +65,9 @@ export const ConfigurationPage: React.FunctionComponent = () => {
             </AdminRoute>
             <AdminRoute path={`${path}/machines/add`}>Add Machine</AdminRoute>
             <AdminRoute path={`${path}/machines/edit/:id`}>Edit Machine</AdminRoute>
-            <AdminRoute path={`${path}/machines`}>Machines</AdminRoute>
+            <AdminRoute path={`${path}/machines`}>
+              <MachinesPage />
+            </AdminRoute>
             <AdminRoute path={`${path}/users/add`}>
               <CreateUserPage />
             </AdminRoute>

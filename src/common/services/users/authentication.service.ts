@@ -47,7 +47,7 @@ export class AuthenticationService {
   }
 
   private async authenticate(user: User): Promise<DisplayUser> {
-    if (!User.isTokenExpired(user)) return User.toDisplay(user, true);
+    if (!user.isTokenExpired()) return user.toDisplay(true);
 
     user.token = await bcrypt.genSalt(16);
     user.tokenExpiration = user.sessionLifetime ? Date.now() + user.sessionLifetime * 86400 : undefined;
@@ -55,7 +55,7 @@ export class AuthenticationService {
     user.preauthenticatedTokeExpiration = undefined;
 
     this.context.users.update(user);
-    return User.toDisplay(user, true);
+    return user.toDisplay(true);
   }
 
   private async deauthenticate(user: User): Promise<DisplayUser> {
@@ -65,6 +65,6 @@ export class AuthenticationService {
     user.tokenExpiration = undefined;
     this.context.users.update(user);
 
-    return User.toDisplay(user);
+    return user.toDisplay();
   }
 }

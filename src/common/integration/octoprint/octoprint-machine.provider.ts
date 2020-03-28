@@ -70,7 +70,7 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
 
   async createMachine(configuration: MachineConfigurationCollection): Promise<Machine> {
     try {
-      this.machine = new Machine(configuration);
+      this.machine = new Machine('Octoprint', configuration);
 
       const settings = await this.getData('api/settings');
       const profiles = await this.getData('api/printerprofiles');
