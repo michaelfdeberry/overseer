@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
-    "build": "tsc -p",
+    "build": "npm run build:remote --prefix ../client && tsc -p",
     "prestart": "npm run build",
     "start": "ts-node dist/server.js",
     "dev": "node ./node_modules/nodemon/bin/nodemon.js -e ts  --exec \"ts-node src/server.ts || exit 1\""
