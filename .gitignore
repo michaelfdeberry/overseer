@@ -8,6 +8,9 @@ cake/tools/**
 !cake/tools/packages.config
 publish/**
 
+# Exclude generated public files 
+server/public/**
+
 # User-specific files
 *.suo
 *.user
