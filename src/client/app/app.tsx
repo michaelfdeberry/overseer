@@ -23,7 +23,7 @@ const App: React.FunctionComponent = () => {
               activeUser,
               isInitialized: true,
               isSetup: !requiresSetup,
-              isLocalApp: Boolean(__isLocalApp__),
+              isLocalApp: __isLocalApp__,
               currentTheme: getCurrentTheme(),
             }));
           });
@@ -31,8 +31,8 @@ const App: React.FunctionComponent = () => {
           dispatch(actions.common.initialize({
             isInitialized: true,
             isSetup: !requiresSetup,
+            isLocalApp: __isLocalApp__,
             currentTheme: getCurrentTheme(),
-            isLocalApp: Boolean(__isLocalApp__)
           }));
         }
       });
