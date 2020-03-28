@@ -8,8 +8,8 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../../../hooks';
 import { logout, logoutUser } from '../../../../operations/local/authentication.operations.local';
 import { deleteUser, getUsers, updateUser } from '../../../../operations/local/users.operations.local';
+import { invokeOperation } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
-import { catchLogNotify } from '../../../../store/operators';
 import { PromptDialog } from '../../../common/prompt-dialog';
 import { accessLevels, sessionLifetimes } from '../../utils/display-options.class';
 import { ChangePasswordForm } from './change-password-form';
@@ -26,14 +26,14 @@ export const UpdateUserPage: React.FunctionComponent = () => {
   const [unmodifiedUser, setUnmodifiedUser] = React.useState<DisplayUser>();
 
   const update = (): void => {
-    updateUser(user).pipe(catchLogNotify(dispatch)).subscribe(updatedUser => {
+    invokeOperation(dispatch, updateUser(user), 'User Updated!').subscribe(updatedUser => {
       dispatch(actions.users.updateUser(updatedUser));
       history.push('/configuration/users');
     });
   };
 
   const remove = (): void => {
-    deleteUser(user).pipe(catchLogNotify(dispatch)).subscribe(deletedUser => {
+    invokeOperation(dispatch, deleteUser(user), `User ${user.username} Updated!`).subscribe(deletedUser => {
       dispatch(actions.users.removedUser(deletedUser));
       history.push('/configuration/users');
     });
@@ -41,12 +41,12 @@ export const UpdateUserPage: React.FunctionComponent = () => {
 
   const signOut = (): void => {
     if (activeUser.id === user.id) {
-      logout(activeUser.token).pipe(catchLogNotify(dispatch)).subscribe(() => {
+      invokeOperation(dispatch, logout(activeUser.token)).subscribe(() => {
         dispatch(actions.common.clearActiveUser());
         history.push('/login');
       });
     } else {
-      logoutUser(user.id).pipe(catchLogNotify(dispatch)).subscribe(updatedUser => {
+      invokeOperation(dispatch, logoutUser(user.id)).subscribe(updatedUser => {
         setUser(updatedUser);
       })
     }
@@ -54,7 +54,7 @@ export const UpdateUserPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!users) {
-      getUsers().subscribe(u => dispatch(actions.users.updateUsers(u)));
+      invokeOperation(dispatch, getUsers()).subscribe(u => dispatch(actions.users.updateUsers(u)));
     }
   }, [users]);
 

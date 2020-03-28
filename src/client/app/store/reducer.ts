@@ -59,4 +59,4 @@ function loggingReducer(state: AppState, action: AnyAction): AppState {
   return newState;
 }
 
-export const reducer = loggingReducer;
+export const reducer = __isDev__ ? loggingReducer : internalReducer;

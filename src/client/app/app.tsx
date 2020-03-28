@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import { useDispatch, useSelector } from './hooks';
 import { getActiveUser } from './operations/active-user.operations';
-import { requiresInitialSetup } from './operations/local/authorization.operations.local';
+import { authorize, requiresInitialSetup } from './operations/local/authorization.operations.local';
 import { invokeOperation } from './operations/operation-invoker';
 import { getCurrentTheme } from './operations/theme.operations';
 import { actions } from './store/actions';
@@ -16,7 +16,25 @@ const App: React.FunctionComponent = () => {
   React.useEffect(() => {
     if (!isInitialized) {
       invokeOperation(dispatch, requiresInitialSetup()).subscribe((requiresSetup) => {
-        dispatch(actions.common.initialize({ isInitialized: true, isSetup: !requiresSetup, currentTheme: getCurrentTheme(), activeUser: getActiveUser() }));
+        const activeUser = getActiveUser();
+        if (activeUser) {
+          invokeOperation(dispatch, authorize(activeUser.token)).subscribe((activeUser) => {
+            dispatch(actions.common.initialize({
+              activeUser,
+              isInitialized: true,
+              isSetup: !requiresSetup,
+              isLocalApp: Boolean(__isLocalApp__),
+              currentTheme: getCurrentTheme(),
+            }));
+          });
+        } else {
+          dispatch(actions.common.initialize({
+            isInitialized: true,
+            isSetup: !requiresSetup,
+            currentTheme: getCurrentTheme(),
+            isLocalApp: Boolean(__isLocalApp__)
+          }));
+        }
       });
     }
   }, []);

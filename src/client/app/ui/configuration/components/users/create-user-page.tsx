@@ -5,6 +5,7 @@ import { Link, useHistory } from 'react-router-dom';
 
 import { useDispatch, useSelector } from '../../../../hooks';
 import { createUser } from '../../../../operations/local/users.operations.local';
+import { invokeOperation } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
 import { CreateUserForm, CreateUserFormState } from './create-user-form';
 
@@ -18,7 +19,7 @@ export const CreateUserPage: React.FunctionComponent = () => {
     const { isValid, ...user } = state;
 
     if (isValid) {
-      createUser(user).subscribe(newUser => {
+      invokeOperation(dispatch, createUser(user), `User ${user.username} Created!`).subscribe(newUser => {
         dispatch(actions.users.addUser(newUser));
         history.push('/configuration/users')
       });

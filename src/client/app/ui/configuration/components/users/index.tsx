@@ -8,8 +8,8 @@ import { Link } from 'react-router-dom';
 
 import { useDispatch, useSelector } from '../../../../hooks';
 import { getUsers } from '../../../../operations/local/users.operations.local';
+import { invokeOperation } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
-import { catchLogNotify } from '../../../../store/operators';
 import { sessionLifetimes } from '../../utils/display-options.class';
 import { sortByKey } from '../../utils/sort.functions';
 
@@ -19,7 +19,7 @@ export const UsersPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!users) {
-      getUsers().pipe(catchLogNotify(dispatch)).subscribe(u => dispatch(actions.users.updateUsers(u)));
+      invokeOperation(dispatch, getUsers()).subscribe(u => dispatch(actions.users.updateUsers(u)));
     }
   }, [users]);
 

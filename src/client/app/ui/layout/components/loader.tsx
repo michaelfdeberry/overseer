@@ -18,10 +18,12 @@ export const Loader: React.FunctionComponent = () => {
   }, [loading])
 
   return (
-    <LoadingBar
-      height={3}
-      color={theme.palette.primary.main}
-      onRef={(ref: LoadingBar) => loadingBarRef.current = ref}
-    />
+    <div className="loader">
+      <LoadingBar
+        height={3}
+        color={theme.palette.primary.main}
+        onRef={(ref: LoadingBar) => loadingBarRef.current = ref}
+      />
+    </div>
   )
 }

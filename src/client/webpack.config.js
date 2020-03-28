@@ -78,6 +78,10 @@ module.exports = function(env) {
         filename: isDev ? 'styles.css' : 'styles.[contenthash].css',
         chunkFilename: isDev ? 'styles.css' : 'styles.[contenthash].css',
       }),
+      new webpack.DefinePlugin({
+        __isDev__: isDev,
+        __isLocalApp__: buildTarget !== 'remote',
+      }),
     ],
 
     devServer: {

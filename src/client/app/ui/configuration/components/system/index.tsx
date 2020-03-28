@@ -31,7 +31,7 @@ export const SystemSettingsContainer: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!settings) {
-      getSettings().subscribe(s => dispatch(actions.common.updateSettings(s)));
+      invokeOperation(dispatch, getSettings()).subscribe(s => dispatch(actions.common.updateSettings(s)));
     } else {
       setFormState(settings);
     }

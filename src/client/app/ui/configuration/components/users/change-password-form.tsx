@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 
 import { useDispatch } from '../../../../hooks';
 import { changePassword } from '../../../../operations/local/users.operations.local';
-import { catchLogNotify } from '../../../../store/operators';
+import { invokeOperation } from '../../../../operations/operation-invoker';
 import { isConfirmPasswordValid } from '../../validators/confirm-password.validator';
 import { isPasswordValid } from '../../validators/password.validator';
 import { PasswordRequirements } from './password-requirements';
@@ -34,7 +34,7 @@ export const ChangePasswordForm: React.FunctionComponent<ChangePasswordFormProps
   };
 
   const submitPasswordForm = (): void => {
-    changePassword({ ...user, password: passwordForm.password }).pipe(catchLogNotify(dispatch)).subscribe(() => {
+    invokeOperation(dispatch, changePassword({ ...user, password: passwordForm.password })).subscribe(() => {
       history.push('/configuration/users');
     });
   };
