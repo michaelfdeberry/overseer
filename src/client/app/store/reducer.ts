@@ -35,7 +35,7 @@ function internalReducer(state: AppState, action: AnyAction): AppState {
     case actions.users.types.updateUsers:
       return { ...state, users: payload.users };
     case actions.machines.types.addMachine:
-      return { ...state, machines: [...state.machines, payload.machines] };
+      return { ...state, machines: [...state.machines, payload.machine] };
     case actions.machines.types.removeMachine:
       return { ...state, machines: state.machines.filter(m => m.id !== payload.machine.id) };
     case actions.machines.types.updateMachine:
@@ -53,7 +53,7 @@ function loggingReducer(state: AppState, action: AnyAction): AppState {
   console.groupCollapsed(action.type);
   console.log('previous state', state);
   console.log('action', action);
-  console.log('current state', state);
+  console.log('current state', newState);
   console.groupEnd();
 
   return newState;

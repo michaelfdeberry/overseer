@@ -64,19 +64,19 @@ export const SystemSettingsContainer: React.FunctionComponent = () => {
         <div className="switch-container">
           <FormControlLabel
             label="Hide Disabled Machines"
-            control={<Switch name="hideDisabledMachines" checked={formState.hideDisabledMachines} onChange={updateForm} color="primary" />}
+            control={<Switch name="hideDisabledMachines" checked={formState.hideDisabledMachines} onChange={updateForm} color="secondary" />}
           />
         </div>
         <div className="switch-container">
           <FormControlLabel
             label="Hide Idle Machines"
-            control={<Switch name="hideIdleMachines" checked={formState.hideIdleMachines} onChange={updateForm} color="primary" />}
+            control={<Switch name="hideIdleMachines" checked={formState.hideIdleMachines} onChange={updateForm} color="secondary" />}
           />
         </div>
         <div className="switch-container">
           <FormControlLabel
             label="Sort By Estimated Time Remaining"
-            control={<Switch name="sortByTimeRemaining" checked={formState.sortByTimeRemaining} onChange={updateForm} color="primary" />}
+            control={<Switch name="sortByTimeRemaining" checked={formState.sortByTimeRemaining} onChange={updateForm} color="secondary" />}
           />
         </div>
         <div className="configuration-actions">

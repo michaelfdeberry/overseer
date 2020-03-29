@@ -31,14 +31,6 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
     this.machine.patchSetting('Profiles', profiles);
   }
 
-  private get profileOptions(): { text: string; value: string }[] {
-    return this.profiles.options || [];
-  }
-
-  private set profileOptions(options: { text: string; value: string }[]) {
-    this.profiles = { ...this.profiles, options };
-  }
-
   private getHttpOptions(): AxiosRequestConfig {
     return { headers: { 'X-Api-Key': this.apiKey } };
   }
@@ -87,7 +79,7 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
         }
       }
 
-      const profileOptions = this.profileOptions;
+      const profileOptions = [];
       for (const profileKey in profiles.profiles) {
         if (!profiles.profiles.hasOwnProperty(profileKey)) {
           continue;
@@ -123,7 +115,7 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
         }
       }
 
-      this.profileOptions = profileOptions;
+      this.profiles = { ...this.profiles, options: profileOptions };
 
       return this.machine;
     } catch (err) {

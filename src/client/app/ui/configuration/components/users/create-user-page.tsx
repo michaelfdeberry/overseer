@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import { useDispatch, useSelector } from '../../../../hooks';
-import { createUser } from '../../../../operations/local/users.operations.local';
+import { createUser, getUsers } from '../../../../operations/local/users.operations.local';
 import { invokeOperation } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
 import { CreateUserForm, CreateUserFormState } from './create-user-form';
@@ -15,7 +15,7 @@ export const CreateUserPage: React.FunctionComponent = () => {
   const users = useSelector(state => state.users);
   const [state, updateState] = React.useState<CreateUserFormState>({});
 
-  function save() {
+  const save = () => {
     const { isValid, ...user } = state;
 
     if (isValid) {
@@ -24,7 +24,15 @@ export const CreateUserPage: React.FunctionComponent = () => {
         history.push('/configuration/users')
       });
     }
-  }
+  };
+
+  React.useEffect(() => {
+    if (!users) {
+      invokeOperation(dispatch, getUsers()).subscribe(users => {
+        dispatch(actions.users.updateUsers(users));
+      })
+    }
+  });
 
   return (
     <form className="configuration-form">

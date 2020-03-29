@@ -26,7 +26,7 @@ export const ConfigurationInput: React.FunctionComponent<ConfigurationInputProps
   switch (setting.type) {
     case 'options':
       return (
-        <FormControl>
+        <FormControl fullWidth>
           <InputLabel>{name}</InputLabel>
           <Select
             fullWidth

@@ -2,9 +2,10 @@ export class Repository<T extends { id?: string }> {
   constructor(private chain: any, private objConstructor: new () => T) {}
 
   construct(obj: any): T {
+    if (!obj) return undefined;
+
     const result = new this.objConstructor();
     Object.assign(result, obj);
-
     return result;
   }
 

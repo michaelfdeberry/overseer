@@ -25,6 +25,7 @@ export interface CreateUserFormState {
 
 export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (props: CreateUserFormProps) => {
   const { disableAccessLevel, state, updateState } = props;
+  const [passwordFocused, setPasswordFocused] = React.useState(false);
   const [touched, setTouched] = React.useState({
     accessLevel: false,
     username: false,
@@ -87,14 +88,18 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
         type="text"
         error={touched.username && !isRequiredFieldValid(state.username)}
       />
-      <Tooltip arrow placement="bottom-end" disableFocusListener title={<PasswordRequirements password={state.password} />}>
+      <Tooltip arrow open={passwordFocused} placement="bottom-end" disableFocusListener title={<PasswordRequirements password={state.password} />}>
         <TextField
           fullWidth
           required
           id="password"
           label="Password"
           value={state.password || ''}
-          onBlur={() => handleTouch('password')}
+          onFocus={() => setPasswordFocused(true)}
+          onBlur={() => {
+            handleTouch('password');
+            setPasswordFocused(false);
+          }}
           onChange={handleChange('password')}
           type="password"
           error={touched.password && !isPasswordValid(state.password)}

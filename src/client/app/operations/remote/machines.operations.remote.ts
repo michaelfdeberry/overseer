@@ -29,6 +29,6 @@ export function deleteMachine(machine: Machine): Observable<void> {
   return defer(() => withMachineConfigurationService(service => service.deleteMachine(machine.id)));
 }
 
-export function sortMachines(sortOrder: string[]): Observable<void> {
+export function sortMachines(sortOrder: string[]): Observable<Machine[]> {
   return defer(() => withMachineConfigurationService(service => service.sortMachines(sortOrder)));
 }

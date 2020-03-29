@@ -20,7 +20,9 @@ export class UserConfigurationService {
     if (!user) throw new Error('invalid_user');
     if (!user.username) throw new Error('invalid_username');
     if (!user.password) throw new Error('invalid_password');
-    if (await this.context.users.getByKey(u => u.username.toLowerCase() === user.username.toLowerCase())) throw new Error('unavailable_username');
+
+    const existingUser = await this.context.users.getByKey(u => u.username.toLowerCase() === user.username.toLowerCase());
+    if (existingUser) throw new Error('unavailable_username');
 
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(user.password, salt);

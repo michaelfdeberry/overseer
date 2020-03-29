@@ -26,14 +26,14 @@ export const UpdateUserPage: React.FunctionComponent = () => {
   const [unmodifiedUser, setUnmodifiedUser] = React.useState<DisplayUser>();
 
   const update = (): void => {
-    invokeOperation(dispatch, updateUser(user), 'User Updated!').subscribe(updatedUser => {
+    invokeOperation(dispatch, updateUser(user), `User ${user.username} Updated!`).subscribe(updatedUser => {
       dispatch(actions.users.updateUser(updatedUser));
       history.push('/configuration/users');
     });
   };
 
   const remove = (): void => {
-    invokeOperation(dispatch, deleteUser(user), `User ${user.username} Updated!`).subscribe(deletedUser => {
+    invokeOperation(dispatch, deleteUser(user), `User ${user.username} Removed!`).subscribe(deletedUser => {
       dispatch(actions.users.removedUser(deletedUser));
       history.push('/configuration/users');
     });

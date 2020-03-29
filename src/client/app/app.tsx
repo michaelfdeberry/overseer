@@ -1,3 +1,4 @@
+import initializeIntegration from '@overseer/common/integration/initialize-integration.function';
 import * as React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
@@ -15,6 +16,8 @@ const App: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!isInitialized) {
+      initializeIntegration();
+
       invokeOperation(dispatch, requiresInitialSetup()).subscribe((requiresSetup) => {
         const activeUser = getActiveUser();
         if (activeUser) {

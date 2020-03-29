@@ -5,6 +5,8 @@ import { Route, Switch, useHistory, useLocation, useRouteMatch } from 'react-rou
 
 import { AdminRoute } from '../common/admin-route';
 import { MachinesPage } from './components/machines';
+import { CreateMachinePage } from './components/machines/create-machine-page';
+import { UpdateMachinePage } from './components/machines/update-machine-page';
 import { SetupPage } from './components/setup';
 import { SystemSettingsContainer } from './components/system';
 import { UsersPage } from './components/users';
@@ -55,7 +57,7 @@ export const ConfigurationPage: React.FunctionComponent = () => {
   const { path } = useRouteMatch();
 
   return (
-    <Container className="configuration">
+    <Container className="configuration" maxWidth="md">
       <Card>
         <CardContent>
           <ConfigurationTabs />
@@ -63,8 +65,12 @@ export const ConfigurationPage: React.FunctionComponent = () => {
             <AdminRoute exact path={path}>
               <SystemSettingsContainer />
             </AdminRoute>
-            <AdminRoute path={`${path}/machines/add`}>Add Machine</AdminRoute>
-            <AdminRoute path={`${path}/machines/edit/:id`}>Edit Machine</AdminRoute>
+            <AdminRoute path={`${path}/machines/add`}>
+              <CreateMachinePage />
+            </AdminRoute>
+            <AdminRoute path={`${path}/machines/edit/:id`}>
+              <UpdateMachinePage />
+            </AdminRoute>
             <AdminRoute path={`${path}/machines`}>
               <MachinesPage />
             </AdminRoute>

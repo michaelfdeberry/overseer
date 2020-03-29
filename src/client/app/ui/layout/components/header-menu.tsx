@@ -56,7 +56,7 @@ export const HeaderMenu: React.FunctionComponent = () => {
       >
         {activeUser.accessLevel === AccessLevel.Administrator ? (
           <MenuItem>
-            <Link to="/configuration">
+            <Link to="/configuration" onClick={closeMenu}>
               <span className="header-menu-item-text">Settings</span>
               <Icon>
                 <SettingsIcon />

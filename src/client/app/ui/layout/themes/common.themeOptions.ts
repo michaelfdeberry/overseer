@@ -2,6 +2,7 @@ import { ThemeOptions } from '@material-ui/core';
 
 export const commonThemeOptions: ThemeOptions = {
   typography: {
+    fontSize: 12,
     button: {
       textTransform: 'none',
       whiteSpace: 'nowrap',

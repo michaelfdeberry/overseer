@@ -76,26 +76,30 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
 
   return (
     <React.Fragment>
-      <FormControl fullWidth>
-        <InputLabel id="machine-type">Machine Type</InputLabel>
-        <Select
-          fullWidth
-          required
-          value={state.machineType || ''}
-          onChange={setMachineType}
-          inputProps={{
-            name: 'accessLevel',
-            id: 'access-level',
-          }}
-        >
-          <MenuItem value={''}>Select Machine...</MenuItem>
-          {machineTypes.map((type: DisplayOption<string>, index: number) => (
-            <MenuItem key={`machine_type_${index}`} value={type.value}>
-              {type.text}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      {
+        props.mode === PersistenceModeType.add ? (
+          <FormControl fullWidth>
+            <InputLabel id="machine-type">Machine Type</InputLabel>
+            <Select
+              fullWidth
+              required
+              value={state.machineType || ''}
+              onChange={setMachineType}
+              inputProps={{
+                name: 'accessLevel',
+                id: 'access-level',
+              }}
+            >
+              <MenuItem value={''}>Select Machine...</MenuItem>
+              {machineTypes.map((type: DisplayOption<string>, index: number) => (
+                <MenuItem key={`machine_type_${index}`} value={type.value}>
+                  {type.text}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        ) : null
+      }
       <ConfigurationInputs mode={mode} restriction={restriction} configuration={state.configuration} updateConfiguration={updateConfiguration} />
     </React.Fragment>
   );

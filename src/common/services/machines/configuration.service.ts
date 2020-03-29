@@ -38,7 +38,7 @@ export class MachineConfigurationService {
     await this.context.machines.delete(machineId);
   }
 
-  async sortMachines(sortOrder: string[]): Promise<void> {
+  async sortMachines(sortOrder: string[]): Promise<Machine[]> {
     const machines = await this.getMachines();
     await this.context.machines.updateAll(
       machines.map(m => {
@@ -46,5 +46,7 @@ export class MachineConfigurationService {
         return m;
       })
     );
+
+    return machines;
   }
 }

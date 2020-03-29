@@ -2,11 +2,6 @@
 @import 'layout';
 @import 'configuration';
 
-html,
-body {
-  font: 'Roboto';
-}
-
 .MuiButton-root.danger-button > .MuiButton-label {
   color: #f44336;
 }
