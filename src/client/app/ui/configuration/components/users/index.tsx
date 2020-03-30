@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 import { useDispatch, useSelector } from '../../../../hooks';
 import { getUsers } from '../../../../operations/local/users.operations.local';
-import { invokeOperation } from '../../../../operations/operation-invoker';
+import { invoke } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
 import { sessionLifetimes } from '../../utils/display-options.class';
 import { sortByKey } from '../../utils/sort.functions';
@@ -24,7 +24,7 @@ export const UsersPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!users) {
-      invokeOperation(dispatch, getUsers()).subscribe(u => dispatch(actions.users.updateUsers(u)));
+      invoke(dispatch, getUsers()).subscribe(u => dispatch(actions.users.updateUsers(u)));
     }
   }, [users]);
 

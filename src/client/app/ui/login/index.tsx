@@ -5,8 +5,8 @@ import { useHistory } from 'react-router-dom';
 
 import { useDispatch, useSelector } from '../../hooks';
 import { login } from '../../operations/local/authentication.operations.local';
+import { invoke } from '../../operations/operation-invoker';
 import { actions } from '../../store/actions';
-import { catchLogNotify } from '../../store/operators';
 import { isRequiredFieldValid } from '../configuration/validators/required.validator';
 
 export const LoginPage: React.FunctionComponent = () => {
@@ -23,12 +23,10 @@ export const LoginPage: React.FunctionComponent = () => {
   const signIn = React.useCallback(() => {
     if (!isValid()) return;
 
-    login(loginFormState)
-      .pipe(catchLogNotify(dispatch))
-      .subscribe(user => {
-        dispatch(actions.common.setActiveUser(user));
-        history.push('/');
-      });
+    invoke(dispatch, login(loginFormState)).subscribe(user => {
+      dispatch(actions.common.setActiveUser(user));
+      history.push('/');
+    });
   }, []);
 
   React.useEffect(() => {

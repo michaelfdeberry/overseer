@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import { useDispatch, useSelector } from '../../../../hooks';
 import { getSettings, updateSettings } from '../../../../operations/local/configuration.operations.local';
-import { invokeOperation } from '../../../../operations/operation-invoker';
+import { invoke } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
 import { pollIntervals } from '../../utils/display-options.class';
 import { ThemeSelector } from './theme-selector';
@@ -20,7 +20,7 @@ export const SystemSettingsContainer: React.FunctionComponent = () => {
   };
 
   const saveForm = (): void => {
-    invokeOperation(dispatch, updateSettings(formState), 'Settings Updated!').subscribe(() => {
+    invoke(dispatch, updateSettings(formState), 'Settings Updated!').subscribe(() => {
       dispatch(actions.common.updateSettings(formState));
     });
   };
@@ -31,7 +31,7 @@ export const SystemSettingsContainer: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!settings) {
-      invokeOperation(dispatch, getSettings()).subscribe(s => dispatch(actions.common.updateSettings(s)));
+      invoke(dispatch, getSettings()).subscribe(s => dispatch(actions.common.updateSettings(s)));
     } else {
       setFormState(settings);
     }

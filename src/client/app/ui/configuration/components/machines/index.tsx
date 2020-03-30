@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 import { useDispatch, useSelector } from '../../../../hooks';
 import { getMachines, sortMachines } from '../../../../operations/local/machines.operations.local';
-import { invokeOperation } from '../../../../operations/operation-invoker';
+import { invoke } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
 import { sortByKey } from '../../utils/sort.functions';
 
@@ -24,7 +24,7 @@ export const MachinesPage: React.FunctionComponent = () => {
     }
     machineIds[newIndex] = target;
 
-    invokeOperation(dispatch, sortMachines(machineIds)).subscribe(machines => {
+    invoke(dispatch, sortMachines(machineIds)).subscribe(machines => {
       dispatch(actions.machines.updateMachines(machines));
     });
   };
@@ -47,7 +47,7 @@ export const MachinesPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!machines) {
-      invokeOperation(dispatch, getMachines()).subscribe(machines => {
+      invoke(dispatch, getMachines()).subscribe(machines => {
         dispatch(actions.machines.updateMachines(machines));
       });
     }

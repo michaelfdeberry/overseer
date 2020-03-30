@@ -6,7 +6,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../../../hooks';
 import { createMachine } from '../../../../operations/local/machines.operations.local';
 import { createUser } from '../../../../operations/local/users.operations.local';
-import { invokeOperation } from '../../../../operations/operation-invoker';
+import { invoke } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
 import { MachineConfigurationForm, MachineConfigurationFormState } from '../machines/machine-configuration-form';
 import { ThemeSelector } from '../system/theme-selector';
@@ -29,7 +29,7 @@ export const SetupPage: React.FunctionComponent = () => {
   const saveAdmin = (): void => {
     const { isValid, ...user } = userState;
     if (currentStep === 0 && isValid) {
-      invokeOperation(dispatch, createUser(user)).subscribe(activeUser => {
+      invoke(dispatch, createUser(user)).subscribe(activeUser => {
         dispatch(actions.common.setActiveUser(activeUser));
         dispatch(actions.users.addUser(activeUser));
         setCurrentStep(1);
@@ -39,7 +39,7 @@ export const SetupPage: React.FunctionComponent = () => {
 
   const saveMachine = (): void => {
     if (currentStep === 1 && machineState.isValid) {
-      invokeOperation(dispatch, createMachine(machineState.machineType, machineState.configuration)).subscribe(machine => {
+      invoke(dispatch, createMachine(machineState.machineType, machineState.configuration)).subscribe(machine => {
         dispatch(actions.machines.addMachine(machine));
         setCurrentStep(2);
       });
@@ -48,7 +48,7 @@ export const SetupPage: React.FunctionComponent = () => {
 
   const saveMachineAndAddMore = (): void => {
     if (currentStep === 1 && machineState.isValid) {
-      invokeOperation(dispatch, createMachine(machineState.machineType, machineState.configuration)).subscribe(machine => {
+      invoke(dispatch, createMachine(machineState.machineType, machineState.configuration)).subscribe(machine => {
         dispatch(actions.machines.addMachine(machine));
         setCurrentStep(2);
       });

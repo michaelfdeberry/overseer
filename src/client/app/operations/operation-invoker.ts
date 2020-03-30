@@ -5,7 +5,7 @@ import { catchError, take, tap } from 'rxjs/operators';
 import { AnyAction } from '../store/action.type';
 import { actions } from '../store/actions';
 
-export function invokeOperation<T>(dispatch: React.Dispatch<AnyAction>, operation: Observable<T>, successMessage?: string): Observable<T> {
+export function invoke<T>(dispatch: React.Dispatch<AnyAction>, operation: Observable<T>, successMessage?: string): Observable<T> {
   dispatch(actions.layout.startLoading());
   return operation.pipe(
     take(1),

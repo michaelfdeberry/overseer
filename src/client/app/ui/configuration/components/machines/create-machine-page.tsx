@@ -6,7 +6,7 @@ import { Link, useHistory } from 'react-router-dom';
 
 import { useDispatch, useSelector } from '../../../../hooks';
 import { createMachine } from '../../../../operations/local/machines.operations.local';
-import { invokeOperation } from '../../../../operations/operation-invoker';
+import { invoke } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
 import { MachineConfigurationForm, MachineConfigurationFormState } from './machine-configuration-form';
 
@@ -17,7 +17,7 @@ export const CreateMachinePage: React.FunctionComponent = () => {
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
 
   const save = (): void => {
-    invokeOperation(dispatch, createMachine(machineState.machineType, machineState.configuration), 'Machine Created!').subscribe(machine => {
+    invoke(dispatch, createMachine(machineState.machineType, machineState.configuration), 'Machine Created!').subscribe(machine => {
       dispatch(actions.machines.addMachine(machine));
       history.push('/configuration/machines');
     });

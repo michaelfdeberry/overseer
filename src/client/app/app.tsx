@@ -5,7 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { useDispatch, useSelector } from './hooks';
 import { getActiveUser } from './operations/active-user.operations';
 import { authorize, requiresInitialSetup } from './operations/local/authorization.operations.local';
-import { invokeOperation } from './operations/operation-invoker';
+import { invoke } from './operations/operation-invoker';
 import { getCurrentTheme } from './operations/theme.operations';
 import { actions } from './store/actions';
 import Layout from './ui/layout';
@@ -18,10 +18,10 @@ const App: React.FunctionComponent = () => {
     if (!isInitialized) {
       initializeIntegration();
 
-      invokeOperation(dispatch, requiresInitialSetup()).subscribe(requiresSetup => {
+      invoke(dispatch, requiresInitialSetup()).subscribe(requiresSetup => {
         const activeUser = getActiveUser();
         if (activeUser) {
-          invokeOperation(dispatch, authorize(activeUser.token)).subscribe(activeUser => {
+          invoke(dispatch, authorize(activeUser.token)).subscribe(activeUser => {
             dispatch(
               actions.common.initialize({
                 activeUser,

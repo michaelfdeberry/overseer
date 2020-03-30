@@ -8,7 +8,7 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../../../hooks';
 import { logout, logoutUser } from '../../../../operations/local/authentication.operations.local';
 import { deleteUser, getUsers, updateUser } from '../../../../operations/local/users.operations.local';
-import { invokeOperation } from '../../../../operations/operation-invoker';
+import { invoke } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
 import { PromptDialog } from '../../../common/prompt-dialog';
 import { accessLevels, sessionLifetimes } from '../../utils/display-options.class';
@@ -26,14 +26,14 @@ export const UpdateUserPage: React.FunctionComponent = () => {
   const [unmodifiedUser, setUnmodifiedUser] = React.useState<DisplayUser>();
 
   const update = (): void => {
-    invokeOperation(dispatch, updateUser(user), `User ${user.username} Updated!`).subscribe(updatedUser => {
+    invoke(dispatch, updateUser(user), `User ${user.username} Updated!`).subscribe(updatedUser => {
       dispatch(actions.users.updateUser(updatedUser));
       history.push('/configuration/users');
     });
   };
 
   const remove = (): void => {
-    invokeOperation(dispatch, deleteUser(user), `User ${user.username} Removed!`).subscribe(deletedUser => {
+    invoke(dispatch, deleteUser(user), `User ${user.username} Removed!`).subscribe(deletedUser => {
       dispatch(actions.users.removedUser(deletedUser));
       history.push('/configuration/users');
     });
@@ -41,12 +41,12 @@ export const UpdateUserPage: React.FunctionComponent = () => {
 
   const signOut = (): void => {
     if (activeUser.id === user.id) {
-      invokeOperation(dispatch, logout(activeUser.token)).subscribe(() => {
+      invoke(dispatch, logout(activeUser.token)).subscribe(() => {
         dispatch(actions.common.clearActiveUser());
         history.push('/login');
       });
     } else {
-      invokeOperation(dispatch, logoutUser(user.id)).subscribe(updatedUser => {
+      invoke(dispatch, logoutUser(user.id)).subscribe(updatedUser => {
         setUser(updatedUser);
       });
     }
@@ -54,7 +54,7 @@ export const UpdateUserPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!users) {
-      invokeOperation(dispatch, getUsers()).subscribe(u => dispatch(actions.users.updateUsers(u)));
+      invoke(dispatch, getUsers()).subscribe(u => dispatch(actions.users.updateUsers(u)));
     }
   }, [users]);
 

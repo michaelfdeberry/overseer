@@ -7,7 +7,7 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 
 import { useDispatch, useSelector } from '../../../../hooks';
 import { deleteMachine, getMachines, updateMachine } from '../../../../operations/local/machines.operations.local';
-import { invokeOperation } from '../../../../operations/operation-invoker';
+import { invoke } from '../../../../operations/operation-invoker';
 import { actions } from '../../../../store/actions';
 import { PromptDialog } from '../../../common/prompt-dialog';
 import { MachineConfigurationForm, MachineConfigurationFormState } from './machine-configuration-form';
@@ -24,14 +24,14 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
 
   const update = (): void => {
-    invokeOperation(dispatch, updateMachine(machine), `Machine ${machine.name} Updated!`).subscribe(machine => {
+    invoke(dispatch, updateMachine(machine), `Machine ${machine.name} Updated!`).subscribe(machine => {
       dispatch(actions.machines.updateMachine(machine));
       history.push('/configuration/machines');
     });
   };
 
   const remove = (): void => {
-    invokeOperation(dispatch, deleteMachine(machine), `Machine ${machine.name} Removed!`).subscribe(() => {
+    invoke(dispatch, deleteMachine(machine), `Machine ${machine.name} Removed!`).subscribe(() => {
       dispatch(actions.machines.removeMachine(machine));
       history.push('/configuration/machines');
     });
@@ -48,7 +48,7 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!machines) {
-      invokeOperation(dispatch, getMachines()).subscribe(machines => {
+      invoke(dispatch, getMachines()).subscribe(machines => {
         dispatch(actions.machines.updateMachines(machines));
       });
     }
