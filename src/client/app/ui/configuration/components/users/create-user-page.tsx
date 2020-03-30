@@ -15,13 +15,13 @@ export const CreateUserPage: React.FunctionComponent = () => {
   const users = useSelector(state => state.users);
   const [state, updateState] = React.useState<CreateUserFormState>({});
 
-  const save = () => {
+  const save = (): void => {
     const { isValid, ...user } = state;
 
     if (isValid) {
       invokeOperation(dispatch, createUser(user), `User ${user.username} Created!`).subscribe(newUser => {
         dispatch(actions.users.addUser(newUser));
-        history.push('/configuration/users')
+        history.push('/configuration/users');
       });
     }
   };
@@ -30,7 +30,7 @@ export const CreateUserPage: React.FunctionComponent = () => {
     if (!users) {
       invokeOperation(dispatch, getUsers()).subscribe(users => {
         dispatch(actions.users.updateUsers(users));
-      })
+      });
     }
   });
 

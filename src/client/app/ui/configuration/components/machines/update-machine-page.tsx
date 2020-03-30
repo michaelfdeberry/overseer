@@ -18,39 +18,33 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
   const dispatch = useDispatch();
   const machineRef = React.useRef<Machine>();
   const machines = useSelector(state => state.machines);
-  const restriction = useSelector(state => state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote);
+  const restriction = useSelector(state => (state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote));
   const [machine, setMachine] = React.useState<Machine>();
   const [confirmDelete, setConfirmDelete] = React.useState(false);
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
 
-  const update = () => {
+  const update = (): void => {
     invokeOperation(dispatch, updateMachine(machine), `Machine ${machine.name} Updated!`).subscribe(machine => {
       dispatch(actions.machines.updateMachine(machine));
       history.push('/configuration/machines');
-    })
+    });
   };
 
-  const remove = () => {
+  const remove = (): void => {
     invokeOperation(dispatch, deleteMachine(machine), `Machine ${machine.name} Removed!`).subscribe(() => {
       dispatch(actions.machines.removeMachine(machine));
       history.push('/configuration/machines');
-    })
+    });
   };
 
-  const onFormStateChange = (state: MachineConfigurationFormState) => {
-    setNewMachine({ configuration: state.configuration });
+  const onFormStateChange = (state: MachineConfigurationFormState): void => {
+    setMachine(Object.assign(new Machine(), machine, { configuration: state.configuration }));
     updateMachineState(state);
   };
 
-  const toggleDisabledState = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMachine({ disabled: event.target.checked });
+  const toggleDisabledState = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setMachine(Object.assign(new Machine(), machine, { disabled: event.target.checked }));
   };
-
-  const setNewMachine = (props: Partial<Machine>) => {
-    const newMachine: Machine = new Machine();
-    Object.assign(newMachine, machine, props);
-    setMachine(newMachine);
-  }
 
   React.useEffect(() => {
     if (!machines) {
@@ -79,7 +73,7 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
         <Icon>
           <Edit />
         </Icon>
-        Editing Machine <em> '{machineRef.current.name}'</em>
+        Editing Machine <em> &apos;{machineRef.current.name}&apos; </em>
         <span className="action">
           <FormControlLabel
             label="Disable Monitoring?"
@@ -87,12 +81,7 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
           />
         </span>
       </Typography>
-      <MachineConfigurationForm
-        mode={PersistenceModeType.edit}
-        restriction={restriction}
-        state={machineState}
-        updateState={onFormStateChange}
-      />
+      <MachineConfigurationForm mode={PersistenceModeType.edit} restriction={restriction} state={machineState} updateState={onFormStateChange} />
       <div className="configuration-actions">
         <div className="configuration-actions-secondary">
           <Button className="danger-button" onClick={() => setConfirmDelete(true)}>
@@ -102,13 +91,13 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
         <div className="configuration-actions-primary">
           <Button component={Link} to="/configuration/machines">
             Cancel
-        </Button>
+          </Button>
           <Button color="primary" disabled={equals(machineRef.current, machine)} onClick={update}>
             Save
-        </Button>
+          </Button>
         </div>
       </div>
       <PromptDialog open={confirmDelete} setOpen={setConfirmDelete} onConfirm={remove} message="Are you sure you want to remove this machine?" />
     </form>
-  )
+  );
 };

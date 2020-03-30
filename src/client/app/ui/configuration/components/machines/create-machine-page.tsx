@@ -13,15 +13,15 @@ import { MachineConfigurationForm, MachineConfigurationFormState } from './machi
 export const CreateMachinePage: React.FunctionComponent = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const restriction = useSelector(state => state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote);
+  const restriction = useSelector(state => (state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote));
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
 
-  const save = () => {
-    invokeOperation(dispatch, createMachine(machineState.machineType, machineState.configuration), 'Machine Created!').subscribe((machine) => {
+  const save = (): void => {
+    invokeOperation(dispatch, createMachine(machineState.machineType, machineState.configuration), 'Machine Created!').subscribe(machine => {
       dispatch(actions.machines.addMachine(machine));
       history.push('/configuration/machines');
     });
-  }
+  };
 
   return (
     <form className="configuration-form">
@@ -31,23 +31,18 @@ export const CreateMachinePage: React.FunctionComponent = () => {
         </Icon>
         Add Machine
       </Typography>
-      <MachineConfigurationForm
-        mode={PersistenceModeType.add}
-        restriction={restriction}
-        state={machineState}
-        updateState={updateMachineState}
-      />
+      <MachineConfigurationForm mode={PersistenceModeType.add} restriction={restriction} state={machineState} updateState={updateMachineState} />
       <div className="configuration-actions">
         <div className="configuration-actions-secondary"></div>
         <div className="configuration-actions-primary">
           <Button component={Link} to="/configuration/machines">
             Cancel
-        </Button>
+          </Button>
           <Button color="primary" disabled={!machineState.isValid} onClick={save}>
             Save
-        </Button>
+          </Button>
         </div>
       </div>
     </form>
-  )
+  );
 };

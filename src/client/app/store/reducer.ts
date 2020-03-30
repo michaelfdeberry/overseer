@@ -59,4 +59,5 @@ function loggingReducer(state: AppState, action: AnyAction): AppState {
   return newState;
 }
 
+// eslint-disable-next-line no-undef
 export const reducer = __isDev__ ? loggingReducer : internalReducer;

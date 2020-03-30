@@ -5,7 +5,6 @@ import { Redirect, Route, RouteProps } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../hooks';
 import { actions } from '../../store/actions';
 
-
 export const AdminRoute: React.FunctionComponent<RouteProps> = ({ children, ...rest }: RouteProps) => {
   const dispatch = useDispatch();
   const isSetup = useSelector(state => state.isSetup);

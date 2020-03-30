@@ -17,6 +17,11 @@ export const UsersPage: React.FunctionComponent = () => {
   const dispatch = useDispatch();
   const users = useSelector(state => state.users);
 
+  const getSessionLifetime = (sessionLifetime: number): string => {
+    const item = sessionLifetimes.find(x => x.value === sessionLifetime);
+    return item?.text;
+  };
+
   React.useEffect(() => {
     if (!users) {
       invokeOperation(dispatch, getUsers()).subscribe(u => dispatch(actions.users.updateUsers(u)));
@@ -26,11 +31,6 @@ export const UsersPage: React.FunctionComponent = () => {
   if (!users) {
     // TODO: add loader?
     return null;
-  }
-
-  function getSessionLifetime(sessionLifetime: number) {
-    const item = sessionLifetimes.find(x => x.value === sessionLifetime);
-    return item.text;
   }
 
   return (

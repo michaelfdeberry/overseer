@@ -14,6 +14,7 @@
     "jest": true
   },
   "rules": {
+    "react/prop-types": 0,
     "prettier/prettier": ["error", { "singleQuote": true }],
     "@typescript-eslint/explicit-function-return-type": ["warn", { "allowExpressions": true }],
     "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }]

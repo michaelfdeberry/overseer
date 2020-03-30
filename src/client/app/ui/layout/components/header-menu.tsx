@@ -22,13 +22,13 @@ export const HeaderMenu: React.FunctionComponent = () => {
 
   const closeMenu = (): void => {
     setAnchorEl(null);
-  }
+  };
 
   const signOut = (): void => {
     closeMenu();
     dispatch(actions.common.clearActiveUser());
     history.push('/login');
-  }
+  };
 
   if (!activeUser) {
     return null;

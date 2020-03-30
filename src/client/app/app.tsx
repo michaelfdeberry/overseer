@@ -18,25 +18,31 @@ const App: React.FunctionComponent = () => {
     if (!isInitialized) {
       initializeIntegration();
 
-      invokeOperation(dispatch, requiresInitialSetup()).subscribe((requiresSetup) => {
+      invokeOperation(dispatch, requiresInitialSetup()).subscribe(requiresSetup => {
         const activeUser = getActiveUser();
         if (activeUser) {
-          invokeOperation(dispatch, authorize(activeUser.token)).subscribe((activeUser) => {
-            dispatch(actions.common.initialize({
-              activeUser,
-              isInitialized: true,
-              isSetup: !requiresSetup,
-              isLocalApp: __isLocalApp__,
-              currentTheme: getCurrentTheme(),
-            }));
+          invokeOperation(dispatch, authorize(activeUser.token)).subscribe(activeUser => {
+            dispatch(
+              actions.common.initialize({
+                activeUser,
+                isInitialized: true,
+                isSetup: !requiresSetup,
+                // eslint-disable-next-line no-undef
+                isLocalApp: __isLocalApp__,
+                currentTheme: getCurrentTheme(),
+              })
+            );
           });
         } else {
-          dispatch(actions.common.initialize({
-            isInitialized: true,
-            isSetup: !requiresSetup,
-            isLocalApp: __isLocalApp__,
-            currentTheme: getCurrentTheme(),
-          }));
+          dispatch(
+            actions.common.initialize({
+              isInitialized: true,
+              isSetup: !requiresSetup,
+              // eslint-disable-next-line no-undef
+              isLocalApp: __isLocalApp__,
+              currentTheme: getCurrentTheme(),
+            })
+          );
         }
       });
     }

@@ -15,13 +15,13 @@ export const ConfigurationInput: React.FunctionComponent<ConfigurationInputProps
   const [touched, setTouched] = React.useState(false);
   const { name, setting, updateSetting } = props;
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     updateSetting(name, { ...setting, value: event.target.value });
-  }
+  };
 
-  function hasError() {
+  const hasError = (): boolean => {
     return touched && setting.isRequired && !isRequiredFieldValid(setting.value);
-  }
+  };
 
   switch (setting.type) {
     case 'options':

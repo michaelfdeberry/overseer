@@ -16,7 +16,7 @@ export const SetupPage: React.FunctionComponent = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const isSetup = useSelector(state => state.isSetup);
-  const restriction = useSelector(state => state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote);
+  const restriction = useSelector(state => (state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote));
   const [currentStep, setCurrentStep] = React.useState(0);
   const [userState, updateUserState] = React.useState<CreateUserFormState>({ accessLevel: AccessLevel.Administrator });
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
@@ -26,7 +26,7 @@ export const SetupPage: React.FunctionComponent = () => {
     return null;
   }
 
-  function saveAdmin(): void {
+  const saveAdmin = (): void => {
     const { isValid, ...user } = userState;
     if (currentStep === 0 && isValid) {
       invokeOperation(dispatch, createUser(user)).subscribe(activeUser => {
@@ -35,31 +35,31 @@ export const SetupPage: React.FunctionComponent = () => {
         setCurrentStep(1);
       });
     }
-  }
+  };
 
-  function saveMachine(): void {
+  const saveMachine = (): void => {
     if (currentStep === 1 && machineState.isValid) {
       invokeOperation(dispatch, createMachine(machineState.machineType, machineState.configuration)).subscribe(machine => {
         dispatch(actions.machines.addMachine(machine));
         setCurrentStep(2);
-      })
+      });
     }
-  }
+  };
 
-  function saveMachineAndAddMore(): void {
+  const saveMachineAndAddMore = (): void => {
     if (currentStep === 1 && machineState.isValid) {
       invokeOperation(dispatch, createMachine(machineState.machineType, machineState.configuration)).subscribe(machine => {
         dispatch(actions.machines.addMachine(machine));
         setCurrentStep(2);
-      })
+      });
     }
-  }
+  };
 
-  function completeSelectTheme(): void {
+  const completeSelectTheme = (): void => {
     setCurrentStep(3);
-  }
+  };
 
-  function renderStep() {
+  const renderStep = (): React.ReactNode => {
     switch (currentStep) {
       case 0:
         if (!userState) {
@@ -145,12 +145,12 @@ export const SetupPage: React.FunctionComponent = () => {
       default:
         return null;
     }
-  }
+  };
 
   return (
     <React.Fragment>
       <Typography align="center" variant="h6">
-        Before you begin let's setup Overseer!
+        Before you begin let&apos;s setup Overseer!
       </Typography>
       <Stepper activeStep={currentStep}>
         <Step>

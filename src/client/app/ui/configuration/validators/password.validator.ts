@@ -15,10 +15,10 @@ export function containsNumber(password: string): boolean {
   return password && /^.*[0-9]/.test(password);
 }
 
-export function containsSpecialChar(password: string) {
+export function containsSpecialChar(password: string): boolean {
   return password && /^.*[!@#$%^&*]/.test(password);
 }
 
-export function isValidLength(password: string) {
+export function isValidLength(password: string): boolean {
   return password && password.length >= 8;
 }

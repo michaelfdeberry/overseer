@@ -3,16 +3,15 @@ import * as React from 'react';
 import LoadingBar from 'react-top-loading-bar';
 import { Subscription, timer } from 'rxjs';
 
-import { useDispatch, useSelector } from '../../../hooks';
+import { useSelector } from '../../../hooks';
 
 export const Loader: React.FunctionComponent = () => {
-  const dispatch = useDispatch();
   const theme: Theme = useTheme();
   const cancelRef = React.useRef<Subscription>();
   const loadingBarRef = React.useRef<LoadingBar>();
   const loading = useSelector(state => state.loading);
 
-  const setupCancelTimer = () => {
+  const setupCancelTimer = (): void => {
     cancelRef.current = timer(30000).subscribe(() => {
       if (!cancelRef.current) return;
       loadingBarRef.current.complete();
@@ -23,7 +22,7 @@ export const Loader: React.FunctionComponent = () => {
     if (loading && cancelRef.current) {
       cancelRef.current.unsubscribe();
       setupCancelTimer();
-    };
+    }
 
     if (loading && !loadingBarRef.current.props.progress) {
       loadingBarRef.current.continuousStart();
@@ -40,11 +39,7 @@ export const Loader: React.FunctionComponent = () => {
 
   return (
     <div className="loader">
-      <LoadingBar
-        height={3}
-        color={theme.palette.primary.main}
-        onRef={(ref: LoadingBar) => loadingBarRef.current = ref}
-      />
+      <LoadingBar height={3} color={theme.palette.primary.main} onRef={(ref: LoadingBar) => (loadingBarRef.current = ref)} />
     </div>
-  )
-}
+  );
+};

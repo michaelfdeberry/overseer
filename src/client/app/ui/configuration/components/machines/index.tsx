@@ -14,7 +14,7 @@ export const MachinesPage: React.FunctionComponent = () => {
   const dispatch = useDispatch();
   const machines = useSelector(state => state.machines);
 
-  const move = (previousIndex: number, newIndex: number) => {
+  const move = (previousIndex: number, newIndex: number): void => {
     const machineIds = machines.sort(sortByKey('sortIndex')).map(m => m.id);
     const target = machineIds[previousIndex];
     const delta = newIndex < previousIndex ? -1 : 1;
@@ -24,22 +24,22 @@ export const MachinesPage: React.FunctionComponent = () => {
     }
     machineIds[newIndex] = target;
 
-    invokeOperation(dispatch, sortMachines(machineIds)).subscribe((machines) => {
+    invokeOperation(dispatch, sortMachines(machineIds)).subscribe(machines => {
       dispatch(actions.machines.updateMachines(machines));
     });
-  }
+  };
 
-  const moveUp = (index: number) => {
+  const moveUp = (index: number): void => {
     if (index <= 0) return;
     move(index, --index);
   };
 
-  const moveDown = (index: number) => {
+  const moveDown = (index: number): void => {
     if (index >= machines.length) return;
     move(index, ++index);
   };
 
-  const onDrop = (dropResult: DropResult) => {
+  const onDrop = (dropResult: DropResult): void => {
     if (!dropResult.destination) return;
     if (dropResult.destination.index === dropResult.source.index) return;
     move(dropResult.source.index, dropResult.destination.index);
@@ -49,7 +49,7 @@ export const MachinesPage: React.FunctionComponent = () => {
     if (!machines) {
       invokeOperation(dispatch, getMachines()).subscribe(machines => {
         dispatch(actions.machines.updateMachines(machines));
-      })
+      });
     }
   }, [machines]);
 
@@ -66,56 +66,69 @@ export const MachinesPage: React.FunctionComponent = () => {
             <th className="centered">Monitoring Enabled?</th>
             <th className="action">
               <Button component={Link} to="/configuration/machines/add">
-                <Icon><Add /></Icon>
-              Add
-            </Button>
+                <Icon>
+                  <Add />
+                </Icon>
+                Add
+              </Button>
             </th>
           </tr>
         </thead>
         <Droppable droppableId="table">
-          {
-            (droppableProvided: DroppableProvided) => (
-              <tbody ref={(ref: HTMLElement) => { droppableProvided.innerRef(ref); }} {...droppableProvided.droppableProps}>
-                {
-                  machines.sort(sortByKey('sortIndex')).map((machine, index) => {
-                    return (
-                      <Draggable draggableId={machine.id} index={index} key={machine.id}>
-                        {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-                          <tr
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            className={snapshot.isDragging ? 'dragging' : ''}
-                          >
-                            <td className="sort-column">
-                              <Icon className="drag" {...provided.dragHandleProps}>< DragIndicator /></Icon>
-                              <Button disabled={!index} onClick={() => moveUp(index)}>
-                                <ArrowUpward />
-                              </Button>
-                              <Button disabled={index === machines.length - 1} onClick={() => moveDown(index)}>
-                                <ArrowDownward />
-                              </Button>
-                            </td>
-                            <td>{machine.name}</td>
-                            <td>{machine.type}</td>
-                            <td className="centered">{machine.disabled ? (<Icon><Warning /></Icon>) : (<Icon><Check /></Icon>)}</td>
-                            <td className="action">
-                              <Button component={Link} to={`/configuration/machines/edit/${machine.id}`}>
-                                <Icon><Edit /></Icon>
+          {(droppableProvided: DroppableProvided) => (
+            <tbody
+              ref={(ref: HTMLElement) => {
+                droppableProvided.innerRef(ref);
+              }}
+              {...droppableProvided.droppableProps}
+            >
+              {machines.sort(sortByKey('sortIndex')).map((machine, index) => {
+                return (
+                  <Draggable draggableId={machine.id} index={index} key={machine.id}>
+                    {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
+                      <tr ref={provided.innerRef} {...provided.draggableProps} className={snapshot.isDragging ? 'dragging' : ''}>
+                        <td className="sort-column">
+                          <Icon className="drag" {...provided.dragHandleProps}>
+                            <DragIndicator />
+                          </Icon>
+                          <Button disabled={!index} onClick={() => moveUp(index)}>
+                            <ArrowUpward />
+                          </Button>
+                          <Button disabled={index === machines.length - 1} onClick={() => moveDown(index)}>
+                            <ArrowDownward />
+                          </Button>
+                        </td>
+                        <td>{machine.name}</td>
+                        <td>{machine.type}</td>
+                        <td className="centered">
+                          {machine.disabled ? (
+                            <Icon>
+                              <Warning />
+                            </Icon>
+                          ) : (
+                            <Icon>
+                              <Check />
+                            </Icon>
+                          )}
+                        </td>
+                        <td className="action">
+                          <Button component={Link} to={`/configuration/machines/edit/${machine.id}`}>
+                            <Icon>
+                              <Edit />
+                            </Icon>
                             Edit
                           </Button>
-                            </td>
-                          </tr>
-                        )}
-                      </Draggable>
-                    )
-                  })
-                }
-                {droppableProvided.placeholder}
-              </tbody>
-            )
-          }
+                        </td>
+                      </tr>
+                    )}
+                  </Draggable>
+                );
+              })}
+              {droppableProvided.placeholder}
+            </tbody>
+          )}
         </Droppable>
       </table>
     </DragDropContext>
-  )
+  );
 };

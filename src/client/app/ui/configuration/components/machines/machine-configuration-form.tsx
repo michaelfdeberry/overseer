@@ -5,7 +5,7 @@ import {
   MachineConfigurationCollection,
   MachineSetting,
   MachineSettingGroup,
-  PersistenceModeType
+  PersistenceModeType,
 } from '@overseer/common/models';
 import * as React from 'react';
 
@@ -30,28 +30,19 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
   const { mode, state, updateState, restriction = BuildRestrictionType.none } = props;
   const machineTypes = Array.from(machineConfigurationBuilder.keys()).map(key => new DisplayOption(key, key));
 
-  React.useEffect(() => {
-    const currentBuilder = machineConfigurationBuilder.get(state.machineType);
-    updateConfiguration(currentBuilder?.configuration);
-  }, [state.machineType]);
-
-  React.useEffect(() => {
-    updateState({ ...state, isValid: validate() });
-  }, [validate()]);
-
-  function setMachineType(event: React.ChangeEvent<HTMLInputElement>): void {
+  const setMachineType = (event: React.ChangeEvent<HTMLInputElement>): void => {
     updateState({ ...state, machineType: event.target.value });
-  }
+  };
 
-  function updateConfiguration(configuration: MachineConfigurationCollection): void {
+  const updateConfiguration = (configuration: MachineConfigurationCollection): void => {
     updateState({ ...state, configuration });
-  }
+  };
 
-  function validateSetting(setting: MachineSetting): boolean {
+  const validateSetting = (setting: MachineSetting): boolean => {
     return !setting.isRequired || isRequiredFieldValid(setting.value);
-  }
+  };
 
-  function validate(): boolean {
+  const validate = (): boolean => {
     if (!state.configuration) return false;
 
     for (const config of Object.values(state.configuration)) {
@@ -72,34 +63,41 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
     }
 
     return true;
-  }
+  };
+
+  React.useEffect(() => {
+    const currentBuilder = machineConfigurationBuilder.get(state.machineType);
+    updateConfiguration(currentBuilder?.configuration);
+  }, [state.machineType]);
+
+  React.useEffect(() => {
+    updateState({ ...state, isValid: validate() });
+  }, [validate()]);
 
   return (
     <React.Fragment>
-      {
-        props.mode === PersistenceModeType.add ? (
-          <FormControl fullWidth>
-            <InputLabel id="machine-type">Machine Type</InputLabel>
-            <Select
-              fullWidth
-              required
-              value={state.machineType || ''}
-              onChange={setMachineType}
-              inputProps={{
-                name: 'accessLevel',
-                id: 'access-level',
-              }}
-            >
-              <MenuItem value={''}>Select Machine...</MenuItem>
-              {machineTypes.map((type: DisplayOption<string>, index: number) => (
-                <MenuItem key={`machine_type_${index}`} value={type.value}>
-                  {type.text}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        ) : null
-      }
+      {props.mode === PersistenceModeType.add ? (
+        <FormControl fullWidth>
+          <InputLabel id="machine-type">Machine Type</InputLabel>
+          <Select
+            fullWidth
+            required
+            value={state.machineType || ''}
+            onChange={setMachineType}
+            inputProps={{
+              name: 'accessLevel',
+              id: 'access-level',
+            }}
+          >
+            <MenuItem value={''}>Select Machine...</MenuItem>
+            {machineTypes.map((type: DisplayOption<string>, index: number) => (
+              <MenuItem key={`machine_type_${index}`} value={type.value}>
+                {type.text}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      ) : null}
       <ConfigurationInputs mode={mode} restriction={restriction} configuration={state.configuration} updateConfiguration={updateConfiguration} />
     </React.Fragment>
   );

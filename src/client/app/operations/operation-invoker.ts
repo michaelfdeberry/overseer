@@ -17,7 +17,9 @@ export function invokeOperation<T>(dispatch: React.Dispatch<AnyAction>, operatio
       }
     }),
     catchError((error: Error) => {
-      const errorMessage = errorMessageMap.hasOwnProperty(error.message) ? errorMessageMap[error.message] : errorMessageMap['unknown'];
+      const errorMessage = Object.prototype.hasOwnProperty.call(errorMessageMap, error.message)
+        ? errorMessageMap[error.message]
+        : errorMessageMap['unknown'];
       dispatch(actions.layout.notifyError(errorMessage));
       return throwError(error);
     })

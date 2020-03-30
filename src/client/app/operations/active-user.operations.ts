@@ -13,6 +13,6 @@ export function setActiveUser(user: DisplayUser): void {
   localStorage.setItem(activeUserKey, JSON.stringify(user));
 }
 
-export function clearActiveUser() {
+export function clearActiveUser(): void {
   localStorage.removeItem(activeUserKey);
 }

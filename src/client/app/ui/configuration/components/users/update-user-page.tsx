@@ -48,7 +48,7 @@ export const UpdateUserPage: React.FunctionComponent = () => {
     } else {
       invokeOperation(dispatch, logoutUser(user.id)).subscribe(updatedUser => {
         setUser(updatedUser);
-      })
+      });
     }
   };
 
@@ -79,7 +79,7 @@ export const UpdateUserPage: React.FunctionComponent = () => {
             <PersonIcon />
           </Icon>
           Editing User
-          <em> '{user.username}' </em>
+          <em> &apos;{user.username}&apos; </em>
         </Typography>
       </form>
       <ChangePasswordForm user={unmodifiedUser} />

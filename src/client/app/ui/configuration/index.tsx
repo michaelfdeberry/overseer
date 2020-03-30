@@ -18,12 +18,20 @@ const ConfigurationTabs: React.FunctionComponent = () => {
   const { pathname } = useLocation();
   const [tabValue, setTabValue] = useState(pathname);
 
-  function isValidTabPath(path) {
+  const isValidTabPath = (path): boolean => {
     if (path.indexOf('add') >= 0) return false;
     if (path.indexOf('edit') >= 0) return false;
     if (path.indexOf('setup') >= 0) return false;
     return true;
-  }
+  };
+
+  const navigate = (_: React.MouseEvent, value: string): void => {
+    setTabValue(value);
+
+    if (pathname !== value) {
+      history.push(value);
+    }
+  };
 
   useEffect(() => {
     return history.listen(location => {
@@ -34,14 +42,6 @@ const ConfigurationTabs: React.FunctionComponent = () => {
   }, []);
 
   if (!isValidTabPath(pathname)) return null;
-
-  function navigate(_: React.MouseEvent, value: string): void {
-    setTabValue(value);
-
-    if (pathname !== value) {
-      history.push(value);
-    }
-  }
 
   return (
     <Tabs value={tabValue} onChange={navigate} indicatorColor="primary" textColor="primary" variant="fullWidth">

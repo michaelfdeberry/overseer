@@ -8,7 +8,7 @@ export function useDispatch(): React.Dispatch<AnyAction> {
   return React.useContext(DispatchContext);
 }
 
-export function useAppState() {
+export function useAppState(): AppState {
   return React.useContext(StateContext);
 }
 

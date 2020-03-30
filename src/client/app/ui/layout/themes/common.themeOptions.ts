@@ -8,7 +8,7 @@ export const commonThemeOptions: ThemeOptions = {
       whiteSpace: 'nowrap',
     },
     caption: {
-      fontSize: '14px',
+      fontSize: 13,
       fontWeight: 'bold',
     },
   },
