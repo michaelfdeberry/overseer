@@ -79,21 +79,29 @@
     table-layout: fixed;
     margin-top: 14px;
 
-    .cdk-drop-list-dragging tr:not(.cdk-drag-placeholder) {
-      transition: all 250ms cubic-bezier(0, 0, 0.2, 1);
-    }
-
-    &.drag-drop {
-      cursor: move;
-    }
-
     tr {
-      .sort-column {
-        width: 100px;
-        padding-left: 0;
+      &.dragging {
+        box-sizing: border-box;
+        border-radius: 4px;
+        box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
 
-        @media (max-width: 480px) {
+        background-color: rgba(202, 202, 202, 0.37);
+
+        th,
+        td {
           display: none;
+
+          &:nth-child(1) {
+            display: table-cell;
+
+            button {
+              display: none;
+            }
+          }
+
+          &:nth-child(2) {
+            display: table-cell;
+          }
         }
       }
 
@@ -105,6 +113,26 @@
 
         @media (max-width: 480px) {
           padding-left: 0;
+        }
+
+        &.sort-column {
+          position: relative;
+          width: 120px;
+
+          > .drag {
+            position: absolute;
+            left: 0;
+            top: 8px;
+          }
+
+          > .MuiButton-root {
+            margin-left: 5px;
+            min-width: 42px;
+          }
+
+          @media (max-width: 480px) {
+            display: none;
+          }
         }
 
         &.centered {
