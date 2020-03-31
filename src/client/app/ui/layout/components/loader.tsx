@@ -12,7 +12,7 @@ export const Loader: React.FunctionComponent = () => {
   const loading = useSelector(state => state.loading);
 
   const setupCancelTimer = (): void => {
-    cancelRef.current = timer(30000).subscribe(() => {
+    cancelRef.current = timer(15000).subscribe(() => {
       if (!cancelRef.current) return;
       loadingBarRef.current.complete();
     });

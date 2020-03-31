@@ -20,18 +20,14 @@ export const SetupPage: React.FunctionComponent = () => {
   const [currentStep, setCurrentStep] = React.useState(0);
   const [userState, updateUserState] = React.useState<CreateUserFormState>({ accessLevel: AccessLevel.Administrator });
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
-
-  if (isSetup) {
-    history.replace('/');
-    return null;
-  }
+  const [setupStarted, setSetupStarted] = React.useState(!isSetup);
 
   const saveAdmin = (): void => {
     const { isValid, ...user } = userState;
     if (currentStep === 0 && isValid) {
       invoke(dispatch, createUser(user)).subscribe(activeUser => {
         dispatch(actions.common.setActiveUser(activeUser));
-        dispatch(actions.users.addUser(activeUser));
+        dispatch(actions.users.updateUsers([activeUser]));
         setCurrentStep(1);
       });
     }
@@ -56,96 +52,113 @@ export const SetupPage: React.FunctionComponent = () => {
   };
 
   const completeSelectTheme = (): void => {
+    dispatch(actions.common.initialize({ isInitialized: true, isSetup: true }));
     setCurrentStep(3);
+  };
+
+  const renderAdminStep = (): React.ReactNode => {
+    if (!userState) {
+      updateUserState({ accessLevel: AccessLevel.Administrator });
+      return null;
+    }
+
+    return (
+      <form className="configuration-form" onSubmit={saveAdmin}>
+        <Typography variant="caption">Please create an administrator account...</Typography>
+        <CreateUserForm disableAccessLevel state={userState} updateState={updateUserState} />
+        <div className="configuration-actions">
+          <div className="configuration-actions-secondary"></div>
+          <div className="configuration-actions-primary">
+            <Button disabled={!userState.isValid} color="primary" onClick={saveAdmin}>
+              Next
+            </Button>
+          </div>
+        </div>
+      </form>
+    );
+  };
+
+  const renderMachinesStep = (): React.ReactNode => {
+    if (!machineState) {
+      updateMachineState({});
+      return null;
+    }
+
+    return (
+      <form className="configuration-form" onSubmit={saveMachine}>
+        <Typography variant="caption">Please add at least one machine...</Typography>
+        <MachineConfigurationForm mode={PersistenceModeType.add} restriction={restriction} state={machineState} updateState={updateMachineState} />
+        <div className="configuration-actions">
+          <div className="configuration-actions-secondary">
+            <Button disabled={!machineState.isValid} onClick={saveMachineAndAddMore}>
+              Save &amp; Add More...
+            </Button>
+          </div>
+          <div className="configuration-actions-primary">
+            <Button disabled={!machineState.isValid} color="primary" onClick={saveMachine}>
+              Next
+            </Button>
+          </div>
+        </div>
+      </form>
+    );
+  };
+
+  const renderSettingsStep = (): React.ReactNode => {
+    return (
+      <form className="configuration-form">
+        <Typography variant="caption">Please select your preferred theme...</Typography>
+        <ThemeSelector />
+        <div className="configuration-actions">
+          <div className="configuration-actions-secondary"></div>
+          <div className="configuration-actions-primary">
+            <Button color="primary" onClick={completeSelectTheme}>
+              Next
+            </Button>
+          </div>
+        </div>
+      </form>
+    );
+  };
+
+  const renderCompleteStep = (): React.ReactNode => {
+    return (
+      <form className="configuration-form">
+        <Typography variant="caption">The initial setup for Overseer is now complete, what would you like to do next?</Typography>
+        <div className="setup-next-steps">
+          <Button color="primary" component={Link} to="/">
+            Start Monitoring
+          </Button>
+          <Button color="primary" component={Link} to="/configuration/machines/add">
+            Add Machines
+          </Button>
+          <Button color="primary" component={Link} to="/configuration/users/add">
+            Add Users
+          </Button>
+        </div>
+      </form>
+    );
   };
 
   const renderStep = (): React.ReactNode => {
     switch (currentStep) {
       case 0:
-        if (!userState) {
-          updateUserState({ accessLevel: AccessLevel.Administrator });
-          return null;
-        }
-
-        return (
-          <form className="configuration-form" onSubmit={saveAdmin}>
-            <Typography variant="caption">Please create an administrator account...</Typography>
-            <CreateUserForm disableAccessLevel state={userState} updateState={updateUserState} />
-            <div className="configuration-actions">
-              <div className="configuration-actions-secondary"></div>
-              <div className="configuration-actions-primary">
-                <Button disabled={!userState.isValid} color="primary" onClick={saveAdmin}>
-                  Next
-                </Button>
-              </div>
-            </div>
-          </form>
-        );
+        return renderAdminStep();
       case 1:
-        if (!machineState) {
-          updateMachineState({});
-          return null;
-        }
-
-        return (
-          <form className="configuration-form" onSubmit={saveMachine}>
-            <Typography variant="caption">Please add at least one machine...</Typography>
-            <MachineConfigurationForm
-              mode={PersistenceModeType.add}
-              restriction={restriction}
-              state={machineState}
-              updateState={updateMachineState}
-            />
-            <div className="configuration-actions">
-              <div className="configuration-actions-secondary">
-                <Button disabled={!machineState.isValid} onClick={saveMachineAndAddMore}>
-                  Save &amp; Add More...
-                </Button>
-              </div>
-              <div className="configuration-actions-primary">
-                <Button disabled={!machineState.isValid} color="primary" onClick={saveMachine}>
-                  Next
-                </Button>
-              </div>
-            </div>
-          </form>
-        );
+        return renderMachinesStep();
       case 2:
-        return (
-          <form className="configuration-form">
-            <Typography variant="caption">Please select your preferred theme...</Typography>
-            <ThemeSelector />
-            <div className="configuration-actions">
-              <div className="configuration-actions-secondary"></div>
-              <div className="configuration-actions-primary">
-                <Button color="primary" onClick={completeSelectTheme}>
-                  Next
-                </Button>
-              </div>
-            </div>
-          </form>
-        );
+        return renderSettingsStep();
       case 3:
-        return (
-          <form className="configuration-form">
-            <Typography variant="caption">The initial setup for Overseer is now complete, what would you like to do next?</Typography>
-            <div className="setup-next-steps">
-              <Button color="primary" component={Link} to="/">
-                Start Monitoring
-              </Button>
-              <Button color="primary" component={Link} to="/configuration/machines/add">
-                Add Machines
-              </Button>
-              <Button color="primary" component={Link} to="/configuration/users/add">
-                Add Users
-              </Button>
-            </div>
-          </form>
-        );
+        return renderCompleteStep();
       default:
         return null;
     }
   };
+
+  if (isSetup && !setupStarted) {
+    history.replace('/');
+    return null;
+  }
 
   return (
     <React.Fragment>
