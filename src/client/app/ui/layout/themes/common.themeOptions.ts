@@ -1,8 +1,9 @@
 import { ThemeOptions } from '@material-ui/core';
 
+const defaultFontSize = 14;
 export const commonThemeOptions: ThemeOptions = {
   typography: {
-    fontSize: 13,
+    fontSize: defaultFontSize,
     button: {
       textTransform: 'none',
       whiteSpace: 'nowrap',
@@ -10,6 +11,9 @@ export const commonThemeOptions: ThemeOptions = {
     caption: {
       fontSize: 13,
       fontWeight: 'bold',
+    },
+    body1: {
+      fontSize: defaultFontSize,
     },
   },
   overrides: {
@@ -19,6 +23,11 @@ export const commonThemeOptions: ThemeOptions = {
     MuiTabs: {
       root: {
         borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+      },
+    },
+    MuiInputBase: {
+      root: {
+        fontSize: defaultFontSize,
       },
     },
   },
