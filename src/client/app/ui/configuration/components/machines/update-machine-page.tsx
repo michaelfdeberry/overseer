@@ -23,7 +23,9 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
   const [confirmDelete, setConfirmDelete] = React.useState(false);
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
 
-  const update = (): void => {
+  const update = (event: React.FormEvent): void => {
+    event.preventDefault();
+
     invoke(dispatch, updateMachine(machine), `Machine ${machine.name} Updated!`).subscribe(machine => {
       dispatch(actions.machines.updateMachine(machine));
       history.push('/configuration/machines');
@@ -68,7 +70,7 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
   if (!machine) return null;
 
   return (
-    <form className="configuration-form">
+    <form className="configuration-form" onSubmit={update}>
       <Typography variant="h6">
         <Icon>
           <Edit />
@@ -92,7 +94,7 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
           <Button component={Link} to="/configuration/machines">
             Cancel
           </Button>
-          <Button color="primary" disabled={equals(machineRef.current, machine)} onClick={update}>
+          <Button type="submit" color="primary" disabled={equals(machineRef.current, machine)}>
             Save
           </Button>
         </div>

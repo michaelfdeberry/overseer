@@ -25,7 +25,9 @@ export const UpdateUserPage: React.FunctionComponent = () => {
   const [confirmDelete, setConfirmDelete] = React.useState(false);
   const [unmodifiedUser, setUnmodifiedUser] = React.useState<DisplayUser>();
 
-  const update = (): void => {
+  const update = (event: React.FormEvent): void => {
+    event.preventDefault();
+
     invoke(dispatch, updateUser(user), `User ${user.username} Updated!`).subscribe(updatedUser => {
       dispatch(actions.users.updateUser(updatedUser));
       history.push('/configuration/users');
@@ -83,7 +85,7 @@ export const UpdateUserPage: React.FunctionComponent = () => {
         </Typography>
       </form>
       <ChangePasswordForm user={unmodifiedUser} />
-      <form className="configuration-form">
+      <form className="configuration-form" onSubmit={update}>
         <Typography variant="caption">Account Settings</Typography>
         <FormControl fullWidth>
           <InputLabel id="access-level-label">Access Level</InputLabel>
@@ -124,7 +126,7 @@ export const UpdateUserPage: React.FunctionComponent = () => {
             <Button component={Link} to="/configuration/users">
               Cancel
             </Button>
-            <Button color="primary" disabled={user.sessionLifetime === unmodifiedUser.sessionLifetime} onClick={update}>
+            <Button type="submit" color="primary" disabled={user.sessionLifetime === unmodifiedUser.sessionLifetime}>
               Save
             </Button>
           </div>

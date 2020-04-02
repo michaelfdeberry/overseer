@@ -33,7 +33,9 @@ export const ChangePasswordForm: React.FunctionComponent<ChangePasswordFormProps
     return isPasswordValid(passwordForm.password) && isConfirmPasswordValid(passwordForm.password, passwordForm.confirmPassword);
   };
 
-  const submitPasswordForm = (): void => {
+  const submitPasswordForm = (event: React.FormEvent): void => {
+    event.preventDefault();
+
     invoke(dispatch, changePassword({ ...user, password: passwordForm.password })).subscribe(() => {
       history.push('/configuration/users');
     });
@@ -76,7 +78,7 @@ export const ChangePasswordForm: React.FunctionComponent<ChangePasswordFormProps
       <div className="configuration-actions">
         <div className="configuration-actions-secondary"></div>
         <div className="configuration-actions-primary">
-          <Button color="primary" disabled={!isPasswordFormValid()} onClick={submitPasswordForm}>
+          <Button type="submit" color="primary" disabled={!isPasswordFormValid()}>
             Change Password
           </Button>
         </div>

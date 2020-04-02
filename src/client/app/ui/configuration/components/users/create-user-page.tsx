@@ -15,9 +15,10 @@ export const CreateUserPage: React.FunctionComponent = () => {
   const users = useSelector(state => state.users);
   const [state, updateState] = React.useState<CreateUserFormState>({});
 
-  const save = (): void => {
-    const { isValid, ...user } = state;
+  const save = (event: React.FormEvent): void => {
+    event.preventDefault();
 
+    const { isValid, ...user } = state;
     if (isValid) {
       invoke(dispatch, createUser(user), `User ${user.username} Created!`).subscribe(newUser => {
         dispatch(actions.users.addUser(newUser));
@@ -35,7 +36,7 @@ export const CreateUserPage: React.FunctionComponent = () => {
   });
 
   return (
-    <form className="configuration-form">
+    <form className="configuration-form" onSubmit={save}>
       <Typography variant="h6">
         <Icon>
           <PersonAdd />
@@ -49,7 +50,7 @@ export const CreateUserPage: React.FunctionComponent = () => {
           <Button onClick={() => updateState(undefined)} component={Link} to="/configuration/users">
             Cancel
           </Button>
-          <Button color="primary" disabled={!state.isValid} onClick={save}>
+          <Button type="submit" color="primary" disabled={!state.isValid}>
             Save
           </Button>
         </div>

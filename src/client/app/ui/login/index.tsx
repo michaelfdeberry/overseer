@@ -20,14 +20,15 @@ export const LoginPage: React.FunctionComponent = () => {
     return isRequiredFieldValid(loginFormState.username) && isRequiredFieldValid(loginFormState.password);
   };
 
-  const signIn = React.useCallback(() => {
-    if (!isValid()) return;
+  const signIn = (event: React.FormEvent) => {
+    event.preventDefault();
 
+    if (!isValid()) return;
     invoke(dispatch, login(loginFormState)).subscribe(user => {
       dispatch(actions.common.setActiveUser(user));
       history.push('/');
     });
-  }, []);
+  };
 
   React.useEffect(() => {
     if (activeUser) {
@@ -39,7 +40,7 @@ export const LoginPage: React.FunctionComponent = () => {
     <Container className="configuration" maxWidth="md">
       <Card>
         <CardContent>
-          <form className="configuration-form">
+          <form className="configuration-form" onSubmit={signIn}>
             <Typography variant="h6">Please Sign In...</Typography>
             <TextField
               type="text"
@@ -60,7 +61,7 @@ export const LoginPage: React.FunctionComponent = () => {
             <div className="configuration-actions">
               <div className="configuration-actions-secondary"></div>
               <div className="configuration-actions-primary">
-                <Button disabled={!isValid()} color="primary" onClick={signIn}>
+                <Button type="submit" disabled={!isValid()} color="primary">
                   Sign In
                 </Button>
               </div>

@@ -19,7 +19,9 @@ export const SystemSettingsContainer: React.FunctionComponent = () => {
     setFormState({ ...formState, [event.target.name]: event.target.value || event.target.checked });
   };
 
-  const saveForm = (): void => {
+  const saveForm = (event: React.FormEvent): void => {
+    event.preventDefault();
+
     invoke(dispatch, updateSettings(formState), 'Settings Updated!').subscribe(() => {
       dispatch(actions.common.updateSettings(formState));
     });
@@ -47,7 +49,7 @@ export const SystemSettingsContainer: React.FunctionComponent = () => {
         <Typography variant="caption">Client Settings</Typography>
         <ThemeSelector />
       </form>
-      <form className="configuration-form">
+      <form className="configuration-form" onSubmit={saveForm}>
         <Typography variant="caption">Application Settings</Typography>
         <FormControl fullWidth>
           <InputLabel id="interval-label">Polling Interval</InputLabel>
@@ -85,7 +87,7 @@ export const SystemSettingsContainer: React.FunctionComponent = () => {
             <Button disabled={isEqual(settings, formState)} onClick={resetForm}>
               Cancel
             </Button>
-            <Button disabled={isEqual(settings, formState)} color="primary" onClick={saveForm}>
+            <Button type="submit" disabled={isEqual(settings, formState)} color="primary">
               Save
             </Button>
           </div>

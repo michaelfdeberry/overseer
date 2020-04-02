@@ -16,7 +16,9 @@ export const CreateMachinePage: React.FunctionComponent = () => {
   const restriction = useSelector(state => (state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote));
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
 
-  const save = (): void => {
+  const save = (event: React.FormEvent): void => {
+    event.preventDefault();
+
     invoke(dispatch, createMachine(machineState.machineType, machineState.configuration), 'Machine Created!').subscribe(machine => {
       dispatch(actions.machines.addMachine(machine));
       history.push('/configuration/machines');
@@ -24,7 +26,7 @@ export const CreateMachinePage: React.FunctionComponent = () => {
   };
 
   return (
-    <form className="configuration-form">
+    <form className="configuration-form" onSubmit={save}>
       <Typography variant="h6">
         <Icon>
           <Add />
@@ -38,7 +40,7 @@ export const CreateMachinePage: React.FunctionComponent = () => {
           <Button component={Link} to="/configuration/machines">
             Cancel
           </Button>
-          <Button color="primary" disabled={!machineState.isValid} onClick={save}>
+          <Button type="submit" color="primary" disabled={!machineState.isValid}>
             Save
           </Button>
         </div>

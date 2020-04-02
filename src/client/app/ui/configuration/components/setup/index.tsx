@@ -20,9 +20,11 @@ export const SetupPage: React.FunctionComponent = () => {
   const [currentStep, setCurrentStep] = React.useState(0);
   const [userState, updateUserState] = React.useState<CreateUserFormState>({ accessLevel: AccessLevel.Administrator });
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
-  const [setupStarted, setSetupStarted] = React.useState(!isSetup);
+  const [setupStarted] = React.useState(!isSetup);
 
-  const saveAdmin = (): void => {
+  const saveAdmin = (event: React.FormEvent): void => {
+    event.preventDefault();
+
     const { isValid, ...user } = userState;
     if (currentStep === 0 && isValid) {
       invoke(dispatch, createUser(user)).subscribe(activeUser => {
@@ -33,7 +35,9 @@ export const SetupPage: React.FunctionComponent = () => {
     }
   };
 
-  const saveMachine = (): void => {
+  const saveMachine = (event: React.FormEvent): void => {
+    event.preventDefault();
+
     if (currentStep === 1 && machineState.isValid) {
       invoke(dispatch, createMachine(machineState.machineType, machineState.configuration)).subscribe(machine => {
         dispatch(actions.machines.addMachine(machine));
@@ -69,7 +73,7 @@ export const SetupPage: React.FunctionComponent = () => {
         <div className="configuration-actions">
           <div className="configuration-actions-secondary"></div>
           <div className="configuration-actions-primary">
-            <Button disabled={!userState.isValid} color="primary" onClick={saveAdmin}>
+            <Button type="submit" disabled={!userState.isValid} color="primary">
               Next
             </Button>
           </div>
@@ -95,7 +99,7 @@ export const SetupPage: React.FunctionComponent = () => {
             </Button>
           </div>
           <div className="configuration-actions-primary">
-            <Button disabled={!machineState.isValid} color="primary" onClick={saveMachine}>
+            <Button type="submit" disabled={!machineState.isValid} color="primary">
               Next
             </Button>
           </div>
