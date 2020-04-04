@@ -2,13 +2,13 @@ import initializeIntegration from '@overseer/common/integration/initialize-integ
 import * as React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
+import Layout from './components/layout';
 import { useDispatch, useSelector } from './hooks';
 import { getActiveUser } from './operations/active-user.operations';
 import { authorize, requiresInitialSetup } from './operations/local/authorization.operations.local';
 import { invoke } from './operations/operation-invoker';
 import { getCurrentTheme } from './operations/theme.operations';
 import { actions } from './store/actions';
-import Layout from './ui/layout';
 
 const App: React.FunctionComponent = () => {
   const dispatch = useDispatch();

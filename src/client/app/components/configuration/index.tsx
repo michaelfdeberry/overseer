@@ -4,14 +4,14 @@ import { useEffect, useState } from 'react';
 import { Route, Switch, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 
 import { AdminRoute } from '../common/admin-route';
-import { MachinesPage } from './components/machines';
-import { CreateMachinePage } from './components/machines/create-machine-page';
-import { UpdateMachinePage } from './components/machines/update-machine-page';
-import { SetupPage } from './components/setup';
-import { SystemSettingsContainer } from './components/system';
-import { UsersPage } from './components/users';
-import { CreateUserPage } from './components/users/create-user-page';
-import { UpdateUserPage } from './components/users/update-user-page';
+import { MachinesPage } from './machines';
+import { CreateMachinePage } from './machines/create-machine-page';
+import { UpdateMachinePage } from './machines/update-machine-page';
+import { SetupPage } from './setup';
+import { SystemSettingsContainer } from './system';
+import { UsersPage } from './users';
+import { CreateUserPage } from './users/create-user-page';
+import { UpdateUserPage } from './users/update-user-page';
 
 const ConfigurationTabs: React.FunctionComponent = () => {
   const history = useHistory();

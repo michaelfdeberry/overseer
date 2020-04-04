@@ -3,9 +3,9 @@ import { Autorenew, FileCopy } from '@material-ui/icons';
 import { AccessLevel, DisplayUser } from '@overseer/common/models';
 import * as React from 'react';
 
-import { useDispatch, useSelector } from '../../../../hooks';
-import { getPreauthenticatedToken } from '../../../../operations/local/authentication.operations.local';
-import { actions } from '../../../../store/actions';
+import { useDispatch, useSelector } from '../../../hooks';
+import { getPreauthenticatedToken } from '../../../operations/local/authentication.operations.local';
+import { actions } from '../../../store/actions';
 
 export const GenerateSsoInput: React.FunctionComponent<{ user: DisplayUser }> = ({ user: { id, accessLevel } }) => {
   const dispatch = useDispatch();
@@ -49,12 +49,12 @@ export const GenerateSsoInput: React.FunctionComponent<{ user: DisplayUser }> = 
             </IconButton>
           </Tooltip>
         ) : (
-          <Tooltip arrow title="Generate">
-            <IconButton disabled={isGeneratingPreauthUrl} onClick={() => generatePreauthUrl(true)}>
-              <Autorenew />
-            </IconButton>
-          </Tooltip>
-        )}
+            <Tooltip arrow title="Generate">
+              <IconButton disabled={isGeneratingPreauthUrl} onClick={() => generatePreauthUrl(true)}>
+                <Autorenew />
+              </IconButton>
+            </Tooltip>
+          )}
       </div>
     </FormControl>
   );

@@ -3,10 +3,10 @@ import PersonAdd from '@material-ui/icons/PersonAdd';
 import * as React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
-import { useDispatch, useSelector } from '../../../../hooks';
-import { createUser, getUsers } from '../../../../operations/local/users.operations.local';
-import { invoke } from '../../../../operations/operation-invoker';
-import { actions } from '../../../../store/actions';
+import { useDispatch, useSelector } from '../../../hooks';
+import { createUser, getUsers } from '../../../operations/local/users.operations.local';
+import { invoke } from '../../../operations/operation-invoker';
+import { actions } from '../../../store/actions';
 import { CreateUserForm, CreateUserFormState } from './create-user-form';
 
 export const CreateUserPage: React.FunctionComponent = () => {

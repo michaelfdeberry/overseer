@@ -3,11 +3,11 @@ import { SystemSettings } from '@overseer/common/models';
 import { isEqual } from 'lodash/fp';
 import * as React from 'react';
 
-import { useDispatch, useSelector } from '../../../../hooks';
-import { getSettings, updateSettings } from '../../../../operations/local/configuration.operations.local';
-import { invoke } from '../../../../operations/operation-invoker';
-import { actions } from '../../../../store/actions';
-import { pollIntervals } from '../../utils/display-options.class';
+import { useDispatch, useSelector } from '../../../hooks';
+import { getSettings, updateSettings } from '../../../operations/local/configuration.operations.local';
+import { invoke } from '../../../operations/operation-invoker';
+import { actions } from '../../../store/actions';
+import { pollIntervals } from '../utils/display-options.class';
 import { ThemeSelector } from './theme-selector';
 
 export const SystemSettingsContainer: React.FunctionComponent = () => {

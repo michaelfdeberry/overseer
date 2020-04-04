@@ -4,11 +4,11 @@ import { DisplayUser } from '@overseer/common/models';
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { useDispatch } from '../../../../hooks';
-import { changePassword } from '../../../../operations/local/users.operations.local';
-import { invoke } from '../../../../operations/operation-invoker';
-import { isConfirmPasswordValid } from '../../validators/confirm-password.validator';
-import { isPasswordValid } from '../../validators/password.validator';
+import { useDispatch } from '../../../hooks';
+import { changePassword } from '../../../operations/local/users.operations.local';
+import { invoke } from '../../../operations/operation-invoker';
+import { isConfirmPasswordValid } from '../validators/confirm-password.validator';
+import { isPasswordValid } from '../validators/password.validator';
 import { PasswordRequirements } from './password-requirements';
 
 type ChangePasswordFormProps = {

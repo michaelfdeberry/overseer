@@ -5,11 +5,11 @@ import { equals } from 'lodash/fp';
 import * as React from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 
-import { useDispatch, useSelector } from '../../../../hooks';
-import { deleteMachine, getMachines, updateMachine } from '../../../../operations/local/machines.operations.local';
-import { invoke } from '../../../../operations/operation-invoker';
-import { actions } from '../../../../store/actions';
-import { PromptDialog } from '../../../common/prompt-dialog';
+import { useDispatch, useSelector } from '../../../hooks';
+import { deleteMachine, getMachines, updateMachine } from '../../../operations/local/machines.operations.local';
+import { invoke } from '../../../operations/operation-invoker';
+import { actions } from '../../../store/actions';
+import { PromptDialog } from '../../common/prompt-dialog';
 import { MachineConfigurationForm, MachineConfigurationFormState } from './machine-configuration-form';
 
 export const UpdateMachinePage: React.FunctionComponent = () => {

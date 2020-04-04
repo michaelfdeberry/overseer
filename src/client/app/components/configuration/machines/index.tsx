@@ -4,11 +4,11 @@ import * as React from 'react';
 import { DragDropContext, Draggable, DraggableProvided, DraggableStateSnapshot, Droppable, DroppableProvided, DropResult } from 'react-beautiful-dnd';
 import { Link } from 'react-router-dom';
 
-import { useDispatch, useSelector } from '../../../../hooks';
-import { getMachines, sortMachines } from '../../../../operations/local/machines.operations.local';
-import { invoke } from '../../../../operations/operation-invoker';
-import { actions } from '../../../../store/actions';
-import { sortByKey } from '../../utils/sort.functions';
+import { useDispatch, useSelector } from '../../../hooks';
+import { getMachines, sortMachines } from '../../../operations/local/machines.operations.local';
+import { invoke } from '../../../operations/operation-invoker';
+import { actions } from '../../../store/actions';
+import { sortByKey } from '../utils/sort.functions';
 
 export const MachinesPage: React.FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -76,12 +76,7 @@ export const MachinesPage: React.FunctionComponent = () => {
         </thead>
         <Droppable droppableId="table">
           {(droppableProvided: DroppableProvided) => (
-            <tbody
-              ref={(ref: HTMLElement) => {
-                droppableProvided.innerRef(ref);
-              }}
-              {...droppableProvided.droppableProps}
-            >
+            <tbody ref={(ref: HTMLElement) => { droppableProvided.innerRef(ref); }} {...droppableProvided.droppableProps}>
               {machines.sort(sortByKey('sortIndex')).map((machine, index) => {
                 return (
                   <Draggable draggableId={machine.id} index={index} key={machine.id}>
@@ -106,10 +101,10 @@ export const MachinesPage: React.FunctionComponent = () => {
                               <Warning />
                             </Icon>
                           ) : (
-                            <Icon>
-                              <Check />
-                            </Icon>
-                          )}
+                              <Icon>
+                                <Check />
+                              </Icon>
+                            )}
                         </td>
                         <td className="action">
                           <Button component={Link} to={`/configuration/machines/edit/${machine.id}`}>

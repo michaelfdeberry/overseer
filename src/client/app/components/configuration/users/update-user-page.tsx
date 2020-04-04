@@ -5,13 +5,13 @@ import { DisplayUser } from '@overseer/common/models';
 import * as React from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 
-import { useDispatch, useSelector } from '../../../../hooks';
-import { logout, logoutUser } from '../../../../operations/local/authentication.operations.local';
-import { deleteUser, getUsers, updateUser } from '../../../../operations/local/users.operations.local';
-import { invoke } from '../../../../operations/operation-invoker';
-import { actions } from '../../../../store/actions';
-import { PromptDialog } from '../../../common/prompt-dialog';
-import { accessLevels, sessionLifetimes } from '../../utils/display-options.class';
+import { useDispatch, useSelector } from '../../../hooks';
+import { logout, logoutUser } from '../../../operations/local/authentication.operations.local';
+import { deleteUser, getUsers, updateUser } from '../../../operations/local/users.operations.local';
+import { invoke } from '../../../operations/operation-invoker';
+import { actions } from '../../../store/actions';
+import { PromptDialog } from '../../common/prompt-dialog';
+import { accessLevels, sessionLifetimes } from '../utils/display-options.class';
 import { ChangePasswordForm } from './change-password-form';
 import { GenerateSsoInput } from './generate-sso-input';
 

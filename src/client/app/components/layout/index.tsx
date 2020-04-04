@@ -2,9 +2,9 @@ import { CssBaseline, ThemeProvider } from '@material-ui/core';
 import * as React from 'react';
 
 import { useSelector } from '../../hooks';
-import { Content } from './components/content';
-import { Header } from './components/header';
-import { Loader } from './components/loader';
+import { Content } from './content';
+import { Header } from './header';
+import { Loader } from './loader';
 import { defaultTheme, themeMap } from './themes';
 
 const Layout: React.FunctionComponent = () => {

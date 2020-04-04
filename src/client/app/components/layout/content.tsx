@@ -3,12 +3,12 @@ import Alert from '@material-ui/lab/Alert';
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import { useDispatch, useSelector } from '../../../hooks';
-import { actions } from '../../../store/actions';
-import { PrivateRoute } from '../../common/private-route';
-import { ConfigurationPage } from '../../configuration';
-import { LoginPage } from '../../login';
-import { MonitoringPage } from '../../monitoring';
+import { useDispatch, useSelector } from '../../hooks';
+import { actions } from '../../store/actions';
+import { PrivateRoute } from '../common/private-route';
+import { ConfigurationPage } from '../configuration';
+import { LoginPage } from '../login';
+import { MonitoringPage } from '../monitoring';
 
 export const Content: React.FunctionComponent = () => {
   const dispatch = useDispatch();

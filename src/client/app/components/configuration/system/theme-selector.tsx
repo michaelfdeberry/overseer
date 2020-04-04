@@ -1,10 +1,10 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import * as React from 'react';
 
-import { useDispatch, useSelector } from '../../../../hooks';
-import { setCurrentTheme } from '../../../../operations/theme.operations';
-import { actions } from '../../../../store/actions';
-import { themeOptions } from '../../utils/display-options.class';
+import { useDispatch, useSelector } from '../../../hooks';
+import { setCurrentTheme } from '../../../operations/theme.operations';
+import { actions } from '../../../store/actions';
+import { themeOptions } from '../utils/display-options.class';
 
 export const ThemeSelector: React.FunctionComponent = () => {
   const dispatch = useDispatch();

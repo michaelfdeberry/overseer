@@ -3,7 +3,7 @@ import * as React from 'react';
 import LoadingBar from 'react-top-loading-bar';
 import { Subscription, timer } from 'rxjs';
 
-import { useSelector } from '../../../hooks';
+import { useSelector } from '../../hooks';
 
 export const Loader: React.FunctionComponent = () => {
   const theme: Theme = useTheme();

@@ -6,8 +6,8 @@ import { AccessLevel } from '@overseer/common/models';
 import * as React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
-import { useDispatch, useSelector } from '../../../hooks';
-import { actions } from '../../../store/actions';
+import { useDispatch, useSelector } from '../../hooks';
+import { actions } from '../../store/actions';
 
 export const HeaderMenu: React.FunctionComponent = () => {
   const history = useHistory();

@@ -6,12 +6,12 @@ import { AccessLevel } from '@overseer/common/models';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import { useDispatch, useSelector } from '../../../../hooks';
-import { getUsers } from '../../../../operations/local/users.operations.local';
-import { invoke } from '../../../../operations/operation-invoker';
-import { actions } from '../../../../store/actions';
-import { sessionLifetimes } from '../../utils/display-options.class';
-import { sortByKey } from '../../utils/sort.functions';
+import { useDispatch, useSelector } from '../../../hooks';
+import { getUsers } from '../../../operations/local/users.operations.local';
+import { invoke } from '../../../operations/operation-invoker';
+import { actions } from '../../../store/actions';
+import { sessionLifetimes } from '../utils/display-options.class';
+import { sortByKey } from '../utils/sort.functions';
 
 export const UsersPage: React.FunctionComponent = () => {
   const dispatch = useDispatch();

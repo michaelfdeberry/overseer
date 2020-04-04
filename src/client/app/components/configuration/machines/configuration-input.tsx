@@ -2,8 +2,8 @@ import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-
 import { MachineSetting } from '@overseer/common/models';
 import * as React from 'react';
 
-import { DisplayOption } from '../../utils/display-options.class';
-import { isRequiredFieldValid } from '../../validators/required.validator';
+import { DisplayOption } from '../utils/display-options.class';
+import { isRequiredFieldValid } from '../validators/required.validator';
 
 export type ConfigurationInputProps = {
   name: string;

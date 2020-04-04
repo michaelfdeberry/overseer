@@ -3,7 +3,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 import * as React from 'react';
 
-import { containsLowercase, containsNumber, containsSpecialChar, containsUppercase, isValidLength } from '../../validators/password.validator';
+import { containsLowercase, containsNumber, containsSpecialChar, containsUppercase, isValidLength } from '../validators/password.validator';
 
 export const PasswordRequirements: React.FunctionComponent<{ password: string }> = props => {
   const getClassName = (func: (p: string) => boolean): string => {

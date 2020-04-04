@@ -5,12 +5,12 @@ import {
   MachineConfigurationCollection,
   MachineSetting,
   MachineSettingGroup,
-  PersistenceModeType,
+  PersistenceModeType
 } from '@overseer/common/models';
 import * as React from 'react';
 
-import { DisplayOption } from '../../utils/display-options.class';
-import { isRequiredFieldValid } from '../../validators/required.validator';
+import { DisplayOption } from '../utils/display-options.class';
+import { isRequiredFieldValid } from '../validators/required.validator';
 import { ConfigurationInputs } from './configuration-inputs';
 
 export type MachineConfigurationFormProps = {
