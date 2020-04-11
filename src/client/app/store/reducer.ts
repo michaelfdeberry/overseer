@@ -42,6 +42,8 @@ function internalReducer(state: AppState, action: AnyAction): AppState {
       return { ...state, machines: state.machines.map(m => (m.id === payload.machine.id ? payload.machine : m)) };
     case actions.machines.types.updateMachines:
       return { ...state, machines: payload.machines };
+    case actions.machines.types.setMachineState:
+      return { ...state, machineStates: { ...state.machineStates, [payload.machineState.machineId]: payload.machineState } };
     default:
       return state;
   }

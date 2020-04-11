@@ -8,6 +8,7 @@
 
 .header {
   display: flex;
+  position: relative;
 
   .header-title {
     flex: 1;
@@ -47,7 +48,7 @@
         text-decoration: none;
 
         .MuiIcon-root {
-          margin-top: 8px;
+          margin-top: 4px;
         }
       }
 

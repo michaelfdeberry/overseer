@@ -1,6 +1,6 @@
 import { AccessLevel } from '@overseer/common/models';
 
-import { themeMap } from '../../layout/themes';
+import { themeMap } from '../components/layout/themes';
 
 export class DisplayOption<TValue> {
   constructor(public text: string, public value: TValue) {}

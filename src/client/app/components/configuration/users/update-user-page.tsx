@@ -10,8 +10,8 @@ import { logout, logoutUser } from '../../../operations/local/authentication.ope
 import { deleteUser, getUsers, updateUser } from '../../../operations/local/users.operations.local';
 import { invoke } from '../../../operations/operation-invoker';
 import { actions } from '../../../store/actions';
+import { accessLevels, sessionLifetimes } from '../../../utils/display-options.class';
 import { PromptDialog } from '../../common/prompt-dialog';
-import { accessLevels, sessionLifetimes } from '../utils/display-options.class';
 import { ChangePasswordForm } from './change-password-form';
 import { GenerateSsoInput } from './generate-sso-input';
 

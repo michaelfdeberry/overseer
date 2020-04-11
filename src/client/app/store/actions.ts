@@ -1,4 +1,4 @@
-import { DisplayUser, Machine, SystemSettings } from '@overseer/common/models';
+import { DisplayUser, Machine, MachineState, SystemSettings } from '@overseer/common/models';
 
 import { Action, TypedAction } from './action.type';
 import { AppState, Notification } from './state';
@@ -29,6 +29,7 @@ const actionsTypes = {
     updateMachine: '@overseer/machines/updateMachine',
     addMachine: '@overseer/machines/addMachine',
     removeMachine: '@overseer/machines/removeMachine',
+    setMachineState: '@overseer/machines/setState',
   },
 };
 
@@ -109,6 +110,9 @@ export const actions = {
     },
     removeMachine(machine: Machine): TypedAction<{ machine: Machine }> {
       return { type: actionsTypes.machines.removeMachine, machine };
+    },
+    setMachineState(machineState: MachineState): TypedAction<{ machineState: MachineState }> {
+      return { type: actionsTypes.machines.setMachineState, machineState };
     },
   },
 };

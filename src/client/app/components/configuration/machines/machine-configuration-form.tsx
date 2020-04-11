@@ -9,7 +9,7 @@ import {
 } from '@overseer/common/models';
 import * as React from 'react';
 
-import { DisplayOption } from '../utils/display-options.class';
+import { DisplayOption } from '../../../utils/display-options.class';
 import { isRequiredFieldValid } from '../validators/required.validator';
 import { ConfigurationInputs } from './configuration-inputs';
 

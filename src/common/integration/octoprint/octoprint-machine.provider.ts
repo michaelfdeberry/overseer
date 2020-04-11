@@ -12,7 +12,7 @@ import processUrl from '../utilities/process-url.utility';
 export class OctoprintMachineProvider extends MachineProvider implements ExceptionTimeoutContext {
   maxExceptionCount = 5;
   timeoutDuration: number = 1000 * 60 * 2;
-  exceptionCount: number;
+  exceptionCount: number = 0;
   lastException: number;
 
   private get url() {
@@ -94,7 +94,7 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
           }
 
           if (profile.extruder.sharedNozzle) {
-            this.machine.tools.push({ type: MachineToolType.Heater, index: 0, name: 'heater 0' });
+            this.machine.tools.push({ type: MachineToolType.Heater, index: 0, name: 'nozzle' });
           }
 
           for (let index = 0; index < profile.extruder.count; index++) {
@@ -102,7 +102,7 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
               this.machine.tools.push({
                 type: MachineToolType.Heater,
                 index: index,
-                name: `heater ${index}`,
+                name: 'nozzle',
               });
             }
 

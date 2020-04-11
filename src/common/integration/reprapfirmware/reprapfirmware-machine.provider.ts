@@ -15,7 +15,7 @@ import processUrl from '../utilities/process-url.utility';
 export class RepRapFirmwareMachineProvider extends MachineProvider implements ExceptionTimeoutContext {
   maxExceptionCount = 5;
   timeoutDuration: number = 1000 * 60 * 2;
-  exceptionCount: number;
+  exceptionCount: number = 0;
   lastException: number;
 
   private async getData(resource: string, options?: AxiosRequestConfig): Promise<any> {
@@ -42,7 +42,7 @@ export class RepRapFirmwareMachineProvider extends MachineProvider implements Ex
       status.tools.forEach((tool: any) => {
         tool.heaters.forEach((heaterIndex: number) => {
           this.machine.tools.push({
-            name: `heater ${heaterIndex}`,
+            name: 'nozzle',
             index: heaterIndex,
             type: MachineToolType.Heater,
           });

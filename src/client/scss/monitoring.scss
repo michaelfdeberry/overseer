@@ -1,0 +1,188 @@
+.machines {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 64px);
+  z-index: 1200;
+
+  .machine {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    float: left;
+    box-sizing: border-box;
+    color: #fff;
+    overflow: hidden;
+
+    .zoom-panel {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      background-image: url('/images/fuzz.gif');
+      cursor: zoom-in;
+
+      &.zoom {
+        z-index: 1500;
+        background-image: none;
+        background-color: #333;
+        cursor: zoom-out;
+
+        .web-cam {
+          background-size: contain;
+          background-position: center;
+        }
+      }
+    }
+
+    .web-cam {
+      position: absolute;
+      height: 100%;
+      width: 102%;
+      margin-left: -1%;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center center;
+
+      &.flip-horizontally {
+        transform: scaleX(-1);
+      }
+
+      &.flip-vertically {
+        transform: scaleY(-1);
+      }
+    }
+
+    .content {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+
+      .head,
+      .foot {
+        position: absolute;
+        left: 0;
+        right: 0;
+        padding: 10px 12px;
+      }
+
+      .head {
+        top: 0;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+      }
+
+      .foot {
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
+      }
+
+      .status,
+      .controls {
+        &:after {
+          clear: both;
+        }
+      }
+
+      .status {
+        float: left;
+        .name {
+          font-size: 20px;
+
+          @media (max-width: 480px) {
+            font-size: 1em;
+          }
+        }
+
+        .state {
+          font-size: 12px;
+
+          @media (max-width: 480px) {
+            font-size: 10px;
+          }
+        }
+      }
+
+      .controls {
+        float: right;
+
+        .MuiButton-contained {
+          color: #fff;
+          padding: 0;
+          $buttonSize: 36px;
+          height: $buttonSize;
+          width: $buttonSize;
+          min-width: $buttonSize;
+          margin-left: 8px;
+          background-color: rgba($color: #444, $alpha: 0.7);
+          box-shadow: 0px 2px 4px rgba($color: #000, $alpha: 0.56);
+
+          .MuiIcon-root {
+            margin-top: 2px;
+            height: 36px;
+          }
+
+          &.resume {
+            background-color: rgba($color: #3f51b5, $alpha: 0.7);
+          }
+
+          &.pause {
+            background-color: rgba($color: #f2994a, $alpha: 0.7);
+          }
+        }
+      }
+
+      .temps {
+        float: right;
+
+        .temp {
+          position: relative;
+          float: left;
+          width: 100px;
+          text-align: center;
+          margin-right: 12px;
+
+          &:after {
+            content: '';
+            clear: both;
+          }
+
+          .heater-icon {
+            border-bottom: 1px solid #fff;
+            width: 100%;
+            display: block;
+            margin-bottom: 10px;
+
+            svg {
+              height: 50px;
+              width: 50px;
+            }
+          }
+
+          .heater-index {
+            display: none;
+          }
+
+          &.nozzle {
+            .heater-index {
+              display: block;
+              position: absolute;
+              display: block;
+              position: absolute;
+              left: 50px;
+              top: 19px;
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+
+    .machine-type-logo {
+      position: absolute;
+      left: 12px;
+      bottom: 20px;
+      width: 90px;
+      opacity: 0.25;
+    }
+  }
+}

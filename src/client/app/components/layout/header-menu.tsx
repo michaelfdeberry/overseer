@@ -7,6 +7,8 @@ import * as React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import { useDispatch, useSelector } from '../../hooks';
+import { logout } from '../../operations/local/authentication.operations.local';
+import { invoke } from '../../operations/operation-invoker';
 import { actions } from '../../store/actions';
 
 export const HeaderMenu: React.FunctionComponent = () => {
@@ -26,8 +28,10 @@ export const HeaderMenu: React.FunctionComponent = () => {
 
   const signOut = (): void => {
     closeMenu();
-    dispatch(actions.common.clearActiveUser());
-    history.push('/login');
+    invoke(dispatch, logout(activeUser.token)).subscribe(() => {
+      dispatch(actions.common.clearActiveUser());
+      history.push('/login');
+    });
   };
 
   if (!activeUser) {

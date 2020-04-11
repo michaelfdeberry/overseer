@@ -6,7 +6,7 @@ import { MachineProviderService } from './provider.service';
 
 export class MonitoringService {
   private intervalRef: any;
-  machineStateUpdateEvent: EventEmitter;
+  machineStateUpdateEvent: EventEmitter = new EventEmitter();
 
   constructor(private context: DataContext, private providerService: MachineProviderService) {}
 

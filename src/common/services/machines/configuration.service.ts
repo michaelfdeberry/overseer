@@ -25,8 +25,7 @@ export class MachineConfigurationService {
   async updateMachine(machine: Machine): Promise<Machine> {
     if (!machine.disabled) {
       const provider = this.providerService.getProvider(machine);
-      const renewedMachine = await provider.createMachine(machine.configuration);
-      machine.configuration = renewedMachine.configuration;
+      Object.assign(machine, await provider.createMachine(machine.configuration));
     }
 
     await this.context.machines.update(machine);

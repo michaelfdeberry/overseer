@@ -20,22 +20,10 @@ const App: React.FunctionComponent = () => {
 
       invoke(dispatch, requiresInitialSetup()).subscribe(requiresSetup => {
         const activeUser = getActiveUser();
-        if (activeUser) {
-          invoke(dispatch, authorize(activeUser.token)).subscribe(activeUser => {
-            dispatch(
-              actions.common.initialize({
-                activeUser,
-                isInitialized: true,
-                isSetup: !requiresSetup,
-                // eslint-disable-next-line no-undef
-                isLocalApp: __isLocalApp__,
-                currentTheme: getCurrentTheme(),
-              })
-            );
-          });
-        } else {
+        invoke(dispatch, authorize(activeUser?.token)).subscribe(activeUser => {
           dispatch(
             actions.common.initialize({
+              activeUser,
               isInitialized: true,
               isSetup: !requiresSetup,
               // eslint-disable-next-line no-undef
@@ -43,7 +31,7 @@ const App: React.FunctionComponent = () => {
               currentTheme: getCurrentTheme(),
             })
           );
-        }
+        });
       });
     }
   }, []);

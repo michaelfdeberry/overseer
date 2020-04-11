@@ -8,7 +8,7 @@ export const StateContext: React.Context<AppState> = React.createContext<AppStat
 export const DispatchContext: React.Context<React.Dispatch<AnyAction>> = React.createContext<React.Dispatch<AnyAction>>(null);
 
 export const Store: React.FunctionComponent<{ children: React.ReactNode }> = props => {
-  const initialState: AppState = { isInitialized: false };
+  const initialState: AppState = { isInitialized: false, machineStates: {} };
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   return (

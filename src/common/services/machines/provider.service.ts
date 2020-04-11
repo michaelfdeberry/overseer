@@ -11,7 +11,10 @@ export class MachineProviderService {
 
   getProvider(machine: Machine): MachineProvider {
     if (!MachineProviderService.providerCache.has(machine.id)) {
-      MachineProviderService.providerCache.set(machine.id, this.createProvider(machine.type));
+      const provider = this.createProvider(machine.type);
+      provider.machine = machine;
+
+      MachineProviderService.providerCache.set(machine.id, provider);
     }
 
     return MachineProviderService.providerCache.get(machine.id);

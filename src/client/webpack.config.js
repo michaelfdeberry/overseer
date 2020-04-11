@@ -25,6 +25,10 @@ module.exports = function(env) {
     module: {
       rules: [
         {
+          test: /\.svg$/,
+          use: ['@svgr/webpack'],
+        },
+        {
           test: /\.ts(x?)$/,
           loader: 'awesome-typescript-loader',
         },
