@@ -1,30 +1,32 @@
-import { LinearProgress, Typography } from '@material-ui/core';
+import { LinearProgress } from '@material-ui/core';
 import { MachineStateType } from '@overseer/common/models';
 import * as React from 'react';
 
-import { toDuration } from '../../utils/duration';
 import { MachineMonitorControls } from './machine-monitor-controls';
 import { MachineMonitorProps } from './machine-monitor-props';
+import { MachineMonitorStatus } from './machine-monitor-status';
 import { MachineMonitorTemps } from './machine-monitor-temps';
 
 export const MachineMonitor: React.FunctionComponent<MachineMonitorProps> = props => {
+  const scaleRatioPerFrame = 0.15;
   const zoomPanelRef = React.useRef<HTMLDivElement>();
   const [zoomState, setZoomState] = React.useState<boolean>(undefined);
   const machineWebsiteUrl = React.useMemo(() => props.machine.get('Url'), [props.machine]);
 
-  const stepRatio = 0.15; // 15% per frame
-
   const progressVariant = (): 'determinate' | 'indeterminate' => {
-    if (!props.machineState || props.machineState.type === MachineStateType.Connecting) return 'indeterminate';
+    if (props.machine.disabled) return 'determinate';
+    if (!props.machineState) return 'indeterminate';
+    if (props.machineState.type === MachineStateType.Connecting) return 'indeterminate';
+
     return 'determinate';
   };
 
   const zoomIn = (): void => {
     const zoomPanelBounds = zoomPanelRef.current.getBoundingClientRect();
-    const deltaTop = zoomPanelBounds.top * stepRatio;
-    const deltaLeft = zoomPanelBounds.left * stepRatio;
-    const deltaHeight = (window.innerHeight - zoomPanelRef.current.clientHeight) * stepRatio;
-    const deltaWidth = (window.innerWidth - zoomPanelRef.current.clientWidth) * stepRatio;
+    const deltaTop = zoomPanelBounds.top * scaleRatioPerFrame;
+    const deltaLeft = zoomPanelBounds.left * scaleRatioPerFrame;
+    const deltaHeight = (window.innerHeight - zoomPanelRef.current.clientHeight) * scaleRatioPerFrame;
+    const deltaWidth = (window.innerWidth - zoomPanelRef.current.clientWidth) * scaleRatioPerFrame;
     zoomPanelRef.current.dataset.initialTop = zoomPanelBounds.top.toString();
     zoomPanelRef.current.dataset.initialLeft = zoomPanelBounds.left.toString();
     zoomPanelRef.current.dataset.initialHeight = zoomPanelRef.current.clientHeight.toString();
@@ -46,6 +48,7 @@ export const MachineMonitor: React.FunctionComponent<MachineMonitorProps> = prop
       zoomPanelRef.current.style.width = `${Math.min(window.innerWidth, bounds.width + deltaWidth)}px`;
       requestAnimationFrame(animate);
     }
+
     requestAnimationFrame(animate);
   };
 
@@ -54,10 +57,10 @@ export const MachineMonitor: React.FunctionComponent<MachineMonitorProps> = prop
     const left = parseFloat(zoomPanelRef.current.dataset.initialLeft);
     const height = parseFloat(zoomPanelRef.current.dataset.initialHeight);
     const width = parseFloat(zoomPanelRef.current.dataset.initialWidth);
-    const deltaTop = top * stepRatio;
-    const deltaLeft = left * stepRatio;
-    const deltaHeight = (zoomPanelRef.current.clientHeight - height) * stepRatio;
-    const deltaWidth = (zoomPanelRef.current.clientWidth - width) * stepRatio;
+    const deltaTop = top * scaleRatioPerFrame;
+    const deltaLeft = left * scaleRatioPerFrame;
+    const deltaHeight = (zoomPanelRef.current.clientHeight - height) * scaleRatioPerFrame;
+    const deltaWidth = (zoomPanelRef.current.clientWidth - width) * scaleRatioPerFrame;
 
     function animate() {
       const bounds = zoomPanelRef.current.getBoundingClientRect();
@@ -94,23 +97,15 @@ export const MachineMonitor: React.FunctionComponent<MachineMonitorProps> = prop
   return (
     <div className="machine">
       <div className="zoom-panel" ref={zoomPanelRef}>
-        <LinearProgress color="secondary" variant={progressVariant()} value={props.machineState?.progress || 0} />
         <div className="content">
+          <LinearProgress color="secondary" variant={progressVariant()} value={props.machineState?.progress || 0} />
           <div
             className={`web-cam ${props.machine.webcamOrientation}`}
             style={{ backgroundImage: `url(${props.machine.webcamUrl})` }}
             onClick={() => setZoomState(!zoomState)}
           ></div>
           <div className="head">
-            <div className="status">
-              <Typography variant="h6">{props.machine.name}</Typography>
-              <Typography variant="caption">
-                {MachineStateType[!props.machineState ? MachineStateType.Connecting : props.machineState.type]}
-                {props.machineState?.type && props.machineState.type > MachineStateType.Idle ? (
-                  <span>({toDuration(props.machineState?.estimatedRemainingTime)} Remaining)</span>
-                ) : null}
-              </Typography>
-            </div>
+            <MachineMonitorStatus {...props} />
             <MachineMonitorControls {...props} />
           </div>
           <div className="foot">

@@ -15,10 +15,12 @@ export class MachineConfigurationService {
   }
 
   async createMachine(machineType: string, configuration: MachineConfigurationCollection): Promise<Machine> {
+    const machines = await this.getMachines();
     const provider = this.providerService.createProvider(machineType);
     const machine = await provider.createMachine(configuration);
     await this.context.machines.add(machine);
 
+    machine.sortIndex = machines.length;
     return machine;
   }
 

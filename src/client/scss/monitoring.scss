@@ -1,10 +1,34 @@
-.machines {
+.monitoring-container {
   position: fixed;
   top: 64px;
   left: 0;
   width: 100%;
   height: calc(100% - 64px);
   z-index: 1200;
+  display: flex;
+  flex-direction: row;
+}
+
+.no-machines-message {
+  @extend .monitoring-container;
+
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0.7;
+
+  .MuiButtonBase-root {
+    margin: 5px;
+  }
+}
+
+.machines {
+  @extend .monitoring-container;
+
+  @media (max-width: 480px) {
+    top: 0;
+    position: relative;
+  }
 
   .machine {
     height: 100%;
@@ -14,6 +38,10 @@
     box-sizing: border-box;
     color: #fff;
     overflow: hidden;
+
+    @media (max-width: 480px) {
+      border-bottom: 1px solid #333;
+    }
 
     .zoom-panel {
       display: flex;
@@ -54,7 +82,6 @@
     }
 
     .content {
-      position: absolute;
       width: 100%;
       height: 100%;
 
@@ -64,6 +91,7 @@
         left: 0;
         right: 0;
         padding: 10px 12px;
+        height: 100px;
       }
 
       .head {
@@ -86,16 +114,12 @@
       .status {
         float: left;
         .name {
-          font-size: 20px;
-
           @media (max-width: 480px) {
             font-size: 1em;
           }
         }
 
         .state {
-          font-size: 12px;
-
           @media (max-width: 480px) {
             font-size: 10px;
           }
@@ -132,14 +156,16 @@
       }
 
       .temps {
-        float: right;
+        position: absolute;
+        right: 12px;
+        bottom: 10px;
 
         .temp {
           position: relative;
           float: left;
           width: 100px;
           text-align: center;
-          margin-right: 12px;
+          margin-left: 12px;
 
           &:after {
             content: '';
@@ -147,14 +173,11 @@
           }
 
           .heater-icon {
-            border-bottom: 1px solid #fff;
             width: 100%;
             display: block;
-            margin-bottom: 10px;
 
             svg {
-              height: 50px;
-              width: 50px;
+              width: 45px;
             }
           }
 
@@ -168,11 +191,21 @@
               position: absolute;
               display: block;
               position: absolute;
-              left: 50px;
-              top: 19px;
-              font-size: 12px;
+              left: 51px;
+              top: 17px;
+              font-size: 11px;
             }
           }
+        }
+
+        .heater-temps {
+          padding-left: 10px;
+        }
+
+        @media (max-width: 480px) {
+          transform: scale(0.7);
+          right: -21px;
+          bottom: -3px;
         }
       }
     }
@@ -183,6 +216,10 @@
       bottom: 20px;
       width: 90px;
       opacity: 0.25;
+
+      @media (max-width: 480px) {
+        width: 45px;
+      }
     }
   }
 }

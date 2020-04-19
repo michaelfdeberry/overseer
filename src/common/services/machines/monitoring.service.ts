@@ -18,6 +18,7 @@ export class MonitoringService {
   disable() {
     if (!this.intervalRef) return;
     clearInterval(this.intervalRef);
+    this.intervalRef = undefined;
   }
 
   private monitor() {

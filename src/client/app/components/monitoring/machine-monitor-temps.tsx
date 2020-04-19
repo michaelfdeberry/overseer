@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core';
 import { MachineToolType } from '@overseer/common/models';
 import * as React from 'react';
 
@@ -33,10 +34,10 @@ export const MachineMonitorTemps: React.FunctionComponent<MachineMonitorProps> =
               <span className="heater-icon">{renderIcon(heater)}</span>
               <span className="heater-index">{heater.index}</span>
               <div className="heater-temps">
-                <span>
+                <Typography variant="caption">
                   {temp?.actual || 0} / {temp?.target || 0}
-                </span>
-                <sup>&deg;C</sup>
+                  <sup>&deg;C</sup>
+                </Typography>
               </div>
             </div>
           );
