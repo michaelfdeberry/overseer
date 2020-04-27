@@ -35,7 +35,7 @@ export const MachineMonitorTemps: React.FunctionComponent<MachineMonitorProps> =
               <span className="heater-index">{heater.index}</span>
               <div className="heater-temps">
                 <Typography variant="caption">
-                  {temp?.actual || 0} / {temp?.target || 0}
+                  {temp?.actual.toFixed(1) || 0} / {temp?.target || 0}
                   <sup>&deg;C</sup>
                 </Typography>
               </div>

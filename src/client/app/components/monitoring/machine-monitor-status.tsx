@@ -2,7 +2,7 @@ import { Typography } from '@material-ui/core';
 import { MachineStateType } from '@overseer/common/models';
 import * as React from 'react';
 
-import { toDuration } from '../../utils/duration';
+import { toDuration } from '../../utils/duration.function';
 import { MachineMonitorProps } from './machine-monitor-props';
 
 export const MachineMonitorStatus: React.FunctionComponent<MachineMonitorProps> = props => {

@@ -41,10 +41,10 @@ export const PromptDialog: React.FunctionComponent<PromptDialogProps> = props =>
 
   return (
     <div>
-      <Dialog open={open} onClose={decline} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+      <Dialog open={open} onClose={decline}>
+        <DialogTitle>{title}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">{message}</DialogContentText>
+          <DialogContentText>{message}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={decline}>{declineButtonText}</Button>

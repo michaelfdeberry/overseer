@@ -21,20 +21,23 @@ export class MonitoringService {
     this.intervalRef = undefined;
   }
 
+  private async pollMachines(context: DataContext) {
+    const machines = await context.machines.getAll();
+    machines
+      .filter(machine => !machine.disabled)
+      .forEach(machine => {
+        this.providerService
+          .getProvider(machine)
+          .getMachineState()
+          .then(state => this.machineStateUpdateEvent.emit('MachineState', state));
+      });
+  }
+
   private monitor() {
     this.context.values.get<SystemSettings>('SystemSettings').then(settings => {
-      this.intervalRef = setInterval(async () => {
-        const machines = await this.context.machines.getAll();
-
-        machines
-          .filter(machine => !machine.disabled)
-          .forEach(machine => {
-            this.providerService
-              .getProvider(machine)
-              .getMachineState()
-              .then(state => this.machineStateUpdateEvent.emit('MachineState', state));
-          });
-      }, settings.interval);
+      this.intervalRef = setInterval(() => this.pollMachines(this.context), settings.interval);
     });
+
+    this.pollMachines(this.context);
   }
 }

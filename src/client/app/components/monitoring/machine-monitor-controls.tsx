@@ -9,6 +9,7 @@ import { cancelJob, pauseJob, resumeJob } from '../../operations/local/control.o
 import { invoke } from '../../operations/operation-invoker';
 import { PromptDialog } from '../common/prompt-dialog';
 import { MachineMonitorProps } from './machine-monitor-props';
+import { TuneDialog } from './tune-dialog';
 
 export const MachineMonitorControls: React.FunctionComponent<MachineMonitorProps> = props => {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ export const MachineMonitorControls: React.FunctionComponent<MachineMonitorProps
 
   const renderPauseButton = (): React.ReactNode => {
     if (props.machineState?.type !== MachineStateType.Operational) return null;
+
     return (
       <Button className="pause" variant="contained" onClick={pause}>
         <Icon>
@@ -45,6 +47,7 @@ export const MachineMonitorControls: React.FunctionComponent<MachineMonitorProps
 
   const renderResumeButton = (): React.ReactNode => {
     if (props.machineState?.type !== MachineStateType.Paused) return null;
+
     return (
       <Button className="resume" variant="contained" onClick={resume}>
         <Icon>
@@ -56,6 +59,7 @@ export const MachineMonitorControls: React.FunctionComponent<MachineMonitorProps
 
   const renderTuneButton = (): React.ReactNode => {
     if (!isOperational()) return null;
+
     return (
       <Button className="tune" variant="contained" onClick={() => setIsTuneDialogOpen(true)}>
         <Icon>
@@ -67,6 +71,7 @@ export const MachineMonitorControls: React.FunctionComponent<MachineMonitorProps
 
   const renderCancelButton = (): React.ReactNode => {
     if (!isOperational()) return null;
+
     return (
       <Button className="cancel" variant="contained" onClick={() => setConfirmCancel(true)}>
         <Icon>
@@ -78,6 +83,7 @@ export const MachineMonitorControls: React.FunctionComponent<MachineMonitorProps
 
   const renderSettingsButton = (): React.ReactNode => {
     if (isOperational()) return null;
+
     return (
       <Button className="settings" variant="contained" component={Link} to={`/configuration/machines/edit/${props.machine.id}`}>
         <Icon>
@@ -98,6 +104,7 @@ export const MachineMonitorControls: React.FunctionComponent<MachineMonitorProps
       {renderTuneButton()}
       {renderSettingsButton()}
       <PromptDialog open={confirmCancel} setOpen={setConfirmCancel} message="Are you sure you want to cancel this job?" onConfirm={cancel} />
+      <TuneDialog openState={isTuneDialogOpen} setOpenState={setIsTuneDialogOpen} {...props} />
     </div>
   );
 };

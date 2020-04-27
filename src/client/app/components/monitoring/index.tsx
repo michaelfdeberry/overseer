@@ -25,10 +25,9 @@ export const MonitoringPage: React.FunctionComponent = () => {
   const [visibleMachines, setVisibleMachines] = React.useState([]);
   const [monitorDimensions, setMonitorDimensions] = React.useState<{ columns?: number; cellHeight?: number }>({});
 
-  function updateSetting<T>(settingKey: keyof SystemSettings, value: T) {
+  function updateSetting<T>(settingKey: keyof SystemSettings, value: T): void {
     const updatedSettings = { ...settings, [settingKey]: value };
-    invoke(dispatch, updateSettings(updatedSettings)).subscribe(() => {
-      dispatch(actions.layout.notifySuccess('Settings Updated!'));
+    invoke(dispatch, updateSettings(updatedSettings), 'Settings Updated!').subscribe(() => {
       dispatch(actions.common.updateSettings(updatedSettings));
     });
   }
@@ -168,6 +167,8 @@ export const MonitoringPage: React.FunctionComponent = () => {
       </div>
     );
   }
+
+  if (!settings) return null;
 
   return (
     <GridList

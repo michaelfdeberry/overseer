@@ -94,7 +94,10 @@ export class RepRapFirmwareMachineProvider extends MachineProvider implements Ex
           status.estimatedRemainingTime = estimatedRemainingTime;
           status.fanSpeed = this.readFanSpeed(jobStatus, machineStatus);
           status.feedRate = jobStatus.params.speedFactor;
-          status.flowRates = jobStatus.params.extrFactors.reduce((rates: any, factor: number, index: number) => (rates[index] = factor), {});
+          status.flowRates = jobStatus.params.extrFactors.reduce((rates: { [key: number]: number }, factor: number, index: number) => {
+            rates[index] = factor;
+            return rates;
+          }, {} as { [key: number]: number });
         }
 
         return status;
