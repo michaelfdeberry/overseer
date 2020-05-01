@@ -4,7 +4,7 @@ import { AuthorizationService } from '@overseer/common/services';
 import { defer, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { clearActiveUser, setActiveUser } from '../active-user.operations';
+import { clearActiveUser, getActiveUser, setActiveUser } from '../active-user.operations';
 
 async function withAuthorizationService<T>(execute: (service: AuthorizationService) => Promise<T>): Promise<T> {
   const context = await getLocalStorageDataContext();
@@ -16,8 +16,8 @@ export function requiresInitialSetup(): Observable<boolean> {
   return defer(() => withAuthorizationService(service => service.requiresInitialSetup()));
 }
 
-export function authorize(token: string): Observable<DisplayUser | null> {
-  return defer(() => withAuthorizationService(service => service.authorize(token))).pipe(
+export function authorize(): Observable<DisplayUser | null> {
+  return defer(() => withAuthorizationService(service => service.authorize(getActiveUser()?.token))).pipe(
     tap(activeUser => {
       if (activeUser) {
         setActiveUser(activeUser);

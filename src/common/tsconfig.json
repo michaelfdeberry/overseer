@@ -10,8 +10,9 @@
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*"]
-    }
+    },
+    "allowJs": true
   },
-  "include": ["**/*"],
+  "include": ["**/*", "../server/src/globals.d.ts"],
   "exclude": ["node_modules"]
 }

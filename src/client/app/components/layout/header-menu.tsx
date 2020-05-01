@@ -28,7 +28,7 @@ export const HeaderMenu: React.FunctionComponent = () => {
 
   const signOut = (): void => {
     closeMenu();
-    invoke(dispatch, logout(activeUser.token)).subscribe(() => {
+    invoke(dispatch, logout()).subscribe(() => {
       dispatch(actions.common.clearActiveUser());
       history.push('/login');
     });

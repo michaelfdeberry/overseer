@@ -1,34 +1,78 @@
-import { getLocalStorageDataContext } from '@overseer/common/data';
 import { Machine, MachineConfigurationCollection } from '@overseer/common/models';
-import { MachineConfigurationService, MachineProviderService } from '@overseer/common/services';
-import { defer, Observable } from 'rxjs';
+import axios, { AxiosResponse } from 'axios';
+import { merge } from 'lodash/fp';
+import { Observable, Observer } from 'rxjs';
 
-async function withMachineConfigurationService<T>(execute: (machineService: MachineConfigurationService) => Promise<T>): Promise<T> {
-  const context = await getLocalStorageDataContext();
-  const service = new MachineConfigurationService(context, new MachineProviderService());
-  return await execute(service);
-}
+import { getBearerConfig } from './utilities/request-configs';
 
 export function getMachines(): Observable<Machine[]> {
-  return defer(() => withMachineConfigurationService(service => service.getMachines()));
+  return Observable.create((observer: Observer<Machine[]>) => {
+    axios
+      .get('/api/machines', getBearerConfig())
+      .then((response: AxiosResponse<Machine[]>) => {
+        observer.next(response.data.map(machine => merge(new Machine(), machine)));
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }
 
 export function getMachine(machineId: string): Observable<Machine> {
-  return defer(() => withMachineConfigurationService(service => service.getMachine(machineId)));
+  return Observable.create((observer: Observer<Machine>) => {
+    axios
+      .get(`/api/machines/${machineId}`, getBearerConfig())
+      .then((response: AxiosResponse<Machine>) => {
+        observer.next(merge(new Machine(), response.data));
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }
 
 export function createMachine(machineType: string, configuration: MachineConfigurationCollection): Observable<Machine> {
-  return defer(() => withMachineConfigurationService(service => service.createMachine(machineType, configuration)));
+  return Observable.create((observer: Observer<Machine>) => {
+    axios
+      .put('/api/machines', { machineType, configuration }, getBearerConfig())
+      .then((response: AxiosResponse<Machine>) => {
+        observer.next(merge(new Machine(), response.data));
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }
 
 export function updateMachine(machine: Machine): Observable<Machine> {
-  return defer(() => withMachineConfigurationService(service => service.updateMachine(machine)));
+  return Observable.create((observer: Observer<Machine>) => {
+    axios
+      .post('/api/machine', machine, getBearerConfig())
+      .then((response: AxiosResponse<Machine>) => {
+        observer.next(merge(new Machine(), response.data));
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }
 
 export function deleteMachine(machine: Machine): Observable<void> {
-  return defer(() => withMachineConfigurationService(service => service.deleteMachine(machine.id)));
+  return Observable.create((observer: Observer<void>) => {
+    axios
+      .delete(`/api/machine/${machine.id}`, getBearerConfig())
+      .then(() => {
+        observer.next();
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }
 
 export function sortMachines(sortOrder: string[]): Observable<Machine[]> {
-  return defer(() => withMachineConfigurationService(service => service.sortMachines(sortOrder)));
+  return Observable.create((observer: Observer<Machine[]>) => {
+    axios
+      .post('/api/machines/sort', sortOrder, getBearerConfig())
+      .then((response: AxiosResponse<Machine[]>) => {
+        observer.next(response.data.map(machine => merge(new Machine(), machine)));
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }

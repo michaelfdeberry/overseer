@@ -11,18 +11,17 @@ async function createMonitoringService(): Promise<void> {
   if (!monitoringService) {
     const context = await getLocalStorageDataContext();
     monitoringService = new MonitoringService(context, new MachineProviderService());
-    monitoringService.machineStateUpdateEvent.on('MachineState', (stateUpdate: MachineState) => {
+    monitoringService.machineStateEventEmitter.on('MachineState', (stateUpdate: MachineState) => {
       machineStateSubject.next(stateUpdate);
     });
   }
 }
 
-export async function enableMonitoring(): Promise<void> {
-  await createMonitoringService();
+export function enableMonitoring(): void {
+  createMonitoringService().then(() => monitoringService.enable());
   monitoringService.enable();
 }
 
 export async function disableMonitoring(): Promise<void> {
-  await createMonitoringService();
-  monitoringService.disable();
+  createMonitoringService().then(() => monitoringService.disable());
 }

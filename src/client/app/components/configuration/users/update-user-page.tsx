@@ -43,7 +43,7 @@ export const UpdateUserPage: React.FunctionComponent = () => {
 
   const signOut = (): void => {
     if (activeUser.id === user.id) {
-      invoke(dispatch, logout(activeUser.token)).subscribe(() => {
+      invoke(dispatch, logout()).subscribe(() => {
         dispatch(actions.common.clearActiveUser());
         history.push('/login');
       });

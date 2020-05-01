@@ -4,7 +4,7 @@ import { AuthenticationService } from '@overseer/common/services';
 import { defer, Observable, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { clearActiveUser, setActiveUser } from '../active-user.operations';
+import { clearActiveUser, getActiveUser, setActiveUser } from '../active-user.operations';
 
 async function withAuthenticationService<T>(execute: (service: AuthenticationService) => Promise<T>): Promise<T> {
   const context = await getLocalStorageDataContext();
@@ -16,8 +16,8 @@ export function login(user: DisplayUser): Observable<DisplayUser> {
   return defer(() => withAuthenticationService(service => service.authenticateUser(user))).pipe(tap(activeUser => setActiveUser(activeUser)));
 }
 
-export function logout(token: string): Observable<DisplayUser> {
-  return defer(() => withAuthenticationService(service => service.deauthenticateToken(token))).pipe(tap(() => clearActiveUser()));
+export function logout(): Observable<DisplayUser> {
+  return defer(() => withAuthenticationService(service => service.deauthenticateToken(getActiveUser()?.token))).pipe(tap(() => clearActiveUser()));
 }
 
 export function logoutUser(userId: string): Observable<DisplayUser> {

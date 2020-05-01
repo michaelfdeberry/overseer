@@ -6,7 +6,7 @@ import { MachineProviderService } from './provider.service';
 export class MachineControlService {
   constructor(private context: DataContext, private providerService: MachineProviderService) {}
 
-  async getProvider(machineId: string): Promise<MachineProvider> {
+  private async getProvider(machineId: string): Promise<MachineProvider> {
     const machine = await this.context.machines.getById(machineId);
     return this.providerService.getProvider(machine);
   }

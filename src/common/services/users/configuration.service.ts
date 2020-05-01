@@ -51,8 +51,9 @@ export class UserConfigurationService {
     return pUser.toDisplay();
   }
 
-  async deleteUser(user: DisplayUser): Promise<DisplayUser> {
+  async deleteUser(userId: string): Promise<DisplayUser> {
     const users = await this.context.users.getAll();
+    const user = users.find(u => u.id === userId);
     const isAdmin = user.accessLevel === AccessLevel.Administrator;
     const admins = users.filter(u => u.accessLevel === AccessLevel.Administrator);
 

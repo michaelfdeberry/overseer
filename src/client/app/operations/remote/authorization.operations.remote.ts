@@ -1,18 +1,35 @@
-import { getLocalStorageDataContext } from '@overseer/common/data';
 import { DisplayUser } from '@overseer/common/models';
-import { AuthorizationService } from '@overseer/common/services';
-import { defer, Observable } from 'rxjs';
+import axios, { AxiosResponse } from 'axios';
+import { Observable, Observer } from 'rxjs';
 
-async function withAuthorizationService<T>(execute: (service: AuthorizationService) => Promise<T>): Promise<T> {
-  const context = await getLocalStorageDataContext();
-  const service = new AuthorizationService(context);
-  return await execute(service);
+import { getBearerConfig, getDefaultConfig } from './utilities/request-configs';
+
+export function requiresInitialSetup(): Observable<boolean> {
+  return Observable.create((observer: Observer<boolean>) => {
+    axios
+      .get('/api/auth/setup', getDefaultConfig())
+      .then(() => {
+        observer.next(true);
+        observer.complete();
+      })
+      .catch(() => {
+        observer.next(false);
+        observer.complete();
+      });
+  });
 }
 
-export function requiresAuthorization(): Observable<boolean> {
-  return defer(() => withAuthorizationService(service => service.requiresInitialSetup()));
-}
-
-export function authorize(token: string): Observable<DisplayUser | null> {
-  return defer(() => withAuthorizationService(service => service.authorize(token)));
+export function authorize(): Observable<DisplayUser> {
+  return Observable.create((observer: Observer<DisplayUser>) => {
+    axios
+      .get('/api/auth', getBearerConfig())
+      .then((response: AxiosResponse<DisplayUser>) => {
+        observer.next(response.data);
+        observer.complete();
+      })
+      .catch(() => {
+        observer.next(null);
+        observer.complete();
+      });
+  });
 }

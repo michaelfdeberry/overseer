@@ -70,7 +70,7 @@ export const TuneDialogActions: React.FunctionComponent<MachineMonitorProps> = (
             const flowRate = machineState.flowRates[extruder.index];
 
             return (
-              <tr key={`action_${index}`} className="flow-rates">
+              <tr key={`flow_rate_${index}`} className="flow-rates">
                 <th className="capitalize">{extruder.name}</th>
                 <td>
                   <Slider

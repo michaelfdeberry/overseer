@@ -1,34 +1,74 @@
-import { getLocalStorageDataContext } from '@overseer/common/data';
 import { DisplayUser } from '@overseer/common/models';
-import { UserConfigurationService } from '@overseer/common/services';
-import { defer, Observable } from 'rxjs';
+import axios, { AxiosResponse } from 'axios';
+import { Observable, Observer } from 'rxjs';
 
-async function withUserConfigurationService<T>(execute: (service: UserConfigurationService) => Promise<T>): Promise<T> {
-  const context = await getLocalStorageDataContext();
-  const service = new UserConfigurationService(context);
-  return await execute(service);
-}
+import { getBearerConfig } from './utilities/request-configs';
 
 export function getUsers(): Observable<DisplayUser[]> {
-  return defer(() => withUserConfigurationService(service => service.getUsers()));
+  return Observable.create((observer: Observer<DisplayUser[]>) => {
+    axios
+      .get('/api/users', getBearerConfig())
+      .then((response: AxiosResponse<DisplayUser[]>) => {
+        observer.next(response.data);
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }
 
 export function getUser(userId: string): Observable<DisplayUser> {
-  return defer(() => withUserConfigurationService(service => service.getUser(userId)));
+  return Observable.create((observer: Observer<DisplayUser>) => {
+    axios
+      .get(`/api/users/${userId}`, getBearerConfig())
+      .then((response: AxiosResponse<DisplayUser>) => {
+        observer.next(response.data);
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }
 
 export function createUser(user: DisplayUser): Observable<DisplayUser> {
-  return defer(() => withUserConfigurationService(service => service.createUser(user)));
+  return Observable.create((observer: Observer<DisplayUser>) => {
+    axios
+      .put('/api/users', user, getBearerConfig())
+      .then((response: AxiosResponse<DisplayUser>) => {
+        observer.next(response.data);
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }
 
 export function updateUser(user: DisplayUser): Observable<DisplayUser> {
-  return defer(() => withUserConfigurationService(service => service.updateUser(user)));
+  return Observable.create((observer: Observer<DisplayUser>) => {
+    axios
+      .post('/api/users', user, getBearerConfig())
+      .then((response: AxiosResponse<DisplayUser>) => {
+        observer.next(response.data);
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }
 
 export function deleteUser(user: DisplayUser): Observable<DisplayUser> {
-  return defer(() => withUserConfigurationService(service => service.deleteUser(user)));
+  return Observable.create((observer: Observer<DisplayUser>) => {
+    axios.delete(`/api/users/${user.id}`, getBearerConfig()).then((response: AxiosResponse<DisplayUser>) => {
+      observer.next(response.data);
+      observer.complete();
+    });
+  });
 }
 
 export function changePassword(user: DisplayUser): Observable<DisplayUser> {
-  return defer(() => withUserConfigurationService(service => service.changePassword(user)));
+  return Observable.create((observer: Observer<DisplayUser>) => {
+    axios
+      .post('/api/users/password', user, getBearerConfig())
+      .then((response: AxiosResponse<DisplayUser>) => {
+        observer.next(response.data);
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }

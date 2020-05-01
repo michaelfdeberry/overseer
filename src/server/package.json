@@ -5,24 +5,24 @@
   "license": "GNU Affero General Public License v3.0",
   "private": true,
   "scripts": {
-    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
-    "build": "npm run build:remote --prefix ../client && tsc -p",
-    "prestart": "npm run build",
-    "start": "ts-node dist/server.js",
-    "dev": "node ./node_modules/nodemon/bin/nodemon.js -e ts  --exec \"ts-node src/server.ts || exit 1\""
+    "prebuild": "tslint -c tslint.json -p tsconfig.json",
+    "build": "tsc -P ./tsconfig.json",
+    "temp": "npm run build:remote --prefix ../client &&",
+    "nopeprestart": "npm run build",
+    "start": "ts-node -P ./tsconfig.json ./src/server.ts",
+    "dev": "node ./node_modules/nodemon/bin/nodemon.js -e ts --exec \"ts-node -P ./tsconfig.json || exit 1\""
   },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
+    "@overseer/common": "file:../common",
     "express": "~4.16.1",
-    "morgan": "~1.9.1"
+    "ws": "^7.2.5"
   },
   "devDependencies": {
     "@types/express": "^4.17.2",
-    "@types/morgan": "^1.7.37",
     "@types/node": "^12.12.21",
+    "@types/ws": "^7.2.4",
     "nodemon": "^2.0.2",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.4"
+    "typescript": "^3.8.3"
   }
 }

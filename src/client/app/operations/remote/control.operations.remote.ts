@@ -1,37 +1,42 @@
-import { getLocalStorageDataContext } from '@overseer/common/data';
-import { MachineControlService, MachineProviderService } from '@overseer/common/services';
-import { defer, Observable } from 'rxjs';
+import axios from 'axios';
+import { Observable, Observer } from 'rxjs';
 
-async function withMachineControlService<T>(execute: (c: MachineControlService) => Promise<T>): Promise<T> {
-  const context = await getLocalStorageDataContext();
-  const service = new MachineControlService(context, new MachineProviderService());
-  return execute(service);
+function issueControlCommand(endpoint: string): Observable<void> {
+  return Observable.create((observer: Observer<void>) => {
+    axios
+      .get(endpoint)
+      .then(() => {
+        observer.next();
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
 }
 
 export function pauseJob(machineId: string): Observable<void> {
-  return defer(() => withMachineControlService(service => service.pauseJob(machineId)));
+  return issueControlCommand(`/api/control/${machineId}/pause`);
 }
 
 export function resumeJob(machineId: string): Observable<void> {
-  return defer(() => withMachineControlService(service => service.resumeJob(machineId)));
+  return issueControlCommand(`/api/control/${machineId}/resume`);
 }
 
 export function cancelJob(machineId: string): Observable<void> {
-  return defer(() => withMachineControlService(service => service.cancelJob(machineId)));
+  return issueControlCommand(`/api/control/${machineId}/cancel`);
 }
 
 export function setFanSpeed(machineId: string, speedPercentage: number): Observable<void> {
-  return defer(() => withMachineControlService(service => service.setFanSpeed(machineId, speedPercentage)));
+  return issueControlCommand(`/api/control/${machineId}/fan/${speedPercentage}`);
 }
 
 export function setFeedRate(machineId: string, speedPercentage: number): Observable<void> {
-  return defer(() => withMachineControlService(service => service.setFeedRate(machineId, speedPercentage)));
+  return issueControlCommand(`/api/control/${machineId}/feed/${speedPercentage}`);
 }
 
 export function setTemperature(machineId: string, heaterIndex: number, temperature: number): Observable<void> {
-  return defer(() => withMachineControlService(service => service.setTemperature(machineId, heaterIndex, temperature)));
+  return issueControlCommand(`/api/control/${machineId}/heater/${heaterIndex}/temp/${temperature}`);
 }
 
 export function setFlowRate(machineId: string, extruderIndex: number, flowRatePercentage: number): Observable<void> {
-  return defer(() => withMachineControlService(service => service.setFlowRate(machineId, extruderIndex, flowRatePercentage)));
+  return issueControlCommand(`/api/control/${machineId}/extruder/${extruderIndex}/flow/${flowRatePercentage}`);
 }

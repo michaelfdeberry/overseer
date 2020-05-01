@@ -50,6 +50,10 @@ module.exports = function(env) {
       ],
     },
 
+    node: {
+      fs: 'empty',
+    },
+
     output: {
       filename: isDev ? '[name].js' : '[name].[contenthash].js',
       path: distribution,
@@ -73,8 +77,8 @@ module.exports = function(env) {
       new HtmlWebpackPlugin({ template: './index.html' }),
       new CopyPlugin([{ from: './public', to: distribution }]),
       new webpack.NormalModuleReplacementPlugin(/(.*)operations(.*)/, function(resource) {
-        if (buildTarget === 'remote') {
-          return resource.request.replace('local', `remote`);
+        if (buildTarget === 'remote' && resource.request.indexOf('local') >= 0) {
+          resource.request = resource.request.replace(/local/g, `remote`);
         }
         return resource;
       }),

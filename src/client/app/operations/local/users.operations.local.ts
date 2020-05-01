@@ -26,7 +26,7 @@ export function updateUser(user: DisplayUser): Observable<DisplayUser> {
 }
 
 export function deleteUser(user: DisplayUser): Observable<DisplayUser> {
-  return defer(() => withUserConfigurationService(service => service.deleteUser(user)));
+  return defer(() => withUserConfigurationService(service => service.deleteUser(user.id)));
 }
 
 export function changePassword(user: DisplayUser): Observable<DisplayUser> {
