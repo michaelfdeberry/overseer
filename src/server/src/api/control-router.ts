@@ -2,10 +2,10 @@ import { AccessLevel } from '@overseer/common/models/users';
 import { MachineControlService } from '@overseer/common/services';
 import { Request, Response, Router } from 'express';
 
-import asyncRequestHandler from '../utilities/async-request-handler';
-import { RouteAuthorizer } from '../utilities/route-authorizers';
+import asyncRequestHandler from './utilities/async-request-handler';
+import { RouteAuthorizer } from './utilities/route-authorizers';
 
-export function initialize(routeAuthorizer: RouteAuthorizer, machineControlService: MachineControlService): Router {
+export function create(routeAuthorizer: RouteAuthorizer, machineControlService: MachineControlService): Router {
   const router: Router = Router();
 
   router.all('*', routeAuthorizer.requireAccessLevel(AccessLevel.Administrator));

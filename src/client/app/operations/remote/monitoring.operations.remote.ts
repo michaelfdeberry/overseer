@@ -21,10 +21,10 @@ export async function enableMonitoring(): Promise<void> {
   });
 
   webSocket.addEventListener('message', (event: MessageEvent) => {
-    const update = JSON.parse(event.data);
-    switch (update.type) {
+    const action = JSON.parse(event.data);
+    switch (action.type) {
       case 'MachineState':
-        machineStateSubject.next(update.data);
+        machineStateSubject.next(action.payload);
     }
   });
 

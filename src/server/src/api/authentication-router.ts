@@ -2,10 +2,10 @@ import { AccessLevel } from '@overseer/common/models/users';
 import { AuthenticationService } from '@overseer/common/services';
 import { Request, Response, Router } from 'express';
 
-import asyncRequestHandler from '../utilities/async-request-handler';
-import { RouteAuthorizer } from '../utilities/route-authorizers';
+import asyncRequestHandler from './utilities/async-request-handler';
+import { RouteAuthorizer } from './utilities/route-authorizers';
 
-export function initialize(routeAuthorizer: RouteAuthorizer, authenticationService: AuthenticationService) {
+export function create(routeAuthorizer: RouteAuthorizer, authenticationService: AuthenticationService) {
   const router: Router = Router();
 
   router.post(

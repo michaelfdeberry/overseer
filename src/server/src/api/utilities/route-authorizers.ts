@@ -2,10 +2,14 @@ import { AccessLevel } from '@overseer/common/models/users';
 import { AuthorizationService } from '@overseer/common/services';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 
-export type RouteAuthorizer = { requireAuthentication: RequestHandler; requireAccessLevel: (...accessLevels: AccessLevel[]) => RequestHandler };
+export type RouteAuthorizer = {
+  requireAuthentication: RequestHandler;
+  requireAccessLevel: (...accessLevels: AccessLevel[]) => RequestHandler;
+  requireAccessLevelAfterSetup: (...accessLevels: AccessLevel[]) => RequestHandler;
+};
 
 export default function create(authorizationService: AuthorizationService): RouteAuthorizer {
-  return {
+  const routeAuthorizer: RouteAuthorizer = {
     async requireAuthentication(request: Request, response: Response, next: NextFunction): Promise<void> {
       try {
         const user = await authorizationService.authorize(request.headers.authorization);
@@ -38,6 +42,22 @@ export default function create(authorizationService: AuthorizationService): Rout
           response.sendStatus(500);
         }
       };
-    }
+    },
+    requireAccessLevelAfterSetup(...accessLevels: AccessLevel[]) {
+      return async function (request: Request, response: Response, next: NextFunction) {
+        try {
+          const isSetupRequest = await authorizationService.requiresInitialSetup();
+          if (isSetupRequest) {
+            next();
+          } else {
+            routeAuthorizer.requireAccessLevel(...accessLevels)(request, response, next);
+          }
+        } catch {
+          response.sendStatus(500);
+        }
+      };
+    },
   };
+
+  return routeAuthorizer;
 }

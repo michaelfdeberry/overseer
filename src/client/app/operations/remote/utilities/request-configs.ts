@@ -13,5 +13,5 @@ export function getDefaultConfig(): AxiosRequestConfig {
 }
 
 export function getBearerConfig(): AxiosRequestConfig {
-  return merge(getDefaultConfig, { headers: { Authorization: `Bearer ${getActiveUser()?.token}` } });
+  return merge(getDefaultConfig, { headers: { Authorization: `Bearer ${getActiveUser()?.token || ''}` } });
 }

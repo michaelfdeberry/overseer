@@ -15,7 +15,7 @@ module.exports = function(env) {
   }
 
   return {
-    mode: 'production',
+    mode: env.MODE,
     entry: './app/index.tsx',
 
     resolve: {
@@ -55,8 +55,8 @@ module.exports = function(env) {
     },
 
     output: {
-      filename: isDev ? '[name].js' : '[name].[contenthash].js',
       path: distribution,
+      filename: isDev ? '[name].js' : '[name].[contenthash].js',
     },
 
     optimization: {

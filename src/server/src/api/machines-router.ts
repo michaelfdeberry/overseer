@@ -2,10 +2,10 @@ import { AccessLevel } from '@overseer/common/models/users';
 import { MachineConfigurationService } from '@overseer/common/services';
 import { Request, Response, Router } from 'express';
 
-import asyncRequestHandler from '../utilities/async-request-handler';
-import { RouteAuthorizer } from '../utilities/route-authorizers';
+import asyncRequestHandler from './utilities/async-request-handler';
+import { RouteAuthorizer } from './utilities/route-authorizers';
 
-export function initialize(routeAuthorizer: RouteAuthorizer, machineConfigurationService: MachineConfigurationService): Router {
+export function create(routeAuthorizer: RouteAuthorizer, machineConfigurationService: MachineConfigurationService): Router {
   const router: Router = Router();
 
   router.all('*', routeAuthorizer.requireAuthentication);
@@ -28,7 +28,7 @@ export function initialize(routeAuthorizer: RouteAuthorizer, machineConfiguratio
     '/',
     routeAuthorizer.requireAccessLevel(AccessLevel.Administrator),
     asyncRequestHandler(async function (request: Request, response: Response): Promise<void> {
-      response.json(await machineConfigurationService.createMachine(request.body.type, request.body.configuration));
+      response.json(await machineConfigurationService.createMachine(request.body.machineType, request.body.configuration));
     })
   );
 

@@ -5,12 +5,8 @@
   "license": "GNU Affero General Public License v3.0",
   "private": true,
   "scripts": {
-    "prebuild": "tslint -c tslint.json -p tsconfig.json",
-    "build": "tsc -P ./tsconfig.json",
-    "temp": "npm run build:remote --prefix ../client &&",
-    "nopeprestart": "npm run build",
-    "start": "ts-node -P ./tsconfig.json ./src/server.ts",
-    "dev": "node ./node_modules/nodemon/bin/nodemon.js -e ts --exec \"ts-node -P ./tsconfig.json || exit 1\""
+    "build": "npm run build:remote --prefix ../client && tsc -P ./tsconfig.json",
+    "start": "npm run build:remote:dev --prefix ../client && node ./node_modules/nodemon/bin/nodemon.js -e ts --exec \"ts-node -P ./tsconfig.json ./src/server.ts || exit 1\""
   },
   "dependencies": {
     "@overseer/common": "file:../common",
@@ -22,6 +18,7 @@
     "@types/node": "^12.12.21",
     "@types/ws": "^7.2.4",
     "nodemon": "^2.0.2",
+    "ts-node": "^8.9.1",
     "tslint": "^5.20.1",
     "typescript": "^3.8.3"
   }

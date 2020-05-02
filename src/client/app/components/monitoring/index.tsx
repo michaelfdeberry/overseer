@@ -110,6 +110,7 @@ export const MonitoringPage: React.FunctionComponent = () => {
   }, [mediaBreakpoints, visibleMachines, machineStates, machinesGridRef.current]);
 
   if (!machines) return null;
+  if (!settings) return null;
 
   if (!machines.length) {
     return (
@@ -167,8 +168,6 @@ export const MonitoringPage: React.FunctionComponent = () => {
       </div>
     );
   }
-
-  if (!settings) return null;
 
   return (
     <GridList

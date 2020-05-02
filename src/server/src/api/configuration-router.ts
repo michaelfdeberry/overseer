@@ -2,10 +2,10 @@ import { AccessLevel } from '@overseer/common/models/users';
 import { SystemConfigurationService } from '@overseer/common/services';
 import { Request, Response, Router } from 'express';
 
-import asyncRequestHandler from '../utilities/async-request-handler';
-import { RouteAuthorizer } from '../utilities/route-authorizers';
+import asyncRequestHandler from './utilities/async-request-handler';
+import { RouteAuthorizer } from './utilities/route-authorizers';
 
-export function initialize(routeAuthorizer: RouteAuthorizer, systemConfigurationService: SystemConfigurationService): Router {
+export function create(routeAuthorizer: RouteAuthorizer, systemConfigurationService: SystemConfigurationService): Router {
   const router: Router = Router();
 
   router.get(

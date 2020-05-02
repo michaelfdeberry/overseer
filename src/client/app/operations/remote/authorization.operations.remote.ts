@@ -9,11 +9,11 @@ export function requiresInitialSetup(): Observable<boolean> {
     axios
       .get('/api/auth/setup', getDefaultConfig())
       .then(() => {
-        observer.next(true);
+        observer.next(false);
         observer.complete();
       })
       .catch(() => {
-        observer.next(false);
+        observer.next(true);
         observer.complete();
       });
   });
