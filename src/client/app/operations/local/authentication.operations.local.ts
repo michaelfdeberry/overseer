@@ -1,4 +1,4 @@
-import { getLocalStorageDataContext } from '@overseer/common/data';
+import { IndexedDBContext } from '@overseer/common/data/indexeddb/indexeddb-context.class';
 import { DisplayUser } from '@overseer/common/models';
 import { AuthenticationService } from '@overseer/common/services';
 import { defer, Observable, throwError } from 'rxjs';
@@ -7,7 +7,7 @@ import { tap } from 'rxjs/operators';
 import { clearActiveUser, getActiveUser, setActiveUser } from '../active-user.operations';
 
 async function withAuthenticationService<T>(execute: (service: AuthenticationService) => Promise<T>): Promise<T> {
-  const context = await getLocalStorageDataContext();
+  const context = new IndexedDBContext();
   const service = new AuthenticationService(context);
   return await execute(service);
 }

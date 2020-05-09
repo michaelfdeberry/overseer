@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 
-import { DataContext } from '../../data/data-context.class';
+import { DataContext } from '../../data/data-context.interface';
 import { Machine } from '../../models';
 import { SystemSettings } from '../../models/system/settings.interface';
 import { MachineProviderService } from './provider.service';

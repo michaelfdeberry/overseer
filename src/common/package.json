@@ -12,14 +12,17 @@
     "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
     "events": "^3.1.0",
-    "lodash-id": "^0.14.0",
-    "lowdb": "^1.0.0",
-    "url-parse": "^1.4.7"
+    "idb": "^5.0.2",
+    "sqlite3": "^4.2.0",
+    "url-parse": "^1.4.7",
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/node": "^13.7.0",
+    "@types/sqlite3": "^3.1.6",
     "@types/url-parse": "^1.4.3",
+    "@types/uuid": "^7.0.3",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
     "eslint": "^6.8.0",

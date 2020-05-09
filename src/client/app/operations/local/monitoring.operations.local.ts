@@ -1,4 +1,4 @@
-import { getLocalStorageDataContext } from '@overseer/common/data';
+import { IndexedDBContext } from '@overseer/common/data/indexeddb/indexeddb-context.class';
 import { MachineState } from '@overseer/common/models';
 import { MachineProviderService, MonitoringService } from '@overseer/common/services';
 import { Observable, Subject } from 'rxjs';
@@ -9,7 +9,7 @@ export const machineState$: Observable<MachineState> = machineStateSubject.asObs
 
 async function createMonitoringService(): Promise<void> {
   if (!monitoringService) {
-    const context = await getLocalStorageDataContext();
+    const context = new IndexedDBContext();
     monitoringService = new MonitoringService(context, new MachineProviderService());
     monitoringService.machineStateEventEmitter.on('MachineState', (stateUpdate: MachineState) => {
       machineStateSubject.next(stateUpdate);
@@ -19,7 +19,6 @@ async function createMonitoringService(): Promise<void> {
 
 export function enableMonitoring(): void {
   createMonitoringService().then(() => monitoringService.enable());
-  monitoringService.enable();
 }
 
 export async function disableMonitoring(): Promise<void> {

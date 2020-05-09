@@ -1,4 +1,4 @@
-import { DataContext } from '../../data/data-context.class';
+import { DataContext } from '../../data/data-context.interface';
 import { MachineToolType } from '../../models/machines';
 import { MachineProvider } from '../../models/machines/machine.provider';
 import { MachineProviderService } from './provider.service';

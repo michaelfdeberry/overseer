@@ -1,9 +1,9 @@
-import { getLocalStorageDataContext } from '@overseer/common/data';
+import { IndexedDBContext } from '@overseer/common/data/indexeddb/indexeddb-context.class';
 import { MachineControlService, MachineProviderService } from '@overseer/common/services';
 import { defer, Observable } from 'rxjs';
 
 async function withMachineControlService<T>(execute: (c: MachineControlService) => Promise<T>): Promise<T> {
-  const context = await getLocalStorageDataContext();
+  const context = new IndexedDBContext();
   const service = new MachineControlService(context, new MachineProviderService());
   return execute(service);
 }

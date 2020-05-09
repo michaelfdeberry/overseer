@@ -1,4 +1,4 @@
-import { DataContext } from '../../data/data-context.class';
+import { DataContext } from '../../data/data-context.interface';
 import { AccessLevel, DisplayUser, User } from '../../models/users';
 
 export class AuthorizationService {

@@ -1,6 +1,6 @@
-import { DataContext, getFileDataContext } from '@overseer/common/data';
+import { SqliteContext } from '@overseer/common/data/sqlite/sqlite-context.class';
 import initializeIntegration from '@overseer/common/integration/initialize-integration.function';
-import { MachineState } from '@overseer/common/models/machines';
+import { MachineState } from '@overseer/common/models';
 import express, { Application } from 'express';
 import { createServer, Server } from 'http';
 import * as WebSocket from 'ws';
@@ -9,13 +9,13 @@ import { createApiRouter } from './api';
 import { errorHandler } from './error-handler';
 import { createServices } from './services';
 
-getFileDataContext().then(async (context: DataContext) => {
-  // TODO: check for database updates.
+// TODO: check for database updates.
 
-  initializeIntegration();
+initializeIntegration();
+const context = new SqliteContext();
+const services = createServices(context);
 
-  const services = createServices(context);
-  const settings = await services.systemConfigurationService.getSystemSetting();
+services.systemConfigurationService.getSystemSetting().then(async (settings) => {
   const httpServer: Application = express();
   const webServer: Server = createServer(httpServer);
 

@@ -1,4 +1,4 @@
-import { DataContext } from '../../data/data-context.class';
+import { DataContext } from '../../data/data-context.interface';
 import { Certificate } from '../../models/system/certificate.class';
 import { defaultSystemSettings, SystemSettings } from '../../models/system/settings.interface';
 

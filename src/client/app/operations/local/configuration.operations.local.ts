@@ -1,10 +1,10 @@
-import { getLocalStorageDataContext } from '@overseer/common/data';
+import { IndexedDBContext } from '@overseer/common/data/indexeddb/indexeddb-context.class';
 import { SystemSettings } from '@overseer/common/models';
 import { SystemConfigurationService } from '@overseer/common/services';
 import { defer, Observable, of } from 'rxjs';
 
 async function withSystemConfigurationService<T>(execute: (service: SystemConfigurationService) => Promise<T>): Promise<T> {
-  const context = await getLocalStorageDataContext();
+  const context = new IndexedDBContext();
   const service = new SystemConfigurationService(context);
   return await execute(service);
 }

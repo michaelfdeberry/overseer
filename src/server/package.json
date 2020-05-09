@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "build": "npm run build:remote --prefix ../client && tsc -P ./tsconfig.json",
-    "start": "npm run build:remote:dev --prefix ../client && node ./node_modules/nodemon/bin/nodemon.js -e ts --exec \"ts-node -P ./tsconfig.json ./src/server.ts || exit 1\""
+    "start": "npm run build:remote:dev --prefix ../client && node ./node_modules/nodemon/bin/nodemon.js -e ../**/*.ts --exec \"ts-node -P ./tsconfig.json ./src/server.ts || exit 1\""
   },
   "dependencies": {
     "@overseer/common": "file:../common",
