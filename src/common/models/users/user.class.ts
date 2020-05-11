@@ -11,7 +11,7 @@ export class User {
   token?: string;
   tokenExpiration?: number;
   preauthenticatedToken?: string;
-  preauthenticatedTokeExpiration: number;
+  preauthenticatedTokenExpiration: number;
 
   constructor(options?: Partial<User>) {
     Object.assign(this, options || {});

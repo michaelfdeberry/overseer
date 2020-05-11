@@ -18,9 +18,10 @@ export class MachineConfigurationService {
     const machines = await this.getMachines();
     const provider = this.providerService.createProvider(machineType);
     const machine = await provider.createMachine(configuration);
-    await this.context.machines.add(machine);
 
     machine.sortIndex = machines.length;
+    await this.context.machines.add(machine);
+
     return machine;
   }
 

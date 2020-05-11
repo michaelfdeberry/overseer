@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import { useDispatch, useSelector } from '../../../hooks';
+import { login } from '../../../operations/local/authentication.operations.local';
 import { createMachine } from '../../../operations/local/machines.operations.local';
 import { createUser } from '../../../operations/local/users.operations.local';
 import { invoke } from '../../../operations/operation-invoker';
@@ -27,10 +28,12 @@ export const SetupPage: React.FunctionComponent = () => {
 
     const { isValid, ...user } = userState;
     if (currentStep === 0 && isValid) {
-      invoke(dispatch, createUser(user)).subscribe(activeUser => {
-        dispatch(actions.common.setActiveUser(activeUser));
-        dispatch(actions.users.updateUsers([activeUser]));
-        setCurrentStep(1);
+      invoke(dispatch, createUser(user)).subscribe(createdUser => {
+        invoke(dispatch, login(createdUser)).subscribe(activeUser => {
+          dispatch(actions.common.setActiveUser(activeUser));
+          dispatch(actions.users.addUser(activeUser));
+          setCurrentStep(1);
+        });
       });
     }
   };

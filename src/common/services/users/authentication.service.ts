@@ -6,6 +6,14 @@ import { AccessLevel, DisplayUser, User } from '../../models/users';
 export class AuthenticationService {
   constructor(private context: DataContext) {}
 
+  private base64Encode(value: string) {
+    try {
+      return btoa(value);
+    } catch (err) {
+      return Buffer.from(value).toString('base64');
+    }
+  }
+
   async authenticateUser(credentials: Partial<DisplayUser>): Promise<DisplayUser> {
     if (!credentials.username) throw new Error('invalid_username');
     if (!credentials.password) throw new Error('invalid_password');
@@ -22,8 +30,8 @@ export class AuthenticationService {
     if (!user) return;
     if (user.accessLevel !== AccessLevel.Readonly) return;
 
-    user.preauthenticatedToken = btoa(await bcrypt.genSalt(16));
-    user.preauthenticatedTokeExpiration = Date.now() + 120000;
+    user.preauthenticatedToken = this.base64Encode(await bcrypt.genSalt(16));
+    user.preauthenticatedTokenExpiration = Date.now() + 120000;
     await this.context.users.update(user);
 
     return user.preauthenticatedToken;
@@ -31,9 +39,8 @@ export class AuthenticationService {
 
   async authenticatePreauthorization(token: string): Promise<DisplayUser | undefined> {
     const user = await this.context.users.getByKey(u => u.preauthenticatedToken === token);
-    ``;
     if (!user) return;
-    if (user.preauthenticatedTokeExpiration < Date.now()) return;
+    if (user.preauthenticatedTokenExpiration < Date.now()) return;
 
     return this.authenticate(user);
   }
@@ -49,13 +56,13 @@ export class AuthenticationService {
   private async authenticate(user: User): Promise<DisplayUser> {
     if (!user.isTokenExpired()) return user.toDisplay(true);
 
-    user.token = await bcrypt.genSalt(16);
+    user.token = this.base64Encode(await bcrypt.genSalt(16));
     user.tokenExpiration = user.sessionLifetime ? Date.now() + user.sessionLifetime * 86400 : undefined;
     user.preauthenticatedToken = undefined;
-    user.preauthenticatedTokeExpiration = undefined;
+    user.preauthenticatedTokenExpiration = undefined;
 
-    this.context.users.update(user);
-    return user.toDisplay(true);
+    const authenticatedUser = await this.context.users.update(user);
+    return authenticatedUser.toDisplay(true);
   }
 
   private async deauthenticate(user: User): Promise<DisplayUser> {
@@ -63,8 +70,8 @@ export class AuthenticationService {
 
     user.token = undefined;
     user.tokenExpiration = undefined;
-    this.context.users.update(user);
+    const deauthenticatedUser = await this.context.users.update(user);
 
-    return user.toDisplay();
+    return deauthenticatedUser.toDisplay();
   }
 }

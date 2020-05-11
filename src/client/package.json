@@ -1,7 +1,9 @@
 {
   "name": "@overseer/client",
   "version": "2.0.0",
-  "description": "",
+  "author": "Michael DeBerry",
+  "description": "The web interface for the overseer application",
+  "license": "GNU Affero General Public License v3.0",
   "scripts": {
     "start": "node --max_old_space_size=8192 node_modules/webpack-dev-server/bin/webpack-dev-server.js --devtool source-map --open --hot --env.BUILD_TARGET=local --env.MODE=development",
     "build": "npm run build:local & npm run build:remote",
@@ -11,9 +13,6 @@
     "lint": "eslint ./app/ --ext ts,tsx",
     "lint:fix": "eslint ./app/ -c ./.eslintrc.json --ext ts,tsx --fix"
   },
-  "keywords": [],
-  "author": "",
-  "license": "GNU Affero General Public License v3.0",
   "dependencies": {
     "@material-ui/core": "^4.9.5",
     "@material-ui/icons": "^4.9.1",

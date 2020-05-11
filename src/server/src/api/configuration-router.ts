@@ -12,7 +12,7 @@ export function create(routeAuthorizer: RouteAuthorizer, systemConfigurationServ
     '/',
     routeAuthorizer.requireAuthentication,
     asyncRequestHandler(async function (_request: Request, response: Response): Promise<void> {
-      response.json(systemConfigurationService.getSystemSetting());
+      response.json(await systemConfigurationService.getSystemSetting());
     })
   );
 
