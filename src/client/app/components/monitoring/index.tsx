@@ -17,7 +17,7 @@ import { machineStateSort } from './machine-monitor-sort.function';
 export const MonitoringPage: React.FunctionComponent = () => {
   const dispatch = useDispatch();
   const mediaBreakpoints = useMediaBreakPoints();
-  const machinesGridRef = React.useRef<HTMLElement>();
+  const machinesGridRef = React.useRef<HTMLUListElement>();
   const settings = useSelector(state => state.settings);
   const machines = useSelector(state => state.machines);
   const machineStates = useSelector(state => state.machineStates);
