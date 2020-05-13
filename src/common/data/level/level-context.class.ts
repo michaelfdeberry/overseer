@@ -8,7 +8,7 @@ import { DataContext } from '../data-context.interface';
 import { LevelRepository } from './level-repository.class';
 import { LevelValueStore } from './level-value-store.class';
 
-function createDb(): Promise<LevelUpDb> {
+export function createDb(): Promise<LevelUpDb> {
   return new Promise((resolve, reject) => {
     const db = LevelUp(EncodingDown(LevelDOWN('overseer.db')), {}, (err: Error) => {
       if (err) {
@@ -22,22 +22,24 @@ function createDb(): Promise<LevelUpDb> {
 
 export class LevelContext implements DataContext {
   get values(): ValueStore {
-    return new LevelValueStore(createDb);
+    return new LevelValueStore(this.db);
   }
 
   get machines(): Repository<Machine> {
-    return new LevelRepository(createDb, 'machines');
+    return new LevelRepository(this.db, 'machines', Machine);
   }
 
   get users(): Repository<User> {
-    return new LevelRepository(createDb, 'users');
+    return new LevelRepository(this.db, 'users', User);
   }
 
   get logs(): Repository<LogEntry> {
-    return new LevelRepository(createDb, 'logging');
+    return new LevelRepository(this.db, 'logging', LogEntry);
   }
 
   get certificates(): Repository<Certificate> {
-    return new LevelRepository(createDb, 'certificates');
+    return new LevelRepository(this.db, 'certificates', Certificate);
   }
+
+  constructor(private db: LevelUpDb) {}
 }

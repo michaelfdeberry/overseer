@@ -5,27 +5,26 @@ import { Repository } from '../repository.interface';
 import { getLevelValue, setLevelValue } from './level-utilities';
 
 export class LevelRepository<T extends { id?: string }> implements Repository<T> {
-  constructor(private getDb: () => Promise<LevelUp>, private collection: string) {}
+  constructor(private db: LevelUp, private collection: string, private entityConstructor: new () => T) {}
+
+  construct(obj: Partial<T>): T {
+    return !obj ? undefined : Object.assign(new this.entityConstructor(), obj);
+  }
 
   async add(value: T): Promise<string> {
-    const db = await this.getDb();
-    const ids = await getLevelValue<string[]>(db, this.collection, []);
+    const ids = await getLevelValue<string[]>(this.db, this.collection, []);
 
     value.id = uuid();
-    await setLevelValue<T>(db, value.id, value);
-    await setLevelValue<string[]>(db, this.collection, [...ids, value.id]);
-    await db.close();
+    await setLevelValue<T>(this.db, value.id, value);
+    await setLevelValue<string[]>(this.db, this.collection, [...ids, value.id]);
 
     return value.id;
   }
 
   async getById(id: string): Promise<T> {
-    const db = await this.getDb();
-    const entity = await getLevelValue<T>(db, id);
+    const entity = await getLevelValue<T>(this.db, id);
 
-    await db.close();
-
-    return entity;
+    return this.construct(entity);
   }
 
   async getByKey(predicate: (t: T) => boolean): Promise<T> {
@@ -34,21 +33,14 @@ export class LevelRepository<T extends { id?: string }> implements Repository<T>
   }
 
   async getAll(): Promise<T[]> {
-    const db = await this.getDb();
-    const ids = await getLevelValue<string[]>(db, this.collection, []);
-    const entities = await Promise.all(ids.map(id => getLevelValue<T>(db, id)));
+    const ids = await getLevelValue<string[]>(this.db, this.collection, []);
+    const entities = await Promise.all(ids.map(id => getLevelValue<T>(this.db, id)));
 
-    await db.close();
-
-    return entities;
+    return entities.map(e => this.construct(e));
   }
 
   async update(value: T): Promise<T> {
-    const db = await this.getDb();
-
-    await setLevelValue(db, value.id, value);
-    await db.close();
-
+    await setLevelValue(this.db, value.id, value);
     return value;
   }
 
@@ -57,20 +49,14 @@ export class LevelRepository<T extends { id?: string }> implements Repository<T>
   }
 
   async delete(id: string): Promise<void> {
-    const db = await this.getDb();
-    const ids = await getLevelValue<string[]>(db, this.collection, []);
+    const ids = await getLevelValue<string[]>(this.db, this.collection, []);
 
-    await setLevelValue(db, this.collection, [...ids.filter(x => x !== id)]);
-    await db.del(id);
-    await db.close();
+    await setLevelValue(this.db, this.collection, [...ids.filter(x => x !== id)]);
+    await this.db.del(id);
   }
 
   async count(): Promise<number> {
-    const db = await this.getDb();
-    const ids: string[] = await getLevelValue(db, this.collection, []);
-
-    await db.close();
-
+    const ids: string[] = await getLevelValue(this.db, this.collection, []);
     return ids.length;
   }
 }

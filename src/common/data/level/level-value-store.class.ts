@@ -5,26 +5,23 @@ import { ValueStore } from '../value-store.interface';
 import { getLevelValue, setLevelValue } from './level-utilities';
 
 export class LevelValueStore implements ValueStore {
-  constructor(private getDb: () => Promise<LevelUp>) {}
+  constructor(private db: LevelUp) {}
 
-  private async getId(db: LevelUp, name: string): Promise<string> {
-    const nameKeyMapper = await getLevelValue<{ [key: string]: string }>(db, 'values', {});
+  private async getId(name: string): Promise<string> {
+    const nameKeyMapper = await getLevelValue<{ [key: string]: string }>(this.db, 'values', {});
     return nameKeyMapper[name];
   }
 
-  private async generateId(db: LevelUp, name: string): Promise<string> {
+  private async generateId(name: string): Promise<string> {
     const id = uuid();
-    const nameKeyMapper = await getLevelValue<{ [key: string]: string }>(db, 'values', {});
-    await setLevelValue(db, 'values', { ...nameKeyMapper, [name]: id });
+    const nameKeyMapper = await getLevelValue<{ [key: string]: string }>(this.db, 'values', {});
+    await setLevelValue(this.db, 'values', { ...nameKeyMapper, [name]: id });
     return id;
   }
 
   async get<T>(name: string): Promise<T> {
-    const db = await this.getDb();
-    const id = await this.getId(db, name);
-    const value = id ? await getLevelValue<T>(db, id) : undefined;
-
-    await db.close();
+    const id = await this.getId(name);
+    const value = id ? await getLevelValue<T>(this.db, id) : undefined;
 
     return value;
   }
@@ -40,13 +37,11 @@ export class LevelValueStore implements ValueStore {
   }
 
   async set<T>(name: string, value: T): Promise<void> {
-    const db = await this.getDb();
-    let id = await this.getId(db, name);
+    let id = await this.getId(name);
     if (!id) {
-      id = await this.generateId(db, name);
+      id = await this.generateId(name);
     }
 
-    await setLevelValue<T>(db, id, value);
-    await db.close();
+    await setLevelValue<T>(this.db, id, value);
   }
 }

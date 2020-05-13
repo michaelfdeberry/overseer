@@ -52,8 +52,7 @@ export function create(routeAuthorizer: RouteAuthorizer, machineConfigurationSer
     '/sort',
     routeAuthorizer.requireAccessLevel(AccessLevel.Administrator),
     asyncRequestHandler(async function (request: Request, response: Response): Promise<void> {
-      await machineConfigurationService.sortMachines(request.body);
-      response.sendStatus(200);
+      response.json(await machineConfigurationService.sortMachines(request.body));
     })
   );
 
