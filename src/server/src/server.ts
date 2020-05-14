@@ -1,6 +1,7 @@
 import { createDb, LevelContext } from '@overseer/common/data/level/level-context.class';
 import initializeIntegration from '@overseer/common/integration/initialize-integration.function';
 import { MachineState } from '@overseer/common/models';
+import compression from 'compression';
 import express, { Application } from 'express';
 import { createServer, Server } from 'http';
 import * as WebSocket from 'ws';
@@ -19,6 +20,7 @@ createDb().then(async (db) => {
   const webServer: Server = createServer(httpServer);
 
   httpServer.on('close', () => db.close());
+  httpServer.use(compression());
   httpServer.use(express.json());
   httpServer.use(createApiRouter(services));
   httpServer.use(express.static('public', { fallthrough: false }));
