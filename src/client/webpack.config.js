@@ -1,11 +1,13 @@
+/* eslint-disable */
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-module.exports = function(env) {
+module.exports = function (env) {
   const isDev = env.MODE === 'development';
   const buildTarget = env.BUILD_TARGET || 'remote';
   let distribution = path.resolve(__dirname, './dist');
@@ -20,22 +22,22 @@ module.exports = function(env) {
 
     resolve: {
       modules: [path.resolve(__dirname, './node_modules'), path.resolve(__dirname, '../common/node_modules')],
-      extensions: ['.ts', '.tsx', '.js'],
+      extensions: ['.ts', '.tsx', '.js']
     },
     module: {
       rules: [
         {
           test: /\.svg$/,
-          use: ['@svgr/webpack'],
+          use: ['@svgr/webpack']
         },
         {
           test: /\.ts(x?)$/,
-          loader: 'awesome-typescript-loader',
+          loader: 'awesome-typescript-loader'
         },
         {
           enforce: 'pre',
           test: /\.(t|j)s$/,
-          loader: 'source-map-loader',
+          loader: 'source-map-loader'
         },
         {
           test: /\.s[ac]ss$/i,
@@ -43,20 +45,20 @@ module.exports = function(env) {
             MiniCssExtractPlugin.loader,
             'css-loader',
             {
-              loader: 'sass-loader',
-            },
-          ],
-        },
-      ],
+              loader: 'sass-loader'
+            }
+          ]
+        }
+      ]
     },
 
     node: {
-      fs: 'empty',
+      fs: 'empty'
     },
 
     output: {
       path: distribution,
-      filename: isDev ? '[name].js' : '[name].[contenthash].js',
+      filename: isDev ? '[name].js' : '[name].[contenthash].js'
     },
 
     optimization: {
@@ -66,17 +68,18 @@ module.exports = function(env) {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
             name: 'vendors',
-            chunks: 'all',
-          },
-        },
+            chunks: 'all'
+          }
+        }
       },
+      minimizer: [new UglifyJsPlugin()]
     },
 
     plugins: [
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({ template: './index.html' }),
       new CopyPlugin([{ from: './public', to: distribution }]),
-      new webpack.NormalModuleReplacementPlugin(/(.*)operations(.*)/, function(resource) {
+      new webpack.NormalModuleReplacementPlugin(/(.*)operations(.*)/, function (resource) {
         if (buildTarget === 'remote' && resource.request.indexOf('local') >= 0) {
           resource.request = resource.request.replace(/local/g, `remote`);
         }
@@ -84,16 +87,16 @@ module.exports = function(env) {
       }),
       new MiniCssExtractPlugin({
         filename: isDev ? 'styles.css' : 'styles.[contenthash].css',
-        chunkFilename: isDev ? 'styles.css' : 'styles.[contenthash].css',
+        chunkFilename: isDev ? 'styles.css' : 'styles.[contenthash].css'
       }),
       new webpack.DefinePlugin({
         __isDev__: isDev,
-        __isLocalApp__: buildTarget !== 'remote',
-      }),
+        __isLocalApp__: buildTarget !== 'remote'
+      })
     ],
 
     devServer: {
-      historyApiFallback: true,
-    },
+      historyApiFallback: true
+    }
   };
 };
