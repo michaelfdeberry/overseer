@@ -6,20 +6,21 @@
   "private": true,
   "scripts": {
     "build": "npm run build:remote --prefix ../client && tsc -P ./tsconfig.json",
-    "start": "npm run build:remote:dev --prefix ../client && node ./node_modules/nodemon/bin/nodemon.js -e ../**/*.ts --exec \"ts-node -P ./tsconfig.json ./src/server.ts || exit 1\""
+    "start": "npm run build:remote:dev --prefix ../client && node ./node_modules/nodemon/bin/nodemon.js -e ../**/*.ts --exec \"ts-node -P ./tsconfig.json ./src/server.ts || exit 1\"",
+    "lint": "eslint ./src --ext ts",
+    "lint:fix": "eslint ./src -c ./.eslintrc.json --ext ts --fix"
   },
   "dependencies": {
     "@overseer/common": "file:../common",
-    "express": "~4.16.1",
+    "express": "^4.17.1",
     "ws": "^7.3.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
-    "@types/node": "^12.12.38",
+    "@types/node": "^14.0.1",
     "@types/ws": "^7.2.4",
     "nodemon": "^2.0.3",
     "ts-node": "^8.10.1",
-    "tslint": "^5.20.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.2"
   }
 }
