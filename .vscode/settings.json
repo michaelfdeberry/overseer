@@ -1,8 +1,10 @@
 {
   "prettier.arrowParens": "always",
+  "prettier.trailingComma": "none",
+  "prettier.tabWidth": 2,
+  "prettier.semi": true,
   "prettier.printWidth": 150,
   "prettier.singleQuote": true,
-  "prettier.tabWidth": 2,
   "typescriptHero.imports.multiLineTrailingComma": false,
   "typescriptHero.imports.multiLineWrapThreshold": 150,
   "typescriptHero.imports.organizeOnSave": true,
