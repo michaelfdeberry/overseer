@@ -6,14 +6,14 @@ import { toDuration } from '../../utils/duration.function';
 import { MachineMonitorProps } from './machine-monitor-props';
 
 export const MachineMonitorStatus: React.FunctionComponent<MachineMonitorProps> = props => {
-  const renderDuration = () => {
+  const renderDuration = (): React.ReactElement => {
     if (!props.machineState) return null;
     if (props.machineState.type <= MachineStateType.Idle) return null;
 
     return <span>({toDuration(props.machineState?.estimatedRemainingTime)} Remaining)</span>;
   };
 
-  const renderTemplate = (machineStateType: MachineStateType) => {
+  const render = (machineStateType: MachineStateType): React.ReactElement => {
     return (
       <div className="status">
         <Typography className="name" variant="h6">
@@ -28,12 +28,12 @@ export const MachineMonitorStatus: React.FunctionComponent<MachineMonitorProps> 
   };
 
   if (props.machine.disabled) {
-    return renderTemplate(MachineStateType.Disabled);
+    return render(MachineStateType.Disabled);
   }
 
   if (!props.machineState) {
-    return renderTemplate(MachineStateType.Connecting);
+    return render(MachineStateType.Connecting);
   }
 
-  return renderTemplate(props.machineState.type);
+  return render(props.machineState.type);
 };

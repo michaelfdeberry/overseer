@@ -24,6 +24,7 @@ const App: React.FunctionComponent = () => {
               activeUser,
               isInitialized: true,
               isSetup: !requiresSetup,
+              // eslint-disable-next-line no-undef
               isLocalApp: __isLocalApp__,
               currentTheme: getCurrentTheme()
             })

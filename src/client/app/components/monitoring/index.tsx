@@ -130,10 +130,10 @@ export const MonitoringPage: React.FunctionComponent = () => {
     return (
       <div className="no-machines-message">
         <div className="message">
-          <Typography variant="h6">'Hide Disabled Machines' enabled and all machines are currently disabled</Typography>
+          <Typography variant="h6">&apos;Hide Disabled Machines&apos; enabled and all machines are currently disabled</Typography>
           <Button color="primary" variant="outlined" onClick={() => updateSetting<boolean>('hideDisabledMachines', false)}>
             <Settings />
-            Disable 'Hide Disabled Machines'?
+            Disable &apos;Hide Disabled Machines&apos;?
           </Button>
           <Button color="primary" variant="outlined" component={Link} to="/configuration/machines">
             <OpenInBrowser />
@@ -150,10 +150,12 @@ export const MonitoringPage: React.FunctionComponent = () => {
 
       return (
         <React.Fragment>
-          <Typography variant="body1">This is likely because 'Hide Idle Machines' is enabled. Would you like to view idle machines?</Typography>
+          <Typography variant="body1">
+            This is likely because &apos;Hide Idle Machines&apos; is enabled. Would you like to view idle machines?
+          </Typography>
           <Button color="primary" variant="outlined" onClick={() => updateSetting<boolean>('hideIdleMachines', false)}>
             <Settings />
-            Disable 'Hide Idle Machines'?
+            Disable &apos;Hide Idle Machines&apos;?
           </Button>
         </React.Fragment>
       );

@@ -20,7 +20,7 @@ export const LoginPage: React.FunctionComponent = () => {
     return isRequiredFieldValid(loginFormState.username) && isRequiredFieldValid(loginFormState.password);
   };
 
-  const signIn = (event: React.FormEvent) => {
+  const signIn = (event: React.FormEvent): void => {
     event.preventDefault();
 
     if (!isValid()) return;

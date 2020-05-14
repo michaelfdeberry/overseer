@@ -38,7 +38,7 @@ export const MachineMonitor: React.FunctionComponent<MachineMonitorProps> = prop
     zoomPanelRef.current.style.position = 'fixed';
     zoomPanelRef.current.classList.toggle('zoom');
 
-    function animate() {
+    function animate(): void {
       const bounds = zoomPanelRef.current.getBoundingClientRect();
       if (bounds.top === 0 && bounds.left === 0 && bounds.height === window.innerHeight && bounds.width === window.innerWidth) return;
 
@@ -62,7 +62,7 @@ export const MachineMonitor: React.FunctionComponent<MachineMonitorProps> = prop
     const deltaHeight = (zoomPanelRef.current.clientHeight - height) * scaleRatioPerFrame;
     const deltaWidth = (zoomPanelRef.current.clientWidth - width) * scaleRatioPerFrame;
 
-    function animate() {
+    function animate(): void {
       const bounds = zoomPanelRef.current.getBoundingClientRect();
       if (bounds.top === top && bounds.left === left && bounds.height === height && bounds.width === width) {
         zoomPanelRef.current.style.top = '';
@@ -110,7 +110,7 @@ export const MachineMonitor: React.FunctionComponent<MachineMonitorProps> = prop
           </div>
           <div className="foot">
             {machineWebsiteUrl ? (
-              <a href={machineWebsiteUrl} title="Open Website" target="_blank">
+              <a href={machineWebsiteUrl} title="Open Website" target="_blank" rel="noreferrer">
                 <img className="machine-type-logo" src={`/images/${props.machine.type}.png`} alt="logo" />
               </a>
             ) : (
