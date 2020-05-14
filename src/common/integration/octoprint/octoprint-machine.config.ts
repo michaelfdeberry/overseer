@@ -14,16 +14,16 @@ export function octoprintConfigFactory(): [string, MachineConfigurationBuilder] 
         'Webcam Orientation': {
           type: 'options',
           mode: PersistenceModeType.edit,
-          options: WebcamOrientationOptions,
+          options: WebcamOrientationOptions
         },
         'Advanced Settings': {
           type: 'group',
           mode: PersistenceModeType.any,
           restriction: BuildRestrictionType.remote,
-          settings: { 'Client Certificate': { type: 'text', mode: PersistenceModeType.any } },
-        },
+          settings: { 'Client Certificate': { type: 'text', mode: PersistenceModeType.any } }
+        }
       },
-      provider: OctoprintMachineProvider,
-    },
+      provider: OctoprintMachineProvider
+    }
   ];
 }

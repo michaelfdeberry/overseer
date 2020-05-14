@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Axios, { AxiosRequestConfig } from 'axios';
 
 import { MachineState, MachineStateType } from '../../models/machines';
@@ -12,18 +13,18 @@ import processUrl from '../utilities/process-url.utility';
 export class OctoprintMachineProvider extends MachineProvider implements ExceptionTimeoutContext {
   maxExceptionCount = 5;
   timeoutDuration: number = 1000 * 60 * 2;
-  exceptionCount: number = 0;
+  exceptionCount = 0;
   lastException: number;
 
-  private get url() {
+  private get url(): string {
     return this.machine.get('Url');
   }
 
-  private get apiKey() {
+  private get apiKey(): string {
     return this.machine.get('Api Key');
   }
 
-  private get profiles() {
+  private get profiles(): MachineSetting {
     return this.machine.getSetting('Profiles');
   }
 
@@ -35,7 +36,7 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
     return { headers: { 'X-Api-Key': this.apiKey } };
   }
 
-  private sendData(resource: string, data?: any): Promise<any> {
+  private sendData(resource: string, data?: any): Promise<void> {
     return Axios.post(processUrl(this.url, resource), data, this.getHttpOptions());
   }
 
@@ -44,15 +45,15 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
     return response.data;
   }
 
-  pauseJob(): Promise<any> {
+  pauseJob(): Promise<void> {
     return this.sendData('api/job', { command: 'pause', action: 'pause' });
   }
 
-  resumeJob(): Promise<any> {
+  resumeJob(): Promise<void> {
     return this.sendData('api/job', { command: 'pause', action: 'resume' });
   }
 
-  cancelJob(): Promise<any> {
+  cancelJob(): Promise<void> {
     return this.sendData('api/job', { command: 'cancel' });
   }
 
@@ -81,7 +82,7 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
 
       const profileOptions = [];
       for (const profileKey in profiles.profiles) {
-        if (!profiles.profiles.hasOwnProperty(profileKey)) {
+        if (!profiles.profiles[profileKey]) {
           continue;
         }
 
@@ -102,14 +103,14 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
               this.machine.tools.push({
                 type: MachineToolType.Heater,
                 index: index,
-                name: 'nozzle',
+                name: 'nozzle'
               });
             }
 
             this.machine.tools.push({
               type: MachineToolType.Extruder,
               index: index,
-              name: `extruder ${index}`,
+              name: `extruder ${index}`
             });
           }
         }
@@ -135,7 +136,7 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
         const state: MachineState = {
           machineId: this.machine.id,
           type: MachineStateType.Idle,
-          temperatures: {},
+          temperatures: {}
         };
 
         for (const key in machineState.temperature) {
@@ -144,7 +145,7 @@ export class OctoprintMachineProvider extends MachineProvider implements Excepti
 
           state.temperatures[index] = {
             actual: temp.actual,
-            target: temp.target,
+            target: temp.target
           };
         }
 

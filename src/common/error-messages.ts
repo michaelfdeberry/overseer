@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 export const errorMessageMap: { [key: string]: string } = {
   unknown: 'An Unknown Error Occurred',
   invalid_user: 'Unable to create user, please try again',
@@ -11,5 +13,5 @@ export const errorMessageMap: { [key: string]: string } = {
   unauthorized_access: 'Unauthorized Access Attempted!',
   setup_required: 'Setup Required',
   delete_user_unavailable: "This user can't be deleted because at least one user must exist",
-  delete_admin_unavailable: 'At least one administrator user must always exist and no other administrators are currently configured.',
+  delete_admin_unavailable: 'At least one administrator user must always exist and no other administrators are currently configured.'
 };

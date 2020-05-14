@@ -31,7 +31,7 @@ export class UserConfigurationService {
       passwordHash: hash,
       passwordSalt: salt,
       sessionLifetime: user.sessionLifetime,
-      accessLevel: user.accessLevel,
+      accessLevel: user.accessLevel
     });
 
     await this.context.users.add(pUser);
@@ -44,7 +44,7 @@ export class UserConfigurationService {
       sessionLifetime: user.sessionLifetime,
       accessLevel: user.accessLevel,
       token: undefined,
-      tokenExpiration: undefined,
+      tokenExpiration: undefined
     });
 
     await this.context.users.update(pUser);

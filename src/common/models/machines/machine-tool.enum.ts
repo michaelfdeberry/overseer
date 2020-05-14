@@ -1,5 +1,5 @@
 export enum MachineToolType {
   Undetermined,
   Heater,
-  Extruder,
+  Extruder
 }

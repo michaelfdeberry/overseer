@@ -6,10 +6,11 @@ import { AccessLevel, DisplayUser, User } from '../../models/users';
 export class AuthenticationService {
   constructor(private context: DataContext) {}
 
-  private base64Encode(value: string) {
+  private base64Encode(value: string): string {
     try {
       return btoa(value);
     } catch (err) {
+      // eslint-disable-next-line no-undef
       return Buffer.from(value).toString('base64');
     }
   }

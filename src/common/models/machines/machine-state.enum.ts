@@ -4,5 +4,5 @@ export enum MachineStateType {
   Offline = -1,
   Idle = 0,
   Paused,
-  Operational,
+  Operational
 }

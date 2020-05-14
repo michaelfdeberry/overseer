@@ -6,6 +6,7 @@ import { SystemSettings } from '../../models/system/settings.interface';
 import { MachineProviderService } from './provider.service';
 
 export class MonitoringService {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private intervalRef: any;
   machineStateEventEmitter: EventEmitter = new EventEmitter();
 

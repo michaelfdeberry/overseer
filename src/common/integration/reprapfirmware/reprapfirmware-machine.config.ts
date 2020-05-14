@@ -12,18 +12,18 @@ export function repRapFirmwareConfigFactory(): [string, MachineConfigurationBuil
         'Webcam Orientation': {
           type: 'options',
           mode: PersistenceModeType.any,
-          options: WebcamOrientationOptions,
+          options: WebcamOrientationOptions
         },
         'Advanced Settings': {
           type: 'group',
           mode: PersistenceModeType.any,
           restriction: BuildRestrictionType.remote,
           settings: {
-            'Client Certificate': { type: 'text', mode: PersistenceModeType.any },
-          },
-        },
+            'Client Certificate': { type: 'text', mode: PersistenceModeType.any }
+          }
+        }
       },
-      provider: RepRapFirmwareMachineProvider,
-    },
+      provider: RepRapFirmwareMachineProvider
+    }
   ];
 }

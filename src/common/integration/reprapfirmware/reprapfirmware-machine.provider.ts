@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Axios, { AxiosRequestConfig } from 'axios';
 
 import {
@@ -15,7 +16,7 @@ import processUrl from '../utilities/process-url.utility';
 export class RepRapFirmwareMachineProvider extends MachineProvider implements ExceptionTimeoutContext {
   maxExceptionCount = 5;
   timeoutDuration: number = 1000 * 60 * 2;
-  exceptionCount: number = 0;
+  exceptionCount = 0;
   lastException: number;
 
   private async getData(resource: string, options?: AxiosRequestConfig): Promise<any> {
@@ -23,7 +24,7 @@ export class RepRapFirmwareMachineProvider extends MachineProvider implements Ex
     return response.data;
   }
 
-  executeGcode(command: string): Promise<any> {
+  executeGcode(command: string): Promise<void> {
     return this.getData('rr_gcode', { params: { gcode: command } });
   }
 
@@ -44,7 +45,7 @@ export class RepRapFirmwareMachineProvider extends MachineProvider implements Ex
           this.machine.tools.push({
             name: 'nozzle',
             index: heaterIndex,
-            type: MachineToolType.Heater,
+            type: MachineToolType.Heater
           });
         });
 
@@ -52,7 +53,7 @@ export class RepRapFirmwareMachineProvider extends MachineProvider implements Ex
           this.machine.tools.push({
             name: `extruder ${extruderIndex}`,
             index: extruderIndex,
-            type: MachineToolType.Extruder,
+            type: MachineToolType.Extruder
           });
         });
       });
@@ -123,7 +124,7 @@ export class RepRapFirmwareMachineProvider extends MachineProvider implements Ex
 
         temperatures[currentHeater.index] = {
           actual: auxTemp.current,
-          target: auxTemp.active,
+          target: auxTemp.active
         };
       } else {
         // Overseer doesn't have a concept of tools similar to RRF, just heaters and drives.
@@ -146,7 +147,7 @@ export class RepRapFirmwareMachineProvider extends MachineProvider implements Ex
           // temps section.
           temperatures[currentHeater.index] = {
             actual: machineStatus.temps.current[currentHeater.index],
-            target: machineStatus.temps.tools.active[toolIndex][toolHeaterIndex],
+            target: machineStatus.temps.tools.active[toolIndex][toolHeaterIndex]
           };
         }
       }
@@ -195,13 +196,13 @@ export class RepRapFirmwareMachineProvider extends MachineProvider implements Ex
 
         return {
           estimatedRemainingTime: jobStatus.timesLeft.filament,
-          progress: Math.max(0, progress),
+          progress: Math.max(0, progress)
         };
       } else {
         const progress = (jobStatus.coords.xyz[2] / fileStatus.height) * 100;
         return {
           estimatedRemainingTime: jobStatus.timesLeft.layer,
-          progress: Math.max(0, progress),
+          progress: Math.max(0, progress)
         };
       }
     } catch {
@@ -210,7 +211,7 @@ export class RepRapFirmwareMachineProvider extends MachineProvider implements Ex
 
     return {
       estimatedRemainingTime: jobStatus.timesLeft.file,
-      progress: Math.max(0, jobStatus.fractionPrinted),
+      progress: Math.max(0, jobStatus.fractionPrinted)
     };
   }
 }

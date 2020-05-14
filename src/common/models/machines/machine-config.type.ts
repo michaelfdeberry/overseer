@@ -4,14 +4,14 @@ import { MachineProvider } from './machine.provider';
 export enum PersistenceModeType {
   add = 1,
   edit = 2,
-  any = 3,
+  any = 3
 }
 
 // used to restrict certain settings to either the local or remote builds
 export enum BuildRestrictionType {
   none,
   local,
-  remote,
+  remote
 }
 
 export type MachineSetting = {

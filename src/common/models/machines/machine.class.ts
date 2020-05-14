@@ -9,7 +9,7 @@ export class Machine {
   sortIndex: number;
   configuration: MachineConfigurationCollection;
 
-  get name() {
+  get name(): string {
     return this.get('Name');
   }
 
@@ -17,7 +17,7 @@ export class Machine {
     this.patch('Name', value);
   }
 
-  get webcamUrl() {
+  get webcamUrl(): string {
     return this.get('Webcam Url');
   }
 
@@ -25,7 +25,7 @@ export class Machine {
     this.patch('Webcam Url', value);
   }
 
-  get webcamOrientation() {
+  get webcamOrientation(): string {
     return this.get('Webcam Orientation');
   }
 
@@ -51,7 +51,7 @@ export class Machine {
     return group?.settings[settingName];
   }
 
-  patchGroupSetting(groupName: string, settingName: string, setting: MachineSetting) {
+  patchGroupSetting(groupName: string, settingName: string, setting: MachineSetting): void {
     const group = this.configuration[groupName] as MachineSettingGroup;
     group.settings[settingName] = setting;
   }

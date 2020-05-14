@@ -24,7 +24,7 @@ export class User {
       sessionLifetime: this.sessionLifetime,
       accessLevel: this.accessLevel,
       isLoggedIn: !this.isTokenExpired(),
-      token: includeToken ? this.token : undefined,
+      token: includeToken ? this.token : undefined
     };
   }
 

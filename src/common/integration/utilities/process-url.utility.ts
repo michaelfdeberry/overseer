@@ -18,7 +18,7 @@ export default function(url: string, refPath?: string): string {
     return refUri.toString();
   }
 
-  let query: any = {};
+  let query: object = {};
   if (refPath && refPath.indexOf('?') > 0) {
     if (refPath.startsWith('/')) {
       refPath = refPath.substr(1);

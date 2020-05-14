@@ -15,15 +15,15 @@ export class IndexedDBContext implements DataContext {
   }
 
   get machines(): Repository<Machine> {
-    return <Repository<Machine>>this.createRepository('machines', Machine);
+    return this.createRepository('machines', Machine) as Repository<Machine>;
   }
 
   get users(): Repository<User> {
-    return <Repository<User>>this.createRepository('users', User);
+    return this.createRepository('users', User) as Repository<User>;
   }
 
   get logs(): Repository<LogEntry> {
-    return <Repository<LogEntry>>this.createRepository('logging', LogEntry);
+    return this.createRepository('logging', LogEntry) as Repository<LogEntry>;
   }
 
   private async createDb(): Promise<IDBPDatabase<OverseerSchema>> {
@@ -72,7 +72,7 @@ export class IndexedDBContext implements DataContext {
             await userCursor.continue();
           }
         }
-      },
+      }
     });
   }
 

@@ -6,7 +6,7 @@ export const defaultSystemSettings: SystemSettings = {
   localPort: defaultLocalPort,
   sortByTimeRemaining: false,
   hideIdleMachines: false,
-  hideDisabledMachines: false,
+  hideDisabledMachines: false
 };
 
 export interface SystemSettings {
