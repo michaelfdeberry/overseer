@@ -14,8 +14,8 @@ export function machineStateSort(left: MachineStateSortType, right: MachineState
   if (leftState.type <= MachineStateType.Idle && rightState.type > MachineStateType.Idle) return 1;
 
   const minute = 60000;
-  let etrLeft = (leftState.estimatedRemainingTime || 0) / minute;
-  let etrRight = (rightState.estimatedRemainingTime || 0) / minute;
+  const etrLeft = (leftState.estimatedRemainingTime || 0) / minute;
+  const etrRight = (rightState.estimatedRemainingTime || 0) / minute;
 
   if (etrLeft < etrRight) return -1;
   if (etrLeft > etrRight) return 1;

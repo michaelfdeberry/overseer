@@ -145,7 +145,7 @@ export const MonitoringPage: React.FunctionComponent = () => {
   }
 
   if (!visibleMachines.length) {
-    const renderHideIdleMachinesMessage = () => {
+    const renderHideIdleMachinesMessage = (): React.ReactNode => {
       if (!settings.hideIdleMachines) return null;
 
       return (

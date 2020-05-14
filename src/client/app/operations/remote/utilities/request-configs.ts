@@ -7,8 +7,8 @@ export function getDefaultConfig(): AxiosRequestConfig {
   return {
     headers: {
       'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
+      Accept: 'application/json'
+    }
   };
 }
 

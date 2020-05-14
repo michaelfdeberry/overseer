@@ -14,5 +14,5 @@ export const themeMap: { [key: string]: Theme } = {
   'Deep Purple / Amber': deepPurpleAmberTheme,
   'Indigo / Pink': indigoPinkTheme,
   'Pink / Blue-grey': pinkBlueGreyTheme,
-  'Purple / Green': purpleGreenTheme,
+  'Purple / Green': purpleGreenTheme
 };

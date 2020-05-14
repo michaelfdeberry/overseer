@@ -48,12 +48,12 @@ export const HeaderMenu: React.FunctionComponent = () => {
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'right'
         }}
         keepMounted
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'right'
         }}
         open={open}
         onClose={closeMenu}

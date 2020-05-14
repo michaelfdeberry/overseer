@@ -26,7 +26,7 @@ export const PromptDialog: React.FunctionComponent<PromptDialogProps> = props =>
     confirmButtonText = 'Yes',
     declineButtonText = 'No',
     onConfirm,
-    onDecline,
+    onDecline
   } = props;
 
   const confirm = (): void => {

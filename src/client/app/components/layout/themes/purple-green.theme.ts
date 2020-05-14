@@ -8,7 +8,7 @@ export const purpleGreenTheme = createMuiTheme(
   merge(commonThemeOptions, {
     palette: {
       primary: purple,
-      secondary: green,
-    },
+      secondary: green
+    }
   })
 );

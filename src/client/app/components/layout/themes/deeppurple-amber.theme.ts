@@ -9,7 +9,7 @@ export const deepPurpleAmberTheme = createMuiTheme(
     ...commonThemeOptions,
     palette: {
       primary: deepPurple,
-      secondary: amber,
-    },
+      secondary: amber
+    }
   })
 );

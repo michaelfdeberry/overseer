@@ -49,12 +49,12 @@ export const GenerateSsoInput: React.FunctionComponent<{ user: DisplayUser }> = 
             </IconButton>
           </Tooltip>
         ) : (
-            <Tooltip arrow title="Generate">
-              <IconButton disabled={isGeneratingPreauthUrl} onClick={() => generatePreauthUrl(true)}>
-                <Autorenew />
-              </IconButton>
-            </Tooltip>
-          )}
+          <Tooltip arrow title="Generate">
+            <IconButton disabled={isGeneratingPreauthUrl} onClick={() => generatePreauthUrl(true)}>
+              <Autorenew />
+            </IconButton>
+          </Tooltip>
+        )}
       </div>
     </FormControl>
   );

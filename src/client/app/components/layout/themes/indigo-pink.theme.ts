@@ -8,7 +8,7 @@ export const indigoPinkTheme = createMuiTheme(
   merge(commonThemeOptions, {
     palette: {
       primary: indigo,
-      secondary: pink,
-    },
+      secondary: pink
+    }
   })
 );

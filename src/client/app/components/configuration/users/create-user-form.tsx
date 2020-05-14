@@ -30,7 +30,7 @@ export const CreateUserForm: React.FunctionComponent<CreateUserFormProps> = (pro
     accessLevel: false,
     username: false,
     password: false,
-    confirmPassword: false,
+    confirmPassword: false
   });
 
   function validate(): boolean {

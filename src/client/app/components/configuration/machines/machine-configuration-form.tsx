@@ -86,7 +86,7 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
             onChange={setMachineType}
             inputProps={{
               name: 'accessLevel',
-              id: 'access-level',
+              id: 'access-level'
             }}
           >
             <MenuItem value={''}>Select Machine...</MenuItem>

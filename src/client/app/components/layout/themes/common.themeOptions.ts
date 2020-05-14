@@ -6,29 +6,29 @@ export const commonThemeOptions: ThemeOptions = {
     fontSize: defaultFontSize,
     button: {
       textTransform: 'none',
-      whiteSpace: 'nowrap',
+      whiteSpace: 'nowrap'
     },
     caption: {
       fontSize: 13,
-      fontWeight: 'bold',
+      fontWeight: 'bold'
     },
     body1: {
-      fontSize: defaultFontSize,
-    },
+      fontSize: defaultFontSize
+    }
   },
   overrides: {
     MuiAppBar: {
-      colorPrimary: { backgroundColor: '#f5f5f5', color: '#444' },
+      colorPrimary: { backgroundColor: '#f5f5f5', color: '#444' }
     },
     MuiTabs: {
       root: {
-        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-      },
+        borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
+      }
     },
     MuiInputBase: {
       root: {
-        fontSize: defaultFontSize,
-      },
-    },
-  },
+        fontSize: defaultFontSize
+      }
+    }
+  }
 };

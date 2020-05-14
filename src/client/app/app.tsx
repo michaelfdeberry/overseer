@@ -25,7 +25,7 @@ const App: React.FunctionComponent = () => {
               isInitialized: true,
               isSetup: !requiresSetup,
               isLocalApp: __isLocalApp__,
-              currentTheme: getCurrentTheme(),
+              currentTheme: getCurrentTheme()
             })
           );
         });

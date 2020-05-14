@@ -9,17 +9,17 @@ export const pinkBlueGreyTheme = createMuiTheme(
     palette: {
       type: 'dark',
       primary: pink,
-      secondary: blueGrey,
+      secondary: blueGrey
     },
     overrides: {
       MuiAppBar: {
-        colorPrimary: { backgroundColor: '#212121', color: '#fff' },
+        colorPrimary: { backgroundColor: '#212121', color: '#fff' }
       },
       MuiTabs: {
         root: {
-          borderBottom: ' 1px solid rgba(255, 255, 255, 0.12)',
-        },
-      },
-    },
+          borderBottom: ' 1px solid rgba(255, 255, 255, 0.12)'
+        }
+      }
+    }
   })
 );
