@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import path from 'path';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function errorHandler(error: any, request: Request, response: Response, next: NextFunction): void {
   const isApiRequest = request.url.indexOf('/api') >= 0;
 

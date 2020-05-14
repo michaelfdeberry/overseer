@@ -56,7 +56,7 @@ export default function create(authorizationService: AuthorizationService): Rout
           response.sendStatus(500);
         }
       };
-    },
+    }
   };
 
   return routeAuthorizer;

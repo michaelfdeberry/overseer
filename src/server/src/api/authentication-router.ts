@@ -5,7 +5,7 @@ import { Request, Response, Router } from 'express';
 import asyncRequestHandler from './utilities/async-request-handler';
 import { RouteAuthorizer } from './utilities/route-authorizers';
 
-export function create(routeAuthorizer: RouteAuthorizer, authenticationService: AuthenticationService) {
+export function create(routeAuthorizer: RouteAuthorizer, authenticationService: AuthenticationService): Router {
   const router: Router = Router();
 
   router.post(

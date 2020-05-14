@@ -39,6 +39,6 @@ export function createServices(context: DataContext): ServiceDependencies {
     machineProviderService,
     monitoringService,
     systemConfigurationService,
-    userConfigurationService,
+    userConfigurationService
   };
 }
