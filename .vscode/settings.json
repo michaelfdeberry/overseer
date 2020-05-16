@@ -5,6 +5,7 @@
   "prettier.semi": true,
   "prettier.printWidth": 150,
   "prettier.singleQuote": true,
+  "prettier.endOfLine": "auto",
   "typescriptHero.imports.multiLineTrailingComma": false,
   "typescriptHero.imports.multiLineWrapThreshold": 150,
   "typescriptHero.imports.organizeOnSave": true,
