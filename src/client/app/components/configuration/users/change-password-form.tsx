@@ -1,4 +1,6 @@
-import { Button, TextField, Tooltip } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { DisplayUser } from '@overseer/common/models';
 import * as React from 'react';

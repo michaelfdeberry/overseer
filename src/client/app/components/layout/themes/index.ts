@@ -1,4 +1,4 @@
-import { Theme } from '@material-ui/core';
+import { Theme } from '@material-ui/core/styles';
 
 import { deepPurpleAmberTheme } from './deeppurple-amber.theme';
 import { indigoPinkTheme } from './indigo-pink.theme';

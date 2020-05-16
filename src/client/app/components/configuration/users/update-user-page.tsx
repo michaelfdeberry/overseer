@@ -1,4 +1,10 @@
-import { Button, FormControl, Icon, InputLabel, MenuItem, Select, Typography } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
+import Icon from '@material-ui/core/Icon';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import Typography from '@material-ui/core/Typography';
 import EditIcon from '@material-ui/icons/Edit';
 import PersonIcon from '@material-ui/icons/Person';
 import { DisplayUser } from '@overseer/common/models';

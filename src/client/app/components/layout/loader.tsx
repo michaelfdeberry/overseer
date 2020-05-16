@@ -1,4 +1,4 @@
-import { Theme, useTheme } from '@material-ui/core';
+import { Theme, useTheme } from '@material-ui/core/styles';
 import * as React from 'react';
 import LoadingBar from 'react-top-loading-bar';
 import { Subscription, timer } from 'rxjs';

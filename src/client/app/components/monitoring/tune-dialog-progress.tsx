@@ -1,5 +1,10 @@
-import { Button, Icon, LinearProgress, Typography } from '@material-ui/core';
-import { Pause, PlayArrow, Stop } from '@material-ui/icons';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Typography from '@material-ui/core/Typography';
+import Pause from '@material-ui/icons/Pause';
+import PlayArrow from '@material-ui/icons/PlayArrow';
+import Stop from '@material-ui/icons/Stop';
 import { MachineStateType } from '@overseer/common/models';
 import * as React from 'react';
 

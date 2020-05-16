@@ -1,4 +1,6 @@
-import { Button, Icon, Typography } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import Typography from '@material-ui/core/Typography';
 import PersonAdd from '@material-ui/icons/PersonAdd';
 import * as React from 'react';
 import { Link, useHistory } from 'react-router-dom';

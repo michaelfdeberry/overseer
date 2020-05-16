@@ -1,5 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Icon } from '@material-ui/core';
-import { OpenInNew } from '@material-ui/icons';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Icon from '@material-ui/core/Icon';
+import OpenInNew from '@material-ui/icons/OpenInNew';
 import { MachineStateType } from '@overseer/common/models';
 import * as React from 'react';
 

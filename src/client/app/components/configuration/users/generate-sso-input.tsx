@@ -1,5 +1,10 @@
-import { FormControl, IconButton, Input, InputLabel, Tooltip } from '@material-ui/core';
-import { Autorenew, FileCopy } from '@material-ui/icons';
+import FormControl from '@material-ui/core/FormControl';
+import IconButton from '@material-ui/core/IconButton';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import Tooltip from '@material-ui/core/Tooltip';
+import Autorenew from '@material-ui/icons/Autorenew';
+import FileCopy from '@material-ui/icons/FileCopy';
 import { AccessLevel, DisplayUser } from '@overseer/common/models';
 import * as React from 'react';
 

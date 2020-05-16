@@ -1,4 +1,8 @@
-import { Button, Step, StepLabel, Stepper, Typography } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
+import Stepper from '@material-ui/core/Stepper';
+import Typography from '@material-ui/core/Typography';
 import { AccessLevel, BuildRestrictionType, PersistenceModeType } from '@overseer/common/models';
 import * as React from 'react';
 import { Link, useHistory } from 'react-router-dom';

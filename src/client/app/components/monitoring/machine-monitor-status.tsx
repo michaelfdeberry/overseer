@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 import { MachineStateType } from '@overseer/common/models';
 import * as React from 'react';
 

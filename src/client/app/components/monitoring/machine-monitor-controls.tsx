@@ -1,5 +1,10 @@
-import { Button, Icon } from '@material-ui/core';
-import { Build, Pause, PlayArrow, Settings, Stop } from '@material-ui/icons';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import Build from '@material-ui/icons/Build';
+import Pause from '@material-ui/icons/Pause';
+import PlayArrow from '@material-ui/icons/PlayArrow';
+import Settings from '@material-ui/icons/Settings';
+import Stop from '@material-ui/icons/Stop';
 import { AccessLevel, MachineStateType } from '@overseer/common/models';
 import * as React from 'react';
 import { Link } from 'react-router-dom';

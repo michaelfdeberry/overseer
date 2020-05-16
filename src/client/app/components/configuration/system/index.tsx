@@ -1,4 +1,11 @@
-import { Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, Typography } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import Switch from '@material-ui/core/Switch';
+import Typography from '@material-ui/core/Typography';
 import { SystemSettings } from '@overseer/common/models';
 import { isEqual } from 'lodash/fp';
 import * as React from 'react';

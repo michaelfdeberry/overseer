@@ -1,5 +1,9 @@
-import { Button, FormControlLabel, Icon, Switch, Typography } from '@material-ui/core';
-import { Edit } from '@material-ui/icons';
+import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Icon from '@material-ui/core/Icon';
+import Switch from '@material-ui/core/Switch';
+import Typography from '@material-ui/core/Typography';
+import Edit from '@material-ui/icons/Edit';
 import { BuildRestrictionType, Machine, PersistenceModeType } from '@overseer/common/models';
 import { equals } from 'lodash/fp';
 import * as React from 'react';

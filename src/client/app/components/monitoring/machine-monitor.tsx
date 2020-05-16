@@ -1,4 +1,4 @@
-import { LinearProgress } from '@material-ui/core';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import { MachineStateType } from '@overseer/common/models';
 import * as React from 'react';
 

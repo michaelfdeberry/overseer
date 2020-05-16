@@ -1,4 +1,9 @@
-import { FormControl, InputLabel, MenuItem, Select, TextField, Tooltip } from '@material-ui/core';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
 import { AccessLevel } from '@overseer/common/models';
 import * as React from 'react';
 

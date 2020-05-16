@@ -1,5 +1,12 @@
-import { Button, Icon } from '@material-ui/core';
-import { Add, ArrowDownward, ArrowUpward, Check, DragIndicator, Edit, Warning } from '@material-ui/icons';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import Add from '@material-ui/icons/Add';
+import ArrowDownward from '@material-ui/icons/ArrowDownward';
+import ArrowUpward from '@material-ui/icons/ArrowUpward';
+import Check from '@material-ui/icons/Check';
+import DragIndicator from '@material-ui/icons/DragIndicator';
+import Edit from '@material-ui/icons/Edit';
+import Warning from '@material-ui/icons/Warning';
 import * as React from 'react';
 import { DragDropContext, Draggable, DraggableProvided, DraggableStateSnapshot, Droppable, DroppableProvided, DropResult } from 'react-beautiful-dnd';
 import { Link } from 'react-router-dom';

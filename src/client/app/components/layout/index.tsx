@@ -1,4 +1,5 @@
-import { CssBaseline, ThemeProvider } from '@material-ui/core';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@material-ui/core/styles';
 import * as React from 'react';
 
 import { useSelector } from '../../hooks';

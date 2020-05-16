@@ -1,4 +1,4 @@
-import { Slider } from '@material-ui/core';
+import Slider from '@material-ui/core/Slider';
 import { MachineToolType } from '@overseer/common/models';
 import * as React from 'react';
 

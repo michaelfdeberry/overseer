@@ -5,7 +5,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = function (env) {
   const isDev = env.MODE === 'development';
@@ -64,6 +65,7 @@ module.exports = function (env) {
     optimization: {
       runtimeChunk: 'single',
       splitChunks: {
+        chunks: 'all',
         cacheGroups: {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
@@ -72,7 +74,7 @@ module.exports = function (env) {
           }
         }
       },
-      minimizer: [new UglifyJsPlugin()]
+      minimizer: [new TerserPlugin()]
     },
 
     plugins: [
@@ -93,6 +95,7 @@ module.exports = function (env) {
         __isDev__: isDev,
         __isLocalApp__: buildTarget !== 'remote'
       })
+      // new BundleAnalyzerPlugin()
     ],
 
     devServer: {

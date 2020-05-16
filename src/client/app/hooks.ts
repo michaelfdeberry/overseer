@@ -1,4 +1,5 @@
-import { useMediaQuery, useTheme } from '@material-ui/core';
+import useTheme from '@material-ui/core/styles/useTheme';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import * as React from 'react';
 
 import { DispatchContext, StateContext } from './store';

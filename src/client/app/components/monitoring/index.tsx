@@ -1,5 +1,10 @@
-import { Button, GridList, GridListTile, Typography } from '@material-ui/core';
-import { Add, OpenInBrowser, Settings } from '@material-ui/icons';
+import Button from '@material-ui/core/Button';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import Typography from '@material-ui/core/Typography';
+import Add from '@material-ui/icons/Add';
+import OpenInBrowser from '@material-ui/icons/OpenInBrowser';
+import Settings from '@material-ui/icons/Settings';
 import { MachineStateType, SystemSettings } from '@overseer/common/models';
 import { equals } from 'lodash/fp';
 import * as React from 'react';

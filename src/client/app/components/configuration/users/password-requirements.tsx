@@ -1,4 +1,5 @@
-import { Icon, Typography } from '@material-ui/core';
+import Icon from '@material-ui/core/Icon';
+import Typography from '@material-ui/core/Typography';
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 import * as React from 'react';
