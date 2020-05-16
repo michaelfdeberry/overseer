@@ -12,7 +12,7 @@ import { ThemeSelector } from './theme-selector';
 
 export const SystemSettingsContainer: React.FunctionComponent = () => {
   const dispatch = useDispatch();
-  const settings = useSelector(state => state.settings);
+  const settings = useSelector((state) => state.settings);
   const [formState, setFormState] = React.useState<SystemSettings>(settings);
 
   const updateForm = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -33,7 +33,7 @@ export const SystemSettingsContainer: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!settings) {
-      invoke(dispatch, getSettings()).subscribe(s => dispatch(actions.common.updateSettings(s)));
+      invoke(dispatch, getSettings()).subscribe((s) => dispatch(actions.common.updateSettings(s)));
     } else {
       setFormState(settings);
     }
@@ -54,7 +54,7 @@ export const SystemSettingsContainer: React.FunctionComponent = () => {
         <FormControl fullWidth>
           <InputLabel id="interval-label">Polling Interval</InputLabel>
           <Select fullWidth name="interval" labelId="interval-label" value={formState.interval} onChange={updateForm}>
-            {pollIntervals.map(item => {
+            {pollIntervals.map((item) => {
               return (
                 <MenuItem key={item.text} value={item.value}>
                   {item.text}

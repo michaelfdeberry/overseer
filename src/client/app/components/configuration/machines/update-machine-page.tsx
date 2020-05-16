@@ -17,8 +17,8 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const machineRef = React.useRef<Machine>();
-  const machines = useSelector(state => state.machines);
-  const restriction = useSelector(state => (state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote));
+  const machines = useSelector((state) => state.machines);
+  const restriction = useSelector((state) => (state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote));
   const [machine, setMachine] = React.useState<Machine>();
   const [confirmDelete, setConfirmDelete] = React.useState(false);
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
@@ -26,7 +26,7 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
   const update = (event: React.FormEvent): void => {
     event.preventDefault();
 
-    invoke(dispatch, updateMachine(machine), `Machine ${machine.name} Updated!`).subscribe(machine => {
+    invoke(dispatch, updateMachine(machine), `Machine ${machine.name} Updated!`).subscribe((machine) => {
       dispatch(actions.machines.updateMachine(machine));
       history.push('/configuration/machines');
     });
@@ -50,7 +50,7 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!machines) {
-      invoke(dispatch, getMachines()).subscribe(machines => {
+      invoke(dispatch, getMachines()).subscribe((machines) => {
         dispatch(actions.machines.updateMachines(machines));
       });
     }
@@ -59,7 +59,7 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
   React.useEffect(() => {
     if (!machines) return;
 
-    const foundMachine = machines.find(m => m.id === id);
+    const foundMachine = machines.find((m) => m.id === id);
     if (!foundMachine) return;
 
     machineRef.current = foundMachine;

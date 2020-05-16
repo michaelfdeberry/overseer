@@ -11,14 +11,14 @@ import { actions } from './store/actions';
 
 const App: React.FunctionComponent = () => {
   const dispatch = useDispatch();
-  const isInitialized = useSelector(state => state.isInitialized);
+  const isInitialized = useSelector((state) => state.isInitialized);
 
   React.useEffect(() => {
     initializeIntegration();
 
     if (!isInitialized) {
-      invoke(dispatch, requiresInitialSetup()).subscribe(requiresSetup => {
-        invoke(dispatch, authorize()).subscribe(activeUser => {
+      invoke(dispatch, requiresInitialSetup()).subscribe((requiresSetup) => {
+        invoke(dispatch, authorize()).subscribe((activeUser) => {
           dispatch(
             actions.common.initialize({
               activeUser,

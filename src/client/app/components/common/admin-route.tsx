@@ -7,8 +7,8 @@ import { actions } from '../../store/actions';
 
 export const AdminRoute: React.FunctionComponent<RouteProps> = ({ children, ...rest }: RouteProps) => {
   const dispatch = useDispatch();
-  const isSetup = useSelector(state => state.isSetup);
-  const activeUser = useSelector(state => state.activeUser);
+  const isSetup = useSelector((state) => state.isSetup);
+  const activeUser = useSelector((state) => state.activeUser);
 
   const renderRoute = (): React.ReactNode => {
     if (!isSetup) {

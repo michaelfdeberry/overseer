@@ -7,7 +7,7 @@ import { AppState } from './state';
 export const StateContext: React.Context<AppState> = React.createContext<AppState>(null);
 export const DispatchContext: React.Context<React.Dispatch<AnyAction>> = React.createContext<React.Dispatch<AnyAction>>(null);
 
-export const Store: React.FunctionComponent<{ children: React.ReactNode }> = props => {
+export const Store: React.FunctionComponent<{ children: React.ReactNode }> = (props) => {
   const initialState: AppState = { isInitialized: false, machineStates: {} };
   const [state, dispatch] = React.useReducer(reducer, initialState);
 

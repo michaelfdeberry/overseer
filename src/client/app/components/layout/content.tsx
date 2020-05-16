@@ -12,8 +12,8 @@ import { MonitoringPage } from '../monitoring';
 
 export const Content: React.FunctionComponent = () => {
   const dispatch = useDispatch();
-  const isInitialized = useSelector(state => state.isInitialized);
-  const lastNotification = useSelector(state => state.lastNotification);
+  const isInitialized = useSelector((state) => state.isInitialized);
+  const lastNotification = useSelector((state) => state.lastNotification);
 
   const onNotificationClose = (): void => {
     dispatch(actions.layout.clearNotification());

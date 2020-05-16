@@ -6,8 +6,8 @@ import { actions } from '../../store/actions';
 
 export const PrivateRoute: React.FunctionComponent<RouteProps> = ({ children, ...rest }: RouteProps) => {
   const dispatch = useDispatch();
-  const isSetup = useSelector(state => state.isSetup);
-  const isAuthenticated = !!useSelector(state => state.activeUser);
+  const isSetup = useSelector((state) => state.isSetup);
+  const isAuthenticated = !!useSelector((state) => state.activeUser);
 
   function renderRoute(): React.ReactNode {
     if (!isSetup) {

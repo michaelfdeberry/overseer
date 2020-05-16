@@ -13,13 +13,13 @@ import { MachineConfigurationForm, MachineConfigurationFormState } from './machi
 export const CreateMachinePage: React.FunctionComponent = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const restriction = useSelector(state => (state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote));
+  const restriction = useSelector((state) => (state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote));
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
 
   const save = (event: React.FormEvent): void => {
     event.preventDefault();
 
-    invoke(dispatch, createMachine(machineState.machineType, machineState.configuration), 'Machine Created!').subscribe(machine => {
+    invoke(dispatch, createMachine(machineState.machineType, machineState.configuration), 'Machine Created!').subscribe((machine) => {
       dispatch(actions.machines.addMachine(machine));
       history.push('/configuration/machines');
     });

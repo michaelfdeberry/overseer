@@ -9,29 +9,29 @@ async function withMachineControlService<T>(execute: (c: MachineControlService) 
 }
 
 export function pauseJob(machineId: string): Observable<void> {
-  return defer(() => withMachineControlService(service => service.pauseJob(machineId)));
+  return defer(() => withMachineControlService((service) => service.pauseJob(machineId)));
 }
 
 export function resumeJob(machineId: string): Observable<void> {
-  return defer(() => withMachineControlService(service => service.resumeJob(machineId)));
+  return defer(() => withMachineControlService((service) => service.resumeJob(machineId)));
 }
 
 export function cancelJob(machineId: string): Observable<void> {
-  return defer(() => withMachineControlService(service => service.cancelJob(machineId)));
+  return defer(() => withMachineControlService((service) => service.cancelJob(machineId)));
 }
 
 export function setFanSpeed(machineId: string, speedPercentage: number): Observable<void> {
-  return defer(() => withMachineControlService(service => service.setFanSpeed(machineId, speedPercentage)));
+  return defer(() => withMachineControlService((service) => service.setFanSpeed(machineId, speedPercentage)));
 }
 
 export function setFeedRate(machineId: string, speedPercentage: number): Observable<void> {
-  return defer(() => withMachineControlService(service => service.setFeedRate(machineId, speedPercentage)));
+  return defer(() => withMachineControlService((service) => service.setFeedRate(machineId, speedPercentage)));
 }
 
 export function setTemperature(machineId: string, heaterIndex: number, temperature: number): Observable<void> {
-  return defer(() => withMachineControlService(service => service.setTemperature(machineId, heaterIndex, temperature)));
+  return defer(() => withMachineControlService((service) => service.setTemperature(machineId, heaterIndex, temperature)));
 }
 
 export function setFlowRate(machineId: string, extruderIndex: number, flowRatePercentage: number): Observable<void> {
-  return defer(() => withMachineControlService(service => service.setFlowRate(machineId, extruderIndex, flowRatePercentage)));
+  return defer(() => withMachineControlService((service) => service.setFlowRate(machineId, extruderIndex, flowRatePercentage)));
 }

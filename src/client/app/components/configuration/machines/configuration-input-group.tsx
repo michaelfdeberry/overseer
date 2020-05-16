@@ -26,7 +26,7 @@ export const ConfigurationInputGroup: React.FunctionComponent<ConfigurationInput
         <Typography>{name}</Typography>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails>
-        {Object.keys(group.settings).map(key => {
+        {Object.keys(group.settings).map((key) => {
           const setting = group.settings[key];
           if (!(setting.mode & mode)) return null;
           if (setting.restriction && setting.restriction !== restriction) return null;

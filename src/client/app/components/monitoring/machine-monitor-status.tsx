@@ -5,7 +5,7 @@ import * as React from 'react';
 import { toDuration } from '../../utils/duration.function';
 import { MachineMonitorProps } from './machine-monitor-props';
 
-export const MachineMonitorStatus: React.FunctionComponent<MachineMonitorProps> = props => {
+export const MachineMonitorStatus: React.FunctionComponent<MachineMonitorProps> = (props) => {
   const renderDuration = (): React.ReactElement => {
     if (!props.machineState) return null;
     if (props.machineState.type <= MachineStateType.Idle) return null;

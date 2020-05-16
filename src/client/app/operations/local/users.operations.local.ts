@@ -10,25 +10,25 @@ async function withUserConfigurationService<T>(execute: (service: UserConfigurat
 }
 
 export function getUsers(): Observable<DisplayUser[]> {
-  return defer(() => withUserConfigurationService(service => service.getUsers()));
+  return defer(() => withUserConfigurationService((service) => service.getUsers()));
 }
 
 export function getUser(userId: string): Observable<DisplayUser> {
-  return defer(() => withUserConfigurationService(service => service.getUser(userId)));
+  return defer(() => withUserConfigurationService((service) => service.getUser(userId)));
 }
 
 export function createUser(user: DisplayUser): Observable<DisplayUser> {
-  return defer(() => withUserConfigurationService(service => service.createUser(user)));
+  return defer(() => withUserConfigurationService((service) => service.createUser(user)));
 }
 
 export function updateUser(user: DisplayUser): Observable<DisplayUser> {
-  return defer(() => withUserConfigurationService(service => service.updateUser(user)));
+  return defer(() => withUserConfigurationService((service) => service.updateUser(user)));
 }
 
 export function deleteUser(user: DisplayUser): Observable<DisplayUser> {
-  return defer(() => withUserConfigurationService(service => service.deleteUser(user.id)));
+  return defer(() => withUserConfigurationService((service) => service.deleteUser(user.id)));
 }
 
 export function changePassword(user: DisplayUser): Observable<DisplayUser> {
-  return defer(() => withUserConfigurationService(service => service.changePassword(user)));
+  return defer(() => withUserConfigurationService((service) => service.changePassword(user)));
 }

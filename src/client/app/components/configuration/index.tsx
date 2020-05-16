@@ -34,7 +34,7 @@ const ConfigurationTabs: React.FunctionComponent = () => {
   };
 
   useEffect(() => {
-    return history.listen(location => {
+    return history.listen((location) => {
       if (isValidTabPath(location.pathname)) {
         setTabValue(location.pathname);
       }

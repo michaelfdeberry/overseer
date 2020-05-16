@@ -12,7 +12,7 @@ import { isRequiredFieldValid } from '../configuration/validators/required.valid
 export const LoginPage: React.FunctionComponent = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const activeUser = useSelector(state => state.activeUser);
+  const activeUser = useSelector((state) => state.activeUser);
   const [loginFormState, setLoginFormState] = React.useState<DisplayUser>({});
   const [touched, setTouched] = React.useState({ username: false, password: false });
 
@@ -24,7 +24,7 @@ export const LoginPage: React.FunctionComponent = () => {
     event.preventDefault();
 
     if (!isValid()) return;
-    invoke(dispatch, login(loginFormState)).subscribe(user => {
+    invoke(dispatch, login(loginFormState)).subscribe((user) => {
       dispatch(actions.common.setActiveUser(user));
       history.push('/');
     });

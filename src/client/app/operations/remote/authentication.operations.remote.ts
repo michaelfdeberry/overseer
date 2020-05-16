@@ -36,7 +36,7 @@ export function logoutUser(userId: string): Observable<DisplayUser> {
     axios
       .post(`/api/auth/logout/${userId}`, {}, getBearerConfig())
       .then((response: AxiosResponse<DisplayUser>) => response.data)
-      .then(loggedOutUser => {
+      .then((loggedOutUser) => {
         observer.next(loggedOutUser);
         observer.complete();
       });

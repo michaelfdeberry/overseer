@@ -10,25 +10,25 @@ async function withMachineConfigurationService<T>(execute: (machineService: Mach
 }
 
 export function getMachines(): Observable<Machine[]> {
-  return defer(() => withMachineConfigurationService(service => service.getMachines()));
+  return defer(() => withMachineConfigurationService((service) => service.getMachines()));
 }
 
 export function getMachine(machineId: string): Observable<Machine> {
-  return defer(() => withMachineConfigurationService(service => service.getMachine(machineId)));
+  return defer(() => withMachineConfigurationService((service) => service.getMachine(machineId)));
 }
 
 export function createMachine(machineType: string, configuration: MachineConfigurationCollection): Observable<Machine> {
-  return defer(() => withMachineConfigurationService(service => service.createMachine(machineType, configuration)));
+  return defer(() => withMachineConfigurationService((service) => service.createMachine(machineType, configuration)));
 }
 
 export function updateMachine(machine: Machine): Observable<Machine> {
-  return defer(() => withMachineConfigurationService(service => service.updateMachine(machine)));
+  return defer(() => withMachineConfigurationService((service) => service.updateMachine(machine)));
 }
 
 export function deleteMachine(machine: Machine): Observable<void> {
-  return defer(() => withMachineConfigurationService(service => service.deleteMachine(machine.id)));
+  return defer(() => withMachineConfigurationService((service) => service.deleteMachine(machine.id)));
 }
 
 export function sortMachines(sortOrder: string[]): Observable<Machine[]> {
-  return defer(() => withMachineConfigurationService(service => service.sortMachines(sortOrder)));
+  return defer(() => withMachineConfigurationService((service) => service.sortMachines(sortOrder)));
 }

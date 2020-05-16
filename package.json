@@ -1,0 +1,25 @@
+{
+  "name": "overseer",
+  "version": "2.0.0",
+  "description": "3D printer monitoring application",
+  "scripts": {
+    "setup": "npm install --prefix ./src/common && npm install --prefix ./src/client && npm install --prefix ./src/server",
+    "lint": "npm run lint --prefix ./src/common && npm run lint --prefix ./src/client && npm run lint --prefix ./src/server",
+    "build": "npm run build --prefix ./src/common && npm run build --prefix ./src/client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaelfdeberry/overseer.git"
+  },
+  "keywords": [
+    "3d",
+    "printer",
+    "monitoring"
+  ],
+  "author": "Michael DeBerry",
+  "license": "GNU Affero General Public License v3.0",
+  "bugs": {
+    "url": "https://github.com/michaelfdeberry/overseer/issues"
+  },
+  "homepage": "https://github.com/michaelfdeberry/overseer#readme"
+}

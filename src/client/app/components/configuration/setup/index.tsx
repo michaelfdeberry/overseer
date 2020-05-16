@@ -16,8 +16,8 @@ import { CreateUserForm, CreateUserFormState } from '../users/create-user-form';
 export const SetupPage: React.FunctionComponent = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const isSetup = useSelector(state => state.isSetup);
-  const restriction = useSelector(state => (state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote));
+  const isSetup = useSelector((state) => state.isSetup);
+  const restriction = useSelector((state) => (state.isLocalApp ? BuildRestrictionType.local : BuildRestrictionType.remote));
   const [currentStep, setCurrentStep] = React.useState(0);
   const [userState, updateUserState] = React.useState<CreateUserFormState>({ accessLevel: AccessLevel.Administrator });
   const [machineState, updateMachineState] = React.useState<MachineConfigurationFormState>({});
@@ -28,8 +28,8 @@ export const SetupPage: React.FunctionComponent = () => {
 
     const { isValid, ...user } = userState;
     if (currentStep === 0 && isValid) {
-      invoke(dispatch, createUser(user)).subscribe(createdUser => {
-        invoke(dispatch, login(createdUser)).subscribe(activeUser => {
+      invoke(dispatch, createUser(user)).subscribe((createdUser) => {
+        invoke(dispatch, login(createdUser)).subscribe((activeUser) => {
           dispatch(actions.common.setActiveUser(activeUser));
           dispatch(actions.users.addUser(activeUser));
           setCurrentStep(1);
@@ -42,7 +42,7 @@ export const SetupPage: React.FunctionComponent = () => {
     event.preventDefault();
 
     if (currentStep === 1 && machineState.isValid) {
-      invoke(dispatch, createMachine(machineState.machineType, machineState.configuration)).subscribe(machine => {
+      invoke(dispatch, createMachine(machineState.machineType, machineState.configuration)).subscribe((machine) => {
         dispatch(actions.machines.addMachine(machine));
         setCurrentStep(2);
       });
@@ -51,7 +51,7 @@ export const SetupPage: React.FunctionComponent = () => {
 
   const saveMachineAndAddMore = (): void => {
     if (currentStep === 1 && machineState.isValid) {
-      invoke(dispatch, createMachine(machineState.machineType, machineState.configuration)).subscribe(machine => {
+      invoke(dispatch, createMachine(machineState.machineType, machineState.configuration)).subscribe((machine) => {
         dispatch(actions.machines.addMachine(machine));
         setCurrentStep(2);
       });

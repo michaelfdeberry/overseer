@@ -24,4 +24,4 @@ export const pollIntervals = [
 
 export const accessLevels = [new DisplayOption('Readonly', AccessLevel.Readonly), new DisplayOption('Administrator', AccessLevel.Administrator)];
 
-export const themeOptions = Object.keys(themeMap).map(theme => new DisplayOption(theme, theme));
+export const themeOptions = Object.keys(themeMap).map((theme) => new DisplayOption(theme, theme));

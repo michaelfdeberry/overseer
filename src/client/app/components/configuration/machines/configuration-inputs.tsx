@@ -21,7 +21,7 @@ export const ConfigurationInputs: React.FunctionComponent<ConfigurationInputsPro
 
   return (
     <React.Fragment>
-      {Object.keys(configuration).map(key => {
+      {Object.keys(configuration).map((key) => {
         const configurationItem = configuration[key];
 
         if (!(configurationItem.mode & mode)) return null;

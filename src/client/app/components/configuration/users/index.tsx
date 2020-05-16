@@ -15,16 +15,16 @@ import { sortByKey } from '../../../utils/sort.functions';
 
 export const UsersPage: React.FunctionComponent = () => {
   const dispatch = useDispatch();
-  const users = useSelector(state => state.users);
+  const users = useSelector((state) => state.users);
 
   const getSessionLifetime = (sessionLifetime: number): string => {
-    const item = sessionLifetimes.find(x => x.value === sessionLifetime);
+    const item = sessionLifetimes.find((x) => x.value === sessionLifetime);
     return item?.text;
   };
 
   React.useEffect(() => {
     if (!users) {
-      invoke(dispatch, getUsers()).subscribe(u => dispatch(actions.users.updateUsers(u)));
+      invoke(dispatch, getUsers()).subscribe((u) => dispatch(actions.users.updateUsers(u)));
     }
   }, [users]);
 
@@ -52,7 +52,7 @@ export const UsersPage: React.FunctionComponent = () => {
         </tr>
       </thead>
       <tbody>
-        {users.sort(sortByKey('username')).map(user => (
+        {users.sort(sortByKey('username')).map((user) => (
           <tr key={user.username}>
             <td>{user.username}</td>
             <td>{AccessLevel[user.accessLevel]}</td>

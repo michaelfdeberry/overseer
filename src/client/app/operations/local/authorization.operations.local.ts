@@ -13,12 +13,12 @@ async function withAuthorizationService<T>(execute: (service: AuthorizationServi
 }
 
 export function requiresInitialSetup(): Observable<boolean> {
-  return defer(() => withAuthorizationService(service => service.requiresInitialSetup()));
+  return defer(() => withAuthorizationService((service) => service.requiresInitialSetup()));
 }
 
 export function authorize(): Observable<DisplayUser | null> {
-  return defer(() => withAuthorizationService(service => service.authorize(getActiveUser()?.token))).pipe(
-    tap(activeUser => {
+  return defer(() => withAuthorizationService((service) => service.authorize(getActiveUser()?.token))).pipe(
+    tap((activeUser) => {
       if (activeUser) {
         setActiveUser(activeUser);
       } else {

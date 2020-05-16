@@ -9,7 +9,7 @@ import { actions } from '../../../store/actions';
 
 export const GenerateSsoInput: React.FunctionComponent<{ user: DisplayUser }> = ({ user: { id, accessLevel } }) => {
   const dispatch = useDispatch();
-  const isLocalApp = useSelector(state => state.isLocalApp);
+  const isLocalApp = useSelector((state) => state.isLocalApp);
   const [isGeneratingPreauthUrl, setIsGeneratingPreauthUrl] = React.useState(false);
   const [preauthUrl, setPreauthUrl] = React.useState('');
   const preauthUrlInputRef = React.useRef<HTMLInputElement | null>(null);
@@ -19,7 +19,7 @@ export const GenerateSsoInput: React.FunctionComponent<{ user: DisplayUser }> = 
       if (isGeneratingPreauthUrl) return;
 
       setIsGeneratingPreauthUrl(generate);
-      getPreauthenticatedToken(id).subscribe(token => {
+      getPreauthenticatedToken(id).subscribe((token) => {
         setPreauthUrl(`${window.location.origin}/sso?token=${token}`);
         dispatch(actions.layout.notifyInfo('Preauthenticated URL Generated!'));
       });

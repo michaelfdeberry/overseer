@@ -17,7 +17,7 @@ type PromptDialogProps = {
   onDecline?: () => void;
 };
 
-export const PromptDialog: React.FunctionComponent<PromptDialogProps> = props => {
+export const PromptDialog: React.FunctionComponent<PromptDialogProps> = (props) => {
   const {
     open,
     setOpen,

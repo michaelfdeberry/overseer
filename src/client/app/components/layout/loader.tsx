@@ -9,7 +9,7 @@ export const Loader: React.FunctionComponent = () => {
   const theme: Theme = useTheme();
   const cancelRef = React.useRef<Subscription>();
   const loadingBarRef = React.useRef<LoadingBar>();
-  const loading = useSelector(state => state.loading);
+  const loading = useSelector((state) => state.loading);
 
   const setupCancelTimer = (): void => {
     cancelRef.current = timer(15000).subscribe(() => {

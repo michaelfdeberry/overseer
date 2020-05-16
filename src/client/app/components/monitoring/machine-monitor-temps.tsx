@@ -8,7 +8,7 @@ import ChamberIcon from './icons/chamber.svg';
 import NozzleIcon from './icons/nozzle.svg';
 import { MachineMonitorProps } from './machine-monitor-props';
 
-export const MachineMonitorTemps: React.FunctionComponent<MachineMonitorProps> = props => {
+export const MachineMonitorTemps: React.FunctionComponent<MachineMonitorProps> = (props) => {
   const renderIcon = (heater): React.ReactNode => {
     switch (heater.name) {
       case 'bed':
@@ -23,9 +23,9 @@ export const MachineMonitorTemps: React.FunctionComponent<MachineMonitorProps> =
   return (
     <div className="temps">
       {props.machine.tools
-        .filter(t => t.type === MachineToolType.Heater)
+        .filter((t) => t.type === MachineToolType.Heater)
         .sort(sortByKey('name'))
-        .map(heater => {
+        .map((heater) => {
           const temps = props.machineState?.temperatures || {};
           const temp = temps[heater.index];
 

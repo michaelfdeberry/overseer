@@ -28,7 +28,7 @@ export interface MachineConfigurationFormState {
 
 export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurationFormProps> = (props: MachineConfigurationFormProps) => {
   const { mode, state, updateState, restriction = BuildRestrictionType.none } = props;
-  const machineTypes = Array.from(machineConfigurationBuilder.keys()).map(key => new DisplayOption(key, key));
+  const machineTypes = Array.from(machineConfigurationBuilder.keys()).map((key) => new DisplayOption(key, key));
 
   const setMachineType = (event: React.ChangeEvent<HTMLInputElement>): void => {
     updateState({ ...state, machineType: event.target.value });
@@ -51,7 +51,7 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
 
       if (config.type === 'group') {
         const group = config as MachineSettingGroup;
-        if (!Object.values(group.settings).every(setting => validateSetting(setting))) {
+        if (!Object.values(group.settings).every((setting) => validateSetting(setting))) {
           return false;
         }
       } else {

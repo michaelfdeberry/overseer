@@ -12,10 +12,10 @@ import { sortByKey } from '../../../utils/sort.functions';
 
 export const MachinesPage: React.FunctionComponent = () => {
   const dispatch = useDispatch();
-  const machines = useSelector(state => state.machines);
+  const machines = useSelector((state) => state.machines);
 
   const move = (previousIndex: number, newIndex: number): void => {
-    const machineIds = machines.sort(sortByKey('sortIndex')).map(m => m.id);
+    const machineIds = machines.sort(sortByKey('sortIndex')).map((m) => m.id);
     const target = machineIds[previousIndex];
     const delta = newIndex < previousIndex ? -1 : 1;
 
@@ -24,7 +24,7 @@ export const MachinesPage: React.FunctionComponent = () => {
     }
     machineIds[newIndex] = target;
 
-    invoke(dispatch, sortMachines(machineIds)).subscribe(machines => {
+    invoke(dispatch, sortMachines(machineIds)).subscribe((machines) => {
       dispatch(actions.machines.updateMachines(machines));
     });
   };
@@ -47,7 +47,7 @@ export const MachinesPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!machines) {
-      invoke(dispatch, getMachines()).subscribe(machines => {
+      invoke(dispatch, getMachines()).subscribe((machines) => {
         dispatch(actions.machines.updateMachines(machines));
       });
     }

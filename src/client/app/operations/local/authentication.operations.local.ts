@@ -13,15 +13,15 @@ async function withAuthenticationService<T>(execute: (service: AuthenticationSer
 }
 
 export function login(user: DisplayUser): Observable<DisplayUser> {
-  return defer(() => withAuthenticationService(service => service.authenticateUser(user))).pipe(tap(activeUser => setActiveUser(activeUser)));
+  return defer(() => withAuthenticationService((service) => service.authenticateUser(user))).pipe(tap((activeUser) => setActiveUser(activeUser)));
 }
 
 export function logout(): Observable<DisplayUser> {
-  return defer(() => withAuthenticationService(service => service.deauthenticateToken(getActiveUser()?.token))).pipe(tap(() => clearActiveUser()));
+  return defer(() => withAuthenticationService((service) => service.deauthenticateToken(getActiveUser()?.token))).pipe(tap(() => clearActiveUser()));
 }
 
 export function logoutUser(userId: string): Observable<DisplayUser> {
-  return defer(() => withAuthenticationService(service => service.deauthenticateUser(userId)));
+  return defer(() => withAuthenticationService((service) => service.deauthenticateUser(userId)));
 }
 
 export function getPreauthenticatedToken(_userId: string): Observable<string> {

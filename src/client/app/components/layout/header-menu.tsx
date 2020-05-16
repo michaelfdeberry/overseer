@@ -14,7 +14,7 @@ import { actions } from '../../store/actions';
 export const HeaderMenu: React.FunctionComponent = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const activeUser = useSelector(state => state.activeUser);
+  const activeUser = useSelector((state) => state.activeUser);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = !!anchorEl;
 

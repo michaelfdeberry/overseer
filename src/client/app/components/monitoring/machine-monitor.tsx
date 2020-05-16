@@ -7,7 +7,7 @@ import { MachineMonitorProps } from './machine-monitor-props';
 import { MachineMonitorStatus } from './machine-monitor-status';
 import { MachineMonitorTemps } from './machine-monitor-temps';
 
-export const MachineMonitor: React.FunctionComponent<MachineMonitorProps> = props => {
+export const MachineMonitor: React.FunctionComponent<MachineMonitorProps> = (props) => {
   const scaleRatioPerFrame = 0.15;
   const zoomPanelRef = React.useRef<HTMLDivElement>();
   const [zoomState, setZoomState] = React.useState<boolean>(undefined);

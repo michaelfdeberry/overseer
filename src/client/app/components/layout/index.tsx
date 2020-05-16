@@ -8,7 +8,7 @@ import { Loader } from './loader';
 import { defaultTheme, themeMap } from './themes';
 
 const Layout: React.FunctionComponent = () => {
-  const themeName = useSelector(state => state.currentTheme);
+  const themeName = useSelector((state) => state.currentTheme);
 
   return (
     <ThemeProvider theme={themeMap[themeName || defaultTheme]}>

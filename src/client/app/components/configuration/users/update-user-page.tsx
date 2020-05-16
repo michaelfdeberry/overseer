@@ -19,8 +19,8 @@ export const UpdateUserPage: React.FunctionComponent = () => {
   const { id } = useParams();
   const history = useHistory();
   const dispatch = useDispatch();
-  const users = useSelector(state => state.users);
-  const activeUser = useSelector(state => state.activeUser);
+  const users = useSelector((state) => state.users);
+  const activeUser = useSelector((state) => state.activeUser);
   const [user, setUser] = React.useState<DisplayUser>();
   const [confirmDelete, setConfirmDelete] = React.useState(false);
   const [unmodifiedUser, setUnmodifiedUser] = React.useState<DisplayUser>();
@@ -28,14 +28,14 @@ export const UpdateUserPage: React.FunctionComponent = () => {
   const update = (event: React.FormEvent): void => {
     event.preventDefault();
 
-    invoke(dispatch, updateUser(user), `User ${user.username} Updated!`).subscribe(updatedUser => {
+    invoke(dispatch, updateUser(user), `User ${user.username} Updated!`).subscribe((updatedUser) => {
       dispatch(actions.users.updateUser(updatedUser));
       history.push('/configuration/users');
     });
   };
 
   const remove = (): void => {
-    invoke(dispatch, deleteUser(user), `User ${user.username} Removed!`).subscribe(deletedUser => {
+    invoke(dispatch, deleteUser(user), `User ${user.username} Removed!`).subscribe((deletedUser) => {
       dispatch(actions.users.removedUser(deletedUser));
       history.push('/configuration/users');
     });
@@ -48,7 +48,7 @@ export const UpdateUserPage: React.FunctionComponent = () => {
         history.push('/login');
       });
     } else {
-      invoke(dispatch, logoutUser(user.id)).subscribe(updatedUser => {
+      invoke(dispatch, logoutUser(user.id)).subscribe((updatedUser) => {
         setUser(updatedUser);
       });
     }
@@ -56,13 +56,13 @@ export const UpdateUserPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!users) {
-      invoke(dispatch, getUsers()).subscribe(u => dispatch(actions.users.updateUsers(u)));
+      invoke(dispatch, getUsers()).subscribe((u) => dispatch(actions.users.updateUsers(u)));
     }
   }, [users]);
 
   React.useEffect(() => {
     if (users && !user) {
-      const foundUser = users.find(u => u.id === id);
+      const foundUser = users.find((u) => u.id === id);
       setUser(foundUser);
       setUnmodifiedUser(foundUser);
     }

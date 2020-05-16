@@ -10,11 +10,11 @@ async function withSystemConfigurationService<T>(execute: (service: SystemConfig
 }
 
 export function getSettings(): Observable<SystemSettings> {
-  return defer(() => withSystemConfigurationService(service => service.getSystemSetting()));
+  return defer(() => withSystemConfigurationService((service) => service.getSystemSetting()));
 }
 
 export function updateSettings(settings: SystemSettings): Observable<void> {
-  return defer(() => withSystemConfigurationService(service => service.updateSystemSettings(settings)));
+  return defer(() => withSystemConfigurationService((service) => service.updateSystemSettings(settings)));
 }
 
 export function getApplicationInfo(): Observable<{ [key: string]: string }> {

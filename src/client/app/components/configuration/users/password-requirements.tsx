@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import { containsLowercase, containsNumber, containsSpecialChar, containsUppercase, isValidLength } from '../validators/password.validator';
 
-export const PasswordRequirements: React.FunctionComponent<{ password: string }> = props => {
+export const PasswordRequirements: React.FunctionComponent<{ password: string }> = (props) => {
   const getClassName = (func: (p: string) => boolean): string => {
     return func(props.password) ? 'success' : 'error';
   };

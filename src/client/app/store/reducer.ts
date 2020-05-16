@@ -29,17 +29,17 @@ function internalReducer(state: AppState, action: AnyAction): AppState {
     case actions.users.types.addUser:
       return { ...state, users: [...(state.users || []), payload] };
     case actions.users.types.removeUser:
-      return { ...state, users: state.users.filter(u => u.id !== payload.id) };
+      return { ...state, users: state.users.filter((u) => u.id !== payload.id) };
     case actions.users.types.updateUser:
-      return { ...state, users: state.users.map(u => (u.id === payload.id ? payload : u)) };
+      return { ...state, users: state.users.map((u) => (u.id === payload.id ? payload : u)) };
     case actions.users.types.updateUsers:
       return { ...state, users: payload.users };
     case actions.machines.types.addMachine:
       return { ...state, machines: [...(state.machines || []), payload.machine] };
     case actions.machines.types.removeMachine:
-      return { ...state, machines: state.machines.filter(m => m.id !== payload.machine.id) };
+      return { ...state, machines: state.machines.filter((m) => m.id !== payload.machine.id) };
     case actions.machines.types.updateMachine:
-      return { ...state, machines: state.machines.map(m => (m.id === payload.machine.id ? payload.machine : m)) };
+      return { ...state, machines: state.machines.map((m) => (m.id === payload.machine.id ? payload.machine : m)) };
     case actions.machines.types.updateMachines:
       return { ...state, machines: payload.machines };
     case actions.machines.types.setMachineState:

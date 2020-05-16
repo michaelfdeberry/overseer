@@ -11,9 +11,9 @@ import { PromptDialog } from '../common/prompt-dialog';
 import { MachineMonitorProps } from './machine-monitor-props';
 import { TuneDialog } from './tune-dialog';
 
-export const MachineMonitorControls: React.FunctionComponent<MachineMonitorProps> = props => {
+export const MachineMonitorControls: React.FunctionComponent<MachineMonitorProps> = (props) => {
   const dispatch = useDispatch();
-  const activeUser = useSelector(state => state.activeUser);
+  const activeUser = useSelector((state) => state.activeUser);
   const [confirmCancel, setConfirmCancel] = React.useState(false);
   const [isTuneDialogOpen, setIsTuneDialogOpen] = React.useState(false);
 

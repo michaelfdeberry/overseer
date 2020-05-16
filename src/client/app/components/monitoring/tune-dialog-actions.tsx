@@ -65,7 +65,7 @@ export const TuneDialogActions: React.FunctionComponent<MachineMonitorProps> = (
           <th colSpan={3}>Flow Rates</th>
         </tr>
         {machine.tools
-          .filter(tool => tool.type === MachineToolType.Extruder)
+          .filter((tool) => tool.type === MachineToolType.Extruder)
           .map((extruder, index) => {
             const flowRate = machineState.flowRates[extruder.index];
 

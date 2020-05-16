@@ -12,7 +12,7 @@ import { CreateUserForm, CreateUserFormState } from './create-user-form';
 export const CreateUserPage: React.FunctionComponent = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const users = useSelector(state => state.users);
+  const users = useSelector((state) => state.users);
   const [state, updateState] = React.useState<CreateUserFormState>({});
 
   const save = (event: React.FormEvent): void => {
@@ -20,7 +20,7 @@ export const CreateUserPage: React.FunctionComponent = () => {
 
     const { isValid, ...user } = state;
     if (isValid) {
-      invoke(dispatch, createUser(user), `User ${user.username} Created!`).subscribe(newUser => {
+      invoke(dispatch, createUser(user), `User ${user.username} Created!`).subscribe((newUser) => {
         dispatch(actions.users.addUser(newUser));
         history.push('/configuration/users');
       });
@@ -29,7 +29,7 @@ export const CreateUserPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (!users) {
-      invoke(dispatch, getUsers()).subscribe(users => {
+      invoke(dispatch, getUsers()).subscribe((users) => {
         dispatch(actions.users.updateUsers(users));
       });
     }

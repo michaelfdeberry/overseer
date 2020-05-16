@@ -9,7 +9,7 @@ export function getMachines(): Observable<Machine[]> {
     axios
       .get('/api/machines', getBearerConfig())
       .then((response: AxiosResponse<Machine[]>) => {
-        observer.next(response.data.map(machine => Object.assign(new Machine(), machine)));
+        observer.next(response.data.map((machine) => Object.assign(new Machine(), machine)));
         observer.complete();
       })
       .catch((error: Error) => observer.error(error));
@@ -69,7 +69,7 @@ export function sortMachines(sortOrder: string[]): Observable<Machine[]> {
     axios
       .post('/api/machines/sort', sortOrder, getBearerConfig())
       .then((response: AxiosResponse<Machine[]>) => {
-        observer.next(response.data.map(machine => Object.assign(new Machine(), machine)));
+        observer.next(response.data.map((machine) => Object.assign(new Machine(), machine)));
         observer.complete();
       })
       .catch((error: Error) => observer.error(error));

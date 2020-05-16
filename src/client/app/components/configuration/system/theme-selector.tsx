@@ -8,7 +8,7 @@ import { themeOptions } from '../../../utils/display-options.class';
 
 export const ThemeSelector: React.FunctionComponent = () => {
   const dispatch = useDispatch();
-  const currentTheme = useSelector(state => state.currentTheme);
+  const currentTheme = useSelector((state) => state.currentTheme);
 
   const onThemeChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setCurrentTheme(event.target.value);

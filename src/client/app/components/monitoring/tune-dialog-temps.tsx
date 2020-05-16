@@ -28,7 +28,7 @@ export const TuneDialogTemps: React.FunctionComponent<MachineMonitorProps> = ({ 
       </thead>
       <tbody>
         {machine.tools
-          .filter(tool => tool.type === MachineToolType.Heater)
+          .filter((tool) => tool.type === MachineToolType.Heater)
           .map((heater, index) => {
             const temp = machineState.temperatures[heater.index];
 

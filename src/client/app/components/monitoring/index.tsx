@@ -18,9 +18,9 @@ export const MonitoringPage: React.FunctionComponent = () => {
   const dispatch = useDispatch();
   const mediaBreakpoints = useMediaBreakPoints();
   const machinesGridRef = React.useRef<HTMLUListElement>();
-  const settings = useSelector(state => state.settings);
-  const machines = useSelector(state => state.machines);
-  const machineStates = useSelector(state => state.machineStates);
+  const settings = useSelector((state) => state.settings);
+  const machines = useSelector((state) => state.machines);
+  const machineStates = useSelector((state) => state.machineStates);
   const [gridSpacing, setGridSpacing] = React.useState(1);
   const [visibleMachines, setVisibleMachines] = React.useState([]);
   const [monitorDimensions, setMonitorDimensions] = React.useState<{ columns?: number; cellHeight?: number }>({});
@@ -39,7 +39,7 @@ export const MonitoringPage: React.FunctionComponent = () => {
   React.useEffect(() => {
     if (settings) return;
 
-    invoke(dispatch, getSettings()).subscribe(settings => {
+    invoke(dispatch, getSettings()).subscribe((settings) => {
       dispatch(actions.common.updateSettings(settings));
     });
   }, [settings]);
@@ -47,14 +47,14 @@ export const MonitoringPage: React.FunctionComponent = () => {
   React.useEffect(() => {
     if (machines) return;
 
-    invoke(dispatch, getMachines()).subscribe(machines => {
+    invoke(dispatch, getMachines()).subscribe((machines) => {
       dispatch(actions.machines.updateMachines(machines));
     });
   }, [machines]);
 
   React.useEffect(() => {
     enableMonitoring();
-    const subscription = machineState$.subscribe(state => {
+    const subscription = machineState$.subscribe((state) => {
       dispatch(actions.machines.setMachineState(state));
     });
 
@@ -68,7 +68,7 @@ export const MonitoringPage: React.FunctionComponent = () => {
     if (!machines) return;
     if (!settings) return;
 
-    const filteredMachines = machines.filter(machine => {
+    const filteredMachines = machines.filter((machine) => {
       const machineState = machineStates && machineStates[machine.id];
 
       if (settings.hideIdleMachines && machine.disabled) return false;
@@ -126,7 +126,7 @@ export const MonitoringPage: React.FunctionComponent = () => {
     );
   }
 
-  if (settings.hideDisabledMachines && machines.every(machine => machine.disabled)) {
+  if (settings.hideDisabledMachines && machines.every((machine) => machine.disabled)) {
     return (
       <div className="no-machines-message">
         <div className="message">
@@ -180,7 +180,7 @@ export const MonitoringPage: React.FunctionComponent = () => {
       cellHeight={monitorDimensions.cellHeight}
     >
       {visibleMachines
-        .map(machine => [machine, machineStates[machine.id]])
+        .map((machine) => [machine, machineStates[machine.id]])
         .sort(machineStateSort)
         .map(([machine, machineState]) => {
           return (
