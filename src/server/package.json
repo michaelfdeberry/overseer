@@ -1,6 +1,6 @@
 {
   "name": "@overseer/server",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "author": "Michael DeBerry",
   "license": "GNU Affero General Public License v3.0",
   "private": true,

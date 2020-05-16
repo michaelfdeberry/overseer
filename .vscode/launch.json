@@ -19,6 +19,15 @@
       "name": "Attach by Process ID",
       "processId": "${command:PickProcess}",
       "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug set-version.js",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/tools/set-version.js",
+      "args": ["patch"],
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }
