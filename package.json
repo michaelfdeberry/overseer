@@ -3,12 +3,12 @@
   "version": "2.0.3",
   "description": "3D printer monitoring application",
   "scripts": {
-    "setup": "npm install --prefix ./src/common && npm install --prefix ./src/client && npm install --prefix ./src/server",
-    "lint": "npm run lint --prefix ./src/common && npm run lint --prefix ./src/client && npm run lint --prefix ./src/server",
-    "build:client-app": "npm run build:local --prefix ./src/client",
-    "build:server-app": "npm run build --prefix ./src/server",
+    "install:all": "node ./tools/install-all.js",
+    "lint:all": "npm run lint --prefix ./src/common/ && npm run lint --prefix ./src/client/ && npm run lint --prefix ./src/server/",
+    "build:client-app": "npm run build:local --prefix ./src/client/",
+    "build:server-app": "npm run build --prefix ./src/server/",
     "build:all": "npm run build:client-app && npm run build:server-app",
-    "set-version": "node ./tools/set-version.js"
+    "set-version": "npm run lint:all && npm run build:all && node ./tools/set-version.js"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/michaelfdeberry/overseer/issues"
   },
-  "homepage": "https://github.com/michaelfdeberry/overseer#readme"
+  "homepage": "https://github.com/michaelfdeberry/overseer#readme",
+  "dependencies": {
+    "@overseer/common": "file:src/common"
+  }
 }
