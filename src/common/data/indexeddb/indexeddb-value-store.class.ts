@@ -10,7 +10,7 @@ export class IndexedDBValueStore implements ValueStore {
     const db = await this.getDb();
     const record = await db.get('values', name);
 
-    return record.value;
+    return record?.value;
   }
 
   async getOrSet<T>(name: string, setAction: () => T): Promise<T> {

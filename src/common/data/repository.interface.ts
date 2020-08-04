@@ -6,5 +6,6 @@ export interface Repository<T extends { id?: string }> {
   update(value: T): Promise<T>;
   updateAll(value: T[]): Promise<T[]>;
   delete(id: string): Promise<void>;
+  deleteAll(ids: string[]): Promise<void>;
   count(): Promise<number>;
 }

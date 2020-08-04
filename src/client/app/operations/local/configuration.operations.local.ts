@@ -1,7 +1,8 @@
 import { IndexedDBContext } from '@overseer/common/data/indexeddb/indexeddb-context.class';
-import { SystemSettings } from '@overseer/common/models';
+import { LogEntry, SystemSettings } from '@overseer/common/models';
 import { SystemConfigurationService } from '@overseer/common/services';
 import { defer, Observable, of } from 'rxjs';
+import { UAParser } from 'ua-parser-js';
 
 async function withSystemConfigurationService<T>(execute: (service: SystemConfigurationService) => Promise<T>): Promise<T> {
   const context = new IndexedDBContext();
@@ -18,13 +19,21 @@ export function updateSettings(settings: SystemSettings): Observable<void> {
 }
 
 export function getApplicationInfo(): Observable<{ [key: string]: string }> {
+  const parser = new UAParser();
+  const parseResult = parser.getResult();
+
   return of({
-    //TODO: get system info
+    'Application Version': __appVersion__,
+    Browser: `${parseResult.browser.name} ${parseResult.browser.version}`,
+    'Browser Engine': `${parseResult.engine.name} ${parseResult.engine.version}`,
+    'Operating System': `${parseResult.os.name} ${parseResult.os.version}`
   });
 }
 
-//todo: add log function
+export function writeToLog(logEntry: LogEntry): Observable<void> {
+  return defer(() => withSystemConfigurationService((service) => service.writeToLog(logEntry)));
+}
 
-export function getLog(): Observable<string> {
-  throw new Error('TODO: support this');
+export function getLog(): Observable<LogEntry[]> {
+  return defer(() => withSystemConfigurationService((service) => service.readFromLog()));
 }

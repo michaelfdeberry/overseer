@@ -6,7 +6,9 @@ const CopyPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+const { version } = require('./package.json');
 
 module.exports = function (env) {
   const isDev = env.MODE === 'development';
@@ -15,6 +17,31 @@ module.exports = function (env) {
 
   if (buildTarget === 'remote') {
     distribution = path.resolve(__dirname, '../server/public');
+  }
+
+  const plugins = [
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({ template: './index.html' }),
+    new CopyPlugin([{ from: './public', to: distribution }]),
+    new webpack.NormalModuleReplacementPlugin(/(.*)operations(.*)/, function (resource) {
+      if (buildTarget === 'remote' && resource.request.indexOf('local') >= 0) {
+        resource.request = resource.request.replace(/local/g, `remote`);
+      }
+      return resource;
+    }),
+    new MiniCssExtractPlugin({
+      filename: isDev ? 'styles.css' : 'styles.[contenthash].css',
+      chunkFilename: isDev ? 'styles.css' : 'styles.[contenthash].css'
+    }),
+    new webpack.DefinePlugin({
+      __isDev__: isDev,
+      __isLocalApp__: buildTarget !== 'remote',
+      __appVersion__: `'${version}'`
+    })
+  ];
+
+  if (isDev) {
+    // plugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static' }));
   }
 
   return {
@@ -77,26 +104,7 @@ module.exports = function (env) {
       minimizer: [new TerserPlugin()]
     },
 
-    plugins: [
-      new CleanWebpackPlugin(),
-      new HtmlWebpackPlugin({ template: './index.html' }),
-      new CopyPlugin([{ from: './public', to: distribution }]),
-      new webpack.NormalModuleReplacementPlugin(/(.*)operations(.*)/, function (resource) {
-        if (buildTarget === 'remote' && resource.request.indexOf('local') >= 0) {
-          resource.request = resource.request.replace(/local/g, `remote`);
-        }
-        return resource;
-      }),
-      new MiniCssExtractPlugin({
-        filename: isDev ? 'styles.css' : 'styles.[contenthash].css',
-        chunkFilename: isDev ? 'styles.css' : 'styles.[contenthash].css'
-      }),
-      new webpack.DefinePlugin({
-        __isDev__: isDev,
-        __isLocalApp__: buildTarget !== 'remote'
-      })
-      // new BundleAnalyzerPlugin()
-    ],
+    plugins,
 
     devServer: {
       historyApiFallback: true

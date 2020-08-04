@@ -1,4 +1,7 @@
 export class LogEntry {
-  id: string;
+  id?: string;
+  level: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
   message: string;
+  timestamp: number;
+  stack: string;
 }

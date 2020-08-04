@@ -1,5 +1,5 @@
 import Typography from '@material-ui/core/Typography';
-import { MachineToolType } from '@overseer/common/models';
+import { MachineTool, MachineToolType } from '@overseer/common/models';
 import * as React from 'react';
 
 import { sortByKey } from '../../utils/sort.functions';
@@ -9,7 +9,7 @@ import NozzleIcon from './icons/nozzle.svg';
 import { MachineMonitorProps } from './machine-monitor-props';
 
 export const MachineMonitorTemps: React.FunctionComponent<MachineMonitorProps> = (props) => {
-  const renderIcon = (heater): React.ReactNode => {
+  const renderIcon = (heater: MachineTool): React.ReactNode => {
     switch (heater.name) {
       case 'bed':
         return <BedIcon />;

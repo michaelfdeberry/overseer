@@ -18,6 +18,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.52",
     "@overseer/common": "file:../common",
+    "@types/ua-parser-js": "^0.7.33",
     "axios": "^0.19.2",
     "lodash": "^4.17.15",
     "react": "^16.13.1",
@@ -25,7 +26,8 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-top-loading-bar": "^1.2.0",
-    "rxjs": "^6.5.5"
+    "rxjs": "^6.5.5",
+    "ua-parser-js": "^0.7.21"
   },
   "devDependencies": {
     "@svgr/webpack": "^5.4.0",

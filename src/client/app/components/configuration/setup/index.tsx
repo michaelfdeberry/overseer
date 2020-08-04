@@ -32,8 +32,8 @@ export const SetupPage: React.FunctionComponent = () => {
 
     const { isValid, ...user } = userState;
     if (currentStep === 0 && isValid) {
-      invoke(dispatch, createUser(user)).subscribe((createdUser) => {
-        invoke(dispatch, login(createdUser)).subscribe((activeUser) => {
+      invoke(dispatch, createUser(user)).subscribe(() => {
+        invoke(dispatch, login(user)).subscribe((activeUser) => {
           dispatch(actions.common.setActiveUser(activeUser));
           dispatch(actions.users.addUser(activeUser));
           setCurrentStep(1);

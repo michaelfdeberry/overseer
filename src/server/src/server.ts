@@ -7,7 +7,7 @@ import { createServer, Server } from 'http';
 import * as WebSocket from 'ws';
 
 import { createApiRouter } from './api';
-import { errorHandler } from './error-handler';
+import { createErrorHandler } from './error-handler';
 import { createServices } from './services';
 
 initializeIntegration();
@@ -24,7 +24,7 @@ createDb().then(async (db) => {
   httpServer.use(express.json());
   httpServer.use(createApiRouter(services));
   httpServer.use(express.static('public', { fallthrough: false }));
-  httpServer.use(errorHandler);
+  httpServer.use(createErrorHandler(services.systemConfigurationService));
 
   const webSocketServer = new WebSocket.Server({ server: webServer, path: '/push' });
   webSocketServer.on('connection', (ws: WebSocket & { isAlive: boolean }) => {

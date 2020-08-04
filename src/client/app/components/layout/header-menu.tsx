@@ -3,6 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import InfoIcon from '@material-ui/icons/Info';
 import MenuIcon from '@material-ui/icons/Menu';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { AccessLevel } from '@overseer/common/models';
@@ -70,7 +71,18 @@ export const HeaderMenu: React.FunctionComponent = () => {
               </Icon>
             </Link>
           </MenuItem>
-        ) : null}
+        ) : (
+          <React.Fragment>
+            <MenuItem>
+              <Link to="/configuration" onClick={closeMenu}>
+                <span className="header-menu-item-text">About</span>
+                <Icon>
+                  <InfoIcon />
+                </Icon>
+              </Link>
+            </MenuItem>
+          </React.Fragment>
+        )}
         <MenuItem onClick={signOut}>
           <span className="header-menu-item-text">Sign out</span>
           <Icon>

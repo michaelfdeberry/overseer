@@ -62,4 +62,8 @@ export class IndexedDBRepository implements Repository<StoreValueType> {
     const db = await this.getDb();
     await db.delete(this.store, id);
   }
+
+  async deleteAll(ids: string[]): Promise<void> {
+    await Promise.all(ids.map(id => this.delete(id)));
+  }
 }

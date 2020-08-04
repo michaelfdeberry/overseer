@@ -55,6 +55,17 @@ export class LevelRepository<T extends { id?: string }> implements Repository<T>
     await this.db.del(id);
   }
 
+  async deleteAll(ids: string[]): Promise<void> {
+    const existingIds = await getLevelValue<string[]>(this.db, this.collection, []);
+
+    await setLevelValue(
+      this.db,
+      this.collection,
+      existingIds.filter(id => ids.indexOf(id) < 0)
+    );
+    await Promise.all(ids.map(id => this.db.del(id)));
+  }
+
   async count(): Promise<number> {
     const ids: string[] = await getLevelValue(this.db, this.collection, []);
     return ids.length;
