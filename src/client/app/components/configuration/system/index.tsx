@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
-import { SystemSettings } from '@overseer/common/models';
+import { SystemSettings } from '@overseer/common/lib/models';
 import { isEqual } from 'lodash/fp';
 import * as React from 'react';
 

@@ -5,7 +5,7 @@ import Pause from '@material-ui/icons/Pause';
 import PlayArrow from '@material-ui/icons/PlayArrow';
 import Settings from '@material-ui/icons/Settings';
 import Stop from '@material-ui/icons/Stop';
-import { AccessLevel, MachineStateType } from '@overseer/common/models';
+import { AccessLevel, MachineStateType } from '@overseer/common/lib/models';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 

@@ -1,10 +1,10 @@
-import { IndexedDBContext } from '@overseer/common/data/indexeddb/indexeddb-context.class';
-import { MachineControlService, MachineProviderService } from '@overseer/common/services';
+import { IndexedDBContext } from '@overseer/common/lib/data/indexeddb/indexeddb-context.class';
+import { MachineConfigurationService, MachineControlService } from '@overseer/common/lib/services';
 import { defer, Observable } from 'rxjs';
 
 async function withMachineControlService<T>(execute: (c: MachineControlService) => Promise<T>): Promise<T> {
   const context = new IndexedDBContext();
-  const service = new MachineControlService(context, new MachineProviderService());
+  const service = new MachineControlService(new MachineConfigurationService(context));
   return execute(service);
 }
 

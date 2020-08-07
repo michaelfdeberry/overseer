@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Pause from '@material-ui/icons/Pause';
 import PlayArrow from '@material-ui/icons/PlayArrow';
 import Stop from '@material-ui/icons/Stop';
-import { MachineStateType } from '@overseer/common/models';
+import { MachineStateType } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { useDispatch } from '../../hooks';

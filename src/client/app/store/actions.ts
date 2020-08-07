@@ -1,22 +1,22 @@
-import { DisplayUser, Machine, MachineState, SystemSettings } from '@overseer/common/models';
+import { DisplayUser, Machine, MachineState, SystemSettings } from '@overseer/common/lib/models';
 
 import { Action, TypedAction } from './action.type';
 import { AppState, Notification } from './state';
 
 const actionsTypes = {
   common: {
-    initialize: '@overseer/common/initialize',
-    setActiveUser: '@overseer/common/setActiveUser',
-    clearActiveUser: '@overseer/common/clearActiveUser',
-    updateSettings: '@overseer/common/updateSettings'
+    initialize: '@overseer/common/lib/initialize',
+    setActiveUser: '@overseer/common/lib/setActiveUser',
+    clearActiveUser: '@overseer/common/lib/clearActiveUser',
+    updateSettings: '@overseer/common/lib/updateSettings'
   },
   layout: {
     updateTheme: '@overseer/layout/updateTheme',
-    notify: '@overseer/common/notify',
-    clearNotification: '@overseer/common/clearNotification',
-    startLoading: '@overseer/common/startLoading',
-    completeLoading: '@overseer/common/completeLoading',
-    clearLoading: '@overseer/common/clearLoading'
+    notify: '@overseer/common/lib/notify',
+    clearNotification: '@overseer/common/lib/clearNotification',
+    startLoading: '@overseer/common/lib/startLoading',
+    completeLoading: '@overseer/common/lib/completeLoading',
+    clearLoading: '@overseer/common/lib/clearLoading'
   },
   users: {
     updateUsers: '@overseer/users/updateUsers',

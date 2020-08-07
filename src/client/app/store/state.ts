@@ -1,4 +1,4 @@
-import { DisplayUser, Machine, MachineState, SystemSettings } from '@overseer/common/models';
+import { DisplayUser, Machine, MachineState, SystemSettings } from '@overseer/common/lib/models';
 
 export type Notification = {
   message?: string;

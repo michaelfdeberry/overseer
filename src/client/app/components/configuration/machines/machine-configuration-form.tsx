@@ -4,14 +4,16 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import {
   BuildRestrictionType,
-  machineConfigurationBuilder,
   MachineConfigurationCollection,
   MachineSetting,
   MachineSettingGroup,
   PersistenceModeType
-} from '@overseer/common/models';
+} from '@overseer/common/lib/models';
 import * as React from 'react';
 
+import { useDispatch } from '../../../hooks';
+import { getMachineConfig, getMachineTypes } from '../../../operations/local/machines.operations.local';
+import { invoke } from '../../../operations/operation-invoker';
 import { DisplayOption } from '../../../utils/display-options.class';
 import { isRequiredFieldValid } from '../validators/required.validator';
 import { ConfigurationInputs } from './configuration-inputs';
@@ -31,7 +33,8 @@ export interface MachineConfigurationFormState {
 
 export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurationFormProps> = (props: MachineConfigurationFormProps) => {
   const { mode, state, updateState, restriction = BuildRestrictionType.none } = props;
-  const machineTypes = Array.from(machineConfigurationBuilder.keys()).map((key) => new DisplayOption(key, key));
+  const dispatch = useDispatch();
+  const [machineTypes, setMachineTypes] = React.useState<DisplayOption<string>[]>();
 
   const setMachineType = (event: React.ChangeEvent<HTMLInputElement>): void => {
     updateState({ ...state, machineType: event.target.value });
@@ -69,8 +72,15 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
   };
 
   React.useEffect(() => {
-    const currentBuilder = machineConfigurationBuilder.get(state.machineType);
-    updateConfiguration(currentBuilder?.configuration);
+    invoke(dispatch, getMachineTypes()).subscribe((machineTypes) => {
+      setMachineTypes(machineTypes.map((key) => new DisplayOption(key, key)));
+    });
+  }, []);
+
+  React.useEffect(() => {
+    invoke(dispatch, getMachineConfig(state.machineType)).subscribe((configuration) => {
+      updateConfiguration(configuration);
+    });
   }, [state.machineType]);
 
   React.useEffect(() => {

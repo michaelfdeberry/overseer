@@ -3,7 +3,7 @@ import Icon from '@material-ui/core/Icon';
 import AddIcon from '@material-ui/icons/Add';
 import CheckIcon from '@material-ui/icons/Check';
 import EditIcon from '@material-ui/icons/Edit';
-import { AccessLevel } from '@overseer/common/models';
+import { AccessLevel } from '@overseer/common/lib/models';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 

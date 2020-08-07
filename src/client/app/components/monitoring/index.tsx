@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Add from '@material-ui/icons/Add';
 import OpenInBrowser from '@material-ui/icons/OpenInBrowser';
 import Settings from '@material-ui/icons/Settings';
-import { MachineStateType, SystemSettings } from '@overseer/common/models';
+import { MachineStateType, SystemSettings } from '@overseer/common/lib/models';
 import { equals } from 'lodash/fp';
 import * as React from 'react';
 import { Link } from 'react-router-dom';

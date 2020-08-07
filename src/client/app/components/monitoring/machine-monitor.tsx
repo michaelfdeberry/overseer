@@ -1,5 +1,5 @@
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { MachineStateType } from '@overseer/common/models';
+import { MachineStateType } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { MachineMonitorControls } from './machine-monitor-controls';

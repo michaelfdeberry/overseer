@@ -1,34 +1,31 @@
-import { DataContext } from '@overseer/common/data';
+import { DataContext } from '@overseer/common/lib/data';
 import {
   AuthenticationService,
   AuthorizationService,
   MachineConfigurationService,
   MachineControlService,
-  MachineProviderService,
   MonitoringService,
   SystemConfigurationService,
   UserConfigurationService
-} from '@overseer/common/services';
+} from '@overseer/common/lib/services';
 
 export type ServiceDependencies = {
   authorizationService: AuthorizationService;
   authenticationService: AuthenticationService;
   machineConfigurationService: MachineConfigurationService;
   machineControlService: MachineControlService;
-  machineProviderService: MachineProviderService;
   monitoringService: MonitoringService;
   systemConfigurationService: SystemConfigurationService;
   userConfigurationService: UserConfigurationService;
 };
 
 export function createServices(context: DataContext): ServiceDependencies {
-  const machineProviderService = new MachineProviderService();
   const authorizationService = new AuthorizationService(context);
   const authenticationService = new AuthenticationService(context);
   const systemConfigurationService = new SystemConfigurationService(context);
-  const machineControlService = new MachineControlService(context, machineProviderService);
-  const machineConfigurationService = new MachineConfigurationService(context, machineProviderService);
-  const monitoringService = new MonitoringService(context, machineProviderService);
+  const machineConfigurationService = new MachineConfigurationService(context);
+  const machineControlService = new MachineControlService(machineConfigurationService);
+  const monitoringService = new MonitoringService(machineConfigurationService, systemConfigurationService);
   const userConfigurationService = new UserConfigurationService(context);
 
   return {
@@ -36,7 +33,6 @@ export function createServices(context: DataContext): ServiceDependencies {
     authenticationService,
     machineConfigurationService,
     machineControlService,
-    machineProviderService,
     monitoringService,
     systemConfigurationService,
     userConfigurationService

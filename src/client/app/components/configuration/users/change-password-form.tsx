@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import { DisplayUser } from '@overseer/common/models';
+import { DisplayUser } from '@overseer/common/lib/models';
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 

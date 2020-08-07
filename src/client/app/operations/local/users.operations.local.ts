@@ -1,6 +1,6 @@
-import { IndexedDBContext } from '@overseer/common/data/indexeddb/indexeddb-context.class';
-import { DisplayUser } from '@overseer/common/models';
-import { UserConfigurationService } from '@overseer/common/services';
+import { IndexedDBContext } from '@overseer/common/lib/data/indexeddb/indexeddb-context.class';
+import { DisplayUser } from '@overseer/common/lib/models';
+import { UserConfigurationService } from '@overseer/common/lib/services';
 import { defer, Observable } from 'rxjs';
 
 async function withUserConfigurationService<T>(execute: (service: UserConfigurationService) => Promise<T>): Promise<T> {

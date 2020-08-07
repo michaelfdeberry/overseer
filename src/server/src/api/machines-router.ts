@@ -1,5 +1,5 @@
-import { AccessLevel } from '@overseer/common/models/users';
-import { MachineConfigurationService } from '@overseer/common/services';
+import { AccessLevel } from '@overseer/common/lib/models/users';
+import { MachineConfigurationService } from '@overseer/common/lib/services';
 import { Request, Response, Router } from 'express';
 
 import asyncRequestHandler from './utilities/async-request-handler';
@@ -23,6 +23,14 @@ export function create(routeAuthorizer: RouteAuthorizer, machineConfigurationSer
       response.json(await machineConfigurationService.getMachine(request.params.machineId));
     })
   );
+
+  router.get('/config', function (_request: Request, response: Response): void {
+    response.json(machineConfigurationService.getMachineTypes());
+  });
+
+  router.get('config/:machineType', function (request: Request, response: Response): void {
+    response.json(machineConfigurationService.getMachineConfiguration(request.params.machineType));
+  });
 
   router.put(
     '/',

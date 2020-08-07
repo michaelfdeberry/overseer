@@ -1,5 +1,5 @@
 import Slider from '@material-ui/core/Slider';
-import { MachineToolType } from '@overseer/common/models';
+import { MachineToolType } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { useDispatch } from '../../hooks';

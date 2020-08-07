@@ -4,7 +4,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { DisplayUser } from '@overseer/common/models';
+import { DisplayUser } from '@overseer/common/lib/models';
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 

@@ -1,4 +1,4 @@
-import { SystemConfigurationService } from '@overseer/common/services';
+import { SystemConfigurationService } from '@overseer/common/lib/services';
 import { NextFunction, Request, Response } from 'express';
 import path from 'path';
 

@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import Add from '@material-ui/icons/Add';
-import { BuildRestrictionType, PersistenceModeType } from '@overseer/common/models/machines';
+import { BuildRestrictionType, PersistenceModeType } from '@overseer/common/lib/models/machines';
 import * as React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 

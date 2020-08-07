@@ -1,5 +1,5 @@
-import { AccessLevel } from '@overseer/common/models/users';
-import { AuthorizationService } from '@overseer/common/services';
+import { AccessLevel } from '@overseer/common/lib/models/users';
+import { AuthorizationService } from '@overseer/common/lib/services';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 
 export type RouteAuthorizer = {

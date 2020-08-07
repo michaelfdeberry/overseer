@@ -1,4 +1,4 @@
-import { AccessLevel } from '@overseer/common/models';
+import { AccessLevel } from '@overseer/common/lib/models';
 
 import { themeMap } from '../components/layout/themes';
 

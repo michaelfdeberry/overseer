@@ -1,5 +1,5 @@
-import { AccessLevel } from '@overseer/common/models/users';
-import { SystemConfigurationService } from '@overseer/common/services';
+import { AccessLevel } from '@overseer/common/lib/models/users';
+import { SystemConfigurationService } from '@overseer/common/lib/services';
 import { Request, Response, Router } from 'express';
 import { arch, platform, release } from 'os';
 

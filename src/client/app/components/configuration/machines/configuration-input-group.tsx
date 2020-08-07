@@ -3,7 +3,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { BuildRestrictionType, MachineSetting, MachineSettingGroup, PersistenceModeType } from '@overseer/common/models';
+import { BuildRestrictionType, MachineSetting, MachineSettingGroup, PersistenceModeType } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { ConfigurationInput } from './configuration-input';

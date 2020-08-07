@@ -5,7 +5,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 import Autorenew from '@material-ui/icons/Autorenew';
 import FileCopy from '@material-ui/icons/FileCopy';
-import { AccessLevel, DisplayUser } from '@overseer/common/models';
+import { AccessLevel, DisplayUser } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { useDispatch, useSelector } from '../../../hooks';

@@ -1,7 +1,6 @@
 export * from './machines/configuration.service';
 export * from './machines/control.service';
 export * from './machines/monitoring.service';
-export * from './machines/provider.service';
 
 export * from './system/configuration.service';
 

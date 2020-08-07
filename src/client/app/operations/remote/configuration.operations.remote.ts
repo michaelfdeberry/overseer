@@ -1,4 +1,4 @@
-import { LogEntry, SystemSettings } from '@overseer/common/models';
+import { LogEntry, SystemSettings } from '@overseer/common/lib/models';
 import axios, { AxiosResponse } from 'axios';
 import { Observable, Observer } from 'rxjs';
 import { UAParser } from 'ua-parser-js';
@@ -6,7 +6,7 @@ import { UAParser } from 'ua-parser-js';
 import { getBearerConfig, getDefaultConfig } from './utilities/request-configs';
 
 export function getSettings(): Observable<SystemSettings> {
-  return Observable.create((observer: Observer<SystemSettings>) => {
+  return new Observable((observer: Observer<SystemSettings>) => {
     axios
       .get('/api/config', getBearerConfig())
       .then((response: AxiosResponse<SystemSettings>) => {
@@ -20,7 +20,7 @@ export function getSettings(): Observable<SystemSettings> {
 }
 
 export function updateSettings(settings: SystemSettings): Observable<void> {
-  return Observable.create((observer: Observer<void>) => {
+  return new Observable((observer: Observer<void>) => {
     axios
       .post<SystemSettings>('/api/config', settings, getBearerConfig())
       .then(() => {
@@ -32,7 +32,7 @@ export function updateSettings(settings: SystemSettings): Observable<void> {
 }
 
 export function getApplicationInfo(): Observable<{ [key: string]: string }> {
-  return Observable.create((observer: Observer<{ [key: string]: string }>) => {
+  return new Observable((observer: Observer<{ [key: string]: string }>) => {
     axios
       .get('/api/config/about', getDefaultConfig())
       .then((response: AxiosResponse<{ [key: string]: string }>) => {
@@ -53,7 +53,7 @@ export function getApplicationInfo(): Observable<{ [key: string]: string }> {
 }
 
 export function writeToLog(logEntry: LogEntry): Observable<void> {
-  return Observable.create((observer: Observer<void>) => {
+  return new Observable((observer: Observer<void>) => {
     axios
       .put('/api/config/log', logEntry, getDefaultConfig())
       .then(() => {
@@ -65,7 +65,7 @@ export function writeToLog(logEntry: LogEntry): Observable<void> {
 }
 
 export function getLog(): Observable<LogEntry[]> {
-  return Observable.create((observer: Observer<LogEntry[]>) => {
+  return new Observable((observer: Observer<LogEntry[]>) => {
     axios
       .get('/api/config/log', getDefaultConfig())
       .then((response: AxiosResponse<LogEntry[]>) => {

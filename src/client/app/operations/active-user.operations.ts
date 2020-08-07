@@ -1,4 +1,4 @@
-import { DisplayUser } from '@overseer/common/models';
+import { DisplayUser } from '@overseer/common/lib/models';
 
 const activeUserKey = 'active_user';
 

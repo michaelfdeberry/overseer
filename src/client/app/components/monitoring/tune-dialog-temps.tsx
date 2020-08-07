@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Add from '@material-ui/icons/Add';
 import Remove from '@material-ui/icons/Remove';
-import { MachineToolType } from '@overseer/common/models';
+import { MachineToolType } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { useDispatch } from '../../hooks';

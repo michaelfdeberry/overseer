@@ -1,11 +1,11 @@
-import { IndexedDBContext } from '@overseer/common/data/indexeddb/indexeddb-context.class';
-import { Machine, MachineConfigurationCollection } from '@overseer/common/models';
-import { MachineConfigurationService, MachineProviderService } from '@overseer/common/services';
+import { IndexedDBContext } from '@overseer/common/lib/data/indexeddb/indexeddb-context.class';
+import { Machine, MachineConfigurationCollection } from '@overseer/common/lib/models';
+import { MachineConfigurationService } from '@overseer/common/lib/services';
 import { defer, Observable } from 'rxjs';
 
 async function withMachineConfigurationService<T>(execute: (machineService: MachineConfigurationService) => Promise<T>): Promise<T> {
   const context = new IndexedDBContext();
-  const service = new MachineConfigurationService(context, new MachineProviderService());
+  const service = new MachineConfigurationService(context);
   return await execute(service);
 }
 
@@ -31,4 +31,12 @@ export function deleteMachine(machine: Machine): Observable<void> {
 
 export function sortMachines(sortOrder: string[]): Observable<Machine[]> {
   return defer(() => withMachineConfigurationService((service) => service.sortMachines(sortOrder)));
+}
+
+export function getMachineTypes(): Observable<string[]> {
+  return defer(() => withMachineConfigurationService((service) => Promise.resolve(service.getMachineTypes())));
+}
+
+export function getMachineConfig(machineType: string): Observable<MachineConfigurationCollection> {
+  return defer(() => withMachineConfigurationService((service) => Promise.resolve(service.getMachineConfiguration(machineType))));
 }

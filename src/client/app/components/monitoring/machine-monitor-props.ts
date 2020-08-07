@@ -1,4 +1,4 @@
-import { Machine, MachineState } from '@overseer/common/models';
+import { Machine, MachineState } from '@overseer/common/lib/models';
 
 export type MachineMonitorProps = {
   machine: Machine;

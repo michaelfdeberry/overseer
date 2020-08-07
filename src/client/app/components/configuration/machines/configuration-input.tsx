@@ -3,7 +3,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
-import { MachineSetting } from '@overseer/common/models';
+import { MachineSetting } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { DisplayOption } from '../../../utils/display-options.class';

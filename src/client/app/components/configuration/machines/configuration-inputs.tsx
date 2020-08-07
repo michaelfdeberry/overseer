@@ -1,4 +1,4 @@
-import { BuildRestrictionType, MachineConfiguration, MachineConfigurationCollection, PersistenceModeType } from '@overseer/common/models';
+import { BuildRestrictionType, MachineConfiguration, MachineConfigurationCollection, PersistenceModeType } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { ConfigurationInput } from './configuration-input';

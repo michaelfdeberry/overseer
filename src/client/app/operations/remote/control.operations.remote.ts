@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Observable, Observer } from 'rxjs';
 
 function issueControlCommand(endpoint: string): Observable<void> {
-  return Observable.create((observer: Observer<void>) => {
+  return new Observable((observer: Observer<void>) => {
     axios
       .get(endpoint)
       .then(() => {

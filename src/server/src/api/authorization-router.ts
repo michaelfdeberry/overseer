@@ -1,4 +1,4 @@
-import { AuthorizationService } from '@overseer/common/services';
+import { AuthorizationService } from '@overseer/common/lib/services';
 import { Request, Response, Router } from 'express';
 
 import asyncRequestHandler from './utilities/async-request-handler';

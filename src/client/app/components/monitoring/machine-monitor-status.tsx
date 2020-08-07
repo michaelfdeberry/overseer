@@ -1,5 +1,5 @@
 import Typography from '@material-ui/core/Typography';
-import { MachineStateType } from '@overseer/common/models';
+import { MachineStateType } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { toDuration } from '../../utils/duration.function';

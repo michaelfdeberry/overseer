@@ -39,5 +39,3 @@ export type MachineConfigurationBuilder = {
   configuration: MachineConfigurationCollection;
   provider: new () => MachineProvider;
 };
-
-export const machineConfigurationBuilder: Map<string, MachineConfigurationBuilder> = new Map();

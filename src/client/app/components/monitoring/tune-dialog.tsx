@@ -5,7 +5,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Icon from '@material-ui/core/Icon';
 import OpenInNew from '@material-ui/icons/OpenInNew';
-import { MachineStateType } from '@overseer/common/models';
+import { MachineStateType } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { MachineMonitorProps } from './machine-monitor-props';

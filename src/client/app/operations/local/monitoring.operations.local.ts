@@ -1,6 +1,6 @@
-import { IndexedDBContext } from '@overseer/common/data/indexeddb/indexeddb-context.class';
-import { MachineState } from '@overseer/common/models';
-import { MachineProviderService, MonitoringService } from '@overseer/common/services';
+import { IndexedDBContext } from '@overseer/common/lib/data/indexeddb/indexeddb-context.class';
+import { MachineState } from '@overseer/common/lib/models';
+import { MachineConfigurationService, MonitoringService, SystemConfigurationService } from '@overseer/common/lib/services';
 import { Observable, Subject } from 'rxjs';
 
 let monitoringService: MonitoringService;
@@ -10,7 +10,7 @@ export const machineState$: Observable<MachineState> = machineStateSubject.asObs
 async function createMonitoringService(): Promise<void> {
   if (!monitoringService) {
     const context = new IndexedDBContext();
-    monitoringService = new MonitoringService(context, new MachineProviderService());
+    monitoringService = new MonitoringService(new MachineConfigurationService(context), new SystemConfigurationService(context));
     monitoringService.machineStateEventEmitter.on('MachineState', (stateUpdate: MachineState) => {
       machineStateSubject.next(stateUpdate);
     });

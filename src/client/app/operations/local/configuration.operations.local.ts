@@ -1,6 +1,6 @@
-import { IndexedDBContext } from '@overseer/common/data/indexeddb/indexeddb-context.class';
-import { LogEntry, SystemSettings } from '@overseer/common/models';
-import { SystemConfigurationService } from '@overseer/common/services';
+import { IndexedDBContext } from '@overseer/common/lib/data/indexeddb/indexeddb-context.class';
+import { LogEntry, SystemSettings } from '@overseer/common/lib/models';
+import { SystemConfigurationService } from '@overseer/common/lib/services';
 import { defer, Observable, of } from 'rxjs';
 import { UAParser } from 'ua-parser-js';
 

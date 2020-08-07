@@ -4,7 +4,7 @@ import Icon from '@material-ui/core/Icon';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import Edit from '@material-ui/icons/Edit';
-import { BuildRestrictionType, Machine, PersistenceModeType } from '@overseer/common/models';
+import { BuildRestrictionType, Machine, PersistenceModeType } from '@overseer/common/lib/models';
 import { equals } from 'lodash/fp';
 import * as React from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';

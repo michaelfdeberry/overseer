@@ -1,4 +1,4 @@
-import { Machine, MachineState, MachineStateType } from '@overseer/common/models';
+import { Machine, MachineState, MachineStateType } from '@overseer/common/lib/models';
 
 type MachineStateSortType = [Machine, MachineState];
 export function machineStateSort(left: MachineStateSortType, right: MachineStateSortType): number {

@@ -4,7 +4,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
-import { AccessLevel } from '@overseer/common/models';
+import { AccessLevel } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { accessLevels, sessionLifetimes } from '../../../utils/display-options.class';

@@ -7,7 +7,7 @@ import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import EditIcon from '@material-ui/icons/Edit';
 import PersonIcon from '@material-ui/icons/Person';
-import { DisplayUser } from '@overseer/common/models';
+import { DisplayUser } from '@overseer/common/lib/models';
 import * as React from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 

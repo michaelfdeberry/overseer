@@ -1,11 +1,11 @@
-import { Machine, MachineConfigurationCollection } from '@overseer/common/models';
+import { Machine, MachineConfigurationCollection } from '@overseer/common/lib/models';
 import axios, { AxiosResponse } from 'axios';
 import { Observable, Observer } from 'rxjs';
 
 import { getBearerConfig } from './utilities/request-configs';
 
 export function getMachines(): Observable<Machine[]> {
-  return Observable.create((observer: Observer<Machine[]>) => {
+  return new Observable((observer: Observer<Machine[]>) => {
     axios
       .get('/api/machines', getBearerConfig())
       .then((response: AxiosResponse<Machine[]>) => {
@@ -17,7 +17,7 @@ export function getMachines(): Observable<Machine[]> {
 }
 
 export function getMachine(machineId: string): Observable<Machine> {
-  return Observable.create((observer: Observer<Machine>) => {
+  return new Observable((observer: Observer<Machine>) => {
     axios
       .get(`/api/machines/${machineId}`, getBearerConfig())
       .then((response: AxiosResponse<Machine>) => {
@@ -29,7 +29,7 @@ export function getMachine(machineId: string): Observable<Machine> {
 }
 
 export function createMachine(machineType: string, configuration: MachineConfigurationCollection): Observable<Machine> {
-  return Observable.create((observer: Observer<Machine>) => {
+  return new Observable((observer: Observer<Machine>) => {
     axios
       .put('/api/machines', { machineType, configuration }, getBearerConfig())
       .then((response: AxiosResponse<Machine>) => {
@@ -41,7 +41,7 @@ export function createMachine(machineType: string, configuration: MachineConfigu
 }
 
 export function updateMachine(machine: Machine): Observable<Machine> {
-  return Observable.create((observer: Observer<Machine>) => {
+  return new Observable((observer: Observer<Machine>) => {
     axios
       .post('/api/machines', machine, getBearerConfig())
       .then((response: AxiosResponse<Machine>) => {
@@ -53,7 +53,7 @@ export function updateMachine(machine: Machine): Observable<Machine> {
 }
 
 export function deleteMachine(machine: Machine): Observable<void> {
-  return Observable.create((observer: Observer<void>) => {
+  return new Observable((observer: Observer<void>) => {
     axios
       .delete(`/api/machines/${machine.id}`, getBearerConfig())
       .then(() => {
@@ -65,11 +65,35 @@ export function deleteMachine(machine: Machine): Observable<void> {
 }
 
 export function sortMachines(sortOrder: string[]): Observable<Machine[]> {
-  return Observable.create((observer: Observer<Machine[]>) => {
+  return new Observable((observer: Observer<Machine[]>) => {
     axios
       .post('/api/machines/sort', sortOrder, getBearerConfig())
       .then((response: AxiosResponse<Machine[]>) => {
         observer.next(response.data.map((machine) => Object.assign(new Machine(), machine)));
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
+}
+
+export function getMachineTypes(): Observable<string[]> {
+  return new Observable((observer: Observer<string[]>) => {
+    axios
+      .get('/api/machines/config', getBearerConfig())
+      .then((response: AxiosResponse<string[]>) => {
+        observer.next(response.data);
+        observer.complete();
+      })
+      .catch((error: Error) => observer.error(error));
+  });
+}
+
+export function getMachineConfig(machineType: string): Observable<MachineConfigurationCollection> {
+  return new Observable((observer: Observer<MachineConfigurationCollection>) => {
+    axios
+      .get(`/api/machines/config/${machineType}`, getBearerConfig())
+      .then((response: AxiosResponse<MachineConfigurationCollection>) => {
+        observer.next(response.data);
         observer.complete();
       })
       .catch((error: Error) => observer.error(error));

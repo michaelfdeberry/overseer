@@ -1,14 +1,13 @@
-import { DataContext } from '../../data/data-context.interface';
 import { MachineToolType } from '../../models/machines';
 import { MachineProvider } from '../../models/machines/machine.provider';
-import { MachineProviderService } from './provider.service';
+import { MachineConfigurationService } from './configuration.service';
 
 export class MachineControlService {
-  constructor(private context: DataContext, private providerService: MachineProviderService) {}
+  constructor(private machineConfigurationService: MachineConfigurationService) {}
 
   private async getProvider(machineId: string): Promise<MachineProvider> {
-    const machine = await this.context.machines.getById(machineId);
-    return this.providerService.getProvider(machine);
+    const machine = await this.machineConfigurationService.getMachine(machineId);
+    return this.machineConfigurationService.getProvider(machine);
   }
 
   async pauseJob(machineId: string): Promise<void> {
@@ -42,8 +41,8 @@ export class MachineControlService {
   }
 
   async setTemperature(machineId: string, heaterIndex: number, temperature: number): Promise<void> {
-    const machine = await this.context.machines.getById(machineId);
-    const provider = this.providerService.getProvider(machine);
+    const machine = await this.machineConfigurationService.getMachine(machineId);
+    const provider = this.machineConfigurationService.getProvider(machine);
 
     if (machine.tools.find(tool => tool.type === MachineToolType.Heater && tool.index === heaterIndex && tool.name === 'bed')) {
       return provider.setBedTemperature(temperature);

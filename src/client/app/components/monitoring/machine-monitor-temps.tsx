@@ -1,5 +1,5 @@
 import Typography from '@material-ui/core/Typography';
-import { MachineTool, MachineToolType } from '@overseer/common/models';
+import { MachineTool, MachineToolType } from '@overseer/common/lib/models';
 import * as React from 'react';
 
 import { sortByKey } from '../../utils/sort.functions';

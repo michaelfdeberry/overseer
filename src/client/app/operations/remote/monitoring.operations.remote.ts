@@ -1,4 +1,4 @@
-import { MachineState } from '@overseer/common/models';
+import { MachineState } from '@overseer/common/lib/models';
 import { Observable, Subject } from 'rxjs';
 
 import { getActiveUser } from '../active-user.operations';

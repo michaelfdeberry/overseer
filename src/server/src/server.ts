@@ -1,6 +1,5 @@
-import { createDb, LevelContext } from '@overseer/common/data/level/level-context.class';
-import initializeIntegration from '@overseer/common/integration/initialize-integration.function';
-import { MachineState } from '@overseer/common/models';
+import { createDb, LevelContext } from '@overseer/common/lib/data/level/level-context.class';
+import { MachineState } from '@overseer/common/lib/models';
 import compression from 'compression';
 import express, { Application } from 'express';
 import { createServer, Server } from 'http';
@@ -9,8 +8,6 @@ import * as WebSocket from 'ws';
 import { createApiRouter } from './api';
 import { createErrorHandler } from './error-handler';
 import { createServices } from './services';
-
-initializeIntegration();
 
 createDb().then(async (db) => {
   const context = new LevelContext(db);

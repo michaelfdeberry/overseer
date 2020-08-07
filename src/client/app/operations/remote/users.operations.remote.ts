@@ -1,11 +1,11 @@
-import { DisplayUser } from '@overseer/common/models';
+import { DisplayUser } from '@overseer/common/lib/models';
 import axios, { AxiosResponse } from 'axios';
 import { Observable, Observer } from 'rxjs';
 
 import { getBearerConfig } from './utilities/request-configs';
 
 export function getUsers(): Observable<DisplayUser[]> {
-  return Observable.create((observer: Observer<DisplayUser[]>) => {
+  return new Observable((observer: Observer<DisplayUser[]>) => {
     axios
       .get('/api/users', getBearerConfig())
       .then((response: AxiosResponse<DisplayUser[]>) => {
@@ -17,7 +17,7 @@ export function getUsers(): Observable<DisplayUser[]> {
 }
 
 export function getUser(userId: string): Observable<DisplayUser> {
-  return Observable.create((observer: Observer<DisplayUser>) => {
+  return new Observable((observer: Observer<DisplayUser>) => {
     axios
       .get(`/api/users/${userId}`, getBearerConfig())
       .then((response: AxiosResponse<DisplayUser>) => {
@@ -29,7 +29,7 @@ export function getUser(userId: string): Observable<DisplayUser> {
 }
 
 export function createUser(user: DisplayUser): Observable<DisplayUser> {
-  return Observable.create((observer: Observer<DisplayUser>) => {
+  return new Observable((observer: Observer<DisplayUser>) => {
     axios
       .put('/api/users', user, getBearerConfig())
       .then((response: AxiosResponse<DisplayUser>) => {
@@ -41,7 +41,7 @@ export function createUser(user: DisplayUser): Observable<DisplayUser> {
 }
 
 export function updateUser(user: DisplayUser): Observable<DisplayUser> {
-  return Observable.create((observer: Observer<DisplayUser>) => {
+  return new Observable((observer: Observer<DisplayUser>) => {
     axios
       .post('/api/users', user, getBearerConfig())
       .then((response: AxiosResponse<DisplayUser>) => {
@@ -53,7 +53,7 @@ export function updateUser(user: DisplayUser): Observable<DisplayUser> {
 }
 
 export function deleteUser(user: DisplayUser): Observable<DisplayUser> {
-  return Observable.create((observer: Observer<DisplayUser>) => {
+  return new Observable((observer: Observer<DisplayUser>) => {
     axios.delete(`/api/users/${user.id}`, getBearerConfig()).then((response: AxiosResponse<DisplayUser>) => {
       observer.next(response.data);
       observer.complete();
@@ -62,7 +62,7 @@ export function deleteUser(user: DisplayUser): Observable<DisplayUser> {
 }
 
 export function changePassword(user: DisplayUser): Observable<DisplayUser> {
-  return Observable.create((observer: Observer<DisplayUser>) => {
+  return new Observable((observer: Observer<DisplayUser>) => {
     axios
       .post('/api/users/password', user, getBearerConfig())
       .then((response: AxiosResponse<DisplayUser>) => {

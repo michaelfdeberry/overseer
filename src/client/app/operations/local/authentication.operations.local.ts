@@ -1,6 +1,6 @@
-import { IndexedDBContext } from '@overseer/common/data/indexeddb/indexeddb-context.class';
-import { DisplayUser } from '@overseer/common/models';
-import { AuthenticationService } from '@overseer/common/services';
+import { IndexedDBContext } from '@overseer/common/lib/data/indexeddb/indexeddb-context.class';
+import { DisplayUser } from '@overseer/common/lib/models';
+import { AuthenticationService } from '@overseer/common/lib/services';
 import { defer, Observable, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
 

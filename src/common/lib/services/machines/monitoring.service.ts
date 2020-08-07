@@ -1,16 +1,15 @@
 import { EventEmitter } from 'events';
 
-import { DataContext } from '../../data/data-context.interface';
 import { Machine } from '../../models';
-import { SystemSettings } from '../../models/system/settings.interface';
-import { MachineProviderService } from './provider.service';
+import { SystemConfigurationService } from '../system/configuration.service';
+import { MachineConfigurationService } from './configuration.service';
 
 export class MonitoringService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private intervalRef: any;
   machineStateEventEmitter: EventEmitter = new EventEmitter();
 
-  constructor(private context: DataContext, private providerService: MachineProviderService) {}
+  constructor(private machineConfigurationService: MachineConfigurationService, private systemConfigurationService: SystemConfigurationService) {}
 
   enable(): void {
     if (this.intervalRef) return;
@@ -23,12 +22,12 @@ export class MonitoringService {
     this.intervalRef = undefined;
   }
 
-  private async pollMachines(context: DataContext): Promise<void> {
-    const machines: Machine[] = await context.machines.getAll();
+  private async pollMachines(): Promise<void> {
+    const machines: Machine[] = await this.machineConfigurationService.getMachines();
     machines
       .filter(machine => !machine.disabled)
       .forEach(machine => {
-        this.providerService
+        this.machineConfigurationService
           .getProvider(machine)
           .getMachineState()
           .then(state => this.machineStateEventEmitter.emit('MachineState', state));
@@ -36,10 +35,10 @@ export class MonitoringService {
   }
 
   private monitor(): void {
-    this.context.values.get<SystemSettings>('SystemSettings').then(settings => {
-      this.intervalRef = setInterval(() => this.pollMachines(this.context), settings.interval);
+    this.systemConfigurationService.getSystemSetting().then(settings => {
+      this.intervalRef = setInterval(() => this.pollMachines(), settings.interval);
     });
 
-    this.pollMachines(this.context);
+    this.pollMachines();
   }
 }

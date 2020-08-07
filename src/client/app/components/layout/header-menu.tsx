@@ -6,7 +6,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import InfoIcon from '@material-ui/icons/Info';
 import MenuIcon from '@material-ui/icons/Menu';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { AccessLevel } from '@overseer/common/models';
+import { AccessLevel } from '@overseer/common/lib/models';
 import * as React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
