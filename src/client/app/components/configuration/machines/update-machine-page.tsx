@@ -98,7 +98,7 @@ export const UpdateMachinePage: React.FunctionComponent = () => {
           <Button component={Link} to="/configuration/machines">
             Cancel
           </Button>
-          <Button type="submit" color="primary" disabled={equals(machineRef.current, machine)}>
+          <Button type="submit" color="primary" disabled={equals(machineRef.current, machine) || !machineState.isValid}>
             Save
           </Button>
         </div>

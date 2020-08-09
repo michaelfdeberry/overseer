@@ -34,7 +34,7 @@ export interface MachineConfigurationFormState {
 export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurationFormProps> = (props: MachineConfigurationFormProps) => {
   const { mode, state, updateState, restriction = BuildRestrictionType.none } = props;
   const dispatch = useDispatch();
-  const [machineTypes, setMachineTypes] = React.useState<DisplayOption<string>[]>();
+  const [machineTypes, setMachineTypes] = React.useState<DisplayOption<string>[]>([]);
 
   const setMachineType = (event: React.ChangeEvent<HTMLInputElement>): void => {
     updateState({ ...state, machineType: event.target.value });
@@ -48,7 +48,7 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
     return !setting.isRequired || isRequiredFieldValid(setting.value);
   };
 
-  const validate = (): boolean => {
+  const isValid = React.useMemo(() => {
     if (!state.configuration) return false;
 
     for (const config of Object.values(state.configuration)) {
@@ -69,7 +69,7 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
     }
 
     return true;
-  };
+  }, [state]);
 
   React.useEffect(() => {
     invoke(dispatch, getMachineTypes()).subscribe((machineTypes) => {
@@ -78,14 +78,20 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
   }, []);
 
   React.useEffect(() => {
-    invoke(dispatch, getMachineConfig(state.machineType)).subscribe((configuration) => {
-      updateConfiguration(configuration);
-    });
+    if (mode === PersistenceModeType.add) {
+      invoke(dispatch, getMachineConfig(state.machineType)).subscribe((configuration) => {
+        updateConfiguration(configuration);
+      });
+    }
   }, [state.machineType]);
 
   React.useEffect(() => {
-    updateState({ ...state, isValid: validate() });
-  }, [validate()]);
+    updateState({ ...state, isValid });
+  }, [isValid]);
+
+  if (!machineTypes) {
+    return null;
+  }
 
   return (
     <React.Fragment>
@@ -102,7 +108,7 @@ export const MachineConfigurationForm: React.FunctionComponent<MachineConfigurat
               id: 'access-level'
             }}
           >
-            <MenuItem value={''}>Select Machine...</MenuItem>
+            <MenuItem value={''}>Select Machine Type...</MenuItem>
             {machineTypes.map((type: DisplayOption<string>, index: number) => (
               <MenuItem key={`machine_type_${index}`} value={type.value}>
                 {type.text}
