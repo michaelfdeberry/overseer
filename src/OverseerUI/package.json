@@ -47,8 +47,8 @@
     "rxjs": "^6.5.3",
     "signalr": "^2.4.1",
     "tslib": "^1.10.0",
-    "ua-parser-js": "^0.7.20",
-    "url-parse": "^1.5.0",
+    "ua-parser-js": "^0.7.24",
+    "url-parse": "^1.4.7",
     "zone.js": "^0.9.1"
   },
   "devDependencies": {
