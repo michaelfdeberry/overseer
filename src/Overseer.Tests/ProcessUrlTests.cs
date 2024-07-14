@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Overseer.Machines.Providers;
 using Overseer.Models;
 using System;
@@ -13,7 +14,7 @@ namespace Overseer.Tests
         {
             var url = "http://192.168.1.1/";
             var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url);
-            Assert.AreEqual(new Uri(url), uri);
+            ClassicAssert.AreEqual(new Uri(url), uri);
         }
 
         [Test]
@@ -21,7 +22,7 @@ namespace Overseer.Tests
         {
             var url = "http://192.168.1.1/";
             var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, "/api");
-            Assert.AreEqual(new Uri("http://192.168.1.1/api"), uri);
+            ClassicAssert.AreEqual(new Uri("http://192.168.1.1/api"), uri);
         }
 
         [Test]
@@ -29,7 +30,7 @@ namespace Overseer.Tests
         {
             var url = "http://192.168.1.1/";
             var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, "/api?test=1");
-            Assert.AreEqual(new Uri("http://192.168.1.1/api?test=1"), uri);
+            ClassicAssert.AreEqual(new Uri("http://192.168.1.1/api?test=1"), uri);
         }
 
         [Test]
@@ -37,7 +38,7 @@ namespace Overseer.Tests
         {
             var url = "http://192.168.1.1/";
             var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, "api");
-            Assert.AreEqual(new Uri("http://192.168.1.1/api"), uri);
+            ClassicAssert.AreEqual(new Uri("http://192.168.1.1/api"), uri);
         }
 
         [Test]
@@ -46,7 +47,7 @@ namespace Overseer.Tests
             var url = "http://192.168.1.1/";
             var refPath = "http://192.168.1.2/";
             var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, refPath);
-            Assert.AreEqual(new Uri(refPath), uri);
+            ClassicAssert.AreEqual(new Uri(refPath), uri);
         }
 
         [Test]
@@ -55,7 +56,7 @@ namespace Overseer.Tests
             var url = "http://192.168.1.1/";
             var refPath = "http://localhost/some/path";
             var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, refPath);
-            Assert.AreEqual(new Uri("http://192.168.1.1/some/path"), uri);
+            ClassicAssert.AreEqual(new Uri("http://192.168.1.1/some/path"), uri);
         }
 
         [Test]
@@ -64,7 +65,7 @@ namespace Overseer.Tests
             var url = "http://192.168.1.1/";
             var refPath = "http://localhost/some/path?test=1";
             var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, refPath);
-            Assert.AreEqual(new Uri("http://192.168.1.1/some/path?test=1"), uri);
+            ClassicAssert.AreEqual(new Uri("http://192.168.1.1/some/path?test=1"), uri);
         }
 
         [Test]
@@ -73,7 +74,7 @@ namespace Overseer.Tests
             var url = "http://192.168.1.1/";
             var refPath = "http://127.0.0.1/some/path";
             var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, refPath);
-            Assert.AreEqual(new Uri("http://192.168.1.1/some/path"), uri);
+            ClassicAssert.AreEqual(new Uri("http://192.168.1.1/some/path"), uri);
         }
     }
 }

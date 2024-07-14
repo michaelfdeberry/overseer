@@ -12,7 +12,7 @@ namespace Overseer.Data
             public object Value { get; set; }
         }
 
-        readonly LiteCollection<ValueRecord> _valueCollection;
+        readonly ILiteCollection<ValueRecord> _valueCollection;
 
         public LiteValueStore(LiteDatabase database)
         {

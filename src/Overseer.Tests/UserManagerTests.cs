@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Overseer.Data;
 using Overseer.Models;
 using Overseer.Tests.Data;
@@ -33,21 +34,21 @@ namespace Overseer.Tests
         [Test]
         public void ShouldFailToCreateUserWithoutUsername()
         {
-            var ex = Assert.Throws<OverseerException>(() => _userManager.CreateUser(new UserDisplay
+            var ex = ClassicAssert.Throws<OverseerException>(() => _userManager.CreateUser(new UserDisplay
             {
                 Password = Password
             }));
-            Assert.AreEqual("invalid_username", ex.Message);
+            ClassicAssert.AreEqual("invalid_username", ex.Message);
         }
 
         [Test]
         public void ShouldFailToCreateUserWithoutPassword()
         {
-            var ex = Assert.Throws<OverseerException>(() => _userManager.CreateUser(new UserDisplay
+            var ex = ClassicAssert.Throws<OverseerException>(() => _userManager.CreateUser(new UserDisplay
             {
                 Username = Username
             }));
-            Assert.AreEqual("invalid_password", ex.Message);
+            ClassicAssert.AreEqual("invalid_password", ex.Message);
         }
 
         [Test]
@@ -60,21 +61,21 @@ namespace Overseer.Tests
                 SessionLifetime = 7
             });
 
-            Assert.NotNull(userDisplay);
-            Assert.AreEqual(Username, userDisplay.Username);
-            Assert.AreNotEqual(0, userDisplay.Id);
-            Assert.Null(userDisplay.Token);
-            Assert.False(userDisplay.IsLoggedIn);
-            Assert.AreEqual(7, userDisplay.SessionLifetime);            
+            ClassicAssert.NotNull(userDisplay);
+            ClassicAssert.AreEqual(Username, userDisplay.Username);
+            ClassicAssert.AreNotEqual(0, userDisplay.Id);
+            ClassicAssert.Null(userDisplay.Token);
+            ClassicAssert.False(userDisplay.IsLoggedIn);
+            ClassicAssert.AreEqual(7, userDisplay.SessionLifetime);            
 
             var createdUser = _users.GetById(userDisplay.Id);
-            Assert.NotNull(createdUser);
-            Assert.AreEqual(userDisplay.Username, createdUser.Username);
-            Assert.NotNull(createdUser.PasswordSalt);
-            Assert.NotNull(createdUser.PasswordHash);
-            Assert.AreEqual(userDisplay.SessionLifetime, createdUser.SessionLifetime);
-            Assert.Null(createdUser.Token);
-            Assert.Null(createdUser.TokenExpiration);
+            ClassicAssert.NotNull(createdUser);
+            ClassicAssert.AreEqual(userDisplay.Username, createdUser.Username);
+            ClassicAssert.NotNull(createdUser.PasswordSalt);
+            ClassicAssert.NotNull(createdUser.PasswordHash);
+            ClassicAssert.AreEqual(userDisplay.SessionLifetime, createdUser.SessionLifetime);
+            ClassicAssert.Null(createdUser.Token);
+            ClassicAssert.Null(createdUser.TokenExpiration);
         }
 
         [Test]
@@ -85,13 +86,13 @@ namespace Overseer.Tests
                 Username = Username,
                 Password = Password
             });
-            var ex = Assert.Throws<OverseerException>(() => _userManager.CreateUser(new UserDisplay
+            var ex = ClassicAssert.Throws<OverseerException>(() => _userManager.CreateUser(new UserDisplay
             {
                 Username = Username,
                 Password = Password,
                 SessionLifetime = 7
             }));
-            Assert.AreEqual("unavailable_username", ex.Message);
+            ClassicAssert.AreEqual("unavailable_username", ex.Message);
         }
 
         [Test]
@@ -103,8 +104,8 @@ namespace Overseer.Tests
                 Password = Password
             });
 
-            var ex = Assert.Throws<OverseerException>(() => _authenticationManager.AuthenticateUser("FakeName", Password));
-            Assert.AreEqual("invalid_username", ex.Message);
+            var ex = ClassicAssert.Throws<OverseerException>(() => _authenticationManager.AuthenticateUser("FakeName", Password));
+            ClassicAssert.AreEqual("invalid_username", ex.Message);
         }
 
         [Test]
@@ -116,8 +117,8 @@ namespace Overseer.Tests
                 Password = Password
             });
 
-            var ex = Assert.Throws<OverseerException>(() => _authenticationManager.AuthenticateUser(Username, "WrongPassword"));
-            Assert.AreEqual("invalid_password", ex.Message);
+            var ex = ClassicAssert.Throws<OverseerException>(() => _authenticationManager.AuthenticateUser(Username, "WrongPassword"));
+            ClassicAssert.AreEqual("invalid_password", ex.Message);
         }
 
         [Test]
@@ -129,14 +130,14 @@ namespace Overseer.Tests
                 Password = Password,
                 SessionLifetime = 7
             });
-            Assert.NotNull(createdUser);
+            ClassicAssert.NotNull(createdUser);
 
             var authenticatedUser = _authenticationManager.AuthenticateUser(Username, Password);
-            Assert.NotNull(authenticatedUser);
-            Assert.AreEqual(createdUser.Id, authenticatedUser.Id);
-            Assert.NotNull(authenticatedUser.Token);
-            Assert.NotNull(authenticatedUser.SessionLifetime);
-            Assert.AreEqual(7, authenticatedUser.SessionLifetime);
+            ClassicAssert.NotNull(authenticatedUser);
+            ClassicAssert.AreEqual(createdUser.Id, authenticatedUser.Id);
+            ClassicAssert.NotNull(authenticatedUser.Token);
+            ClassicAssert.NotNull(authenticatedUser.SessionLifetime);
+            ClassicAssert.AreEqual(7, authenticatedUser.SessionLifetime);
         }
 
         [Test]
@@ -147,13 +148,13 @@ namespace Overseer.Tests
                 Username = Username,
                 Password = Password
             });
-            Assert.NotNull(createdUser);
+            ClassicAssert.NotNull(createdUser);
 
             var authenticatedUser = _authenticationManager.AuthenticateUser(Username, Password);
-            Assert.NotNull(authenticatedUser);
-            Assert.AreEqual(createdUser.Id, authenticatedUser.Id);
-            Assert.NotNull(authenticatedUser.Token);
-            Assert.Null(authenticatedUser.SessionLifetime);
+            ClassicAssert.NotNull(authenticatedUser);
+            ClassicAssert.AreEqual(createdUser.Id, authenticatedUser.Id);
+            ClassicAssert.NotNull(authenticatedUser.Token);
+            ClassicAssert.Null(authenticatedUser.SessionLifetime);
         }
 
         [Test]
@@ -168,7 +169,7 @@ namespace Overseer.Tests
 
             var session1 = _authenticationManager.AuthenticateUser(Username, Password);
             var session2 = _authenticationManager.AuthenticateUser(Username, Password);
-            Assert.AreEqual(session1.Token, session2.Token);
+            ClassicAssert.AreEqual(session1.Token, session2.Token);
         }
         
         [Test]
@@ -182,8 +183,8 @@ namespace Overseer.Tests
             });
             var passwordAuthedUser = _authenticationManager.AuthenticateUser(Username, Password);
             var tokenAuthedUser = _authenticationManager.AuthenticateToken(passwordAuthedUser.Token);
-            Assert.NotNull(tokenAuthedUser);
-            Assert.AreEqual(passwordAuthedUser.Token, tokenAuthedUser.Token);
+            ClassicAssert.NotNull(tokenAuthedUser);
+            ClassicAssert.AreEqual(passwordAuthedUser.Token, tokenAuthedUser.Token);
         }
 
         [Test]
@@ -196,16 +197,16 @@ namespace Overseer.Tests
             });
             var passwordAuthedUser = _authenticationManager.AuthenticateUser(Username, Password);
             var tokenAuthedUser = _authenticationManager.AuthenticateToken(passwordAuthedUser.Token);
-            Assert.NotNull(tokenAuthedUser);
-            Assert.AreEqual(passwordAuthedUser.Token, tokenAuthedUser.Token);
+            ClassicAssert.NotNull(tokenAuthedUser);
+            ClassicAssert.AreEqual(passwordAuthedUser.Token, tokenAuthedUser.Token);
         }
 
         [Test]
         public void ShouldFailToAuthenticateInvalidToken()
         {
-            Assert.Null(_authenticationManager.AuthenticateToken(null));
-            Assert.Null(_authenticationManager.AuthenticateToken(string.Empty));
-            Assert.Null(_authenticationManager.AuthenticateToken("Invalid"));
+            ClassicAssert.Null(_authenticationManager.AuthenticateToken(null));
+            ClassicAssert.Null(_authenticationManager.AuthenticateToken(string.Empty));
+            ClassicAssert.Null(_authenticationManager.AuthenticateToken("Invalid"));
         }
 
         [Test]
@@ -224,7 +225,7 @@ namespace Overseer.Tests
             _users.Update(user);
 
             var tokenAuthedUser = _authenticationManager.AuthenticateToken(passwordAuthedUser.Token);
-            Assert.Null(tokenAuthedUser);
+            ClassicAssert.Null(tokenAuthedUser);
         }
 
         [Test]
@@ -237,10 +238,10 @@ namespace Overseer.Tests
                 SessionLifetime = 7
             });
             var session = _authenticationManager.AuthenticateUser(Username, Password);
-            Assert.True(session.IsLoggedIn);
+            ClassicAssert.True(session.IsLoggedIn);
 
             session = _authenticationManager.DeauthenticateUser(session.Token);
-            Assert.False(session.IsLoggedIn);
+            ClassicAssert.False(session.IsLoggedIn);
         }
 
         [Test]
@@ -253,10 +254,10 @@ namespace Overseer.Tests
                 SessionLifetime = 7
             });
             var session = _authenticationManager.AuthenticateUser(Username, Password);
-            Assert.True(session.IsLoggedIn);
+            ClassicAssert.True(session.IsLoggedIn);
 
             session = _authenticationManager.DeauthenticateUser(session.Id);
-            Assert.False(session.IsLoggedIn);
+            ClassicAssert.False(session.IsLoggedIn);
         }
 
         [Test]
@@ -272,13 +273,13 @@ namespace Overseer.Tests
             }
 
             var users = _users.GetAll();
-            Assert.IsNotEmpty(users);
-            Assert.AreEqual(10, users.Count);
+            ClassicAssert.IsNotEmpty(users);
+            ClassicAssert.AreEqual(10, users.Count);
 
             var userDisplays = _userManager.GetUsers();
-            Assert.IsNotEmpty(userDisplays);
-            Assert.AreEqual(users.Count, userDisplays.Count);
-            Assert.True(users.All(x => userDisplays.Any(u => u.Id == x.Id)));
+            ClassicAssert.IsNotEmpty(userDisplays);
+            ClassicAssert.AreEqual(users.Count, userDisplays.Count);
+            ClassicAssert.True(users.All(x => userDisplays.Any(u => u.Id == x.Id)));
         }
 
         [Test]
@@ -293,14 +294,14 @@ namespace Overseer.Tests
 
             var user2 = _userManager.GetUser(user1.Id);
 
-            Assert.NotNull(user2);
-            Assert.AreEqual(user1.Id, user2.Id);
+            ClassicAssert.NotNull(user2);
+            ClassicAssert.AreEqual(user1.Id, user2.Id);
         }
 
         [Test]
         public void ShouldFailToGetUserById()
         {
-            Assert.Throws<NullReferenceException>(() => _userManager.GetUser(100));
+            ClassicAssert.Throws<NullReferenceException>(() => _userManager.GetUser(100));
         }
 
         [Test]
@@ -314,8 +315,8 @@ namespace Overseer.Tests
             });
 
             var user = _users.GetById(1);
-            Assert.NotNull(user);
-            Assert.Throws<OverseerException>(() => _userManager.DeleteUser(user.Id));
+            ClassicAssert.NotNull(user);
+            ClassicAssert.Throws<OverseerException>(() => _userManager.DeleteUser(user.Id));
         }
 
         [Test]
@@ -329,8 +330,8 @@ namespace Overseer.Tests
             });
 
             var first = _users.GetById(1);
-            Assert.NotNull(first);
-            Assert.NotNull(_authenticationManager.AuthenticateUser(Username, "Password1"));
+            ClassicAssert.NotNull(first);
+            ClassicAssert.NotNull(_authenticationManager.AuthenticateUser(Username, "Password1"));
 
             _userManager.ChangePassword(new UserDisplay
             {
@@ -339,9 +340,9 @@ namespace Overseer.Tests
                 Password = "Password2"
             });
             var second = _users.GetById(1);
-            Assert.NotNull(second);            
-            Assert.NotNull(_authenticationManager.AuthenticateUser(Username, "Password2"));
-            Assert.Throws<OverseerException>(() => _authenticationManager.AuthenticateUser(Username, "Password1"));
+            ClassicAssert.NotNull(second);            
+            ClassicAssert.NotNull(_authenticationManager.AuthenticateUser(Username, "Password2"));
+            ClassicAssert.Throws<OverseerException>(() => _authenticationManager.AuthenticateUser(Username, "Password1"));
         }
 
         [Test]
@@ -352,14 +353,14 @@ namespace Overseer.Tests
                 Username = Username,
                 Password = Password
             });
-            Assert.IsNull(user.SessionLifetime);
+            ClassicAssert.IsNull(user.SessionLifetime);
 
             user.SessionLifetime = 7;
             user = _userManager.UpdateUser(user);            
-            Assert.AreEqual(7, user.SessionLifetime);
+            ClassicAssert.AreEqual(7, user.SessionLifetime);
 
             var userModel = _users.GetById(user.Id);
-            Assert.AreEqual(user.SessionLifetime, userModel.SessionLifetime);
+            ClassicAssert.AreEqual(user.SessionLifetime, userModel.SessionLifetime);
         }
 
         [Test]
@@ -376,10 +377,10 @@ namespace Overseer.Tests
             var ssoToken = _authenticationManager.GetPreauthenticatedToken(user.Id);
             var dbUser = _users.GetById(user.Id);
 
-            Assert.IsNotNull(dbUser.PreauthenticatedToken);
-            Assert.IsNotNull(dbUser.PreauthenticatedTokenExpiration);
-            Assert.AreEqual(ssoToken, dbUser.PreauthenticatedToken);
-            Assert.IsTrue(DateTime.UtcNow.AddMinutes(2) > dbUser.PreauthenticatedTokenExpiration);
+            ClassicAssert.IsNotNull(dbUser.PreauthenticatedToken);
+            ClassicAssert.IsNotNull(dbUser.PreauthenticatedTokenExpiration);
+            ClassicAssert.AreEqual(ssoToken, dbUser.PreauthenticatedToken);
+            ClassicAssert.IsTrue(DateTime.UtcNow.AddMinutes(2) > dbUser.PreauthenticatedTokenExpiration);
         }
 
         [Test]
@@ -392,7 +393,7 @@ namespace Overseer.Tests
                 AccessLevel = AccessLevel.Administrator
             });
             var ssoToken = _authenticationManager.GetPreauthenticatedToken(user.Id);
-            Assert.IsTrue(string.IsNullOrWhiteSpace(ssoToken));
+            ClassicAssert.IsTrue(string.IsNullOrWhiteSpace(ssoToken));
         }
 
         [Test]
@@ -409,10 +410,10 @@ namespace Overseer.Tests
             var ssoAuthedUser = _authenticationManager.ValidatePreauthenticatedToken(ssoToken);
             var tokenAuthedUser = _authenticationManager.AuthenticateToken(ssoAuthedUser.Token);
             var dbUser = _users.GetById(ssoAuthedUser.Id);            
-            Assert.NotNull(tokenAuthedUser);
-            Assert.AreEqual(ssoAuthedUser.Token, tokenAuthedUser.Token);
-            Assert.IsNull(dbUser.PreauthenticatedToken);
-            Assert.IsNull(dbUser.PreauthenticatedTokenExpiration);
+            ClassicAssert.NotNull(tokenAuthedUser);
+            ClassicAssert.AreEqual(ssoAuthedUser.Token, tokenAuthedUser.Token);
+            ClassicAssert.IsNull(dbUser.PreauthenticatedToken);
+            ClassicAssert.IsNull(dbUser.PreauthenticatedTokenExpiration);
         }
     }
 }

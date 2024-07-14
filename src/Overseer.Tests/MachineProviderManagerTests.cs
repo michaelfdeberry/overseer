@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Overseer.Data;
 using Overseer.Machines;
 using Overseer.Machines.Providers;
@@ -71,9 +72,9 @@ namespace Overseer.Tests
             machines.ForEach(m => _machines.Create(m));
 
             var providers = _providerManager.GetProviders(machines);
-            Assert.IsNotNull(providers);
-            Assert.IsNotEmpty(providers);
-            Assert.True(machines.Select(m => m.Id).All(id => providers.Any(p => p.MachineId == id)));
+            ClassicAssert.IsNotNull(providers);
+            ClassicAssert.IsNotEmpty(providers);
+            ClassicAssert.True(machines.Select(m => m.Id).All(id => providers.Any(p => p.MachineId == id)));
         }
                 
         [Test]
@@ -83,33 +84,33 @@ namespace Overseer.Tests
             _machines.Create(machine);
 
             var provider = _providerManager.GetProvider(machine);
-            Assert.NotNull(provider);
+            ClassicAssert.NotNull(provider);
         }
 
         [Test]
         public void ShouldFindTypeForEachPrinterType()
         {
             var type = MachineProviderManager.GetProviderType(new OctoprintMachine());
-            Assert.IsNotNull(type);
-            Assert.AreEqual(typeof(OctoprintMachineProvider), type);
+            ClassicAssert.IsNotNull(type);
+            ClassicAssert.AreEqual(typeof(OctoprintMachineProvider), type);
 
             type = MachineProviderManager.GetProviderType(new RepRapFirmwareMachine());
-            Assert.IsNotNull(type);
-            Assert.AreEqual(typeof(RepRapFirmwareMachineProvider), type);
+            ClassicAssert.IsNotNull(type);
+            ClassicAssert.AreEqual(typeof(RepRapFirmwareMachineProvider), type);
 
-            Assert.Throws<InvalidOperationException>(() => MachineProviderManager.GetProviderType(new InvalidMachine()));
+            ClassicAssert.Throws<InvalidOperationException>(() => MachineProviderManager.GetProviderType(new InvalidMachine()));
         }
 
         [Test]
         public void ShouldGetTypeOfMachineByMachineType()
         {
             var type = Machine.GetMachineType(MachineType.Octoprint.ToString());
-            Assert.AreEqual(typeof(OctoprintMachine), type);
+            ClassicAssert.AreEqual(typeof(OctoprintMachine), type);
 
             type = Machine.GetMachineType(MachineType.RepRapFirmware.ToString());
-            Assert.AreEqual(typeof(RepRapFirmwareMachine), type);
+            ClassicAssert.AreEqual(typeof(RepRapFirmwareMachine), type);
 
-            Assert.Throws<InvalidOperationException>(() => Machine.GetMachineType(MachineType.Unknown.ToString()));
+            ClassicAssert.Throws<InvalidOperationException>(() => Machine.GetMachineType(MachineType.Unknown.ToString()));
         }
 
         class InvalidMachine : Machine

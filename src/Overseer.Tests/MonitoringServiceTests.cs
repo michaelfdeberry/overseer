@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Overseer.Machines;
 using Overseer.Models;
 using System.Collections.Generic;
@@ -27,10 +28,10 @@ namespace Overseer.Tests
         public void ShouldStartMonitoring()
         {
             var monitoringService = CreateMonitoringService();
-            Assert.False(monitoringService.Enabled);
+            ClassicAssert.False(monitoringService.Enabled);
 
             monitoringService.StartMonitoring();
-            Assert.True(monitoringService.Enabled);
+            ClassicAssert.True(monitoringService.Enabled);
         }
         
         [Test]
@@ -38,10 +39,10 @@ namespace Overseer.Tests
         {
             var monitoringService = CreateMonitoringService();
             monitoringService.StartMonitoring();
-            Assert.True(monitoringService.Enabled);
+            ClassicAssert.True(monitoringService.Enabled);
 
             monitoringService.StopMonitoring();
-            Assert.False(monitoringService.Enabled);
+            ClassicAssert.False(monitoringService.Enabled);
         }
 
         [Test]
@@ -85,10 +86,10 @@ namespace Overseer.Tests
             //push the updates with an event. So wait a big to let the tasks complete. 
             await Task.Delay(machineCount * 10);    
 
-            Assert.AreEqual(machineCount, statuses.Count);
+            ClassicAssert.AreEqual(machineCount, statuses.Count);
             for (var i = 1; i <= machineCount; i++)
             {
-                Assert.True(statuses.Any(status => status.MachineId == i));
+                ClassicAssert.True(statuses.Any(status => status.MachineId == i));
             }
         }
     }

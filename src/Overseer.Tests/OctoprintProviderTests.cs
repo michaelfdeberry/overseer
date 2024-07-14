@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Overseer.Machines;
 using Overseer.Machines.Providers;
 using Overseer.Models;
@@ -68,15 +69,15 @@ namespace Overseer.Tests
             //LoadConfiguration is called anytime a printer is added or updated
             await _provider.LoadConfiguration(_machine);
             
-            Assert.AreEqual("http://octoprint.local/webcam/?action=stream", _machine.WebCamUrl);
-            Assert.AreEqual("http://octoprint.local:8080/?action=snapshot", _machine.SnapshotUrl);                                    
-            Assert.AreEqual("CR10", _machine.Profile);
-            Assert.AreEqual(1, _machine.AvailableProfiles.Count);
-            Assert.AreEqual(_machine.Profile, _machine.AvailableProfiles.First().Value);
-            Assert.AreEqual(3, _machine.Tools.Count());            
-            Assert.IsNotNull(_machine.GetHeater(-1)); //bed
-            Assert.IsNotNull(_machine.GetHeater(0)); //hotend
-            Assert.IsNotNull(_machine.GetExtruder(0)); //extruder            
+            ClassicAssert.AreEqual("http://octoprint.local/webcam/?action=stream", _machine.WebCamUrl);
+            ClassicAssert.AreEqual("http://octoprint.local:8080/?action=snapshot", _machine.SnapshotUrl);                                    
+            ClassicAssert.AreEqual("CR10", _machine.Profile);
+            ClassicAssert.AreEqual(1, _machine.AvailableProfiles.Count);
+            ClassicAssert.AreEqual(_machine.Profile, _machine.AvailableProfiles.First().Value);
+            ClassicAssert.AreEqual(3, _machine.Tools.Count());            
+            ClassicAssert.IsNotNull(_machine.GetHeater(-1)); //bed
+            ClassicAssert.IsNotNull(_machine.GetHeater(0)); //hotend
+            ClassicAssert.IsNotNull(_machine.GetExtruder(0)); //extruder            
         }
 
         [Test]
@@ -100,8 +101,8 @@ namespace Overseer.Tests
             }
             catch (Exception e)
             {
-                Assert.AreSame(typeof(OverseerException), e.GetType());
-                Assert.AreEqual(exception, e);
+                ClassicAssert.AreSame(typeof(OverseerException), e.GetType());
+                ClassicAssert.AreEqual(exception, e);
             }
         }
 
@@ -125,8 +126,8 @@ namespace Overseer.Tests
             }
             catch (Exception e)
             {
-                Assert.AreSame(typeof(OverseerException), e.GetType());
-                Assert.AreEqual("octoprint_invalid_key", e.Message);
+                ClassicAssert.AreSame(typeof(OverseerException), e.GetType());
+                ClassicAssert.AreEqual("octoprint_invalid_key", e.Message);
             }
         }
 
@@ -150,8 +151,8 @@ namespace Overseer.Tests
             }
             catch (Exception e)
             {
-                Assert.AreSame(typeof(OverseerException), e.GetType());
-                Assert.AreEqual("printer_connect_failure", e.Message);
+                ClassicAssert.AreSame(typeof(OverseerException), e.GetType());
+                ClassicAssert.AreEqual("printer_connect_failure", e.Message);
             }
         }
 
@@ -160,85 +161,85 @@ namespace Overseer.Tests
         {
             await _provider.LoadConfiguration(_machine);
             var status = await _provider.GetStatus(CancellationToken.None);
-            Assert.NotNull(status);
-            Assert.AreEqual(MachineState.Operational, status.State);
-            Assert.AreEqual(287131, status.ElapsedJobTime);
-            Assert.AreEqual(103481, status.EstimatedTimeRemaining);
-            Assert.AreEqual(73.5f, status.Progress);
-            Assert.AreEqual(100f, status.FanSpeed);
-            Assert.AreEqual(100f, status.FeedRate);
+            ClassicAssert.NotNull(status);
+            ClassicAssert.AreEqual(MachineState.Operational, status.State);
+            ClassicAssert.AreEqual(287131, status.ElapsedJobTime);
+            ClassicAssert.AreEqual(103481, status.EstimatedTimeRemaining);
+            ClassicAssert.AreEqual(73.5f, status.Progress);
+            ClassicAssert.AreEqual(100f, status.FanSpeed);
+            ClassicAssert.AreEqual(100f, status.FeedRate);
 
-            Assert.AreEqual(1, status.FlowRates.Count);
-            Assert.AreEqual(0, status.FlowRates.First().Key);
-            Assert.AreEqual(100f, status.FlowRates.First().Value);
+            ClassicAssert.AreEqual(1, status.FlowRates.Count);
+            ClassicAssert.AreEqual(0, status.FlowRates.First().Key);
+            ClassicAssert.AreEqual(100f, status.FlowRates.First().Value);
 
-            Assert.AreEqual(2, status.Temperatures.Count);
+            ClassicAssert.AreEqual(2, status.Temperatures.Count);
             var bed = status.Temperatures[-1];
-            Assert.IsNotNull(bed);
-            Assert.AreEqual(45.02f, bed.Actual);
-            Assert.AreEqual(45f, bed.Target);
+            ClassicAssert.IsNotNull(bed);
+            ClassicAssert.AreEqual(45.02f, bed.Actual);
+            ClassicAssert.AreEqual(45f, bed.Target);
             var hotEnd = status.Temperatures[0];
-            Assert.IsNotNull(hotEnd);
-            Assert.AreEqual(215.21f, hotEnd.Actual);
-            Assert.AreEqual(215f, hotEnd.Target);
+            ClassicAssert.IsNotNull(hotEnd);
+            ClassicAssert.AreEqual(215.21f, hotEnd.Actual);
+            ClassicAssert.AreEqual(215f, hotEnd.Target);
         }
 
         [Test]
         public void ShouldSetToolTemp()
         {
-            Assert.True(ExecuteGCodeTest(() => _provider.SetToolTemperature(0, 200), c => Assert.AreEqual("M104 P0 S200", c)));
+            ClassicAssert.True(ExecuteGCodeTest(() => _provider.SetToolTemperature(0, 200), c => ClassicAssert.AreEqual("M104 P0 S200", c)));
         }
 
         [Test]
         public void ShouldSetBedTemp()
         {
-            Assert.True(ExecuteGCodeTest(() => _provider.SetBedTemperature(100), c => Assert.AreEqual("M140 S100", c)));
+            ClassicAssert.True(ExecuteGCodeTest(() => _provider.SetBedTemperature(100), c => ClassicAssert.AreEqual("M140 S100", c)));
         }
 
         [Test]
         public void ShouldSetFlowRate()
         {
-            Assert.True(ExecuteGCodeTest(() => _provider.SetFlowRate(0, 50), c => Assert.AreEqual("M221 D0 S50", c)));
+            ClassicAssert.True(ExecuteGCodeTest(() => _provider.SetFlowRate(0, 50), c => ClassicAssert.AreEqual("M221 D0 S50", c)));
         }
 
         [Test]
         public void ShouldSetFeedRate()
         {
-            Assert.True(ExecuteGCodeTest(() => _provider.SetFeedRate(50), c => Assert.AreEqual("M220 S50", c)));
+            ClassicAssert.True(ExecuteGCodeTest(() => _provider.SetFeedRate(50), c => ClassicAssert.AreEqual("M220 S50", c)));
         }
 
         [Test]
         public void ShouldSetFanSpeed()
         {
-            Assert.True(ExecuteGCodeTest(() => _provider.SetFanSpeed(50), c => Assert.AreEqual("M106 S127", c)));
+            ClassicAssert.True(ExecuteGCodeTest(() => _provider.SetFanSpeed(50), c => ClassicAssert.AreEqual("M106 S127", c)));
         }
 
         [Test]
         public void ShouldPausePrint()
         {
-            Assert.True(ExecuteJobTest(() => _provider.PauseJob(), b =>
+            ClassicAssert.True(ExecuteJobTest(() => _provider.PauseJob(), b =>
             {
-                Assert.AreEqual("pause", b["command"].ToString());
-                Assert.AreEqual("pause", b["action"].ToString());
+                ClassicAssert.AreEqual("pause", b["command"].ToString());
+                ClassicAssert.AreEqual("pause", b["action"].ToString());
             }));
         }
 
         [Test]
         public void ShouldResumePrint()
         {
-            Assert.True(ExecuteJobTest(() => _provider.ResumeJob(), b =>
+            ClassicAssert.True(ExecuteJobTest(() => _provider.ResumeJob(), b =>
             {
-                Assert.AreEqual("pause", b["command"].ToString());
-                Assert.AreEqual("resume", b["action"].ToString());
+                ClassicAssert.AreEqual("pause", b["command"].ToString());
+                ClassicAssert.AreEqual("resume", b["action"].ToString());
             }));
         }
 
         [Test]
         public void ShouldCancelPrint()
         {
-            Assert.True(ExecuteJobTest(() => _provider.CancelJob(), b =>
+            ClassicAssert.True(ExecuteJobTest(() => _provider.CancelJob(), b =>
             {
-                Assert.AreEqual("cancel", b["command"].ToString());
+                ClassicAssert.AreEqual("cancel", b["command"].ToString());
             }));
         }
 
@@ -255,11 +256,11 @@ namespace Overseer.Tests
                      It.IsAny<CancellationToken>()
                  ))
                  .Callback((OctoprintMachine machine, string r, string m, IEnumerable<(string, string)> q, object b, CancellationToken c) =>
-                 {
-                    Assert.AreEqual("api/job", r);
-                    Assert.AreEqual("POST", m);
-                    Assert.NotNull(b);
-                    assert(JObject.Parse(JsonConvert.SerializeObject(b)));
+                 {  
+                     ClassicAssert.AreEqual("api/job", r);
+                     ClassicAssert.AreEqual("POST", m);
+                     ClassicAssert.NotNull(b);
+                     assert(JObject.Parse(JsonConvert.SerializeObject(b)));
 
                     callbackExecuted = true;
                 });
@@ -282,9 +283,9 @@ namespace Overseer.Tests
                 ))
                 .Callback((OctoprintMachine machine, string r, string m, IEnumerable<(string, string)> q, object b, CancellationToken c) =>
                 {
-                    Assert.AreEqual("api/printer/command", r);
-                    Assert.AreEqual("POST", m);
-                    Assert.NotNull(b);
+                    ClassicAssert.AreEqual("api/printer/command", r);
+                    ClassicAssert.AreEqual("POST", m);
+                    ClassicAssert.NotNull(b);
 
                     dynamic body = JObject.Parse(JsonConvert.SerializeObject(b));
                     assert(body.command.ToString());

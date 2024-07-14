@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace Overseer.Daemon
+namespace Overseer.Server
 {
     public class OverseerAuthenticationOptions : AuthenticationSchemeOptions
     {
@@ -28,21 +28,20 @@ namespace Overseer.Daemon
             IOptionsMonitor<OverseerAuthenticationOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
-            ISystemClock clock,
             IAuthorizationManager authorizationManager
         )
-            : base(options, logger, encoder, clock)
+            : base(options, logger, encoder)
         {
             _authorizationManager = authorizationManager;
         }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var identity = _authorizationManager.Authorize(Context.Request.Headers["Authorization"]);
+            var identity = _authorizationManager.Authorize(Context.Request.Headers.Authorization);
             if (identity == null)
                 return Task.FromResult(AuthenticateResult.Fail("invalid_token"));
             
-            var ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), null);
+            var ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), OverseerAuthenticationOptions.OverseerAuthenticationScheme);
             return Task.FromResult(AuthenticateResult.Success(ticket));
         }
     }

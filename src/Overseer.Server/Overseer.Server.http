@@ -1,0 +1,6 @@
+@Overseer.Server_HostAddress = http://localhost:5079
+
+GET {{Overseer.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

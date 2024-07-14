@@ -8,7 +8,7 @@ namespace Overseer.Data
 {
     public class LiteRepository<T> : IRepository<T> where T : IEntity
     {
-        readonly LiteCollection<T> _collection;
+        readonly ILiteCollection<T> _collection;
 
         public LiteRepository(LiteDatabase database)
         {

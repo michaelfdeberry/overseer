@@ -32,15 +32,18 @@ namespace Overseer.Machines.Providers
             CancellationToken cancellation = default(CancellationToken)
         )
         {
-            var client = new RestClient(new Uri(machine.Url));
-            var request = new RestRequest(resource, (Method)Enum.Parse(typeof(Method), method));
+            var client = new RestClient(new RestClientOptions
+            {
+                BaseUrl = new Uri(machine.Url),
+                ClientCertificates = GetClientCertificate(machine.ClientCertificate)
+            });
+            var request = new RestRequest(resource, (Method)Enum.Parse(typeof(Method), method));            
             request.AddJsonBody(body);
-
-            client.ClientCertificates = GetClientCertificate(machine.ClientCertificate);
+                        
             machine.Headers?.ToList().ForEach(header => client.AddDefaultHeader(header.Key, header.Value));
             query?.ToList().ForEach(p => request.AddParameter(p.name, p.value, ParameterType.QueryString));
 
-            var response = await client.ExecuteTaskAsync(request, cancellation);
+            var response = await client.ExecuteAsync(request, cancellation);
 
             if (response.ErrorException != null)
                 throw response.ErrorException;
