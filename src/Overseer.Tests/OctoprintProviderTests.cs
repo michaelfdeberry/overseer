@@ -27,7 +27,7 @@ namespace Overseer.Tests
         {
             _machine = new OctoprintMachine();
             _machine.Name = "UnitTestPrinter1";
-            _machine.Url = "http://octoprint.local/";
+            _machine.Url = "http://octoprint.local/machine1";
             _machine.ApiKey = Guid.NewGuid().ToString();
 
             _connector = new Mock<RestMachineConnector<OctoprintMachine>>();

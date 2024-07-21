@@ -1,0 +1,110 @@
+<mat-card class="form-card">
+  <mat-card-header>
+    <mat-card-title> {{ "setup.welcomeTitle" | i18next }} </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-stepper linear="true" #stepper>
+      <mat-step [stepControl]="userForm" editable="false">
+        <form [formGroup]="userForm">
+          <ng-template matStepLabel>{{
+            "setup.createUser" | i18next
+          }}</ng-template>
+          <div class="step-content">
+            <p>{{ "setup.createUserMessage" | i18next }}</p>
+            <app-create-user [form]="userForm"></app-create-user>
+          </div>
+          <div class="step-actions">
+            <span class="spacer"></span>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="createUser()"
+              [disabled]="userForm.invalid || busy"
+            >
+              {{ "setup.next" | i18next }}
+            </button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="machineForm" editable="false" #createMachineStep>
+        <form [formGroup]="machineForm">
+          <ng-template matStepLabel>{{
+            "setup.createMachine" | i18next
+          }}</ng-template>
+          <div class="step-content">
+            <p>{{ "setup.createMachineMessage" | i18next }}</p>
+            <app-create-machine [form]="machineForm"></app-create-machine>
+          </div>
+          <div class="step-actions">
+            <button
+              mat-raised-button
+              (click)="createMachine(true)"
+              [disabled]="machineForm.invalid || busy"
+            >
+              {{ "setup.createMultipleMachines" | i18next }}
+            </button>
+            <span class="spacer"></span>
+            <button
+              mat-raised-button
+              (click)="createMachine(false)"
+              color="primary"
+              [disabled]="machineFormDisabled"
+            >
+              {{ "setup.next" | i18next }}
+            </button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="themeForm" editable="false">
+        <form [formGroup]="themeForm">
+          <ng-template matStepLabel>{{
+            "setup.selectTheme" | i18next
+          }}</ng-template>
+          <div class="step-content">
+            <p>{{ "setup.selectThemeMessage" | i18next }}</p>
+            <app-theme-selector [form]="themeForm"></app-theme-selector>
+          </div>
+          <div class="step-actions">
+            <span class="spacer"></span>
+            <button
+              type="submit"
+              mat-raised-button
+              matStepperNext
+              color="primary"
+            >
+              {{ "setup.next" | i18next }}
+            </button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step>
+        <div class="done-step">
+          <ng-template matStepLabel>{{
+            "setup.complete" | i18next
+          }}</ng-template>
+          <p>{{ "setup.completeMessage" | i18next }}</p>
+
+          <div class="complete-actions">
+            <a [routerLink]="['/']" color="primary" mat-button>{{
+              "setup.monitorMachines" | i18next
+            }}</a>
+            <a
+              [routerLink]="['/configuration', 'machines', 'add']"
+              color="primary"
+              routerLinkActive="router-link-active"
+              mat-button
+              >{{ "setup.addMachine" | i18next }}</a
+            >
+            <a
+              [routerLink]="['/configuration', 'users', 'add']"
+              color="primary"
+              routerLinkActive="router-link-active"
+              mat-button
+              >{{ "setup.addUser" | i18next }}</a
+            >
+          </div>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </mat-card-content>
+</mat-card>

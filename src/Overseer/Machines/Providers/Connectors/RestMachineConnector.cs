@@ -29,7 +29,7 @@ namespace Overseer.Machines.Providers
             string method = "GET",
             IEnumerable<(string name, string value)> query = null,
             object body = null,
-            CancellationToken cancellation = default(CancellationToken)
+            CancellationToken cancellation = default
         )
         {
             var client = new RestClient(new RestClientOptions

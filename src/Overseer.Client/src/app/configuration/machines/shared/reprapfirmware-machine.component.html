@@ -1,0 +1,38 @@
+<div [formGroup]="form">
+    <mat-form-field>
+        <input matInput type="text" id="name" placeholder="{{'name' | i18next}}" formControlName="name" required />
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="url" id="url" placeholder="{{'url' | i18next}}" formControlName="url" required />
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput type="url" id="webcamUrl" placeholder="{{'webcamUrl' | i18next}}" formControlName="webCamUrl" required />
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput type="url" id="snapshotUrl" placeholder="{{'snapshotUrl' | i18next}}" formControlName="snapshotUrl" required />
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-select id="webCamOrientation" placeholder="{{ 'webCamOrientation' | i18next }}" formControlName="webCamOrientation">
+            <mat-option *ngFor="let orientation of webCamOrientations" [value]="orientation.value">
+                {{ orientation.translationKey | i18next }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <div *ngIf="enableAdvancedSettings">
+        <div *ngIf="advancedSettingsVisible">
+            <mat-form-field>
+                <input type="text" matInput id="pem" placeholder="{{'clientPem' | i18next}}" formControlName="clientCertificate" />
+            </mat-form-field>
+        </div>
+        <button *ngIf="!advancedSettingsVisible" mat-raised-button color="primary" (click)="advancedSettingsVisible = true">
+            {{'showAdvancedOptions' | i18next}}
+        </button>
+        <button *ngIf="advancedSettingsVisible" mat-raised-button (click)="advancedSettingsVisible = false">
+            {{'hideAdvancedOptions' | i18next}}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+<div [formGroup]="form">
+    <mat-form-field>
+        <mat-select
+            name="machineType"
+            placeholder="{{ 'machineType' | i18next }}"
+            formControlName="machineType"
+        >
+            <mat-option *ngFor="let type of machineTypes" [value]="type.value">
+                {{ type.translationKey | i18next }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+
+<app-machine [form]="form"></app-machine>

@@ -1,0 +1,39 @@
+<table *ngIf="users$ | async; let users" class="config-table users">
+    <thead>
+    <tr>
+        <th translate>username</th>
+        <th translate>accessLevel</th>
+        <th translate>sessionLifetime</th>
+        <th class="centered hidden-mobile" translate>isLoggedIn</th>
+        <th class="action">
+            <a routerLink="/configuration/users/add" mat-button>
+                <mat-icon>add</mat-icon> {{ 'add' | i18next }}
+            </a>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of users">
+        <th>{{ user.username }}</th>
+        <td>{{ getUserAccessLevelName(user.accessLevel) }}</td>
+        <td>
+            <span *ngIf="user.sessionLifetime; else elseBlock">
+                {{ user.sessionLifetime }} days
+            </span>
+            <ng-template #elseBlock><span translate>indefinite</span></ng-template>
+        </td>
+        <td class="centered hidden-mobile">
+            <mat-icon *ngIf="user.isLoggedIn">check</mat-icon>
+        </td>
+        <td class="action">
+            <a mat-button [routerLink]="['/configuration/users/edit/', user.id]">
+                <mat-icon>edit</mat-icon>
+                {{ 'edit' | i18next }}
+            </a>
+        </td>
+    </tr>
+    <tr *ngIf="!users || !users.length">
+        <td colspan="4" class="empty" translate>noUsers</td>
+    </tr>
+    </tbody>
+</table>

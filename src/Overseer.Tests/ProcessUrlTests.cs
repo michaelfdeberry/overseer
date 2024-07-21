@@ -75,6 +75,6 @@ namespace Overseer.Tests
             var refPath = "http://127.0.0.1/some/path";
             var uri = RestMachineConnector<OctoprintMachine>.ProcessUri(url, refPath);
             ClassicAssert.AreEqual(new Uri("http://192.168.1.1/some/path"), uri);
-        }
+        } 
     }
 }
