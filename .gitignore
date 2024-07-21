@@ -12,9 +12,14 @@ publish/**
 *.suo
 *.user
 *.userosscache
-*.sln.docstates
-*.vscode
+*.sln.docstates 
 *.db
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
