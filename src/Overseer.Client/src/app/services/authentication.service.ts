@@ -1,26 +1,26 @@
-import { Observable, Subject } from "rxjs";
-import { User } from "../models/user.model";
-import { Injectable } from "@angular/core";
+import { Observable, Subject } from 'rxjs';
+import { User } from '../models/user.model';
+import { Injectable } from '@angular/core';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export abstract class AuthenticationService {
-    readonly authenticationChangeEvent$: Subject<User>;
+  readonly authenticationChangeEvent$!: Subject<User | undefined>;
 
-    abstract readonly supportsPreauthentication: boolean;
+  abstract readonly supportsPreauthentication: boolean;
 
-    abstract readonly activeUser: User;
+  abstract readonly activeUser: User;
 
-    abstract requiresLogin(): Observable<boolean>;
+  abstract requiresLogin(): Observable<boolean>;
 
-    abstract login(user: User): Observable<User>;
+  abstract login(user: User): Observable<User>;
 
-    abstract logout(): Observable<Object>;
+  abstract logout(): Observable<Object>;
 
-    abstract logoutUser(userId: number): Observable<User>;
+  abstract logoutUser(userId: number): Observable<User>;
 
-    abstract createInitialUser(user: User): Observable<User>;
+  abstract createInitialUser(user: User): Observable<User>;
 
-    abstract getPreauthenticatedToken(userId: number): Observable<string>;
+  abstract getPreauthenticatedToken(userId: number): Observable<string>;
 
-    abstract validatePreauthenticatedToken(token: string): Observable<User>;
+  abstract validatePreauthenticatedToken(token: string): Observable<User>;
 }

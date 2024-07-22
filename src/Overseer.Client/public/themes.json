@@ -1,8 +1,8 @@
 [
-    { "name": "default-theme", "primaryColor": "#2a78eb" },
-    { "name": "overseer-light", "primaryColor": "#1250e0" },
-    { "name": "deeppurple-amber", "primaryColor": "#512da8" },
-    { "name": "indigo-pink", "primaryColor": "#303f9f" },
-    { "name": "pink-bluegrey", "primaryColor": "#C2185B" },
-    { "name": "purple-green", "primaryColor": "#7b1fa2"}
+  { "name": "default-theme", "primaryColor": "#2a78eb" },
+  { "name": "overseer-light", "primaryColor": "#1250e0" },
+  { "name": "deeppurple-amber", "primaryColor": "#512da8" },
+  { "name": "indigo-pink", "primaryColor": "#303f9f" },
+  { "name": "pink-bluegrey", "primaryColor": "#C2185B" },
+  { "name": "purple-green", "primaryColor": "#7b1fa2" }
 ]

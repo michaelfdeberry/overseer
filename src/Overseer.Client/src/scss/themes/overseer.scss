@@ -1,0 +1,64 @@
+@import "variables";
+@use '@angular/material' as mat;
+
+$overseer-palette: (
+    50: #e6f0fd,
+    100: #c1d9fa,
+    200: #97c0f6,
+    300: #6da6f2,
+    400: #4e93f0,
+    500: #2f80ed,
+    600: #2a78eb,
+    700: #236de8,
+    800: #1d63e5,
+    900: #1250e0,
+    A100: #ffffff,
+    A200: #dbe5ff,
+    A400: #a8bfff,
+    A700: #8facff,
+    contrast: (
+        50: #000000,
+        100: #000000,
+        200: #000000,
+        300: #000000,
+        400: #000000,
+        500: #ffffff,
+        600: #ffffff,
+        700: #ffffff,
+        800: #ffffff,
+        900: #ffffff,
+        A100: #000000,
+        A200: #000000,
+        A400: #000000,
+        A700: #000000
+    )
+);
+
+@use '@angular/material' as mat;
+
+$theme: mat.define-theme((color: (theme-type: dark,
+                primary: mat.$violet-palette,
+            ),
+            typography: (brand-family: 'Comic Sans',
+                bold-weight: 900),
+            density: (scale: -1)));
+
+// Overseer Dark (Default)
+$overseer-app-primary: mat-palette($overseer-palette, 700, 100, 800);
+$overseer-app-accent: mat-palette($overseer-palette, 700, 100, 800);
+$overseer-app-theme: mat-dark-theme($overseer-app-primary, $overseer-app-accent);
+@include angular-material-theme($overseer-app-theme);
+
+// Overseer Light
+$overseer-light-primary: mat-palette($overseer-palette, 700, 100, 800);
+$overseer-light-accent: mat-palette($overseer-palette, 700, 100, 800);
+$overseer-light-theme: mat-light-theme($overseer-light-primary, $overseer-light-accent);
+
+.overseer-light {
+    .app {
+        color: $black;
+        background: $white;
+    }
+
+    @include angular-material-theme($overseer-light-theme);
+}

@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextModule, I18NextPipe } from 'angular-i18next';
 import { AboutComponent } from './about/about.component';
 import { ConfigurationRoutingModule } from './configuration-routing.module';
 import { ConfigurationComponent } from './configuration.component';
@@ -29,7 +29,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatDialogClose } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
+import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 
 @NgModule({
   imports: [
@@ -46,6 +49,11 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatTabsModule,
     MatIconModule,
+    MatDialogClose,
+    MatTooltip,
+    MatIcon,
+    CdkDropList,
+    CdkDrag,
   ],
   declarations: [
     ConfigurationComponent,

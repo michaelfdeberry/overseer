@@ -1,8 +1,12 @@
-<h1 mat-dialog-title>{{ options.titleKey | i18next }}</h1>
+<h1 mat-dialog-title>{{ options.titleKey! | i18next }}</h1>
 <div mat-dialog-content>
-    <p>{{ options.messageKey | i18next }}</p>
+  <p>{{ options.messageKey! | i18next }}</p>
 </div>
 <div mat-dialog-actions>
-  <button mat-button [mat-dialog-close]="false">{{ options.negativeActionTextKey | i18next }}</button>
-  <button mat-button [mat-dialog-close]="true" cdkFocusInitial color="primary">{{ options.positiveActionTextKey | i18next }}</button>
+  <button mat-button [mat-dialog-close]="false">
+    {{ options.negativeActionTextKey! | i18next }}
+  </button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial color="primary">
+    {{ options.positiveActionTextKey! | i18next }}
+  </button>
 </div>

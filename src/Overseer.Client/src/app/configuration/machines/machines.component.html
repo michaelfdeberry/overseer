@@ -1,42 +1,42 @@
 <table *ngIf="machines" class="config-table drag-drop machines">
-    <thead>
+  <thead>
     <tr>
-        <th class="sort-column" translate>sort</th>
-        <th translate>name</th>
-        <th translate class="hidden-mobile">machineType</th>
-        <th class="centered" translate>monitoringEnabled</th>
-        <th class="action">
-            <a routerLink="/configuration/machines/add" mat-button>
-                <mat-icon>add</mat-icon> {{ 'add' | i18next }}
-            </a>
-        </th>
+      <th class="sort-column" translate>sort</th>
+      <th translate>name</th>
+      <th translate class="hidden-mobile">machineType</th>
+      <th class="centered" translate>monitoringEnabled</th>
+      <th class="action">
+        <a routerLink="/configuration/machines/add" mat-button> <mat-icon>add</mat-icon> {{ 'add' | i18next }} </a>
+      </th>
     </tr>
-    </thead>
-    <tbody class="drag-boundary" cdkDropList (cdkDropListDropped)="drop($event)">
+  </thead>
+  <tbody class="drag-boundary" cdkDropList (cdkDropListDropped)="drop($event)">
     <tr *ngFor="let machine of machines; let $index = index" cdkDrag cdkDragBoundary=".drag-boundary">
-        <td class="sort-column">
-            <button mat-button (click)="moveUp($index)" [disabled]="$index === 0">
-                <mat-icon>arrow_drop_up</mat-icon>
-            </button>
-            <button mat-button (click)="moveDown($index)" [disabled]="$index === machines.length - 1">
-                <mat-icon>arrow_drop_down</mat-icon>
-            </button>
-        </td>
-        <th class="name">{{ machine.name }}</th>
-        <td class="hidden-mobile">{{ getMachineTypeName(machine.machineType) }}</td>
-        <td class="centered">
-            <mat-icon *ngIf="machine.disabled">warning</mat-icon>
-            <mat-icon *ngIf="!machine.disabled">check</mat-icon>
-        </td>
-        <td class="action">
-            <a mat-button [routerLink]="['/configuration/machines/edit/', machine.id]">
-                <mat-icon>edit</mat-icon>
-                {{ 'edit' | i18next }}
-            </a>
-        </td>
+      <td class="sort-column">
+        <button mat-button (click)="moveUp($index)" [disabled]="$index === 0">
+          <mat-icon>arrow_drop_up</mat-icon>
+        </button>
+        <button mat-button (click)="moveDown($index)" [disabled]="$index === machines.length - 1">
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+      </td>
+      <th class="name">{{ machine.name }}</th>
+      <td class="hidden-mobile">
+        {{ getMachineTypeName(machine.machineType) }}
+      </td>
+      <td class="centered">
+        <mat-icon *ngIf="machine.disabled">warning</mat-icon>
+        <mat-icon *ngIf="!machine.disabled">check</mat-icon>
+      </td>
+      <td class="action">
+        <a mat-button [routerLink]="['/configuration/machines/edit/', machine.id]">
+          <mat-icon>edit</mat-icon>
+          {{ 'edit' | i18next }}
+        </a>
+      </td>
     </tr>
     <tr *ngIf="!machines || !machines.length">
-        <td colspan="4" class="empty" translate>noMachines</td>
+      <td colspan="4" class="empty" translate>noMachines</td>
     </tr>
-    </tbody>
+  </tbody>
 </table>

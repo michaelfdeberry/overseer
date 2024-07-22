@@ -1,78 +1,83 @@
-import { Inject, Injectable } from "@angular/core";
-import { NGXLogInterface } from "ngx-logger";
-import { CONFIG_TOKEN, DBConfig, NgxIndexedDBService } from "../../../libs/ngx-indexed-db/public_api";
-import { Machine } from "../../models/machine.model";
-import { PersistedUser } from "../../models/user.model";
+import { Inject, Injectable } from '@angular/core';
+import { CONFIG_TOKEN, DBConfig, NgxIndexedDBService } from 'ngx-indexed-db';
+import { INGXLoggerMetadata } from 'ngx-logger';
+import { map, Observable } from 'rxjs';
+import { Machine } from '../../models/machine.model';
+import { PersistedUser } from '../../models/user.model';
 
 export class Store<T> {
-    constructor(storeName: string, private db: NgxIndexedDBService) {
-        db.currentStore = storeName;
-    }
+  constructor(
+    private storeName: string,
+    private db: NgxIndexedDBService
+  ) {}
 
-    add(value: T, key?: any): Promise<number> {
-        return this.db.add(value, key);
-    }
+  add(value: T, key?: number): Observable<number> {
+    return this.db.add<T>(this.storeName, value, key).pipe(map((value) => value.id));
+  }
 
-    getByKey(key: any): Promise<T> {
-        return this.db.getByKey(key);
-    }
+  getByKey(key: number): Observable<T> {
+    return this.db.getByKey<T>(this.storeName, key);
+  }
 
-    getByID(id: string | number): Promise<T> {
-        return this.db.getByID(id);
-    }
+  getByID(id: string | number): Observable<T> {
+    return this.db.getByID<T>(this.storeName, id);
+  }
 
-    getAll(): Promise<T[]> {
-        return this.db.getAll();
-    }
+  getAll(): Observable<T[]> {
+    return this.db.getAll<T>(this.storeName);
+  }
 
-    update(value: T, key?: any): Promise<any> {
-        return this.db.update(value, key);
-    }
+  update(value: T): Observable<T> {
+    return this.db.update<T>(this.storeName, value);
+  }
 
-    deleteRecord(key: any): Promise<any> {
-        return this.db.deleteRecord(key);
-    }
+  deleteRecord(key: number): Observable<boolean> {
+    return this.db.deleteByKey(this.storeName, key);
+  }
 
-    delete(key: any): Promise<any> {
-        return this.db.delete(key);
-    }
+  delete(key: number): Observable<T[]> {
+    return this.db.delete<T>(this.storeName, key);
+  }
 
-    clear(): Promise<any> {
-        return this.db.clear();
-    }
+  clear(): Observable<boolean> {
+    return this.db.clear(this.storeName);
+  }
 
-    openCursor(cursorCallback: (event: Event) => void, keyRange?: IDBKeyRange): Promise<void> {
-        return this.db.openCursor(cursorCallback, keyRange);
-    }
+  openCursor(keyRange?: IDBKeyRange): Observable<Event> {
+    return this.db.openCursor(this.storeName, keyRange);
+  }
 
-    getByIndex(indexName: string, key: any): Promise<any> {
-        return this.db.getByIndex(indexName, key);
-    }
+  getByIndex(indexName: string, key: IDBValidKey): Observable<T> {
+    return this.db.getByIndex<T>(this.storeName, indexName, key);
+  }
 }
 
-@Injectable({ providedIn: "root"})
+@Injectable({ providedIn: 'root' })
 export class IndexedStorageService {
-    private stores = new Map<string, any>();
+  private stores = new Map<string, any>();
 
-    constructor (@Inject(CONFIG_TOKEN) private dbConfig: DBConfig) {}
+  constructor(
+    @Inject(CONFIG_TOKEN) private dbConfig: DBConfig,
+    @Inject(NgxIndexedDBService) private dbService: NgxIndexedDBService
+  ) {}
 
-    get machines(): Store<Machine> {
-        return this.getStore("machines");
+  get machines(): Store<Machine> {
+    return this.getStore<Machine>('machines');
+  }
+
+  get users(): Store<PersistedUser> {
+    return this.getStore('users');
+  }
+
+  get logging(): Store<INGXLoggerMetadata> {
+    return this.getStore('logging');
+  }
+
+  private getStore<T>(storeName: string) {
+    if (!this.stores.has(storeName)) {
+      this.stores.set(storeName, new Store<T>(storeName, this.dbService));
     }
 
-    get users(): Store<PersistedUser> {
-        return this.getStore("users");
-    }
-
-    get logging(): Store<NGXLogInterface> {
-        return this.getStore("logging");
-    }
-
-    private getStore<T>(storeName: string) {
-        if (!this.stores.has(storeName)) {
-            this.stores.set(storeName, new Store<T>(storeName, new NgxIndexedDBService(this.dbConfig)));
-        }
-
-        return <Store<T>>this.stores.get(storeName);
-    }
+    return <Store<T>>this.stores.get(storeName);
+  }
 }

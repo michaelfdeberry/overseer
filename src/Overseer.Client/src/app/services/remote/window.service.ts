@@ -4,5 +4,5 @@
 // This will end up in the build for the other build types, but that
 // shouldn't really be an issue since it's not used.
 export class WindowService extends Window {
-    $: any;
+  $: any;
 }

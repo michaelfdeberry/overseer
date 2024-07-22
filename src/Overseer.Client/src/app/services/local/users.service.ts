@@ -1,120 +1,133 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
-import * as bcrypt from "bcryptjs";
-import { Observable, defer } from "rxjs";
+import { genSaltSync, hashSync } from 'bcryptjs';
+import { Observable, throwError } from 'rxjs';
 
-import { UsersService } from "../users.service";
-import { PersistedUser, toUser, User, AccessLevel } from "../../models/user.model";
-import { map, catchError } from "rxjs/operators";
-import { ErrorHandlerService } from "../error-handler.service";
-import { RequireAdministrator } from "../../shared/require-admin.decorator";
-import { IndexedStorageService } from "./indexed-storage.service";
+import { catchError, map, mergeMap } from 'rxjs/operators';
+import { AccessLevel, PersistedUser, toUser, User } from '../../models/user.model';
+import { RequireAdministrator } from '../../shared/require-admin.decorator';
+import { ErrorHandlerService } from '../error-handler.service';
+import { UsersService } from '../users.service';
+import { IndexedStorageService } from './indexed-storage.service';
 
 export interface UserManager {
-    storage: IndexedStorageService;
+  storage: IndexedStorageService;
 }
 
-export async function createUser(userManager: UserManager, user: User): Promise<User> {
-    if (!user) { throw new Error("invalid_user"); }
-    if (!user.username) { throw new Error("invalid_username"); }
-    if (!user.password) { throw new Error("invalid_password"); }
-    if (await userManager.storage.users.getByIndex("username", user.username)) {
-        throw new Error("unavailable_username");
-    }
+export function createUser(userManager: UserManager, user: User): Observable<User> {
+  if (!user) {
+    return throwError(() => new Error('invalid_user'));
+  }
+  if (!user.username) {
+    return throwError(() => new Error('invalid_username'));
+  }
+  if (!user.password) {
+    return throwError(() => new Error('invalid_password'));
+  }
 
-    const salt = bcrypt.genSaltSync();
-    const hash = bcrypt.hashSync(user.password, salt);
-    const pUser = {
+  return userManager.storage.users.getByIndex('username', user.username).pipe(
+    mergeMap((u) => {
+      if (u) return throwError(() => new Error('unavailable_username'));
+
+      const salt = genSaltSync();
+      const hash = hashSync(user.password!, salt);
+      const pUser = {
         username: user.username,
         passwordHash: hash,
         passwordSalt: salt,
         sessionLifetime: user.sessionLifetime,
-        accessLevel: user.accessLevel
-    };
+        accessLevel: user.accessLevel,
+      };
 
-    await userManager.storage.users.add(pUser);
-    return toUser(pUser);
+      return userManager.storage.users.add(pUser).pipe(map(() => toUser(pUser)));
+    })
+  );
 }
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class LocalUsersService implements UsersService, UserManager {
-    constructor(
-        public storage: IndexedStorageService,
-        private errorHandler: ErrorHandlerService
-    ) {}
+  constructor(
+    public storage: IndexedStorageService,
+    private errorHandler: ErrorHandlerService
+  ) {}
 
-    @RequireAdministrator()
-    getUsers(): Observable<User[]> {
-        return defer(() => this.storage.users.getAll())
-            .pipe(map(pUsers => pUsers.map((u: PersistedUser) => toUser(u))))
-            .pipe(catchError(err => this.errorHandler.handle(err)));
-    }
+  @RequireAdministrator()
+  getUsers(): Observable<User[]> {
+    return this.storage.users
+      .getAll()
+      .pipe(map((pUsers) => pUsers.map((u: PersistedUser) => toUser(u))))
+      .pipe(catchError((err) => this.errorHandler.handle(err)));
+  }
 
-    @RequireAdministrator()
-    getUser(userId: number): Observable<User> {
-        return defer(() => this.storage.users.getByID(userId))
-            .pipe(map(pUser => toUser(pUser)))
-            .pipe(catchError(err => this.errorHandler.handle(err)));
-    }
+  @RequireAdministrator()
+  getUser(userId: number): Observable<User> {
+    return this.storage.users
+      .getByID(userId)
+      .pipe(map((pUser) => toUser(pUser)))
+      .pipe(catchError((err) => this.errorHandler.handle(err)));
+  }
 
-    @RequireAdministrator()
-    createUser(user: User): Observable<User> {
-        return defer(() => createUser(this, user))
-            .pipe(catchError(err => this.errorHandler.handle(err)));
-    }
+  @RequireAdministrator()
+  createUser(user: User): Observable<User> {
+    return createUser(this, user).pipe(catchError((err) => this.errorHandler.handle(err)));
+  }
 
-    @RequireAdministrator()
-    updateUser(user: User): Observable<User> {
-        const self = this;
-        return defer(async function(): Promise<User> {
-            const pUser = await self.storage.users.getByID(user.id);
+  @RequireAdministrator()
+  updateUser(user: User): Observable<User> {
+    return this.storage.users.getByID(user.id!).pipe(
+      mergeMap((pUser) => {
+        pUser.sessionLifetime = user.sessionLifetime;
+        pUser.accessLevel = user.accessLevel;
+        pUser.token = undefined;
+        pUser.tokenExpiration = undefined;
 
-            pUser.sessionLifetime = user.sessionLifetime;
-            pUser.accessLevel = user.accessLevel;
-            pUser.token = null;
-            pUser.tokenExpiration = null;
-            await self.storage.users.update(pUser);
+        return this.storage.users.update(pUser).pipe(
+          map((u) => toUser(u)),
+          catchError((err) => this.errorHandler.handle(err))
+        );
+      }),
+      catchError((err) => this.errorHandler.handle(err))
+    );
+  }
 
-            return toUser(pUser);
-        })
-            .pipe(catchError(err => this.errorHandler.handle(err)));
-    }
+  @RequireAdministrator()
+  deleteUser(user: User): Observable<User> {
+    return this.storage.users.getAll().pipe(
+      mergeMap((users) => {
+        if (users.length === 1) {
+          throw new Error('delete_user_unavailable');
+        }
 
-    @RequireAdministrator()
-    deleteUser(user: User): Observable<any> {
-        const self = this;
-        return defer(async function (): Promise<User> {
-            const users = await self.storage.users.getAll();
-            if (users.length === 1) {
-                throw new Error("delete_user_unavailable");
-            }
+        const remainingAdmins = users.filter((u) => u.accessLevel === AccessLevel.Administrator);
+        if (user.accessLevel === AccessLevel.Administrator && remainingAdmins.length === 1) {
+          throw new Error('delete_user_unavailable');
+        }
 
-            if (user.accessLevel === AccessLevel.Administrator &&
-                users.filter(u => u.accessLevel === AccessLevel.Readonly).length === 1) {
-                throw new Error("delete_user_unavailable");
-            }
+        return this.storage.users.deleteRecord(user.id!).pipe(
+          map(() => user),
+          catchError((err) => this.errorHandler.handle(err))
+        );
+      }),
+      catchError((err) => this.errorHandler.handle(err))
+    );
+  }
 
-            await self.storage.users.deleteRecord(user.id);
-            return user;
-        })
-            .pipe(catchError(err => this.errorHandler.handle(err)));
-    }
+  changePassword(user: User): Observable<User> {
+    return this.storage.users.getByID(user.id!).pipe(
+      mergeMap((pUser) => {
+        const salt = genSaltSync();
+        const hash = hashSync(user.password!, salt);
+        pUser.passwordHash = hash;
+        pUser.passwordSalt = salt;
+        pUser.token = undefined;
+        pUser.tokenExpiration = undefined;
 
-    changePassword(user: User): Observable<User> {
-        const self = this;
-        return defer(async function(): Promise<User> {
-            const pUser = await self.storage.users.getByID(user.id);
-
-            const salt = bcrypt.genSaltSync();
-            const hash = bcrypt.hashSync(user.password, salt);
-            pUser.passwordHash = hash;
-            pUser.passwordSalt = salt;
-            pUser.token = null;
-            pUser.tokenExpiration = null;
-            await self.storage.users.update(pUser);
-
-            return toUser(pUser);
-        })
-            .pipe(catchError(err => this.errorHandler.handle(err)));
-    }
+        return this.storage.users.update(pUser).pipe(
+          map((u) => toUser(u)),
+          catchError((err) => this.errorHandler.handle(err))
+        );
+      }),
+      catchError((err) => this.errorHandler.handle(err))
+    );
+  }
 }

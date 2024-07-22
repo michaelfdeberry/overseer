@@ -1,37 +1,36 @@
 <div class="machines" *ngIf="machines">
-        <!-- <app-monitoring-machine *ngFor="let machine of machines | machineMonitorFilter | machineMonitorResizer" [machine]="machine"></app-monitoring-machine> -->
-        <div class="grid" *appLet="machines | machineMonitorFilter as visibleMachines" [ngClass]="{ 'scroll': rowHeight !== 'fit' }">
-            <mat-grid-list class="grid-list" [cols]="columns" [rowHeight]="rowHeight">
-                <mat-grid-tile *ngFor="let machine of visibleMachines">
-                    <app-monitoring-machine [machine]="machine"></app-monitoring-machine>
-                </mat-grid-tile>
-            </mat-grid-list>
-        </div>
+  <div class="grid" *appLet="machines | machineMonitorFilter as visibleMachines" [ngClass]="{ scroll: rowHeight !== 'fit' }">
+    <mat-grid-list class="grid-list" [cols]="columns" [rowHeight]="rowHeight">
+      <mat-grid-tile *ngFor="let machine of visibleMachines">
+        <app-monitoring-machine [machine]="machine"></app-monitoring-machine>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
 
-        <div class="no-machines" *ngIf="!machines.length; else elseBlock">
-           <p translate="noMachine"></p>
-            <p>
-                <a mat-button routerLink="/configuration/machines/add">
-                    <span translate="noMachinesAddMachine"></span>
-                </a>
-            </p>
-        </div>
+  <div class="no-machines" *ngIf="!machines.length; else elseBlock">
+    <p translate="noMachine"></p>
+    <p>
+      <a mat-button routerLink="/configuration/machines/add">
+        <span translate="noMachinesAddMachine"></span>
+      </a>
+    </p>
+  </div>
 
-        <ng-template #elseBlock>
-            <div *ngIf="machines | machineMonitorFilter as visibleMachines">
-               <div class="no-machines" *ngIf="!visibleMachines?.length">
-                    <p>
-                        <span translate>noMachinesEditMachines</span>
-                    </p>
-                    <p>
-                        <a *ngIf="settings.hideIdleMachines" mat-button color="accent" routerLink="/configuration/general">
-                            <span translate>editVisibility</span>
-                        </a>
-                        <a *ngIf="settings.hideDisabledMachines" mat-button color="accent" routerLink="/configuration/machines">
-                            <span translate>editMachineConfig</span>
-                        </a>
-                    </p>
-               </div>
-            </div>
-        </ng-template>
+  <ng-template #elseBlock>
+    <div *ngIf="machines | machineMonitorFilter as visibleMachines">
+      <div class="no-machines" *ngIf="!visibleMachines?.length">
+        <p>
+          <span translate>noMachinesEditMachines</span>
+        </p>
+        <p>
+          <a *ngIf="settings.hideIdleMachines" mat-button color="accent" routerLink="/configuration/general">
+            <span translate>editVisibility</span>
+          </a>
+          <a *ngIf="settings.hideDisabledMachines" mat-button color="accent" routerLink="/configuration/machines">
+            <span translate>editMachineConfig</span>
+          </a>
+        </p>
+      </div>
     </div>
+  </ng-template>
+</div>

@@ -1,0 +1,124 @@
+@import "variables";
+@import "material-icons";
+
+@import "theme";
+@import "material";
+@import "dialogs";
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: $font-family-base;
+    height: 100%;
+
+    .app {
+        display: block;
+        width: 100%;
+        height: 100%;
+        color: $white;
+        background: $black;
+    }
+}
+
+a.link {
+    color: $sub-text;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+app-navigation {
+    display: block;
+}
+
+.nav-menu {
+    width: 256px;
+
+    .mat-menu-item {
+        mat-icon {
+            float: right;
+            margin: 12px 0;
+        }
+    }
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+
+    > * {
+        width: 100%;
+    }
+
+    .actions {
+        margin: 16px 16px -24px;
+        max-width: 100%;
+        display: flex;
+        justify-content: flex-end;
+
+        button, a {
+            margin: 0 4px;
+        }
+    }
+
+    .form-actions {
+        display: flex;
+    }
+}
+
+.mat-card.form-card {
+    max-width: 50%;
+    margin: 10px auto 0;
+    overflow-x: hidden;
+    padding: 24px;
+
+    @media (max-width: 1170px) {
+        max-width: 80%;
+    }
+
+    @media (max-width: 768px) {
+        max-width: 90%;
+    }
+
+    .mat-card-header {
+        .mat-card-avatar {
+            height: 30px;
+            width: 30px;
+        }
+
+        .mat-card-title {
+            margin: 3px 0;
+            font-size: 18px;
+        }
+    }
+}
+
+.hidden-mobile {
+    @media (max-width: 480px) {
+        display: none;
+    }
+}
+
+.flex {
+    display: flex;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+ng-component {
+    position: relative;
+    width: 100%;
+}
+
+.small {
+    display: flex;
+    font-size: 12px;
+}
+
+.authorize-hidden {
+    display: none !important;
+}

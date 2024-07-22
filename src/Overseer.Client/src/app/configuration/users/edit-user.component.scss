@@ -1,17 +1,17 @@
 .mat-card-avatar {
-    position: relative;
+  position: relative;
 
-    .edit {
-        $size: 13px;
-        height: $size;
-        width: $size;
-        font-size: $size;
-        position: absolute;
-        left: -3px;
-        top: 6px;
-    }
+  .edit {
+    $size: 13px;
+    height: $size;
+    width: $size;
+    font-size: $size;
+    position: absolute;
+    left: -3px;
+    top: 6px;
+  }
 
-    .user {
-        margin-left: 3px;
-    }
+  .user {
+    margin-left: 3px;
+  }
 }

@@ -45,7 +45,7 @@ export class EditUserComponent implements OnInit {
     private formBuilder: FormBuilder,
     private dialog: DialogService,
     private i18NextService: I18NextService,
-    private snackBar: MatSnackBar,
+    private snackBar: MatSnackBar
   ) {
     this.form = this.formBuilder.group({
       id: [],
@@ -61,7 +61,7 @@ export class EditUserComponent implements OnInit {
       },
       {
         validator: matchValidator('password', 'confirmPassword'),
-      },
+      }
     );
   }
 
@@ -89,7 +89,7 @@ export class EditUserComponent implements OnInit {
         this.router.navigate(['/login']);
       });
     } else {
-      this.authenticationService.logoutUser(this.user.id).subscribe((user) => {
+      this.authenticationService.logoutUser(this.user.id!).subscribe((user) => {
         this.user = user;
       });
     }
@@ -99,11 +99,7 @@ export class EditUserComponent implements OnInit {
     if (!this.user) return;
     if (!this.users) return;
 
-    if (
-      this.user.accessLevel === AccessLevel.Administrator &&
-      this.users.filter((u) => u.accessLevel === AccessLevel.Administrator)
-        .length === 1
-    ) {
+    if (this.user.accessLevel === AccessLevel.Administrator && this.users.filter((u) => u.accessLevel === AccessLevel.Administrator).length === 1) {
       this.dialog.alert({
         titleKey: 'warning',
         messageKey: 'requiresAdminPrompt',
@@ -128,19 +124,15 @@ export class EditUserComponent implements OnInit {
   }
 
   changePassword() {
-    this.handleNetworkAction(
-      this.usersService.changePassword(this.passwordForm.value),
-    );
+    this.handleNetworkAction(this.usersService.changePassword(this.passwordForm.value));
   }
 
   generatePreAuthentication() {
     if (!this.user) return;
 
-    this.authenticationService
-      .getPreauthenticatedToken(this.user.id)
-      .subscribe((token) => {
-        this.generatedUrl = `${window.location.origin}/sso?token=${token}`;
-      });
+    this.authenticationService.getPreauthenticatedToken(this.user.id!).subscribe((token) => {
+      this.generatedUrl = `${window.location.origin}/sso?token=${token}`;
+    });
   }
 
   copyToClipboard(input: HTMLInputElement) {
@@ -161,7 +153,7 @@ export class EditUserComponent implements OnInit {
     this.form.disable();
     observable.subscribe(
       () => this.router.navigate(['/configuration/users']),
-      () => this.form.enable(),
+      () => this.form.enable()
     );
   }
 }

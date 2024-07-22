@@ -1,14 +1,14 @@
-import { Injectable } from "@angular/core";
-import { Subject } from "rxjs";
-import { MachineStatus } from "../models/machine-status.model";
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import { MachineStatus } from '../models/machine-status.model';
 
 @Injectable({
-    providedIn: "root"
+  providedIn: 'root',
 })
 export abstract class MonitoringService {
-    readonly statusEvent$: Subject<MachineStatus>;
+  readonly statusEvent$!: Subject<MachineStatus>;
 
-    abstract enableMonitoring(): void;
+  abstract enableMonitoring(): void;
 
-    abstract disableMonitoring(): void;
+  abstract disableMonitoring(): void;
 }

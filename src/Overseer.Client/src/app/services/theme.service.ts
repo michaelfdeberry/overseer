@@ -1,59 +1,68 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
-import { LocalStorageService } from "ngx-store";
-import { HttpClient } from "@angular/common/http";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { LocalStorageService } from 'ngx-store';
+import { HttpClient } from '@angular/common/http';
 
 export interface ThemeUpdate {
-    current: string;
-    previous?: string;
+  current: string;
+  previous?: string;
 }
 
 export interface Theme {
-    name: string;
-    primaryColor: string;
+  name: string;
+  primaryColor: string;
 }
 
 @Injectable({
-    providedIn: "root"
+  providedIn: 'root',
 })
 export class ThemeService {
-    themes: Theme[];
-    theme$: BehaviorSubject<ThemeUpdate>;
+  themes?: Theme[];
+  theme$: BehaviorSubject<ThemeUpdate>;
 
-    get currentTheme(): string {
-        return this.localStorage.get("currentTheme");
+  get currentTheme(): string {
+    return this.localStorage.get('currentTheme');
+  }
+
+  set currentTheme(value: string) {
+    this.localStorage.set('currentTheme', value);
+  }
+
+  get primaryColor() {
+    if (!this.themes) {
+      return '#fff';
     }
 
-    set currentTheme(value: string) {
-        this.localStorage.set("currentTheme", value);
+    const theme = this.themes.find((t) => t.name === this.currentTheme);
+    if (theme) {
+      return theme.primaryColor;
     }
 
-    get primaryColor() {
-        if (!this.themes) { return "#fff"; }
+    return this.themes.find((t) => t.name === 'default-theme')!.primaryColor;
+  }
 
-        const theme = this.themes.find(t => t.name === this.currentTheme);
-        if (theme) { return theme.primaryColor; }
+  constructor(
+    private localStorage: LocalStorageService,
+    http: HttpClient,
+  ) {
+    http
+      .get<Theme[]>('/themes.json')
+      .subscribe((themes) => (this.themes = themes));
 
-        return this.themes.find(t => t.name === "default-theme").primaryColor;
-    }
+    const theme = this.currentTheme || 'default-theme';
+    this.theme$ = new BehaviorSubject<ThemeUpdate>({
+      current: theme,
+    });
 
-    constructor(private localStorage: LocalStorageService, http: HttpClient) {
-        http.get<Theme[]>("/assets/themes.json").subscribe(themes => this.themes = themes);
+    this.currentTheme = theme;
+  }
 
-        const theme = this.currentTheme || "default-theme";
-        this.theme$ = new BehaviorSubject<ThemeUpdate>({
-            current: theme
-        });
+  applyTheme(themeClassName: string) {
+    this.theme$.next({
+      current: themeClassName,
+      previous: this.currentTheme,
+    });
 
-        this.currentTheme = theme;
-    }
-
-    applyTheme(themeClassName) {
-        this.theme$.next({
-            current: themeClassName,
-            previous: this.currentTheme
-        });
-
-        this.currentTheme = themeClassName;
-    }
+    this.currentTheme = themeClassName;
+  }
 }

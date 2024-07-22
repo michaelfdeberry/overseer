@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
-import { NGXLogger } from "ngx-logger";
+import { Injectable } from '@angular/core';
+import { NGXLogger } from 'ngx-logger';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export abstract class LoggingService {
-    abstract readonly logger: NGXLogger;
+  abstract readonly logger: NGXLogger;
 }

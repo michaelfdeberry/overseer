@@ -1,46 +1,49 @@
-import { Component, OnInit } from "@angular/core";
-import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
-
-import { MachinesService } from "../../services/machines.service";
-import { MachineType, Machine } from "../../models/machine.model";
-import { simpleMachineSort } from "../../shared/machine-sorts";
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Component, OnInit } from '@angular/core';
+import { Machine, MachineType } from '../../models/machine.model';
+import { MachinesService } from '../../services/machines.service';
+import { simpleMachineSort } from '../../shared/machine-sorts';
 
 @Component({
-    templateUrl: "./machines.component.html",
-    styleUrls: ["../configuration.scss"]
+  templateUrl: './machines.component.html',
+  styleUrls: ['../configuration.scss'],
 })
 export class MachinesComponent implements OnInit {
-    constructor(private machinesService: MachinesService) {}
+  constructor(private machinesService: MachinesService) {}
 
-    machines: Machine[];
+  machines?: Machine[];
 
-    getMachineTypeName(machineType: MachineType) {
-        return MachineType[machineType];
+  getMachineTypeName(machineType: MachineType) {
+    return MachineType[machineType];
+  }
+
+  ngOnInit() {
+    this.machinesService.getMachines().subscribe((machines) => (this.machines = machines.sort(simpleMachineSort)));
+  }
+
+  moveUp(index: number) {
+    if (index <= 0) {
+      return;
     }
 
-    ngOnInit() {
-        this.machinesService.getMachines()
-            .subscribe(machines => this.machines = machines.sort(simpleMachineSort));
-    }
+    this.move(index, --index);
+  }
 
-    moveUp(index: number) {
-        if (index <= 0) { return; }
+  moveDown(index: number) {
+    if (!this.machines) return;
+    if (index >= this.machines.length) return;
 
-        this.move(index, --index);
-    }
+    this.move(index, ++index);
+  }
 
-    moveDown(index: number) {
-        if (index >= this.machines.length) { return; }
+  move(previousIndex: number, currentIndex: number) {
+    if (!this.machines?.length) return;
 
-        this.move(index, ++index);
-    }
+    moveItemInArray(this.machines, previousIndex, currentIndex);
+    this.machinesService.sortMachines(this.machines.map((m) => m.id)).subscribe();
+  }
 
-    move(previousIndex: number, currentIndex: number) {
-        moveItemInArray(this.machines, previousIndex, currentIndex);
-        this.machinesService.sortMachines(this.machines.map(m => m.id)).subscribe();
-    }
-
-    drop(event: CdkDragDrop<string[]>) {
-        this.move(event.previousIndex, event.currentIndex);
-    }
+  drop(event: CdkDragDrop<string[]>) {
+    this.move(event.previousIndex, event.currentIndex);
+  }
 }

@@ -1,10 +1,10 @@
-import { Component } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-    templateUrl: "./configuration.component.html",
-    styleUrls: ["./configuration.scss"]
+  templateUrl: './configuration.component.html',
+  styleUrls: ['./configuration.scss'],
 })
 export class ConfigurationComponent {
-    constructor( private route: ActivatedRoute ) { }
+  constructor(private route: ActivatedRoute) {}
 }

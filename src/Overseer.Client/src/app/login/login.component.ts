@@ -1,36 +1,37 @@
-import { Component, OnInit } from "@angular/core";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { Router, ActivatedRoute } from "@angular/router";
-
-import { AuthenticationService } from "../services/authentication.service";
-import { User } from "../models/user.model";
-import { Observable } from "rxjs";
+import { Component, OnInit } from '@angular/core';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { MatCard, MatCardActions, MatCardContent } from '@angular/material/card';
+import { MatFormField } from '@angular/material/form-field';
+import { Router } from '@angular/router';
+import { I18NextModule } from 'angular-i18next';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
-    templateUrl: "./login.component.html"
+  templateUrl: './login.component.html',
+  standalone: true,
+  imports: [MatCard, MatFormField, MatCard, MatCardContent, MatCardActions, I18NextModule, ReactiveFormsModule],
 })
-export class LoginComponent implements OnInit {
-    form: FormGroup;
+export class LoginComponent {
+  form: UntypedFormGroup;
 
-    constructor(
-        private authenticationService: AuthenticationService,
-        private formBuilder: FormBuilder,
-        private router: Router,
-        private route: ActivatedRoute
-    ) {}
+  constructor(
+    private authenticationService: AuthenticationService,
+    private formBuilder: UntypedFormBuilder,
+    private router: Router
+  ) {
+    this.form = this.formBuilder.group({
+      username: [null, Validators.required],
+      password: [null, Validators.required],
+    });
+  }
 
-    ngOnInit() {
-        this.form = this.formBuilder.group({
-            username: [null, Validators.required],
-            password: [null, Validators.required]
-        });
-    }
+  signIn() {
+    if (!this.form) return;
 
-    signIn() {
-        this.form.disable();
-        this.authenticationService.login(this.form.value).subscribe(
-            () => this.router.navigate(["/"]),
-            () => this.form.enable()
-        );
-    }
+    this.form.disable();
+    this.authenticationService.login(this.form.value).subscribe({
+      complete: () => this.router.navigate(['/']),
+      error: () => this.form?.enable(),
+    });
+  }
 }

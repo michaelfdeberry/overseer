@@ -1,192 +1,200 @@
 @import "variables";
 
 .machine {
-    width: 100%;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  float: left;
+  box-sizing: border-box;
+  color: $white;
+  overflow: hidden;
+
+  .zoom-panel {
     height: 100%;
-    position: relative;
-    float: left;
-    box-sizing: border-box;
-    color: $white;
-    overflow: hidden;
+    width: 100%;
+    background-image: url("/assets/fuzz.gif");
+  }
 
+  &.zoom {
     .zoom-panel {
-        height: 100%;
-        width: 100%;
-        background-image: url('/assets/fuzz.gif');
-    }
-
-    &.zoom {
-        .zoom-panel {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 75;
-            background-image: none;
-            background-color: $black;
-        }
-
-        .web-cam {
-            background-size: contain;
-            background-position: center;
-            cursor: zoom-out;
-        }
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 75;
+      background-image: none;
+      background-color: $black;
     }
 
     .web-cam {
-        position: absolute;
-        height: 100%;
-        width: 102%;
-        margin-left: -1%;
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-position: center center;
-        cursor: zoom-in;
+      background-size: contain;
+      background-position: center;
+      cursor: zoom-out;
+    }
+  }
 
-        &.FlippedHorizontally {
-            transform: scaleX(-1);
-        }
+  .web-cam {
+    position: absolute;
+    height: 100%;
+    width: 102%;
+    margin-left: -1%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    cursor: zoom-in;
 
-        &.FlippedVertically {
-            transform: scaleY(-1);
-        }
+    &.FlippedHorizontally {
+      transform: scaleX(-1);
     }
 
-    .container {
-        position: absolute;
-        width: 100%;
-        clear: both;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0) 100%);
+    &.FlippedVertically {
+      transform: scaleY(-1);
+    }
+  }
 
-        .status, .controls {
-            padding: 10px 12px;
-        }
+  .container {
+    position: absolute;
+    width: 100%;
+    clear: both;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0) 100%
+    );
 
-        .status {
-            float: left;
-            .name {
-                font-size: 20px;
-
-                @media (max-width: 480px) {
-                    font-size: 1em;
-                }
-            }
-
-            .state {
-                font-size: 12px;
-
-                @media (max-width: 480px) {
-                    font-size: 10px;
-                }
-            }
-        }
-
-        .controls {
-            float: right;
-
-            &.Disabled {
-                .edit {
-                    display: inline-block;
-                }
-            }
-
-            &.Offline, &.Idle {
-                .web-access {
-                    display: inline-block;
-                }
-            }
-
-            &.Operational, &.Paused {
-                .cancel, .tune {
-                    display: inline-block;
-                }
-            }
-
-            &.Operational {
-                .pause {
-                    display: inline-block;
-                }
-            }
-
-            &.Paused {
-                .resume {
-                    display: inline-block;
-                }
-            }
-
-            .control-button {
-                display: none;
-                padding: 0;
-                $buttonSize: 36px;
-                height: $buttonSize;
-                width: $buttonSize;
-                min-width: $buttonSize;
-                margin-left: 8px;
-                background-color: $control-button;
-                box-shadow: $control-button-box-shadow;
-
-                &.resume {
-                    background-color: $control-button-resume;
-                }
-
-                &.pause {
-                    background-color: $control-button-pause;
-                }
-            }
-        }
+    .status,
+    .controls {
+      padding: 10px 12px;
     }
 
-    .machine-type-logo {
-        position: absolute;
-        left: 10px;
-        bottom: 12px;
-        width: 50px;
-        opacity: 0.25;
-    }
+    .status {
+      float: left;
+      .name {
+        font-size: 20px;
 
-    .temperatures {
-        position: absolute;
-        right: 12px;
-        bottom: 12px;
-        font-size: 0;
-        clear: both;
-        background-color: $temp-table-background;
-
-        .temp-table {
-            float: left;
-            width: 110px;
-            margin: 0;
-            border-collapse: collapse;
-            box-sizing: border-box;
-            border: 1px solid $temp-table-border;
-            border-right: none;
-
-            &:last-child {
-                border-right: 1px solid $temp-table-border;
-            }
-
-            @media (max-width: 960px) {
-                width: 90px;
-                font-size: 10px;
-            }
-
-            tr {
-                border-bottom: 1px solid $temp-table-border;
-                &:last-child {
-                    border-bottom: none;
-                }
-
-                td {
-                    font-size: 12px;
-                    padding: 8px 0 6px;
-                    text-align: center;
-                    text-transform: capitalize;
-                    white-space: nowrap;
-
-                    @media (max-width: 960px) {
-                        font-size: 10px;
-                    }
-                }
-            }
+        @media (max-width: 480px) {
+          font-size: 1em;
         }
+      }
+
+      .state {
+        font-size: 12px;
+
+        @media (max-width: 480px) {
+          font-size: 10px;
+        }
+      }
     }
+
+    .controls {
+      float: right;
+
+      &.Disabled {
+        .edit {
+          display: inline-block;
+        }
+      }
+
+      &.Offline,
+      &.Idle {
+        .web-access {
+          display: inline-block;
+        }
+      }
+
+      &.Operational,
+      &.Paused {
+        .cancel,
+        .tune {
+          display: inline-block;
+        }
+      }
+
+      &.Operational {
+        .pause {
+          display: inline-block;
+        }
+      }
+
+      &.Paused {
+        .resume {
+          display: inline-block;
+        }
+      }
+
+      .control-button {
+        display: none;
+        padding: 0;
+        $buttonSize: 36px;
+        height: $buttonSize;
+        width: $buttonSize;
+        min-width: $buttonSize;
+        margin-left: 8px;
+        background-color: $control-button;
+        box-shadow: $control-button-box-shadow;
+
+        &.resume {
+          background-color: $control-button-resume;
+        }
+
+        &.pause {
+          background-color: $control-button-pause;
+        }
+      }
+    }
+  }
+
+  .machine-type-logo {
+    position: absolute;
+    left: 10px;
+    bottom: 12px;
+    width: 50px;
+    opacity: 0.25;
+  }
+
+  .temperatures {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    font-size: 0;
+    clear: both;
+    background-color: $temp-table-background;
+
+    .temp-table {
+      float: left;
+      width: 110px;
+      margin: 0;
+      border-collapse: collapse;
+      box-sizing: border-box;
+      border: 1px solid $temp-table-border;
+      border-right: none;
+
+      &:last-child {
+        border-right: 1px solid $temp-table-border;
+      }
+
+      @media (max-width: 960px) {
+        width: 90px;
+        font-size: 10px;
+      }
+
+      tr {
+        border-bottom: 1px solid $temp-table-border;
+        &:last-child {
+          border-bottom: none;
+        }
+
+        td {
+          font-size: 12px;
+          padding: 8px 0 6px;
+          text-align: center;
+          text-transform: capitalize;
+          white-space: nowrap;
+
+          @media (max-width: 960px) {
+            font-size: 10px;
+          }
+        }
+      }
+    }
+  }
 }

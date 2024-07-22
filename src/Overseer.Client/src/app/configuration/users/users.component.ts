@@ -1,22 +1,22 @@
-import { Component, OnInit } from "@angular/core";
-import { Observable } from "rxjs";
-import { UsersService } from "../../services/users.service";
-import { AccessLevel, User } from "../../models/user.model";
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AccessLevel, User } from '../../models/user.model';
+import { UsersService } from '../../services/users.service';
 
 @Component({
-    templateUrl: "./users.component.html",
-    styleUrls: ["../configuration.scss"]
+  templateUrl: './users.component.html',
+  styleUrls: ['../configuration.scss'],
 })
 export class UsersComponent implements OnInit {
-    constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService) {}
 
-    users$: Observable<User[]>;
+  users$!: Observable<User[]>;
 
-    ngOnInit() {
-        this.users$ = this.usersService.getUsers();
-    }
+  ngOnInit() {
+    this.users$ = this.usersService.getUsers();
+  }
 
-    getUserAccessLevelName(accessLevel: AccessLevel) {
-        return AccessLevel[accessLevel];
-    }
+  getUserAccessLevelName(accessLevel: AccessLevel) {
+    return AccessLevel[accessLevel];
+  }
 }
