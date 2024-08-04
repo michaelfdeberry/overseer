@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { Subject } from 'rxjs';
-import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 import { MachineStatus } from '../../models/machine-status.model';
 import { MonitoringService } from '../monitoring.service';
 
@@ -8,20 +8,16 @@ import { MonitoringService } from '../monitoring.service';
 @Injectable({
   providedIn: 'root',
 })
-export class SignalrCoreMonitoringService implements MonitoringService {
+export class RemoteMonitoringService implements MonitoringService {
   public readonly statusEvent$ = new Subject<MachineStatus>();
   private hubConnection: HubConnection;
   private isConnected = false;
 
   constructor() {
-    this.hubConnection = new HubConnectionBuilder()
-      .withUrl('/push/status')
-      .build();
-
-    this.hubConnection.on('statusUpdate', (statusUpdate) =>
-      this.statusEvent$.next(statusUpdate),
-    );
+    this.hubConnection = new HubConnectionBuilder().withUrl('/push/status').build();
+    this.hubConnection.on('statusUpdate', (statusUpdate: MachineStatus) => this.statusEvent$.next(statusUpdate));
   }
+
   enableMonitoring() {
     if (this.isConnected) {
       return;
@@ -32,6 +28,7 @@ export class SignalrCoreMonitoringService implements MonitoringService {
       this.isConnected = true;
     });
   }
+
   disableMonitoring() {
     if (!this.isConnected) {
       return;

@@ -26,7 +26,7 @@ export interface MachineProvider {
 
   executeGcode(command: string): Observable<void>;
 
-  loadConfiguration(machine: Machine): Observable<void>;
+  loadConfiguration(machine: Machine): Observable<Machine>;
 
   getStatus(): Observable<MachineStatus>;
 }
@@ -77,7 +77,7 @@ export abstract class BaseMachineProvider implements MachineProvider {
 
   abstract executeGcode(command: string): Observable<void>;
 
-  abstract loadConfiguration(machine: Machine): Observable<void>;
+  abstract loadConfiguration(machine: Machine): Observable<Machine>;
 
   abstract acquireStatus(): Observable<MachineStatus>;
 

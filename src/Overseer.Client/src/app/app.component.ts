@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, Renderer2 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NgProgressComponent } from 'ngx-progressbar';
@@ -9,6 +10,7 @@ import { ThemeService } from './services/theme.service';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, NavigationComponent, NgProgressComponent],
+  providers: [CommonModule, ThemeService],
   templateUrl: './app.component.html',
 })
 export class AppComponent {
@@ -16,7 +18,7 @@ export class AppComponent {
 
   constructor(
     private themeService: ThemeService,
-    private renderer: Renderer2,
+    private renderer: Renderer2
   ) {}
 
   get primaryColor() {

@@ -22,7 +22,6 @@ export class AboutComponent implements OnInit {
 
   downloadLog() {
     this.settingsService.getLog().subscribe((log) => {
-      console.log(log);
       const blob = new Blob([log], { type: 'text/plain;charset=utf-8' });
       const link = document.createElement('a');
       link.download = 'overseer.log';

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { CONFIG_TOKEN, DBConfig, NgxIndexedDBService } from 'ngx-indexed-db';
+import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { INGXLoggerMetadata } from 'ngx-logger';
 import { map, Observable } from 'rxjs';
 import { Machine } from '../../models/machine.model';
@@ -56,10 +56,7 @@ export class Store<T> {
 export class IndexedStorageService {
   private stores = new Map<string, any>();
 
-  constructor(
-    @Inject(CONFIG_TOKEN) private dbConfig: DBConfig,
-    @Inject(NgxIndexedDBService) private dbService: NgxIndexedDBService
-  ) {}
+  constructor(@Inject(NgxIndexedDBService) private dbService: NgxIndexedDBService) {}
 
   get machines(): Store<Machine> {
     return this.getStore<Machine>('machines');

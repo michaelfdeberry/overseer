@@ -1,61 +1,31 @@
 <form [formGroup]="form">
   <mat-form-field>
-    <mat-select
-      id="accessLevel"
-      placeholder="{{ 'accessLevel' | i18next }}"
-      formControlName="accessLevel"
-    >
-      <mat-option
-        *ngFor="let accessLevel of accessLevels"
-        [value]="accessLevel.value"
-      >
+    <mat-label>{{ 'accessLevel' | i18next }}</mat-label>
+    <mat-select id="accessLevel" formControlName="accessLevel">
+      <mat-option *ngFor="let accessLevel of accessLevels" [value]="accessLevel.value">
         {{ accessLevel.translationKey | i18next }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field>
-    <input
-      matInput
-      type="text"
-      id="username"
-      placeholder="{{ 'username' | i18next }}"
-      formControlName="username"
-      required
-      autocomplete="username"
-    />
+    <mat-label>{{ 'username' | i18next }}</mat-label>
+    <input matInput type="text" id="username" formControlName="username" required autocomplete="username" />
   </mat-form-field>
 
   <mat-form-field>
-    <input
-      matInput
-      type="password"
-      id="password"
-      placeholder="{{ 'password' | i18next }}"
-      formControlName="password"
-      required
-      autocomplete="new-password"
-    />
+    <mat-label>{{ 'password' | i18next }}</mat-label>
+    <input matInput type="password" id="password" formControlName="password" required autocomplete="new-password" />
   </mat-form-field>
 
   <mat-form-field>
-    <input
-      matInput
-      type="password"
-      id="passwordMatch"
-      placeholder="{{ 'confirmPassword' | i18next }}"
-      formControlName="confirmPassword"
-      required
-      autocomplete="new-password"
-    />
+    <mat-label>{{ 'confirmPassword' | i18next }}</mat-label>
+    <input matInput type="password" id="passwordMatch" formControlName="confirmPassword" required autocomplete="new-password" />
   </mat-form-field>
 
   <mat-form-field>
-    <mat-select
-      id="sessionLifetime"
-      placeholder="{{ 'sessionLifetime' | i18next }}"
-      formControlName="sessionLifetime"
-    >
+    <mat-label>{{ 'sessionLifetime' | i18next }}</mat-label>
+    <mat-select id="sessionLifetime" formControlName="sessionLifetime">
       <mat-option *ngFor="let lifetime of lifetimes" [value]="lifetime.value">
         {{ lifetime.value }} {{ lifetime.translationKey | i18next }}
       </mat-option>

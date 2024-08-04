@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ControlService } from '../control.service';
 import { Observable } from 'rxjs';
-import { MachineProviderService } from './providers/machine-provider.service';
-import { MachineToolType } from '../../models/machine.model';
-import { MachineProvider } from './providers/machine.provider';
-import { MachinesService } from '../machines.service';
 import { map, mergeMap } from 'rxjs/operators';
+import { MachineToolType } from '../../models/machine.model';
 import { RequireAdministrator } from '../../shared/require-admin.decorator';
+import { ControlService } from '../control.service';
+import { MachinesService } from '../machines.service';
+import { MachineProviderService } from './providers/machine-provider.service';
+import { MachineProvider } from './providers/machine.provider';
 
 @Injectable({ providedIn: 'root' })
 export class LocalControlService implements ControlService {
@@ -20,32 +20,32 @@ export class LocalControlService implements ControlService {
   }
 
   @RequireAdministrator()
-  pauseJob(machineId: number): Observable<Object> {
+  pauseJob(machineId: number): Observable<void> {
     return this.getProvider(machineId).pipe(mergeMap((provider) => provider.pauseJob()));
   }
 
   @RequireAdministrator()
-  resumeJob(machineId: number): Observable<Object> {
+  resumeJob(machineId: number): Observable<void> {
     return this.getProvider(machineId).pipe(mergeMap((provider) => provider.resumeJob()));
   }
 
   @RequireAdministrator()
-  cancelJob(machineId: number): Observable<Object> {
+  cancelJob(machineId: number): Observable<void> {
     return this.getProvider(machineId).pipe(mergeMap((provider) => provider.cancelJob()));
   }
 
   @RequireAdministrator()
-  setFanSpeed(machineId: number, speedPercentage: number): Observable<Object> {
+  setFanSpeed(machineId: number, speedPercentage: number): Observable<void> {
     return this.getProvider(machineId).pipe(mergeMap((provider) => provider.setFanSpeed(speedPercentage)));
   }
 
   @RequireAdministrator()
-  setFeedRate(machineId: number, speedPercentage: number): Observable<Object> {
+  setFeedRate(machineId: number, speedPercentage: number): Observable<void> {
     return this.getProvider(machineId).pipe(mergeMap((provider) => provider.setFeedRate(speedPercentage)));
   }
 
   @RequireAdministrator()
-  setTemperature(machineId: number, heaterIndex: number, temperature: number): Observable<Object> {
+  setTemperature(machineId: number, heaterIndex: number, temperature: number): Observable<void> {
     return this.machinesService.getMachine(machineId).pipe(
       mergeMap((machine) => {
         if (machine.tools.find((t) => t.toolType === MachineToolType.Heater && t.index === heaterIndex && t.name === 'bed')) {
@@ -58,7 +58,7 @@ export class LocalControlService implements ControlService {
   }
 
   @RequireAdministrator()
-  setFlowRate(machineId: number, extruderIndex: number, flowRatePercentage: number): Observable<Object> {
+  setFlowRate(machineId: number, extruderIndex: number, flowRatePercentage: number): Observable<void> {
     return this.getProvider(machineId).pipe(mergeMap((provider) => provider.setFlowRate(extruderIndex, flowRatePercentage)));
   }
 }

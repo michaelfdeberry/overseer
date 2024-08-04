@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { defer, EMPTY, forkJoin, NEVER, Observable, of, throwError } from 'rxjs';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { catchError, map, mergeMap } from 'rxjs/operators';
 
 import { MachineState, MachineStatus } from '../../../models/machine-status.model';
 import { Machine, MachineTool, MachineToolType, WebCamOrientation } from '../../../models/machine.model';
@@ -36,14 +36,14 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
     return this.http.post<void>(this.getUrl('api/printer/command'), { command: command }, this.httpOptions);
   }
 
-  loadConfiguration(machine: Machine): Observable<void> {
+  loadConfiguration(machine: Machine): Observable<Machine> {
     machine.url = processUrl(machine.url);
 
     return forkJoin([
       this.http.get<any>(processUrl(machine.url, 'api/settings'), this.httpOptions),
       this.http.get<any>(processUrl(machine.url, 'api/printerprofiles'), this.httpOptions),
     ]).pipe(
-      tap(([settings, profiles]) => {
+      map(([settings, profiles]) => {
         if (!machine.webCamUrl) {
           machine.webCamUrl = processUrl(machine.url, settings.webcam.streamUrl);
 
@@ -110,8 +110,8 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
         }
 
         this.machine = machine;
+        return machine;
       }),
-      mergeMap(() => NEVER),
       catchError((err: Error) => {
         if (err.message.indexOf('Invalid API key') >= 0) {
           return throwError(() => new Error('octoprint_invalid_key'));

@@ -2,11 +2,11 @@
     &.alert,
     &.prompt,
     &.certificate-error {
-        .mat-dialog-title {
+        mat-dialog-title {
             margin-bottom: 0;
         }
 
-        .mat-dialog-actions {
+        mat-dialog-actions {
             display: flex;
             justify-content: flex-end;
             margin: 0 -12px -24px;
@@ -18,7 +18,7 @@
     }
 
     &.tune {
-        .mat-dialog-container {
+        mat-dialog-container {
             padding: 0;
             overflow: hidden;
         }

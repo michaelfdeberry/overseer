@@ -13,23 +13,11 @@ export class RepRapFirmwareMachineComponent extends BaseMachineComponent {
   webCamOrientations = webCamOrientations;
 
   onInit() {
-    this.form.addControl(
-      'machineType',
-      new FormControl(MachineType.RepRapFirmware),
-    );
+    this.form.addControl('machineType', new FormControl(MachineType.RepRapFirmware));
     this.form.addControl('url', new FormControl(null, Validators.required));
-    this.form.addControl(
-      'webCamUrl',
-      new FormControl(null, Validators.required),
-    );
-    this.form.addControl(
-      'webCamOrientation',
-      new FormControl(null, Validators.required),
-    );
-    this.form.addControl(
-      'snapshotUrl',
-      new FormControl(null, Validators.required),
-    );
+    this.form.addControl('webCamUrl', new FormControl(null, Validators.required));
+    this.form.addControl('webCamOrientation', new FormControl(null, Validators.required));
+    this.form.addControl('snapshotUrl', new FormControl(null, Validators.required));
     this.form.addControl('clientCertificate', new FormControl());
   }
 

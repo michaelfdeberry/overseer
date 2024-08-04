@@ -4,21 +4,23 @@ import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { RouterLink } from '@angular/router';
+import { I18NextModule } from 'angular-i18next';
 import { DialogService } from '../dialogs/dialog.service';
 import { MachineState } from '../models/machine-status.model';
 import { ControlService } from '../services/control.service';
+import { DurationPipe } from '../shared/duration.pipe';
+import { LetDirective } from '../shared/let.directive';
 import { MachineMonitor } from './machine-monitor';
 import { TuneDialogService } from './tune-dialog.service';
-import { DurationPipe } from '../shared/duration.pipe';
-import { RouterLink } from '@angular/router';
-import { I18NextModule } from 'angular-i18next';
 
 @Component({
   selector: 'app-monitoring-machine',
   templateUrl: 'machine-monitor.component.html',
   styleUrls: ['machine-monitor.component.scss'],
   standalone: true,
-  imports: [CommonModule, MatIcon, MatProgressBar, DurationPipe, RouterLink, I18NextModule],
+  imports: [CommonModule, MatIcon, MatProgressBar, DurationPipe, RouterLink, I18NextModule, LetDirective],
+  providers: [TuneDialogService],
 })
 export class MachineMonitorComponent {
   @Input() machine!: MachineMonitor;

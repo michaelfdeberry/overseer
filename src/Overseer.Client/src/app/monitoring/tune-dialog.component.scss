@@ -10,7 +10,7 @@
   text-transform: capitalize;
 }
 
-.mat-dialog-title {
+mat-dialog-title {
   margin: 0;
   padding: 20px 24px;
   display: flex;
@@ -45,7 +45,7 @@
       line-height: 15px;
       position: relative;
 
-      .mat-icon {
+      mat-icon {
         font-size: 15px;
         height: 15px;
         width: 15px;
@@ -217,7 +217,7 @@
     .target-temp {
       position: relative;
 
-      .mat-raised-button {
+      mat-raised-button {
         padding: 0;
         min-width: 24px;
         height: 24px;
@@ -241,7 +241,7 @@
           }
         }
 
-        .mat-icon {
+        mat-icon {
           font-size: 14px;
           line-height: 14px;
           margin-top: -5px;
@@ -345,13 +345,13 @@
       }
     }
 
-    .mat-slider {
+    mat-slider {
       width: 100%;
     }
   }
 }
 
-.mat-dialog-actions {
+mat-dialog-actions {
   margin-bottom: 0;
   padding: 12px;
   display: flex;

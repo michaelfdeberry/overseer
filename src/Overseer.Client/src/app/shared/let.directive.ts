@@ -6,14 +6,12 @@ interface LetContext<T> {
 
 @Directive({
   selector: '[appLet]',
+  standalone: true,
 })
 export class LetDirective<T> {
   private context: LetContext<T> = { appLet: null };
 
-  constructor(
-    viewContainer: ViewContainerRef,
-    templateRef: TemplateRef<LetContext<T>>,
-  ) {
+  constructor(viewContainer: ViewContainerRef, templateRef: TemplateRef<LetContext<T>>) {
     viewContainer.createEmbeddedView(templateRef, this.context);
   }
 

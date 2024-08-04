@@ -1,4 +1,4 @@
-@import "variables";
+@import 'variables';
 
 .cdk-drag-preview {
   box-sizing: border-box;
@@ -38,18 +38,22 @@
       width: 100px;
       padding-left: 0;
 
-      @media (max-width: 480px) {
-        display: none;
-      }
-
-      .mat-button {
+      .mat-mdc-button {
         padding: 0 8px;
         min-width: auto;
+
+        mat-icon {
+          margin: 0;
+        }
+      }
+
+      @media (max-width: 480px) {
+        display: none;
       }
     }
 
     th {
-      .mat-button {
+      .mat-mdc-button {
         font-weight: bold;
       }
     }
@@ -73,8 +77,8 @@
         width: 100px;
         padding: 0;
 
-        .mat-button {
-          .mat-icon {
+        .mat-mdc-button {
+          mat-icon {
             $icon-size: 16px;
             font-size: $icon-size;
             line-height: $icon-size - 2;

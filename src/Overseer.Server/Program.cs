@@ -45,12 +45,12 @@ using (var context = new LiteDataContext())
     {
         if (app.Environment.IsDevelopment())
         {
-            spa.Options.SourcePath = "../OverseerUI";
+            spa.Options.SourcePath = "../Overseer.Client";
             spa.UseAngularCliServer(npmScript: "start");
         }
         else
         {
-            spa.Options.SourcePath = "/OverseerUI";
+            spa.Options.SourcePath = "/Overseer.Client";
         }
     });
 

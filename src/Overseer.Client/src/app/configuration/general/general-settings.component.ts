@@ -13,17 +13,14 @@ import { SettingsService } from '../../services/settings.service';
 export class GeneralSettingsComponent implements OnInit {
   intervals = pollIntervals;
   form!: UntypedFormGroup;
-  clientForm!: UntypedFormGroup;
   settings: any;
 
   constructor(
     private settingsService: SettingsService,
-    private formBuilder: FormBuilder,
+    private formBuilder: FormBuilder
   ) {}
 
   ngOnInit() {
-    this.clientForm = this.formBuilder.group({});
-
     this.form = this.formBuilder.group({
       id: [],
       interval: [null, Validators.required],
@@ -41,7 +38,7 @@ export class GeneralSettingsComponent implements OnInit {
 
           this.form.patchValue(settings);
           this.form.enable();
-        }),
+        })
       )
       .subscribe();
   }
@@ -53,12 +50,10 @@ export class GeneralSettingsComponent implements OnInit {
 
   save() {
     this.form.disable();
-    this.settingsService
-      .updateSettings(this.form.value)
-      .subscribe((updatedSettings) => {
-        this.settings = updatedSettings;
-        this.form.enable();
-        this.form.markAsPristine();
-      });
+    this.settingsService.updateSettings(this.form.value).subscribe((updatedSettings) => {
+      this.settings = updatedSettings;
+      this.form.enable();
+      this.form.markAsPristine();
+    });
   }
 }

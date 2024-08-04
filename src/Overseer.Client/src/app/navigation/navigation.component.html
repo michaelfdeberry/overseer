@@ -9,15 +9,13 @@
     </button>
 
     <mat-menu #menu="matMenu" class="nav-menu">
-      <a appHiddenFor="Readonly" routerLink="/configuration" mat-menu-item>
-        <span translate>settings</span>
-        <span class="nav-menu-spacer"></span>
+      <button appHiddenFor="Readonly" routerLink="/configuration" mat-menu-item>
+        <span>{{ 'settings' | i18next }}</span>
         <mat-icon>settings</mat-icon>
-      </a>
+      </button>
 
       <button (click)="logout()" mat-menu-item>
-        <span translate>logout</span>
-        <span class="nav-menu-spacer"></span>
+        <span>{{ 'logout' | i18next }}</span>
         <mat-icon>exit_to_app</mat-icon>
       </button>
     </mat-menu>

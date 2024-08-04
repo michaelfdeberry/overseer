@@ -1,10 +1,10 @@
 <table *ngIf="machines" class="config-table drag-drop machines">
   <thead>
     <tr>
-      <th class="sort-column" translate>sort</th>
-      <th translate>name</th>
-      <th translate class="hidden-mobile">machineType</th>
-      <th class="centered" translate>monitoringEnabled</th>
+      <th class="sort-column">{{ 'sort' | i18next }}</th>
+      <th>{{ 'name' | i18next }}</th>
+      <th class="hidden-mobile">{{ 'machineType' | i18next }}</th>
+      <th class="centered">{{ 'monitoringEnabled' | i18next }}</th>
       <th class="action">
         <a routerLink="/configuration/machines/add" mat-button> <mat-icon>add</mat-icon> {{ 'add' | i18next }} </a>
       </th>
@@ -36,7 +36,7 @@
       </td>
     </tr>
     <tr *ngIf="!machines || !machines.length">
-      <td colspan="4" class="empty" translate>noMachines</td>
+      <td colspan="4" class="empty">{{ 'noMachines' | i18next }}</td>
     </tr>
   </tbody>
 </table>

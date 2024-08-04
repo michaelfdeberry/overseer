@@ -21,10 +21,10 @@ namespace Overseer.Server.Api
 
             group.MapGet("/", (IConfigurationManager configuration) => Results.Ok(configuration.GetApplicationSettings()));
 
-            group.MapPost("/", (ApplicationSettings settings, IConfigurationManager configuration) => Results.Ok(configuration.UpdateApplicationSettings(settings)))
+            group.MapPut("/", (ApplicationSettings settings, IConfigurationManager configuration) => Results.Ok(configuration.UpdateApplicationSettings(settings)))
                 .RequireAuthorization(AccessLevel.Administrator.ToString());
 
-            group.MapPut("/certificate", (CertificateDetails certificate, IConfigurationManager configuration) => Results.Ok(configuration.AddCertificateExclusion(certificate)))
+            group.MapPost("/certificate", (CertificateDetails certificate, IConfigurationManager configuration) => Results.Ok(configuration.AddCertificateExclusion(certificate)))
                 .RequireAuthorization(AccessLevel.Administrator.ToString());
 
             group.MapGet("/about", (IConfigurationManager configuration) => Results.Ok(configuration.GetApplicationInfo()));

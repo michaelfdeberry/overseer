@@ -5,16 +5,30 @@ import { Subscription, forkJoin } from 'rxjs';
 import { MachinesService } from '../services/machines.service';
 import { MonitoringService } from '../services/monitoring.service';
 import { SettingsService } from '../services/settings.service';
+import { LetDirective } from '../shared/let.directive';
 import { machineSortFunctionFactory, simpleMachineSort } from '../shared/machine-sorts';
 import { MachineMonitor } from './machine-monitor';
 import { MachineMonitorFilterPipe } from './machine-monitor-filter.pipe';
 import { MachineMonitorComponent } from './machine-monitor.component';
+import { I18NextModule } from 'angular-i18next';
+import { MatButton } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
 
 @Component({
   templateUrl: './monitoring.component.html',
   styleUrls: ['./monitoring.component.scss'],
   standalone: true,
-  imports: [CommonModule, MatGridList, MatGridTile, MachineMonitorComponent, MachineMonitorFilterPipe],
+  imports: [
+    CommonModule,
+    MatGridList,
+    MatGridTile,
+    MachineMonitorComponent,
+    MachineMonitorFilterPipe,
+    LetDirective,
+    I18NextModule,
+    MatButton,
+    RouterModule,
+  ],
 })
 export class MonitoringComponent implements OnInit, OnDestroy {
   constructor(

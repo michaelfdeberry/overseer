@@ -1,7 +1,6 @@
 @import "variables";
 @import "material-icons";
-
-@import "theme";
+ 
 @import "material";
 @import "dialogs";
 
@@ -36,7 +35,7 @@ app-navigation {
 .nav-menu {
     width: 256px;
 
-    .mat-menu-item {
+    mat-menu-item {
         mat-icon {
             float: right;
             margin: 12px 0;
@@ -68,7 +67,7 @@ form {
     }
 }
 
-.mat-card.form-card {
+mat-card.form-card {
     max-width: 50%;
     margin: 10px auto 0;
     overflow-x: hidden;
@@ -81,18 +80,16 @@ form {
     @media (max-width: 768px) {
         max-width: 90%;
     }
-
-    .mat-card-header {
-        .mat-card-avatar {
-            height: 30px;
-            width: 30px;
-        }
-
-        .mat-card-title {
-            margin: 3px 0;
-            font-size: 18px;
-        }
+ 
+    mat-card-avatar {
+        height: 30px;
+        width: 30px;
     }
+
+    mat-card-title {
+        padding: 0 !important;        
+        font-size: 18px;
+    } 
 }
 
 .hidden-mobile {

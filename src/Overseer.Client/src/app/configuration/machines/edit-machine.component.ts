@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, take } from 'rxjs';
 
 import { DialogService } from '../../dialogs/dialog.service';
 import { CertificateErrorService } from './certificate-error.service';
@@ -26,28 +26,24 @@ export class EditMachineComponent {
     private machinesService: MachinesService,
     private dialog: DialogService,
     private certificateErrorService: CertificateErrorService,
-    formBuilder: FormBuilder,
+    formBuilder: FormBuilder
   ) {
     this.form = machineFormFactory(formBuilder, {
       disabled: new FormControl(),
     });
 
-    this.route.paramMap
-      .subscribe((params: ParamMap) => {
-        const idParam = params.get('id');
-        if (!idParam) throw new Error('Unable to determine id!');
-        const id = parseInt(idParam, 10);
+    this.route.paramMap.pipe(take(1)).subscribe((params: ParamMap) => {
+      const idParam = params.get('id');
+      if (!idParam) throw new Error('Unable to determine id!');
+      const id = parseInt(idParam, 10);
 
-        this.machinesService.getMachine(id).subscribe((machine) => {
-          this.machine = machine;
-          // TODO: is this timeout needed? I think I added this to get rid of that binding error,
-          // but that was caused by something else.
-          setTimeout(() => {
-            this.form.patchValue(machine);
-          });
+      this.machinesService.getMachine(id).subscribe((machine) => {
+        this.machine = machine;
+        requestAnimationFrame(() => {
+          this.form.patchValue(machine);
         });
-      })
-      .unsubscribe();
+      });
+    });
   }
 
   delete() {
@@ -56,17 +52,13 @@ export class EditMachineComponent {
       .afterClosed()
       .subscribe((result) => {
         if (result && this.machine) {
-          this.handleNetworkAction(
-            this.machinesService.deleteMachine(this.machine),
-          );
+          this.handleNetworkAction(this.machinesService.deleteMachine(this.machine));
         }
       });
   }
 
   save() {
-    this.handleNetworkAction(
-      this.machinesService.updateMachine(this.form.value),
-    );
+    this.handleNetworkAction(this.machinesService.updateMachine(this.form.value));
   }
 
   private handleNetworkAction(observable: Observable<any>) {
@@ -76,14 +68,12 @@ export class EditMachineComponent {
       () => this.router.navigate(['/configuration/machines']),
       (ex) => {
         this.form.enable();
-        this.certificateErrorService
-          .handleCertificateException(ex)
-          .subscribe((exceptionAdded) => {
-            if (exceptionAdded) {
-              this.save();
-            }
-          });
-      },
+        this.certificateErrorService.handleCertificateException(ex).subscribe((exceptionAdded) => {
+          if (exceptionAdded) {
+            this.save();
+          }
+        });
+      }
     );
   }
 }

@@ -3,22 +3,16 @@
     <div mat-card-avatar>
       <mat-icon>person_add</mat-icon>
     </div>
-    <mat-card-title translate>addUser</mat-card-title>
+    <mat-card-title>{{ 'addUser' | i18next }}</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <app-create-user [form]="form"></app-create-user>
   </mat-card-content>
   <mat-card-actions>
     <span class="spacer"></span>
-    <a mat-button routerLink="/configuration/users">{{ "cancel" | i18next }}</a>
-    <button
-      color="primary"
-      mat-button
-      (click)="save()"
-      [disabled]="form.pristine || form.invalid"
-      translate
-    >
-      {{ "save" | i18next }}
+    <a mat-button routerLink="/configuration/users">{{ 'cancel' | i18next }}</a>
+    <button color="primary" mat-button (click)="save()" [disabled]="form.pristine || form.invalid">
+      {{ 'save' | i18next }}
     </button>
   </mat-card-actions>
 </mat-card>

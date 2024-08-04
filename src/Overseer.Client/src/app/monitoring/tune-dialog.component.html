@@ -4,7 +4,7 @@
   </div>
   <div *ngIf="data.url" class="actions-container">
     <a href="{{ data.url }}" target="_blank">
-      <span translate>openWebsite</span>
+      <span>{{ 'openWebsite' | i18next }}</span>
       <mat-icon>open_in_new</mat-icon>
     </a>
   </div>
@@ -12,7 +12,7 @@
 <div mat-dialog-content>
   <div class="progress-container">
     <div class="progress">
-      <h5 translate>progress</h5>
+      <h5>{{ 'progress' | i18next }}</h5>
       <div>
         <mat-progress-bar color="accent" mode="determinate" [value]="data.status?.progress"></mat-progress-bar>
       </div>
@@ -42,8 +42,8 @@
         <thead>
           <tr>
             <th></th>
-            <th translate>current</th>
-            <th translate>target</th>
+            <th>{{ 'current' | i18next }}</th>
+            <th>{{ 'target' | i18next }}</th>
           </tr>
         </thead>
         <tbody>
@@ -52,7 +52,7 @@
 
             <td
               class="actual-temp"
-              *appLet="data.status.temperatures[heater.index] as temp"
+              *appLet="status.temperatures![heater.index] as temp"
               [ngClass]="{
                 warm: temp.target !== 0 && temp.actual / temp.target > 0.5,
                 hot: temp.target !== 0 && temp.actual / temp.target > 0.85,
@@ -60,7 +60,7 @@
             >
               {{ temp.actual | number: '1.1-1' }} &deg;C
             </td>
-            <td class="target-temp" *appLet="data.status.temperatures[heater.index] as temp">
+            <td class="target-temp" *appLet="status.temperatures![heater.index] as temp">
               <button [disabled]="disabled" mat-raised-button (click)="decreaseTemp(heater.index)">
                 <mat-icon>remove</mat-icon>
               </button>
@@ -77,7 +77,7 @@
       <table class="tune-table">
         <tbody>
           <tr>
-            <th colspan="3" translate>fanSpeed</th>
+            <th colspan="3">{{ 'fanSpeed' | i18next }}</th>
           </tr>
           <tr>
             <td colspan="2">
@@ -88,7 +88,7 @@
             <td>{{ data.status?.fanSpeed ?? 0 }}%</td>
           </tr>
           <tr>
-            <th colspan="3" translate>feedRate</th>
+            <th colspan="3">{{ 'feedRate' | i18next }}</th>
           </tr>
           <tr>
             <td colspan="2">
@@ -99,18 +99,18 @@
             <td>{{ data.status?.feedRate ?? 0 }}%</td>
           </tr>
           <tr>
-            <th colspan="3" translate>flowRates</th>
+            <th colspan="3">{{ 'flowRates' | i18next }}</th>
           </tr>
           <tr class="flow-rates" *ngFor="let extruder of data.extruders">
             <th class="capitalize">
               {{ extruder.name | i18next }}
             </th>
-            <td *appLet="data.status.flowRates[extruder.index] as flowRate">
+            <td *appLet="status.flowRates![extruder.index] as flowRate">
               <mat-slider min="75" max="125" step="1" [disabled]="disabled" thumbsLabel="true" tickInterval="auto">
                 <input matSliderThumb [ngModel]="flowRate" (valueChange)="setFlowRate(extruder.index, $event)" />
               </mat-slider>
             </td>
-            <td *appLet="data.status.flowRates[extruder.index] as flowRate">{{ flowRate | number }}%</td>
+            <td *appLet="status.flowRates![extruder.index] as flowRate">{{ flowRate | number }}%</td>
           </tr>
         </tbody>
       </table>

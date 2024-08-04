@@ -13,10 +13,10 @@ namespace Overseer.Server.Api
 
             group.MapGet("/{id}", (int id, IUserManager users) => Results.Ok(users.GetUser(id)));
 
-            group.MapPut("/", (UserDisplay user, IUserManager users) => Results.Ok(users.CreateUser(user)))
+            group.MapPost("/", (UserDisplay user, IUserManager users) => Results.Ok(users.CreateUser(user)))
                 .RequireAuthorization(AccessLevel.Administrator.ToString());
 
-            group.MapPost("/", (UserDisplay user, IUserManager users) => Results.Ok(users.UpdateUser(user)))
+            group.MapPut("/", (UserDisplay user, IUserManager users) => Results.Ok(users.UpdateUser(user)))
                 .RequireAuthorization(AccessLevel.Administrator.ToString());
 
             group.MapDelete("/{id}", (int id, IUserManager users) =>

@@ -10,6 +10,8 @@ import { toUser, User } from '../../models/user.model';
 import { RequireAdministrator } from '../../shared/require-admin.decorator';
 import { SettingsService } from '../settings.service';
 import { IndexedStorageService } from './indexed-storage.service';
+import { ApplicationInfo } from '../../models/application-info.model';
+import { CertificateDetails } from '../../models/certificate-details.model';
 
 @Injectable({ providedIn: 'root' })
 export class LocalSettingsService implements SettingsService {
@@ -51,21 +53,22 @@ export class LocalSettingsService implements SettingsService {
   }
 
   @RequireAdministrator()
-  addCertificateException(certificateDetails: any): Observable<any> {
+  addCertificateException(_certificateDetails: CertificateDetails): Observable<CertificateDetails> {
     // This isn't supported for the client side app as it isn't needed.
     // as long as the browser can open the page the app will be able to access
     // the api.
-    return of(null);
+    return of({});
   }
 
-  getApplicationInfo(): Observable<any> {
+  getApplicationInfo(): Observable<ApplicationInfo> {
     const parser = new UAParser();
 
     return of({
-      platform: parser.getEngine().name,
-      operatingSystem: parser.getOS().name,
-      machineName: parser.getBrowser().name,
-      version: environment.appVersion,
+      platform: parser.getEngine().name ?? undefined,
+      operatingSystem: parser.getOS().name ?? undefined,
+      machineName: parser.getBrowser().name ?? undefined,
+      version: environment.appVersion ?? undefined,
+      runtime: 'N/A',
     });
   }
 

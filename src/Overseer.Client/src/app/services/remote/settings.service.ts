@@ -22,17 +22,11 @@ export class RemoteSettingsService implements SettingsService {
   }
 
   updateSettings(settings: ApplicationSettings) {
-    return this.http.post<ApplicationSettings>(
-      this.getSettingsEndpoint(),
-      settings,
-    );
+    return this.http.put<ApplicationSettings>(this.getSettingsEndpoint(), settings);
   }
 
   addCertificateException(certificateDetails: any) {
-    return this.http.put(
-      this.getSettingsEndpoint('certificate'),
-      certificateDetails,
-    );
+    return this.http.post(this.getSettingsEndpoint('certificate'), certificateDetails);
   }
 
   getApplicationInfo() {
@@ -43,8 +37,6 @@ export class RemoteSettingsService implements SettingsService {
     // I am sure not what, but sometimes the log contains text that will break observable
     // if the content of the file is returned directly. Putting it in an object and then
     // piping in a map to get the string seems to work fine.
-    return this.http
-      .get<{ content: string }>(this.getLoggingEndpoint())
-      .pipe(map((x) => x.content));
+    return this.http.get<{ content: string }>(this.getLoggingEndpoint()).pipe(map((x) => x.content));
   }
 }

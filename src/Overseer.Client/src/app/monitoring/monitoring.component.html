@@ -1,3 +1,4 @@
+{{ machines }}
 <div class="machines" *ngIf="machines">
   <div class="grid" *appLet="machines | machineMonitorFilter as visibleMachines" [ngClass]="{ scroll: rowHeight !== 'fit' }">
     <mat-grid-list class="grid-list" [cols]="columns" [rowHeight]="rowHeight">
@@ -8,11 +9,11 @@
   </div>
 
   <div class="no-machines" *ngIf="!machines.length; else elseBlock">
-    <p translate="noMachine"></p>
+    <p>{{ 'noMachine' | i18next }}</p>
     <p>
-      <a mat-button routerLink="/configuration/machines/add">
-        <span translate="noMachinesAddMachine"></span>
-      </a>
+      <button mat-button routerLink="/configuration/machines/add">
+        <span>{{ 'noMachinesAddMachine' | i18next }}</span>
+      </button>
     </p>
   </div>
 
@@ -20,15 +21,15 @@
     <div *ngIf="machines | machineMonitorFilter as visibleMachines">
       <div class="no-machines" *ngIf="!visibleMachines?.length">
         <p>
-          <span translate>noMachinesEditMachines</span>
+          <span>{{ 'noMachinesEditMachines' | i18next }}</span>
         </p>
         <p>
-          <a *ngIf="settings.hideIdleMachines" mat-button color="accent" routerLink="/configuration/general">
-            <span translate>editVisibility</span>
-          </a>
-          <a *ngIf="settings.hideDisabledMachines" mat-button color="accent" routerLink="/configuration/machines">
-            <span translate>editMachineConfig</span>
-          </a>
+          <button *ngIf="settings.hideIdleMachines" mat-button color="accent" routerLink="/configuration/general">
+            <span>{{ 'editVisibility' | i18next }}</span>
+          </button>
+          <button *ngIf="settings.hideDisabledMachines" mat-button color="accent" routerLink="/configuration/machines">
+            <span>{{ 'editMachineConfig' | i18next }}</span>
+          </button>
         </p>
       </div>
     </div>

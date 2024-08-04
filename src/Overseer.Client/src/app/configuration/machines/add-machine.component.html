@@ -4,7 +4,7 @@
       <div mat-card-avatar>
         <mat-icon>add</mat-icon>
       </div>
-      <mat-card-title translate>addMachine</mat-card-title>
+      <mat-card-title>{{ 'addMachine' | i18next }}</mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
@@ -13,16 +13,9 @@
 
     <mat-card-actions>
       <span class="spacer"></span>
-      <a routerLink="/configuration/machines" mat-button>{{
-        "cancel" | i18next
-      }}</a>
-      <button
-        type="submit"
-        mat-button
-        color="primary"
-        [disabled]="form.pristine || form.invalid"
-      >
-        {{ "save" | i18next }}
+      <a routerLink="/configuration/machines" mat-button>{{ 'cancel' | i18next }}</a>
+      <button type="submit" mat-button color="primary" [disabled]="form.pristine || form.invalid">
+        {{ 'save' | i18next }}
       </button>
     </mat-card-actions>
   </mat-card>

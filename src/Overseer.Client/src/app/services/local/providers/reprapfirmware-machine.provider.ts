@@ -25,50 +25,47 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider {
     });
   }
 
-  loadConfiguration(machine: Machine): Observable<void> {
-    return this.http
-      .get<any>(this.getUrl('rr_status'), { params: { type: '2' } })
-      .pipe(
-        tap((status) => {
-          const tools: MachineTool[] = [];
-          auxiliaryHeaterTypes.forEach((auxToolType) => {
-            const auxTool = status.temps[auxToolType];
-            if (auxTool != null) {
-              tools.push({
-                name: auxToolType,
-                index: auxTool.heater,
-                toolType: MachineToolType.Heater,
-              });
-            }
-          });
-
-          status.tools.forEach((tool: any) => {
-            tool.heaters.forEach((heaterIndex: number) => {
-              tools.push({
-                name: `heater ${heaterIndex}`,
-                index: heaterIndex,
-                toolType: MachineToolType.Heater,
-              });
+  loadConfiguration(machine: Machine): Observable<Machine> {
+    return this.http.get<any>(this.getUrl('rr_status'), { params: { type: '2' } }).pipe(
+      tap((status) => {
+        const tools: MachineTool[] = [];
+        auxiliaryHeaterTypes.forEach((auxToolType) => {
+          const auxTool = status.temps[auxToolType];
+          if (auxTool != null) {
+            tools.push({
+              name: auxToolType,
+              index: auxTool.heater,
+              toolType: MachineToolType.Heater,
             });
+          }
+        });
 
-            tool.drives.forEach((extruderIndex: number) => {
-              tools.push({
-                name: `extruder ${extruderIndex}`,
-                index: extruderIndex,
-                toolType: MachineToolType.Extruder,
-              });
+        status.tools.forEach((tool: any) => {
+          tool.heaters.forEach((heaterIndex: number) => {
+            tools.push({
+              name: `heater ${heaterIndex}`,
+              index: heaterIndex,
+              toolType: MachineToolType.Heater,
             });
           });
 
-          machine.tools = tools;
-          this.machine = machine;
-        })
-      )
-      .pipe(
-        catchError(() => {
-          return throwError(() => new Error('machine_connect_failure'));
-        })
-      );
+          tool.drives.forEach((extruderIndex: number) => {
+            tools.push({
+              name: `extruder ${extruderIndex}`,
+              index: extruderIndex,
+              toolType: MachineToolType.Extruder,
+            });
+          });
+        });
+
+        machine.tools = tools;
+        this.machine = machine;
+        return machine;
+      }),
+      catchError(() => {
+        return throwError(() => new Error('machine_connect_failure'));
+      })
+    );
   }
 
   acquireStatus(): Observable<MachineStatus> {

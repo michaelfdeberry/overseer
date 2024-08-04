@@ -1,36 +1,25 @@
-import {
-  Component,
-  Input,
-  ViewChild,
-  OnInit,
-  OnDestroy,
-  ComponentFactoryResolver,
-} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { OctoprintMachineComponent } from './octoprint-machine.component';
-import { RepRapFirmwareMachineComponent } from './reprapfirmware-machine.component';
-import { BaseMachineComponent } from './base-machine.component';
-import { MachineHostDirective } from './machine-host.directive';
 import { Machine, MachineType } from '../../../models/machine.model';
 import { MachinesService } from '../../../services/machines.service';
+import { BaseMachineComponent } from './base-machine.component';
+import { OctoprintMachineComponent } from './octoprint-machine.component';
+import { RepRapFirmwareMachineComponent } from './reprapfirmware-machine.component';
 
 @Component({
   selector: 'app-machine',
-  templateUrl: './machine-host.component.html',
+  template: '',
 })
 export class MachineHostComponent implements OnInit, OnDestroy {
   constructor(
-    private componentFactoryResolver: ComponentFactoryResolver,
     private machinesService: MachinesService,
+    public viewContainerRef: ViewContainerRef
   ) {}
 
   @Input() form!: FormGroup;
 
   @Input() machine?: Machine;
-
-  @ViewChild(MachineHostDirective, { static: true })
-  machineHost!: MachineHostDirective;
 
   private currentMachineType?: MachineType;
 
@@ -42,32 +31,26 @@ export class MachineHostComponent implements OnInit, OnDestroy {
   ]);
 
   ngOnInit() {
-    this.machineTypeSubscription = this.form.controls[
-      'machineType'
-    ].valueChanges.subscribe((machineType: MachineType) => {
-      if (this.currentMachineType === machineType) {
-        return;
-      }
+    this.machineTypeSubscription = this.form.controls['machineType'].valueChanges.subscribe((machineType: MachineType) => {
+      requestAnimationFrame(() => {
+        if (this.currentMachineType === machineType) {
+          return;
+        }
 
-      this.currentMachineType = machineType;
-      const configComponentType = this.machineTypeComponentMap.get(machineType);
-      if (!configComponentType) {
-        return;
-      }
+        this.currentMachineType = machineType;
+        const configComponentType = this.machineTypeComponentMap.get(machineType);
+        if (!configComponentType) {
+          return;
+        }
 
-      const componentFactory =
-        this.componentFactoryResolver.resolveComponentFactory(
-          configComponentType,
-        );
-      this.machineHost.viewContainerRef.clear();
+        this.viewContainerRef.clear();
 
-      const componentRef =
-        this.machineHost.viewContainerRef.createComponent(componentFactory);
-      const instance = <BaseMachineComponent>componentRef.instance;
-      instance.form = this.form;
-      instance.machine = this.machine;
-      instance.enableAdvancedSettings =
-        this.machinesService.supportsAdvanceSettings;
+        const componentRef = this.viewContainerRef.createComponent(configComponentType);
+        const instance = <BaseMachineComponent>componentRef.instance;
+        instance.form = this.form;
+        instance.machine = this.machine;
+        instance.enableAdvancedSettings = this.machinesService.supportsAdvanceSettings;
+      });
     });
   }
 

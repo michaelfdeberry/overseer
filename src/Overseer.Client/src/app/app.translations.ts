@@ -1,15 +1,23 @@
 import { APP_INITIALIZER, LOCALE_ID } from '@angular/core';
 import { ITranslationService, I18NEXT_SERVICE } from 'angular-i18next';
+import HttpApi from 'i18next-http-backend';
+import LanguageDetector from 'i18next-browser-languagedetector';
 
 export function appInit(i18next: ITranslationService) {
   return () =>
-    i18next.init({
-      supportedLngs: ['en', 'ru'],
-      fallbackLng: 'en',
-      debug: true,
-      returnEmptyString: false,
-      ns: ['translation', 'validation', 'error'],
-    });
+    i18next
+      .use(HttpApi)
+      .use(LanguageDetector)
+      .init({
+        backend: {
+          loadPath: '/i18n/{{lng}}.json',
+        },
+        supportedLngs: ['en'],
+        fallbackLng: 'en',
+        debug: true,
+        returnEmptyString: false,
+        ns: ['translation'],
+      });
 }
 
 export function localeIdFactory(i18next: ITranslationService) {

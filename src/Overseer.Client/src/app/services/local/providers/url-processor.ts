@@ -1,37 +1,38 @@
-import * as Url from 'url-parse';
-
 export function processUrl(url: string, refPath?: string): string {
-  const uri = new Url(url, {});
-  const refUri = new Url(refPath, {});
+  const uri = new URL(url);
 
   // if the ref path is a url the use it if possible
-  if (refUri.protocol && refUri.protocol.startsWith('http')) {
-    // if the host is localhost or a loopback ip assume the url is relative to the base url
-    if (refUri.host === 'localhost' || refUri.host === '127.0.0.1') {
-      uri.set('pathname', refUri.pathname);
-      uri.set('query', refUri.query);
-
-      return uri.toString();
+  if (refPath && URL.canParse(refPath)) {
+    try {
+      const refUri = new URL(refPath);
+      if (refUri.host === 'localhost' || refUri.host === '127.0.0.1') {
+        const relative = new URL(refUri.pathname, url);
+        if (refUri.search) {
+          relative.search = refUri.search;
+        }
+        return relative.toString();
+      }
+      return refUri.toString();
+    } catch (error) {
+      return url;
     }
-
-    // if the reference path is a valid url just use it
-    return refUri.toString();
   }
 
-  let query: any = {};
-  if (refPath && refPath.indexOf('?') > 0) {
+  let query: string | undefined = undefined;
+  if (refPath) {
     if (refPath.startsWith('/')) {
-      refPath = refPath.substr(1);
+      refPath = refPath.substring(1);
     }
 
-    const parts = refPath.split('?');
-    refPath = parts[0];
-    query = Url.qs.parse(parts[1]);
+    if (refPath.includes('?')) {
+      query = new URLSearchParams(refPath.substring(refPath.indexOf('?'))).toString();
+      refPath = refPath.substring(0, refPath.indexOf('?'));
+    }
   }
 
-  // will either clear the path and query or set it to the path and query from the ref path
-  uri.set('pathname', refPath || '');
-  uri.set('query', query);
+  uri.pathname = refPath ? `${uri.pathname}${uri.pathname.endsWith('/') ? '' : '/'}${refPath}` : uri.pathname;
+  uri.search = query ?? '';
 
-  return uri.toString();
+  const result = uri.toString();
+  return result;
 }

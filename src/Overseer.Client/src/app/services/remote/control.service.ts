@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
-import { endpointFactory } from './endpoint-factory';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ControlService } from '../control.service';
+import { endpointFactory } from './endpoint-factory';
 
 @Injectable({ providedIn: 'root' })
 export class RemoteControlService implements ControlService {
@@ -9,39 +10,31 @@ export class RemoteControlService implements ControlService {
 
   constructor(private http: HttpClient) {}
 
-  pauseJob(machineId: number) {
-    return this.http.get(this.getEndpoint(machineId, 'pause'));
+  pauseJob(machineId: number): Observable<void> {
+    return this.http.post<void>(this.getEndpoint(machineId, 'pause'), null);
   }
 
-  resumeJob(machineId: number) {
-    return this.http.get(this.getEndpoint(machineId, 'resume'));
+  resumeJob(machineId: number): Observable<void> {
+    return this.http.post<void>(this.getEndpoint(machineId, 'resume'), null);
   }
 
-  cancelJob(machineId: number) {
-    return this.http.get(this.getEndpoint(machineId, 'cancel'));
+  cancelJob(machineId: number): Observable<void> {
+    return this.http.post<void>(this.getEndpoint(machineId, 'cancel'), null);
   }
 
-  setFanSpeed(machineId: number, speedPercentage: number) {
-    return this.http.get(this.getEndpoint(machineId, 'fan', speedPercentage));
+  setFanSpeed(machineId: number, speedPercentage: number): Observable<void> {
+    return this.http.post<void>(this.getEndpoint(machineId, 'fan', speedPercentage), null);
   }
 
-  setFeedRate(machineId: number, speedPercentage: number) {
-    return this.http.get(this.getEndpoint(machineId, 'feed', speedPercentage));
+  setFeedRate(machineId: number, speedPercentage: number): Observable<void> {
+    return this.http.post<void>(this.getEndpoint(machineId, 'feed', speedPercentage), null);
   }
 
-  setTemperature(machineId: number, heaterIndex: number, temperature: number) {
-    return this.http.get(
-      this.getEndpoint(machineId, heaterIndex, 'temp', temperature),
-    );
+  setTemperature(machineId: number, heaterIndex: number, temperature: number): Observable<void> {
+    return this.http.post<void>(this.getEndpoint(machineId, heaterIndex, 'temp', temperature), null);
   }
 
-  setFlowRate(
-    machineId: number,
-    extruderIndex: number,
-    flowRatePercentage: number,
-  ) {
-    return this.http.get(
-      this.getEndpoint(machineId, extruderIndex, 'flow', flowRatePercentage),
-    );
+  setFlowRate(machineId: number, extruderIndex: number, flowRatePercentage: number): Observable<void> {
+    return this.http.post<void>(this.getEndpoint(machineId, extruderIndex, 'flow', flowRatePercentage), null);
   }
 }

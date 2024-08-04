@@ -5,19 +5,21 @@ import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
+import { I18NextModule } from 'angular-i18next';
 import { Observable } from 'rxjs';
 import { DialogService } from '../dialogs/dialog.service';
+import { MachineStatus } from '../models/machine-status.model';
 import { ControlService } from '../services/control.service';
 import { DurationPipe } from '../shared/duration.pipe';
+import { LetDirective } from '../shared/let.directive';
 import { MachineMonitor } from './machine-monitor';
-import { I18NextModule } from 'angular-i18next';
 
 @Component({
   selector: 'app-monitoring-tune',
   templateUrl: './tune-dialog.component.html',
   styleUrls: ['./tune-dialog.component.scss'],
   standalone: true,
-  imports: [CommonModule, MatIcon, MatSlider, MatSliderThumb, MatProgressBar, MatDialogClose, DurationPipe, FormsModule, I18NextModule],
+  imports: [CommonModule, MatIcon, MatSlider, MatSliderThumb, MatProgressBar, MatDialogClose, DurationPipe, FormsModule, I18NextModule, LetDirective],
 })
 export class TuneDialogComponent {
   disabled = false;
@@ -29,8 +31,8 @@ export class TuneDialogComponent {
     private dialog: DialogService
   ) {}
 
-  get status() {
-    return this.data.status;
+  get status(): MachineStatus {
+    return this.data.status!;
   }
 
   pause() {
@@ -78,9 +80,12 @@ export class TuneDialogComponent {
     this.disableUi(this.controlService.setFanSpeed(this.data.id, fanSpeed));
   }
 
-  private disableUi(observable: Observable<object>) {
+  private disableUi(observable: Observable<void>) {
     this.disabled = true;
     const enableUi = () => (this.disabled = false);
-    observable.subscribe(enableUi, enableUi);
+    observable.subscribe({
+      next: enableUi,
+      error: enableUi,
+    });
   }
 }

@@ -1,20 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
+import { AccessLevelGuard, AuthenticationGuard } from '../shared/authentication-guard';
+import { AboutComponent } from './about/about.component';
 import { ConfigurationComponent } from './configuration.component';
 import { GeneralSettingsComponent } from './general/general-settings.component';
-import { UsersComponent } from './users/users.component';
-import { AddUserComponent } from './users/add-user.component';
-import { EditUserComponent } from './users/edit-user.component';
-import { MachinesComponent } from './machines/machines.component';
 import { AddMachineComponent } from './machines/add-machine.component';
 import { EditMachineComponent } from './machines/edit-machine.component';
-import { AboutComponent } from './about/about.component';
+import { MachinesComponent } from './machines/machines.component';
 import { SetupComponent } from './setup/setup.component';
-import {
-  AuthenticationGuard,
-  AccessLevelGuard,
-} from '../shared/authentication-guard';
+import { AddUserComponent } from './users/add-user.component';
+import { EditUserComponent } from './users/edit-user.component';
+import { UsersComponent } from './users/users.component';
 
 const configurationRoutes: Routes = [
   {
@@ -24,7 +20,7 @@ const configurationRoutes: Routes = [
       {
         path: '',
         redirectTo: 'general',
-        canActivate: [AuthenticationGuard, AccessLevelGuard],
+        pathMatch: 'full',
       },
       {
         path: 'general',

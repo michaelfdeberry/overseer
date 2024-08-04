@@ -1,15 +1,8 @@
 import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { Machine } from '../../../models/machine.model';
 
-export function machineFormFactory(
-  builder: UntypedFormBuilder,
-  controls?: Record<string, UntypedFormControl>,
-) {
+export function machineFormFactory(builder: UntypedFormBuilder, controls?: Record<string, UntypedFormControl>) {
   const form = builder.group({
     machineType: [null, []],
     name: [null, [Validators.required]],
@@ -28,7 +21,7 @@ export function machineFormFactory(
 @Directive()
 export abstract class BaseMachineComponent implements OnInit, OnDestroy {
   @Input()
-  machine: any;
+  machine?: Machine;
 
   @Input()
   form!: UntypedFormGroup;
@@ -43,10 +36,7 @@ export abstract class BaseMachineComponent implements OnInit, OnDestroy {
   abstract onDestroy(): void;
 
   ngOnInit() {
-    this.form.addControl(
-      'name',
-      new UntypedFormControl(null, Validators.required),
-    );
+    this.form.addControl('name', new UntypedFormControl(null, Validators.required));
 
     this.onInit();
 

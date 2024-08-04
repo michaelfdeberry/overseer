@@ -19,11 +19,11 @@ export class RemoteUsersService implements UsersService {
   }
 
   createUser(user: User) {
-    return this.http.put<User>(this.getEndpoint(), user);
+    return this.http.post<User>(this.getEndpoint(), user);
   }
 
   updateUser(user: User) {
-    return this.http.post<User>(this.getEndpoint(), user);
+    return this.http.put<User>(this.getEndpoint(), user);
   }
 
   deleteUser(user: User) {

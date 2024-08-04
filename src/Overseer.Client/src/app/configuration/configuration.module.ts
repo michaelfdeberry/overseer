@@ -9,7 +9,6 @@ import { AboutComponent } from './about/about.component';
 import { ConfigurationRoutingModule } from './configuration-routing.module';
 import { ConfigurationComponent } from './configuration.component';
 import { GeneralSettingsComponent } from './general/general-settings.component';
-import { ThemeSelectorComponent } from './general/theme-selector.component';
 import { AddMachineComponent } from './machines/add-machine.component';
 import { CertificateErrorDialogComponent } from './machines/certificate-error-dialog.component';
 import { CertificateErrorService } from './machines/certificate-error.service';
@@ -17,7 +16,6 @@ import { CreateMachineComponent } from './machines/create-machine.component';
 import { EditMachineComponent } from './machines/edit-machine.component';
 import { MachinesComponent } from './machines/machines.component';
 import { MachineHostComponent } from './machines/shared/machine-host.component';
-import { MachineHostDirective } from './machines/shared/machine-host.directive';
 import { OctoprintMachineComponent } from './machines/shared/octoprint-machine.component';
 import { RepRapFirmwareMachineComponent } from './machines/shared/reprapfirmware-machine.component';
 import { SetupComponent } from './setup/setup.component';
@@ -27,12 +25,14 @@ import { EditUserComponent } from './users/edit-user.component';
 import { UsersComponent } from './users/users.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatStepperModule } from '@angular/material/stepper';
-import { MatButtonModule } from '@angular/material/button';
+import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatDialogClose } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
+import { MatInput } from '@angular/material/input';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 @NgModule({
   imports: [
@@ -54,6 +54,9 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
     MatIcon,
     CdkDropList,
     CdkDrag,
+    MatInput,
+    MatButton,
+    MatSlideToggle,
   ],
   declarations: [
     ConfigurationComponent,
@@ -66,14 +69,11 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
     AddMachineComponent,
     EditMachineComponent,
     CreateMachineComponent,
-    ThemeSelectorComponent,
     MachineHostComponent,
-    MachineHostDirective,
     OctoprintMachineComponent,
     RepRapFirmwareMachineComponent,
     CreateUserComponent,
     CreateMachineComponent,
-    ThemeSelectorComponent,
     CertificateErrorDialogComponent,
     SetupComponent,
   ],

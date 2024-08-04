@@ -19,22 +19,10 @@ export class OctoprintMachineComponent extends BaseMachineComponent {
     this.form.addControl('clientCertificate', new FormControl());
 
     if (this.machine) {
-      this.form.addControl(
-        'profile',
-        new FormControl(null, Validators.required),
-      );
-      this.form.addControl(
-        'webCamUrl',
-        new FormControl(null, Validators.required),
-      );
-      this.form.addControl(
-        'webCamOrientation',
-        new FormControl(null, Validators.required),
-      );
-      this.form.addControl(
-        'snapshotUrl',
-        new FormControl(null, Validators.required),
-      );
+      this.form.addControl('profile', new FormControl(null, Validators.required));
+      this.form.addControl('webCamUrl', new FormControl(null, Validators.required));
+      this.form.addControl('webCamOrientation', new FormControl(null, Validators.required));
+      this.form.addControl('snapshotUrl', new FormControl(null, Validators.required));
     }
   }
 
