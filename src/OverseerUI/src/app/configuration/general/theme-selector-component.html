@@ -1,7 +1,0 @@
-<mat-form-field>
-    <mat-select placeholder="Theme" (selectionChange)="updateTheme($event.value)" value="{{ currentTheme }}">
-        <mat-option *ngFor="let theme of availableThemes" [value]="theme.name">
-            {{ 'themes.' + theme.name | translate}}
-        </mat-option>
-    </mat-select>
-</mat-form-field>

@@ -1,7 +1,0 @@
-$pink: mat-palette($mat-pink, 700, 100, 800);
-$bluegrey: mat-palette($mat-blue-grey, A100, A400);
-$pink-bluegrey-theme: mat-dark-theme($pink, $bluegrey);
-
-.pink-bluegrey {
-    @include angular-material-theme($pink-bluegrey-theme);
-}
