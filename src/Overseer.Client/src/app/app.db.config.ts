@@ -1,5 +1,5 @@
 import { DBConfig } from 'ngx-indexed-db';
-import { environment } from '../environments/environment';
+import { environment } from '../environments/environment.local';
 import { Machine, WebCamOrientation } from './models/machine.model';
 import { AccessLevel } from './models/user.model';
 

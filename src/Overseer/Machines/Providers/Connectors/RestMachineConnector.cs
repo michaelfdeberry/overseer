@@ -37,9 +37,12 @@ namespace Overseer.Machines.Providers
                 BaseUrl = new Uri(machine.Url),
                 ClientCertificates = GetClientCertificate(machine.ClientCertificate)
             });
-            var request = new RestRequest(resource, (Method)Enum.Parse(typeof(Method), method));            
-            request.AddJsonBody(body);
-                        
+            var request = new RestRequest(resource, (Method)Enum.Parse(typeof(Method), method, true));
+            if (body != null)
+            {
+                request.AddJsonBody(body);
+            }
+
             machine.Headers?.ToList().ForEach(header => client.AddDefaultHeader(header.Key, header.Value));
             query?.ToList().ForEach(p => request.AddParameter(p.name, p.value, ParameterType.QueryString));
 
@@ -92,30 +95,43 @@ namespace Overseer.Machines.Providers
         }
 
         public static Uri ProcessUri(string url, string refPath = "")
-        {
+        { 
+            refPath = refPath ?? string.Empty;
             var uri = new Uri(url);
+            var refQuery = string.Empty;
+            var refPort = uri.Port;
+
             if (Uri.TryCreate(refPath, UriKind.Absolute, out var refUri) && refUri.Scheme.StartsWith("http"))
             {
                 //if the host is a loopback ip address assume it's local to base uri and construct a new url with the public host
-                if (refUri.Host == "localhost" || IPAddress.TryParse(refUri.Host, out var ip) && IPAddress.IsLoopback(ip))
+                if (refUri.Host == "localhost" || (IPAddress.TryParse(refUri.Host, out var ip) && IPAddress.IsLoopback(ip)))
                 {
-                    return new UriBuilder(uri.Scheme, uri.Host, refUri.Port, refUri.AbsolutePath, refUri.Query).Uri;
+                    refPath = refUri.PathAndQuery;
+                    refPort = refUri.Port;
                 }
-
-                //if the reference path is an absolute url use the absolute url. 
-                return refUri;
+                else
+                {
+                    //if the reference path is an absolute url use the absolute url. 
+                    return refUri;
+                }
             }
 
-            //else construct a new url with the reference path                     
-            var query = string.Empty;
-            if(!string.IsNullOrWhiteSpace(refPath) && refPath.Contains("?"))
+            refPath = refPath.TrimStart('/');
+            if (refPath.Contains("?"))
             {
-                var parts = refPath.TrimStart('/').Split('?');
+                var parts = refPath.Split('?');
                 refPath = parts.First();
-                query = $"?{parts.Last()}";
+                refQuery = $"?{parts.Last()}";
             }
 
-            return new UriBuilder(uri.Scheme, uri.Host, uri.Port, refPath, query).Uri;
+            // if the ports are the same, join the paths. 
+            if (refPort == uri.Port)
+            {
+                var delimiter = uri.LocalPath.EndsWith("/") ? string.Empty : "/";
+                refPath = $"{uri.LocalPath}{delimiter}{refPath}";
+            }
+
+            return new UriBuilder(uri.Scheme, uri.Host, refPort, refPath, refQuery).Uri;
         }
     }
 }

@@ -1,4 +1,6 @@
+using log4net.Config;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.Extensions.FileProviders;
 using Overseer.Data;
 using Overseer.Models;
 using Overseer.Server;
@@ -9,6 +11,7 @@ using System.CommandLine;
 
 using (var context = new LiteDataContext())
 {
+
     var values = context.GetValueStore();
     var settings = values.GetOrPut(() => new ApplicationSettings());
     var portOption = new Option<int?>(name: "--port", description: "The Overseer Server Port");
@@ -26,35 +29,44 @@ using (var context = new LiteDataContext())
     builder.Services
         .AddAuthentication(OverseerAuthenticationOptions.Setup)
         .UseOverseerAuthentication();
-    builder.Services.AddAuthorization(options =>
-    {
-        options.AddPolicy("Readonly", policy => policy.RequireRole(AccessLevel.Readonly.ToString()));
-        options.AddPolicy("Administrator", policy => policy.RequireRole(AccessLevel.Administrator.ToString()));
-    });
+
+    builder.Services.AddAuthorizationBuilder()
+        .AddPolicy("Readonly", policy => policy.RequireRole(AccessLevel.Readonly.ToString()))
+        .AddPolicy("Administrator", policy => policy.RequireRole(AccessLevel.Administrator.ToString())); 
     
     var app = builder.Build();
-    if (app.Environment.IsDevelopment())
+
+    XmlConfigurator.Configure(new FileInfo(Path.Combine(app.Environment.ContentRootPath, "log4net.config")));
+    var isDev = app.Environment.IsDevelopment();
+
+    if (isDev)
     {
         app.UseSwagger();
         app.UseSwaggerUI();
+        app.UseCors((builder) => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().SetIsOriginAllowedToAllowWildcardSubdomains());
     }
 
+    app.HandleOverseerExceptions();    
     app.MapOverseerApi();
-    app.MapHub<StatusHub>("/status");
-    app.UseSpa(spa =>
-    {
-        if (app.Environment.IsDevelopment())
-        {
-            spa.Options.SourcePath = "../Overseer.Client";
-            spa.UseAngularCliServer(npmScript: "start");
-        }
-        else
-        {
-            spa.Options.SourcePath = "/Overseer.Client";
-        }
-    });
+    app.MapHub<StatusHub>("/push/status");
 
-    app.HandleOverseerExceptions();
+    if (!isDev)
+    {
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "browser"))
+        });
+
+        app.UseSpa(spa =>
+        {
+            spa.Options.SourcePath = "/browser";
+            spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "browser")),
+            };
+        });
+    }  
+
 
     app.Run();
 }

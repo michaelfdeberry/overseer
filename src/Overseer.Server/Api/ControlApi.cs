@@ -53,7 +53,7 @@ namespace Overseer.Server.Api
                 return Results.Ok();
             });
 
-            return group;
+            return builder;
         }
     }
 }

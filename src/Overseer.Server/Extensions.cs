@@ -28,6 +28,7 @@ namespace Overseer.Server
             services.AddTransient<IControlManager, ControlManager>();
             services.AddSingleton<IMonitoringService, MonitoringService>();
             services.AddSingleton<MachineProviderManager>();
+            services.AddCors();
 
             return services;
         }
@@ -49,8 +50,8 @@ namespace Overseer.Server
                         }
 
                         object exceptionModel = exception is OverseerException oEx ?
-                            exceptionModel = new { error = oEx.Message, oEx.Properties } :
-                            exceptionModel = new { error = exception.Message };
+                            exceptionModel = new { message = oEx.Message, oEx.Properties, exceptionType = "overseer" } :
+                            exceptionModel = new { message = exception.Message };
 
                         context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                         context.Response.ContentType = "application/json";

@@ -49,7 +49,7 @@ export class RemoteAuthenticationService implements AuthenticationService {
   }
 
   createInitialUser(user: User): Observable<User> {
-    return this.http.put<User>(this.getEndpoint('setup'), user);
+    return this.http.post<User>(this.getEndpoint('setup'), user);
   }
 
   getPreauthenticatedToken(userId: number): Observable<string> {

@@ -37,8 +37,42 @@
               "includePaths": ["src/scss/abstracts"]
             },
             "scripts": []
-          },
+          },          
           "configurations": {
+            "production-remote": { 
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "2MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kB",
+                  "maximumError": "6kB"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [{
+                "replace": "src/environments/environment.local.ts",
+                "with": "src/environments/environment.remote.ts"
+              }]
+            },
+            "development-remote": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.local.ts",
+                  "with": "src/environments/environment.remote.development.ts"
+                },
+                {
+                  "replace": "src/environments/environment.remote.ts",
+                  "with": "src/environments/environment.remote.development.ts"
+                }
+              ]
+            },
             "production": {
               "budgets": [
                 {
@@ -60,8 +94,8 @@
               "sourceMap": true,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
+                  "replace": "src/environments/environment.local.ts",
+                  "with": "src/environments/environment.local.development.ts"
                 }
               ]
             }
@@ -70,12 +104,18 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "configurations": {
+          "configurations": {            
             "production": {
               "buildTarget": "Overseer.Client:build:production"
             },
             "development": {
               "buildTarget": "Overseer.Client:build:development"
+            },
+            "production-remote": {
+              "buildTarget": "Overseer.Client:build:production-remote"
+            },
+            "development-remote": {
+              "buildTarget": "Overseer.Client:build:development-remote"
             }
           },
           "defaultConfiguration": "development"

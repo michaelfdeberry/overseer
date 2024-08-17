@@ -3,6 +3,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { Subject } from 'rxjs';
 import { MachineStatus } from '../../models/machine-status.model';
 import { MonitoringService } from '../monitoring.service';
+import { environment } from '../../../environments/environment.remote';
 
 // This is used when the .net core host is used.
 @Injectable({
@@ -14,7 +15,9 @@ export class RemoteMonitoringService implements MonitoringService {
   private isConnected = false;
 
   constructor() {
-    this.hubConnection = new HubConnectionBuilder().withUrl('/push/status').build();
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl(`${environment.apiHost}/push/status`, { withCredentials: environment.production })
+      .build();
     this.hubConnection.on('statusUpdate', (statusUpdate: MachineStatus) => this.statusEvent$.next(statusUpdate));
   }
 

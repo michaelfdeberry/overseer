@@ -12,13 +12,16 @@ namespace Overseer.Server.Hubs
         readonly IMonitoringService _monitoringService;
         readonly HashSet<string> _monitoringGroup = new HashSet<string>();
 
-        public StatusHub(IMonitoringService monitoringService)
+        public StatusHub(IMonitoringService monitoringService, IHubContext<StatusHub> hubContext)
         {
             _monitoringService = monitoringService;
 
-            _monitoringService.StatusUpdate += (object? sender, EventArgs<MachineStatus> e)  => 
+            _monitoringService.StatusUpdate += (object? sender, EventArgs<MachineStatus> e)  =>
             {
-                Clients.Group(MonitoringGroupName).SendAsync("StatusUpdate", e.Data);
+                hubContext
+                    .Clients
+                    .Group(MonitoringGroupName)
+                    .SendAsync("StatusUpdate", e.Data);
             };
         }
          

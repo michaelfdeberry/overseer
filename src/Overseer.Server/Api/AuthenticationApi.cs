@@ -19,7 +19,7 @@ namespace Overseer.Server.Api
                 return Results.Text($"requiresInitialization={authorizationManager.RequiresAuthorization()}", statusCode: (int)HttpStatusCode.Unauthorized);
             });
 
-            group.MapPut("/setup", (UserDisplay user, IAuthorizationManager authorizationManager, IUserManager userManager) =>
+            group.MapPost("/setup", (UserDisplay user, IAuthorizationManager authorizationManager, IUserManager userManager) =>
             {
                 if (!authorizationManager.RequiresAuthorization()) return Results.StatusCode((int)HttpStatusCode.PreconditionFailed);
                 return Results.Ok(userManager.CreateUser(user));

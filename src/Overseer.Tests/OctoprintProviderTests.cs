@@ -69,8 +69,8 @@ namespace Overseer.Tests
             //LoadConfiguration is called anytime a printer is added or updated
             await _provider.LoadConfiguration(_machine);
             
-            ClassicAssert.AreEqual("http://octoprint.local/webcam/?action=stream", _machine.WebCamUrl);
-            ClassicAssert.AreEqual("http://octoprint.local:8080/?action=snapshot", _machine.SnapshotUrl);                                    
+            ClassicAssert.AreEqual("http://octoprint.local/machine1/webcam/?action=stream", _machine.WebCamUrl);
+            ClassicAssert.AreEqual("http://octoprint.local:8080/machine1/?action=snapshot", _machine.SnapshotUrl);                                    
             ClassicAssert.AreEqual("CR10", _machine.Profile);
             ClassicAssert.AreEqual(1, _machine.AvailableProfiles.Count);
             ClassicAssert.AreEqual(_machine.Profile, _machine.AvailableProfiles.First().Value);

@@ -3,7 +3,7 @@ import { NgxLoggerLevel } from 'ngx-logger';
 import { LocalStorageService } from 'ngx-store';
 import { defer, forkJoin, map, mergeMap, Observable, of } from 'rxjs';
 import { UAParser } from 'ua-parser-js';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.local';
 import { Machine } from '../../models/machine.model';
 import { ApplicationSettings } from '../../models/settings.model';
 import { toUser, User } from '../../models/user.model';

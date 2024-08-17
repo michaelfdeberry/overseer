@@ -5,32 +5,36 @@ namespace Overseer.Server.Api
 {
     public static class MachineApi
     {
-        public class MachineBindingModel : Machine
+        public class MachineBindingModel(Machine machine)
         {
-            public override MachineType MachineType { get; } = MachineType.Unknown;
+            public Machine Machine { get; set; } = machine;
 
-            public static ValueTask<MachineBindingModel?> BindAsync(HttpContext context)
+            public static async ValueTask<MachineBindingModel?> BindAsync(HttpContext context)
             {
                 using var reader = new StreamReader(context.Request.Body);
-                var jObject = JObject.Parse(reader.ReadToEnd());
-                string machineTypeName = jObject["machineType"]?.Value<string>() ?? "Unknown"; 
-                return ValueTask.FromResult(jObject.ToObject(GetMachineType(machineTypeName)) as MachineBindingModel);
+                var machineJson = await reader.ReadToEndAsync();
+                var jObject = JObject.Parse(machineJson);
+                string machineTypeName = jObject["machineType"]?.Value<string>() ?? "Unknown";
+
+                return jObject.ToObject(Machine.GetMachineType(machineTypeName)) is not Machine machine ? 
+                    throw new Exception("Unable to parse machine") : 
+                    new MachineBindingModel(machine);
             }
         }
 
         public static RouteGroupBuilder MapMachineApi(this RouteGroupBuilder builder)
         {
             var group = builder.MapGroup("/machines");
-            group.RequireAuthorization();
+            //group.RequireAuthorization();
 
             group.MapGet("/", (IMachineManager machines) => Results.Ok(machines.GetMachines()));    
 
             group.MapGet("/{id}", (int id, IMachineManager machines) => Results.Ok(machines.GetMachine(id)));
 
-            group.MapPut("/", (MachineBindingModel machine, IMachineManager machines) => Results.Ok(machines.CreateMachine(machine)))
+            group.MapPut("/", async (MachineBindingModel model, IMachineManager machines) => Results.Ok(await machines.CreateMachine(model.Machine)))
                 .RequireAuthorization(AccessLevel.Administrator.ToString());
 
-            group.MapPost("/", (MachineBindingModel machine, IMachineManager machines) => Results.Ok(machines.UpdateMachine(machine)))
+            group.MapPost("/", async (MachineBindingModel model, IMachineManager machines) => Results.Ok(await machines.UpdateMachine(model.Machine)))
                 .RequireAuthorization(AccessLevel.Administrator.ToString());
 
             group.MapDelete("/{id}", (int id, IMachineManager machines) => Results.Ok(machines.DeleteMachine(id)))

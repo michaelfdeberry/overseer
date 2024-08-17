@@ -1,13 +1,13 @@
 import { ApplicationConfig, importProvidersFrom, Provider, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { I18NextModule } from 'angular-i18next';
 import { NgxIndexedDBModule } from 'ngx-indexed-db';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 import { LocalStorageService, WebStorageModule } from 'ngx-store';
-import { environment } from '../environments/environment';
+import { environment } from '../environments/environment.local';
 import { dbConfig } from './app.db.config';
 import { routes } from './app.routes';
 import { I18N_PROVIDERS } from './app.translations';
@@ -37,10 +37,12 @@ import { SettingsService } from './services/settings.service';
 import { ThemeService } from './services/theme.service';
 import { UsersService } from './services/users.service';
 import { AuthenticationGuard } from './shared/authentication-guard';
+import { OverseerHttpInterceptor } from './app-http-interceptor';
 
 const services: Provider[] =
   environment.serviceType === 'remote'
     ? [
+        { provide: HTTP_INTERCEPTORS, useClass: OverseerHttpInterceptor, multi: true },
         { provide: AuthenticationService, useClass: RemoteAuthenticationService },
         { provide: ControlService, useClass: RemoteControlService },
         { provide: LoggingService, useClass: RemoteLoggingService },
