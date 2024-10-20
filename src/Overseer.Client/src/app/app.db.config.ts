@@ -1,11 +1,11 @@
 import { DBConfig } from 'ngx-indexed-db';
-import { environment } from '../environments/environment.local';
+import { environment } from '../environments/environment';
 import { Machine, WebCamOrientation } from './models/machine.model';
 import { AccessLevel } from './models/user.model';
 
 export function migrationFactory(): { [key: number]: (db: IDBDatabase, transaction: IDBTransaction) => void } {
   return {
-    4: (db, transaction) => {
+    4: (_db, transaction) => {
       const store = transaction.objectStore('users');
       const request = store.openCursor();
 
@@ -24,7 +24,7 @@ export function migrationFactory(): { [key: number]: (db: IDBDatabase, transacti
         }
       };
     },
-    7: (db, transaction) => {
+    7: (_db, transaction) => {
       const store = transaction.objectStore('machines');
       const request = store.openCursor();
 

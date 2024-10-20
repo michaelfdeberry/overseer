@@ -3,7 +3,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { Subject } from 'rxjs';
 import { MachineStatus } from '../../models/machine-status.model';
 import { MonitoringService } from '../monitoring.service';
-import { environment } from '../../../environments/environment.remote';
+import { environment } from '../../../environments/environment';
 
 // This is used when the .net core host is used.
 @Injectable({

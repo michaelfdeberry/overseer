@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { INGXLoggerMetadata, INGXLoggerMonitor, NGXLogger } from 'ngx-logger';
-import { LocalStorage } from 'ngx-store';
 import { LoggingService } from '../logging.service';
 import { IndexedStorageService } from './indexed-storage.service';
 
@@ -14,15 +13,13 @@ class OverseerMonitor implements INGXLoggerMonitor {
 
 @Injectable({ providedIn: 'root' })
 export class LocalLoggingService implements LoggingService {
-  @LocalStorage() activeUser: any;
-
   get logger() {
     return this.ngxLogger;
   }
 
   constructor(
     private ngxLogger: NGXLogger,
-    private storage: IndexedStorageService,
+    private storage: IndexedStorageService
   ) {
     this.ngxLogger.registerMonitor(new OverseerMonitor(this.storage));
   }

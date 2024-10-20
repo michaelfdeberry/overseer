@@ -20,7 +20,10 @@
             "outputPath": "dist/overseer.client",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js",
+              "@angular/localize/init"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -30,60 +33,22 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
-              "src/scss/styles.scss"
+              "src/styles.scss"
             ],
-            "stylePreprocessorOptions": {
-              "includePaths": ["src/scss/abstracts"]
-            },
             "scripts": []
-          },          
+          },
           "configurations": {
-            "production-remote": { 
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "2MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "6kB"
-                }
-              ],
-              "outputHashing": "all",
-              "fileReplacements": [{
-                "replace": "src/environments/environment.local.ts",
-                "with": "src/environments/environment.remote.ts"
-              }]
-            },
-            "development-remote": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.local.ts",
-                  "with": "src/environments/environment.remote.development.ts"
-                },
-                {
-                  "replace": "src/environments/environment.remote.ts",
-                  "with": "src/environments/environment.remote.development.ts"
-                }
-              ]
-            },
             "production": {
               "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "2MB"
+                  "maximumError": "1MB"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kB",
-                  "maximumError": "6kB"
+                  "maximumError": "4kB"
                 }
               ],
               "outputHashing": "all"
@@ -94,8 +59,8 @@
               "sourceMap": true,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.local.ts",
-                  "with": "src/environments/environment.local.development.ts"
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
                 }
               ]
             }
@@ -104,18 +69,12 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "configurations": {            
+          "configurations": {
             "production": {
               "buildTarget": "Overseer.Client:build:production"
             },
             "development": {
               "buildTarget": "Overseer.Client:build:development"
-            },
-            "production-remote": {
-              "buildTarget": "Overseer.Client:build:production-remote"
-            },
-            "development-remote": {
-              "buildTarget": "Overseer.Client:build:development-remote"
             }
           },
           "defaultConfiguration": "development"
@@ -126,7 +85,11 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing",
+              "@angular/localize/init"
+            ],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -136,7 +99,6 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ],
             "scripts": []

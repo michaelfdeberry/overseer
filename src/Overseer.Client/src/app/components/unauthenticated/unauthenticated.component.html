@@ -1,0 +1,33 @@
+<div class="unauthenticated d-flex flex-column flex-md-row">
+  <div class="splash panel px-3 py-2 d-block d-md-flex">
+    <div class="header d-block d-md-flex">
+      <app-svg name="logo" />
+    </div>
+    <div class="content d-none d-md-flex">
+      <div class="illustrations">
+        <app-svg name="printer" />
+        <app-svg name="printer" />
+        <app-svg name="printer" />
+      </div>
+      <div class="welcome">
+        <p class="py-5 m-0">
+          {{ 'about.title' | i18next }}
+        </p>
+      </div>
+    </div>
+    <div class="footer d-none d-md-flex">
+      {{ 'attribution' | i18next }}
+    </div>
+  </div>
+  <div class="page panel px-3 px-md-5 py-2 d-flex">
+    <div class="header fs-4 fw-semibold d-flex">
+      {{ message }}
+    </div>
+    <div class="content d-md-flex">
+      <ng-content />
+    </div>
+    <div class="footer">
+      <a class="text-secondary-emphasis" href="https://github.com/michaelfdeberry/overseer">{{ 'repoLinkLabel' | i18next }}</a>
+    </div>
+  </div>
+</div>

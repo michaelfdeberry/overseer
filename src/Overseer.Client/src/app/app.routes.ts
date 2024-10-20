@@ -1,25 +1,27 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './login/login.component';
-import { SsoComponent } from './login/sso.component';
-import { MonitoringComponent } from './monitoring/monitoring.component';
-import { AuthenticationGuard } from './shared/authentication-guard';
+import { authenticationGuard } from './guards/authentication.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    component: MonitoringComponent,
-    canActivate: [AuthenticationGuard],
+    canActivate: [authenticationGuard()],
+    loadComponent: () => import('./pages/monitoring/monitoring.component').then((m) => m.MonitoringComponent),
   },
   {
     path: 'login',
-    component: LoginComponent,
+    loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent),
   },
   {
     path: 'sso',
-    component: SsoComponent,
+    loadComponent: () => import('./pages/sso/sso.component').then((m) => m.SsoComponent),
   },
   {
-    path: 'configuration',
-    loadChildren: () => import('./configuration/configuration.module').then((module) => module.ConfigurationModule),
+    path: 'setup',
+    loadComponent: () => import('./pages/setup/setup.component').then((m) => m.SetupComponent),
   },
+  // {
+  //   path: 'configuration',
+  //   loadComponent: () => import('./components/configuration/configuration.component').then((m) => m.AppConfigurationComponent),
+  //   children: [{}],
+  // },
 ];

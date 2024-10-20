@@ -1,19 +1,21 @@
 import { ApplicationConfig, importProvidersFrom, Provider, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { I18NextModule } from 'angular-i18next';
 import { NgxIndexedDBModule } from 'ngx-indexed-db';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
-import { LocalStorageService, WebStorageModule } from 'ngx-store';
-import { environment } from '../environments/environment.local';
+import { environment } from '../environments/environment';
 import { dbConfig } from './app.db.config';
 import { routes } from './app.routes';
 import { I18N_PROVIDERS } from './app.translations';
-import { DialogService } from './dialogs/dialog.service';
+// import { DialogService } from './dialogs/dialog.service';
+import { progressInterceptor } from 'ngx-progressbar/http';
+import { AppHttpInterceptor } from './app-http-interceptor';
 import { AuthenticationService } from './services/authentication.service';
 import { ControlService } from './services/control.service';
+import { LocalStorageService } from './services/local-storage.service';
 import { LocalAuthenticationService } from './services/local/authentication.service';
 import { LocalControlService } from './services/local/control.service';
 import { IndexedStorageService } from './services/local/indexed-storage.service';
@@ -36,13 +38,11 @@ import { RemoteUsersService } from './services/remote/users.service';
 import { SettingsService } from './services/settings.service';
 import { ThemeService } from './services/theme.service';
 import { UsersService } from './services/users.service';
-import { AuthenticationGuard } from './shared/authentication-guard';
-import { OverseerHttpInterceptor } from './app-http-interceptor';
 
 const services: Provider[] =
   environment.serviceType === 'remote'
     ? [
-        { provide: HTTP_INTERCEPTORS, useClass: OverseerHttpInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true },
         { provide: AuthenticationService, useClass: RemoteAuthenticationService },
         { provide: ControlService, useClass: RemoteControlService },
         { provide: LoggingService, useClass: RemoteLoggingService },
@@ -70,22 +70,18 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptorsFromDi(), withInterceptors([progressInterceptor])),
     importProvidersFrom(
       ...modules,
       I18NextModule.forRoot(),
       ThemeService,
-      WebStorageModule.forRoot(),
-      AuthenticationGuard,
       LoggerModule.forRoot({
         level: NgxLoggerLevel.DEBUG,
         serverLogLevel: NgxLoggerLevel.INFO,
       })
     ),
     I18N_PROVIDERS,
-    AuthenticationGuard,
     LocalStorageService,
-    DialogService,
     ...services,
   ],
 };

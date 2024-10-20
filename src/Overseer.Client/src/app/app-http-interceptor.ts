@@ -1,23 +1,17 @@
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { LocalStorage, LocalStorageService } from 'ngx-store';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { ErrorHandlerService } from './services/error-handler.service';
-import { LoaderService } from './services/loader.service';
-import { environment } from '../environments/environment.remote';
+import { environment } from '../environments/environment';
 import { User } from './models/user.model';
+import { ErrorHandlerService } from './services/error-handler.service';
+import { LocalStorageService } from './services/local-storage.service';
 
 @Injectable()
-export class OverseerHttpInterceptor implements HttpInterceptor {
-  constructor(
-    private router: Router,
-    private loaderService: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private localStorageService: LocalStorageService
-  ) {}
+export class AppHttpInterceptor implements HttpInterceptor {
+  constructor(private router: Router, private errorHandler: ErrorHandlerService, private localStorageService: LocalStorageService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // only intercept local request.
@@ -25,7 +19,6 @@ export class OverseerHttpInterceptor implements HttpInterceptor {
       return next.handle(request);
     }
 
-    this.loaderService.start();
     const activeUser = this.localStorageService.get('activeUser') as User;
     if (activeUser?.token) {
       request = request.clone({
@@ -37,8 +30,6 @@ export class OverseerHttpInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((errorResponse) => {
-        this.loaderService.stop();
-
         let errorMessage = 'unknown_exception';
         if (!(errorResponse.error instanceof Error)) {
           switch (errorResponse.status) {
@@ -76,8 +67,7 @@ export class OverseerHttpInterceptor implements HttpInterceptor {
 
         this.errorHandler.handle(errorMessage);
         return throwError(() => new Error(errorMessage));
-      }),
-      tap(() => this.loaderService.stop())
+      })
     );
   }
 }

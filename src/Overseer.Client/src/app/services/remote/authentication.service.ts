@@ -1,28 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { LocalStorageService } from 'ngx-store';
-import { Observable, of, Subject } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { User } from '../../models/user.model';
 import { AuthenticationService } from '../authentication.service';
 import { endpointFactory } from './endpoint-factory';
 
 @Injectable({ providedIn: 'root' })
-export class RemoteAuthenticationService implements AuthenticationService {
-  public readonly authenticationChangeEvent$ = new Subject<User | undefined>();
-
+export class RemoteAuthenticationService extends AuthenticationService {
   private getEndpoint = endpointFactory('/api/auth');
+  private http = inject(HttpClient);
 
   supportsPreauthentication = true;
-
-  get activeUser(): User {
-    return this.localStorageService.get('activeUser');
-  }
-
-  constructor(
-    private http: HttpClient,
-    private localStorageService: LocalStorageService
-  ) {}
 
   requiresLogin(): Observable<boolean> {
     return this.http
@@ -32,14 +21,13 @@ export class RemoteAuthenticationService implements AuthenticationService {
   }
 
   login(user: User): Observable<User> {
-    return this.http.post<User>(this.getEndpoint('login'), user).pipe(tap((activeUser) => this.completeAuthentication(activeUser)));
+    return this.http.post<User>(this.getEndpoint('login'), user).pipe(tap((activeUser) => this.activeUser.set(activeUser)));
   }
 
   logout(): Observable<Object> {
     return this.http.delete(this.getEndpoint('logout')).pipe(
       tap(() => {
-        this.localStorageService.clear('all');
-        this.authenticationChangeEvent$.next(undefined);
+        this.activeUser.set(undefined);
       })
     );
   }
@@ -59,11 +47,6 @@ export class RemoteAuthenticationService implements AuthenticationService {
   }
 
   validatePreauthenticatedToken(token: string): Observable<User> {
-    return this.http.post<User>(this.getEndpoint('sso'), token).pipe(tap((activeUser) => this.completeAuthentication(activeUser)));
-  }
-
-  private completeAuthentication(activeUser: User) {
-    this.localStorageService.set('activeUser', activeUser);
-    this.authenticationChangeEvent$.next(activeUser);
+    return this.http.post<User>(this.getEndpoint('sso'), token).pipe(tap((activeUser) => this.activeUser.set(activeUser)));
   }
 }

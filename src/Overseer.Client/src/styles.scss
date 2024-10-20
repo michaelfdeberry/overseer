@@ -1,0 +1,26 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+
+$color-mode-type: media-query;
+
+@include color-mode(dark) {
+  .element {
+    color: var(--bs-primary-text-emphasis);
+    background-color: var(--bs-primary-bg-subtle);
+  }
+}
+
+html,
+body,
+app-root,
+main {
+  font-family: 'Inter';
+  height: 100%;
+  --bs-primary: #578edf;
+}
+
+router-outlet {
+  display: contents;
+}

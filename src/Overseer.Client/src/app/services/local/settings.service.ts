@@ -1,24 +1,21 @@
 import { Injectable } from '@angular/core';
 import { NgxLoggerLevel } from 'ngx-logger';
-import { LocalStorageService } from 'ngx-store';
-import { defer, forkJoin, map, mergeMap, Observable, of } from 'rxjs';
+import { forkJoin, map, mergeMap, Observable, of } from 'rxjs';
 import { UAParser } from 'ua-parser-js';
-import { environment } from '../../../environments/environment.local';
+import { environment } from '../../../environments/environment';
+import { ApplicationInfo } from '../../models/application-info.model';
+import { CertificateDetails } from '../../models/certificate-details.model';
 import { Machine } from '../../models/machine.model';
 import { ApplicationSettings } from '../../models/settings.model';
 import { toUser, User } from '../../models/user.model';
-import { RequireAdministrator } from '../../shared/require-admin.decorator';
 import { SettingsService } from '../settings.service';
 import { IndexedStorageService } from './indexed-storage.service';
-import { ApplicationInfo } from '../../models/application-info.model';
-import { CertificateDetails } from '../../models/certificate-details.model';
+import { RequireAdministrator } from '../../decorators/require-admin.decorator';
+import { LocalStorageService } from '../local-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class LocalSettingsService implements SettingsService {
-  constructor(
-    private localStorage: LocalStorageService,
-    private indexedStorage: IndexedStorageService
-  ) {}
+  constructor(private localStorage: LocalStorageService, private indexedStorage: IndexedStorageService) {}
 
   createAppSettings(): ApplicationSettings {
     const settings: ApplicationSettings = {
@@ -32,7 +29,11 @@ export class LocalSettingsService implements SettingsService {
     return settings;
   }
 
-  getConfigurationBundle(): Observable<{ users: User[]; machines: Machine[]; settings: ApplicationSettings }> {
+  getConfigurationBundle(): Observable<{
+    users: User[];
+    machines: Machine[];
+    settings: ApplicationSettings;
+  }> {
     return forkJoin([this.indexedStorage.users.getAll(), this.indexedStorage.machines.getAll()]).pipe(
       map(([users, machines]) => ({
         machines: machines,

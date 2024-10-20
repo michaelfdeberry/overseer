@@ -1,17 +1,15 @@
-import { ErrorHandler, Inject, Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ErrorHandler, inject, Injectable } from '@angular/core';
 import { I18NextPipe } from 'angular-i18next';
-import { asyncScheduler, never, Observable, scheduled, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { LoggingService } from './logging.service';
+import { ToastsService } from './toast.service';
 
 // Handled exception handler, displays a toast/snackbar
 @Injectable({ providedIn: 'root' })
 export class ErrorHandlerService {
-  constructor(
-    @Inject(I18NextPipe) private i18NextPipe: I18NextPipe,
-    @Inject(MatSnackBar) private snackBar: MatSnackBar,
-    @Inject(LoggingService) private loggingService: LoggingService
-  ) {}
+  private i18NextPipe = inject(I18NextPipe);
+  private loggingService = inject(LoggingService);
+  private toastService = inject(ToastsService);
 
   handle(error: string | Error): Observable<never> {
     const errorMessage = error instanceof Error ? error.message : error;
@@ -22,14 +20,11 @@ export class ErrorHandlerService {
         this.loggingService.logger.error(translation);
       }
 
-      this.snackBar
-        .open(translation, 'Dismiss', {
-          duration: 3000,
-          panelClass: 'error',
-          horizontalPosition: 'right',
-        })
-        .onAction()
-        .subscribe(() => this.snackBar.dismiss());
+      this.toastService.show({
+        message: translation,
+        type: 'error',
+      });
+      console.error(translation);
     } else {
       this.loggingService.logger.error(error);
       this.handle('unknown_exception');

@@ -1,24 +1,20 @@
 import { Injectable } from '@angular/core';
 
-import { defer, EMPTY, empty, forkJoin, NEVER, Observable, of, zip } from 'rxjs';
+import { defer, NEVER, Observable } from 'rxjs';
 
+import { catchError, map, mergeMap } from 'rxjs/operators';
+import { RequireAdministrator } from '../../decorators/require-admin.decorator';
 import { Machine } from '../../models/machine.model';
-import { MachinesService } from '../machines.service';
-import { MachineProviderService } from './providers/machine-provider.service';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { ErrorHandlerService } from '../error-handler.service';
-import { RequireAdministrator } from '../../shared/require-admin.decorator';
+import { MachinesService } from '../machines.service';
 import { IndexedStorageService } from './indexed-storage.service';
+import { MachineProviderService } from './providers/machine-provider.service';
 
 @Injectable({ providedIn: 'root' })
 export class LocalMachinesService implements MachinesService {
   supportsAdvanceSettings = false;
 
-  constructor(
-    private storage: IndexedStorageService,
-    private machineProviders: MachineProviderService,
-    private errorHandler: ErrorHandlerService
-  ) {}
+  constructor(private storage: IndexedStorageService, private machineProviders: MachineProviderService, private errorHandler: ErrorHandlerService) {}
 
   getMachines(): Observable<Machine[]> {
     return defer(() => this.storage.machines.getAll());
