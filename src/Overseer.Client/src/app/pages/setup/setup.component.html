@@ -1,1 +1,19 @@
-Setup
+<app-unauthenticated [message]="'pages.setup.message' | i18next">
+  <div>
+    @switch(step()) { @case('user') {
+    <p class="fw-2">{{ 'pages.setup.createUserMessage' | i18next }}</p>
+    <app-create-user [form]="adminForm" (submit)="handleAdminSubmit()">
+      <button type="submit" class="btn btn-primary" [disabled]="adminForm.invalid">{{ 'pages.setup.next' | i18next }}</button>
+    </app-create-user>
+    } @case('machines') {
+    <p class="fw-2">{{ 'pages.setup.createMachineMessage' | i18next }}</p>
+    <app-create-machine [form]="machinesForm"></app-create-machine>
+    <button type="submit" class="btn btn-primary me-2" (click)="handleMachineSubmit(true)">
+      {{ 'pages.setup.createMultipleMachines' | i18next }}
+    </button>
+    <button type="submit" class="btn btn-primary" (click)="handleMachineSubmit(false)">
+      {{ 'pages.setup.next' | i18next }}
+    </button>
+    }}
+  </div>
+</app-unauthenticated>

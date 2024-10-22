@@ -34,7 +34,7 @@
   "monitoringEnabled": "Monitoring Enabled?",
   "disableMonitoring": "Disable Monitoring",
   "url": "Url",
-  "webcamUrl": "Webcam Url",
+  "webCamUrl": "Webcam Url",
   "webCamOrientation": "Webcam Orientation",
   "flipVertically": "Flip Vertically",
   "flipHorizontally": "Flip Horizontally",
@@ -169,7 +169,7 @@
       "next": "Next",
       "message": "Before you begin let's setup Overseer!",
       "createUser": "Create User",
-      "createUserMessage": "Please create a user account...",
+      "createUserMessage": "Please create an Administrator account...",
       "createMachine": "Add Machine(s)",
       "createMultipleMachines": "Save and Add Another",
       "createMachineMessage": "Please add at least one machine...",
@@ -182,7 +182,8 @@
       "addMachine": "Add More Machines",
       "existingMachinesTitle": "Machines Found",
       "existingMachinesMessage": "Existing machine found! Would you like to skip this step?",
-      "skip": "Skip"
+      "skip": "Skip",
+      "setupComplete": "Setup Complete, Happy Making!"
     }
   }
 }

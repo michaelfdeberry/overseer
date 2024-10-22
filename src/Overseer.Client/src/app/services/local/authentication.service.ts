@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
 import { Router } from '@angular/router';
 import * as bcrypt from 'bcryptjs';
 import { defer, Observable, of, throwError } from 'rxjs';
@@ -14,6 +14,7 @@ export class LocalAuthenticationService extends AuthenticationService {
   private storage = inject(IndexedStorageService);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
+  private injector = inject(EnvironmentInjector);
 
   supportsPreauthentication = false;
 
@@ -23,7 +24,7 @@ export class LocalAuthenticationService extends AuthenticationService {
         const admins = users.filter((u) => u.accessLevel === AccessLevel.Administrator);
 
         if (!admins.length) {
-          this.router.navigate(['/configuration', 'setup']);
+          this.router.navigate(['setup']);
           this.errorHandler.handle('setup_required');
           return false;
         }
@@ -108,7 +109,7 @@ export class LocalAuthenticationService extends AuthenticationService {
   }
 
   createInitialUser(user: User): Observable<User> {
-    return defer(() => createUser(user)).pipe(catchError((err) => this.errorHandler.handle(err)));
+    return runInInjectionContext(this.injector, () => createUser(user).pipe(catchError((err) => this.errorHandler.handle(err))));
   }
 
   getPreauthenticatedToken(userId: number): Observable<string> {

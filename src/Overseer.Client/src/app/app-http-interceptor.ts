@@ -46,7 +46,7 @@ export class AppHttpInterceptor implements HttpInterceptor {
               if (errorResponse.error === 'requiresInitialization=True') {
                 errorMessage = 'setup_required';
                 if (this.router.url !== '/configuration/setup') {
-                  this.router.navigate(['/configuration', 'setup']);
+                  this.router.navigate(['setup']);
                 }
               } else {
                 errorMessage = 'unauthorized_access';

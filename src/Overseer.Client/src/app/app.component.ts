@@ -6,7 +6,7 @@ import { NgProgressHttp } from 'ngx-progressbar/http';
 import { SvgComponent } from './components/svg/svg.component';
 import { AuthenticationService } from './services/authentication.service';
 import { ThemeService } from './services/theme.service';
-import { ToastsComponent } from './components/toast/toast.component';
+import { ToastsComponent } from './components/toasts/toasts.component';
 
 @Component({
   selector: 'app-root',

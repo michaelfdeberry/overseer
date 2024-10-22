@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
 
 import { genSaltSync, hashSync } from 'bcryptjs';
 import { Observable, throwError } from 'rxjs';
@@ -44,7 +44,9 @@ export function createUser(user: User): Observable<User> {
 
 @Injectable({ providedIn: 'root' })
 export class LocalUsersService implements UsersService {
-  constructor(private storage: IndexedStorageService, private errorHandler: ErrorHandlerService) {}
+  private storage = inject(IndexedStorageService);
+  private errorHandler = inject(ErrorHandlerService);
+  private injector = inject(EnvironmentInjector);
 
   @RequireAdministrator()
   getUsers(): Observable<User[]> {
@@ -64,7 +66,7 @@ export class LocalUsersService implements UsersService {
 
   @RequireAdministrator()
   createUser(user: User): Observable<User> {
-    return createUser(user).pipe(catchError((err) => this.errorHandler.handle(err)));
+    return runInInjectionContext(this.injector, () => createUser(user).pipe(catchError((err) => this.errorHandler.handle(err))));
   }
 
   @RequireAdministrator()

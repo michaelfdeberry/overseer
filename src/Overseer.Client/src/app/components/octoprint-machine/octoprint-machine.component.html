@@ -1,0 +1,39 @@
+@if(form) {
+<div class="flex-fill" [formGroup]="form">
+  <div class="mb-3">
+    <label for="name" class="form-label">{{ 'name' | i18next }}</label>
+    <input type="text" class="form-control" id="name" required formControlName="name" />
+  </div>
+  <div class="mb-3">
+    <label for="url" class="form-label">{{ 'url' | i18next }}</label>
+    <input type="text" class="form-control" id="url" required formControlName="url" />
+  </div>
+  <div class="mb-3">
+    <label for="apiKey" class="form-label">{{ 'apiKey' | i18next }}</label>
+    <input type="password" class="form-control" id="apiKey" required formControlName="apiKey" />
+  </div>
+  <div *ngIf="machine" class="mb-3">
+    <label for="profile" class="form-label">{{ 'profile' | i18next }}</label>
+    <input type="text" class="form-control" id="profile" required formControlName="profile" />
+  </div>
+  <div *ngIf="machine" class="mb-3">
+    <label for="webCamUrl" class="form-label">{{ 'webCamUrl' | i18next }}</label>
+    <input type="text" class="form-control" id="webCamUrl" required formControlName="webCamUrl" />
+  </div>
+  <div *ngIf="machine" class="mb-3">
+    <label for="webCamOrientation" class="form-label">{{ 'webCamOrientation' | i18next }}</label>
+    <select id="webCamOrientation" class="form-select" required formControlName="webCamOrientation">
+      @for (option of webCamOrientations; track $index) {
+      <option [value]="option.value">{{ option.translationKey | i18next }}</option>
+      }
+    </select>
+  </div>
+  @if(machinesService.supportsAdvanceSettings) {
+  <div class="mb-3" [(ngbCollapse)]="advancedOptionsVisible">
+    <label for="clientCertificate" class="form-label">{{ 'clientPem' | i18next }}</label>
+    <input type="text" id="clientCertificate" formControlName="clientCertificate" />
+  </div>
+  <button class="btn btn-outline-primary" (click)="advancedOptionsVisible = !advancedOptionsVisible">{{ 'showAdvancedOptions' | i18next }}</button>
+  }
+</div>
+}

@@ -8,11 +8,11 @@
     'bg-warning': toast.type === 'warning'
   }"
   [header]="toast.header ?? ''"
-  [delay]="toast.delay ?? 100000"
+  [delay]="toast.delay ?? 10000"
   (hidden)="toastService.remove(toast.id)"
 >
   <div class="d-flex flex-row">
-    <div class="d-flex flex-fill align-self-center">{{ toast.message }}</div>
+    <div class="d-flex flex-fill align-self-center px-2">{{ toast.message }}</div>
     @if(!toast.header) {
     <button class="btn btn-text" (click)="toastService.remove(toast.id)">{{ 'dismiss' | i18next }}</button>
     }
