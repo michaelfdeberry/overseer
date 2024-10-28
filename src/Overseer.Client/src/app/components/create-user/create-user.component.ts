@@ -1,8 +1,9 @@
 import { Component, input, Input, OnInit, output, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { I18NextModule } from 'angular-i18next';
-import { accessLevels, sessionLifetimes } from '../../models/constants';
+import { accessLevels, SessionLifetime, sessionLifetimes } from '../../models/constants';
 import { CreateUserForm } from '../../models/form.types';
+import { AccessLevel } from '../../models/user.model';
 
 @Component({
   selector: 'app-create-user',
@@ -11,6 +12,7 @@ import { CreateUserForm } from '../../models/form.types';
   imports: [ReactiveFormsModule, I18NextModule],
 })
 export class CreateUserComponent implements OnInit {
+  accessLevel = input<AccessLevel | undefined>();
   form = input<FormGroup<CreateUserForm>>();
 
   lifetimes = sessionLifetimes;
@@ -20,11 +22,16 @@ export class CreateUserComponent implements OnInit {
     const form = this.form();
     if (!form) return;
 
-    form.addControl('username', new FormControl(null, Validators.required));
-    form.addControl('password', new FormControl(null, [Validators.required, Validators.minLength(8)]));
-    form.addControl('confirmPassword', new FormControl(null, Validators.required));
-    form.addControl('sessionLifetime', new FormControl(null));
-    form.addControl('accessLevel', new FormControl(null, Validators.required));
+    const accessLevel = this.accessLevel();
+    form.addControl('accessLevel', new FormControl<AccessLevel | undefined>(accessLevel, Validators.required));
+    form.addControl('username', new FormControl<string>('', Validators.required));
+    form.addControl('password', new FormControl<string>('', [Validators.required, Validators.minLength(8)]));
+    form.addControl('confirmPassword', new FormControl<string>('', Validators.required));
+    form.addControl('sessionLifetime', new FormControl<SessionLifetime>(undefined));
+
+    if (accessLevel) {
+      form.get('accessLevel')?.disable();
+    }
 
     form?.setValidators([
       () => {

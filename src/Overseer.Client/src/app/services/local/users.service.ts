@@ -95,8 +95,8 @@ export class LocalUsersService implements UsersService {
           throw new Error('delete_user_unavailable');
         }
 
-        const remainingAdmins = users.filter((u) => u.accessLevel === AccessLevel.Administrator);
-        if (user.accessLevel === AccessLevel.Administrator && remainingAdmins.length === 1) {
+        const remainingAdmins = users.filter((u) => u.accessLevel === 'Administrator');
+        if (user.accessLevel === 'Administrator' && remainingAdmins.length === 1) {
           throw new Error('delete_user_unavailable');
         }
 

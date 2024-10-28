@@ -1,21 +1,9 @@
-export enum MachineState {
-  Disabled = -2,
-  Connecting = -1,
-  Offline,
-  Idle,
-  Paused,
-  Operational,
-}
+export type MachineState = 'Disabled' | 'Connecting' | 'Offline' | 'Idle' | 'Paused' | 'Operational';
 
-export const idleStates = [
-  MachineState.Disabled,
-  MachineState.Connecting,
-  MachineState.Offline,
-  MachineState.Idle,
-];
+export const idleStates: MachineState[] = ['Disabled', 'Connecting', 'Offline', 'Idle'];
 
 export function isIdle(state: MachineState) {
-  return state <= MachineState.Idle;
+  return idleStates.includes(state);
 }
 
 export interface TemperatureStatus {

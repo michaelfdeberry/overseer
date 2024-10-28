@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { NgxLoggerLevel } from 'ngx-logger';
 import { forkJoin, map, mergeMap, Observable, of } from 'rxjs';
 import { UAParser } from 'ua-parser-js';
 import { environment } from '../../../environments/environment';
@@ -71,19 +70,5 @@ export class LocalSettingsService implements SettingsService {
       version: environment.appVersion ?? undefined,
       runtime: 'N/A',
     });
-  }
-
-  getLog(): Observable<string> {
-    return this.indexedStorage.logging.getAll().pipe(
-      mergeMap((logEntries) => {
-        return logEntries
-          .map((e) => {
-            let message: any = e.message;
-            message = typeof message === 'string' ? message : message.stack;
-            return `${e.timestamp} - ${NgxLoggerLevel[e.level]} in ${e.fileName}(${e.lineNumber}): ${message}`;
-          })
-          .join('\n');
-      })
-    );
   }
 }

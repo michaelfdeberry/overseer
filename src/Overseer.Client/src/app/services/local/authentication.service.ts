@@ -1,9 +1,9 @@
 import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
 import { Router } from '@angular/router';
 import * as bcrypt from 'bcryptjs';
-import { defer, Observable, of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
-import { AccessLevel, isTokenExpired, toUser, User } from '../../models/user.model';
+import { isTokenExpired, toUser, User } from '../../models/user.model';
 import { AuthenticationService } from '../authentication.service';
 import { ErrorHandlerService } from '../error-handler.service';
 import { IndexedStorageService } from './indexed-storage.service';
@@ -21,7 +21,7 @@ export class LocalAuthenticationService extends AuthenticationService {
   requiresLogin(): Observable<boolean> {
     return this.storage.users.getAll().pipe(
       map((users) => {
-        const admins = users.filter((u) => u.accessLevel === AccessLevel.Administrator);
+        const admins = users.filter((u) => u.accessLevel === 'Administrator');
 
         if (!admins.length) {
           this.router.navigate(['setup']);

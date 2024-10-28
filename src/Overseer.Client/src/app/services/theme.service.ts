@@ -9,8 +9,8 @@ export class ThemeService {
   scheme = signal<'auto' | 'dark' | 'light'>('auto');
 
   constructor(private localStorage: LocalStorageService) {
-    this.theme.set(this.localStorage.get('theme'));
-    this.scheme.set(this.localStorage.get('scheme') || 'auto');
+    this.theme.set(this.localStorage.get('theme') ?? '#5cb248');
+    this.scheme.set(this.localStorage.get('scheme') ?? 'auto');
 
     effect(() => {
       this.localStorage.set('theme', this.theme());

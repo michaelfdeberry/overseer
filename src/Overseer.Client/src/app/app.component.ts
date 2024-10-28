@@ -7,6 +7,7 @@ import { SvgComponent } from './components/svg/svg.component';
 import { AuthenticationService } from './services/authentication.service';
 import { ThemeService } from './services/theme.service';
 import { ToastsComponent } from './components/toasts/toasts.component';
+import { AccessLevel } from './models/user.model';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,7 @@ export class AppComponent {
   private authenticationService = inject(AuthenticationService);
 
   isLoggedIn = computed(() => !!this.authenticationService.activeUser());
+  isAdmin = computed(() => this.authenticationService.activeUser()?.accessLevel === 'Administrator');
 
   constructor() {
     effect(() => {
@@ -49,6 +51,12 @@ export class AppComponent {
 
   setAuto(): void {
     this.themeService.scheme.set('auto');
+  }
+
+  goHome(isSettingsRoute: boolean): void {
+    if (isSettingsRoute) {
+      this.router.navigate(['/']);
+    }
   }
 
   logout(): void {

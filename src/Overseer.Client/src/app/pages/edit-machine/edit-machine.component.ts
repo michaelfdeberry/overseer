@@ -1,0 +1,79 @@
+import { Component, inject, signal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { I18NextModule } from 'angular-i18next';
+import { filter, map, Observable, switchMap } from 'rxjs';
+import { MachineHostComponent } from '../../components/machine-host/machine-host.component';
+import { MachineForm } from '../../models/form.types';
+import { Machine } from '../../models/machine.model';
+import { CertificateErrorService } from '../../services/certificate-error.service';
+import { DialogService } from '../../services/dialog.service';
+import { MachinesService } from '../../services/machines.service';
+import { ToastsService } from '../../services/toast.service';
+
+@Component({
+  selector: 'app-edit-machine',
+  templateUrl: './edit-machine.component.html',
+  standalone: true,
+  imports: [I18NextModule, ReactiveFormsModule, RouterLink, MachineHostComponent],
+  providers: [DialogService, CertificateErrorService],
+})
+export class EditMachineComponent {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private formBuilder = inject(FormBuilder);
+  private machinesService = inject(MachinesService);
+  private dialogService = inject(DialogService);
+  private certificateErrorService = inject(CertificateErrorService);
+  private toastsService = inject(ToastsService);
+
+  form?: FormGroup<MachineForm>;
+
+  machine = signal<Machine | undefined>(undefined);
+
+  constructor() {
+    this.route.paramMap
+      .pipe(
+        map((params) => Number(params.get('id'))),
+        switchMap((id) => this.machinesService.getMachine(id))
+      )
+      .subscribe((machine: Machine) => {
+        console.log('Machine', machine);
+        this.machine.set(machine);
+        this.form = this.formBuilder.nonNullable.group({});
+        this.form.addControl('id', new FormControl(machine?.id));
+        this.form.addControl('machineType', new FormControl(null));
+        this.form.addControl('disabled', new FormControl(machine?.disabled));
+      });
+  }
+
+  deleteMachine() {
+    this.dialogService
+      .prompt({ messageKey: 'deleteMachinePrompt' })
+      .closed.pipe(filter((result) => result))
+      .subscribe(() => this.handleNetworkAction(this.machinesService.deleteMachine(this.machine()!)));
+  }
+
+  save() {
+    this.handleNetworkAction(this.machinesService.updateMachine(this.form!.value as Machine));
+  }
+
+  private handleNetworkAction(observable: Observable<any>) {
+    this.form?.disable();
+
+    observable.subscribe({
+      complete: () => {
+        console.log('saved');
+        this.toastsService.show({ message: 'savedChanges', type: 'success' });
+        this.router.navigate(['/settings/machines']);
+      },
+      error: (ex) => {
+        this.form?.enable();
+        this.certificateErrorService
+          .handleCertificateException(ex)
+          .pipe(filter((result) => result))
+          .subscribe(() => this.save());
+      },
+    });
+  }
+}

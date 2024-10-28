@@ -4,6 +4,7 @@ import { CertificateWarningComponent } from '../components/certificate-warning/c
 import { Certificate } from '../models/certificate';
 import { DialogService } from './dialog.service';
 import { SettingsService } from './settings.service';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class CertificateErrorService {
@@ -11,6 +12,8 @@ export class CertificateErrorService {
   private dialogService = inject(DialogService);
 
   handleCertificateException(ex: { key: string; properties: Certificate }): Observable<boolean> {
+    if (environment.serviceType === 'local') return of(false);
+
     if (!ex || !ex.key || ex.key !== 'certificate_exception') {
       return of(false);
     }

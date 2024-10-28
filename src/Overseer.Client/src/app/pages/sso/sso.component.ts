@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
+  selector: 'app-sso',
   template: "<div style='text-align:center;padding:20px;'>Redirecting...</div>",
   standalone: true,
 })

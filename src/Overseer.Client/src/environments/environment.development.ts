@@ -1,7 +1,7 @@
 export const environment = {
   serviceType: 'local',
   production: false,
-  dbVersion: 10,
-  appVersion: '1.0.22',
+  dbVersion: 11,
+  appVersion: '2.0.0',
   apiHost: '',
 };

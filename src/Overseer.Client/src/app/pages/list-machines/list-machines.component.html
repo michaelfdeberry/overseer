@@ -1,0 +1,51 @@
+<table class="table table-striped table-fixed">
+  <thead>
+    <tr>
+      <th scope="col" class="action text-start">{{ 'sort' | i18next }}</th>
+      <th scope="col">{{ 'name' | i18next }}</th>
+      <th scope="col" class="d-none d-sm-table-cell">{{ 'machineType' | i18next }}</th>
+      <th scope="col" class="text-center d-none d-sm-table-cell">{{ 'monitoringEnabled' | i18next }}</th>
+      <th scope="col" class="action">
+        <a class="btn btn-primary" routerLink="new">
+          <i class="bi bi-plus"></i>
+          {{ 'add' | i18next }}
+        </a>
+      </th>
+    </tr>
+  </thead>
+  <tbody class="drag-boundary" cdkDropList (cdkDropListDropped)="drop($event)">
+    @for (machine of machines(); track machine.id) {
+    <tr cdkDrag cdkDragBoundary=".drag-boundary">
+      <td class="action">
+        <div class="btn-group">
+          <button class="btn btn-outline-primary" [disabled]="$index === 0" (click)="moveUp($index)">
+            <i class="bi bi-chevron-up"></i>
+          </button>
+          <button class="btn btn-outline-primary" [disabled]="$index === $count - 1" (click)="moveDown($index)">
+            <i class="bi bi-chevron-down"></i>
+          </button>
+        </div>
+      </td>
+      <td>{{ machine.name }}</td>
+      <td class="d-none d-sm-table-cell">{{ machine.machineType }}</td>
+      <td class="text-center d-none d-sm-table-cell">
+        @if(machine.disabled) {
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        } @else {
+        <i class="bi bi-check-circle-fill"></i>
+        }
+      </td>
+      <td class="action">
+        <a class="btn btn-outline-primary" [routerLink]="[machine.id, 'edit']">
+          <i class="bi bi-pencil"></i>
+          {{ 'edit' | i18next }}
+        </a>
+      </td>
+    </tr>
+    } @if(!machines().length){
+    <tr>
+      <td colspan="5">{{ 'noMachines' | i18next }}</td>
+    </tr>
+    }
+  </tbody>
+</table>

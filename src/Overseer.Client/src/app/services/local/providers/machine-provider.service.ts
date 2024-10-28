@@ -18,10 +18,10 @@ export class MachineProviderService {
 
     if (!provider) {
       switch (machine.machineType) {
-        case MachineType.Octoprint:
+        case 'Octoprint':
           provider = new OctoprintMachineProvider(machine, this.http);
           break;
-        case MachineType.RepRapFirmware:
+        case 'RepRapFirmware':
           provider = new RepRapFirmwareMachineProvider(machine, this.http);
           break;
         default:

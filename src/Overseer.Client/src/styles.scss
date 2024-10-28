@@ -4,6 +4,7 @@ $primary: #5cb248;
 
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons';
 
 html,
 body,
@@ -15,4 +16,26 @@ main {
 
 router-outlet {
   display: contents;
+}
+
+.table-fixed {
+  table-layout: fixed;
+}
+
+.table {
+  tr {
+    th,
+    td {
+      vertical-align: middle;
+
+      &.action {
+        width: 120px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.flex-1 {
+  flex: 1;
 }

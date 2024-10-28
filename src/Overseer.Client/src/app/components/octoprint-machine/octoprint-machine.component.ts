@@ -46,11 +46,11 @@ export class OctoprintMachineComponent {
     this.form.addControl('clientCertificate', new FormControl());
 
     if (this.machine) {
+      this.form.addControl('id', new FormControl(null));
       this.form.addControl('profile', new FormControl(null, Validators.required));
       this.form.addControl('webCamUrl', new FormControl(null, Validators.required));
       this.form.addControl('webCamOrientation', new FormControl(null, Validators.required));
 
-      this.form.addControl('id', new FormControl(this.machine.id));
       this.form.patchValue({
         name: this.machine.name,
         url: this.machine.url,

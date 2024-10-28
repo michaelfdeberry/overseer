@@ -2,7 +2,7 @@
   <div>
     @switch(step()) { @case('user') {
     <p class="fw-2">{{ 'pages.setup.createUserMessage' | i18next }}</p>
-    <app-create-user [form]="adminForm" (submit)="handleAdminSubmit()">
+    <app-create-user [form]="adminForm" accessLevel="Administrator" (submit)="handleAdminSubmit()">
       <button type="submit" class="btn btn-primary" [disabled]="adminForm.invalid">{{ 'pages.setup.next' | i18next }}</button>
     </app-create-user>
     } @case('machines') {

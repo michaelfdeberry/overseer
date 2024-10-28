@@ -1,31 +1,28 @@
-import { AfterViewInit, Component, effect, inject, signal, untracked } from '@angular/core';
+import { Component, effect, inject, signal, untracked } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { I18NextModule, I18NextPipe } from 'angular-i18next';
-import { catchError, filter, iif, map, of, switchMap, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { I18NextModule } from 'angular-i18next';
+import { filter, iif, of, switchMap, tap } from 'rxjs';
+import { CreateMachineComponent } from '../../components/create-machine/create-machine.component';
 import { CreateUserComponent } from '../../components/create-user/create-user.component';
 import { UnauthenticatedComponent } from '../../components/unauthenticated/unauthenticated.component';
 import { CreateUserForm, MachineForm } from '../../models/form.types';
-import { AccessLevel, User } from '../../models/user.model';
+import { Machine } from '../../models/machine.model';
+import { User } from '../../models/user.model';
 import { AuthenticationService } from '../../services/authentication.service';
+import { CertificateErrorService } from '../../services/certificate-error.service';
+import { DialogService } from '../../services/dialog.service';
 import { MachinesService } from '../../services/machines.service';
 import { ToastsService } from '../../services/toast.service';
-import { DialogService } from '../../services/dialog.service';
-import { outputToObservable, toObservable } from '@angular/core/rxjs-interop';
-import { CreateMachineComponent } from '../../components/create-machine/create-machine.component';
-import { Machine } from '../../models/machine.model';
-import { CertificateErrorService } from '../../services/certificate-error.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-setup',
   templateUrl: './setup.component.html',
-  styleUrls: ['./setup.component.scss'],
   standalone: true,
   imports: [UnauthenticatedComponent, I18NextModule, ReactiveFormsModule, CreateUserComponent, CreateMachineComponent],
   providers: [DialogService, CertificateErrorService],
 })
-export class SetupComponent implements AfterViewInit {
-  private i18NextPipe = inject(I18NextPipe);
+export class SetupComponent {
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
   private authenticationService = inject(AuthenticationService);
@@ -36,8 +33,8 @@ export class SetupComponent implements AfterViewInit {
 
   machines: Machine[] = [];
   step = signal<'user' | 'machines' | 'complete'>('user');
-  adminForm: FormGroup<CreateUserForm> = this.formBuilder.group({});
-  machinesForm: FormGroup<MachineForm> = this.formBuilder.group({});
+  adminForm: FormGroup<CreateUserForm> = this.formBuilder.nonNullable.group({});
+  machinesForm: FormGroup<MachineForm> = this.formBuilder.nonNullable.group({});
 
   constructor() {
     effect(() => {
@@ -46,27 +43,17 @@ export class SetupComponent implements AfterViewInit {
         untracked(() => {
           this.toastsService.show({
             type: 'success',
-            message: this.i18NextPipe.transform('pages.setup.setupComplete'),
+            message: 'pages.setup.setupComplete',
           });
         });
       }
     });
   }
 
-  ngAfterViewInit(): void {
-    requestAnimationFrame(() => {
-      console.log('SetupComponent.ngAfterViewInit');
-      const accessLevel = this.adminForm.get('accessLevel');
-      accessLevel?.setValue(AccessLevel.Administrator);
-      accessLevel?.disable();
-      console.log('SetupComponent.ngAfterViewInit', this.adminForm.value);
-    });
-  }
-
   handleAdminSubmit(): void {
     if (this.adminForm.invalid) return;
 
-    const user = this.adminForm.getRawValue() as User;
+    const user: User = this.adminForm.getRawValue();
     this.adminForm.disable();
     this.authenticationService
       .createInitialUser(user)

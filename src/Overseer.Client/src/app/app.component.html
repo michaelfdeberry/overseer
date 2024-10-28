@@ -9,11 +9,15 @@
 
       <div class="d-flex">
         <ul class="navbar-nav me-auto mb-0">
+          @if(isAdmin()){
           <li class="nav-item">
-            <a class="nav-link" href="#" routerLink="/configuration" routerLinkActive="'active'">{{ 'settings' | i18next }}</a>
+            <a class="nav-link" #rla="routerLinkActive" routerLink="settings" routerLinkActive="active" (click)="goHome(rla.isActive)">
+              {{ 'settings' | i18next }}
+            </a>
           </li>
+          }
           <li class="nav-item">
-            <a class="nav-link" href="#" (click)="logout()">{{ 'logout' | i18next }}</a>
+            <a class="nav-link" (click)="logout()" href="#">{{ 'logout' | i18next }}</a>
           </li>
         </ul>
       </div>

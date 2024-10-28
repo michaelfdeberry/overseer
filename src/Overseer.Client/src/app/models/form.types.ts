@@ -3,11 +3,11 @@ import { MachineType, WebCamOrientation } from './machine.model';
 import { AccessLevel } from './user.model';
 
 export type CreateUserForm = {
-  username?: FormControl<string | null>;
-  password?: FormControl<string | null>;
-  confirmPassword?: FormControl<string | null>;
-  sessionLifetime?: FormControl<number | null>;
-  accessLevel?: FormControl<AccessLevel | null>;
+  username?: FormControl<string>;
+  password?: FormControl<string>;
+  confirmPassword?: FormControl<string>;
+  sessionLifetime?: FormControl<number>;
+  accessLevel?: FormControl<AccessLevel>;
 };
 
 export type MachineFormBase = {
@@ -17,6 +17,7 @@ export type MachineFormBase = {
   webCamUrl?: FormControl<string | undefined | null>;
   webCamOrientation?: FormControl<WebCamOrientation | undefined | null>;
   clientCertificate?: FormControl<string | undefined | null>;
+  disabled?: FormControl<boolean | undefined | null>;
 };
 
 export type OctoprintMachineForm = MachineFormBase & {

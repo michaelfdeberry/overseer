@@ -45,7 +45,7 @@ export class AppHttpInterceptor implements HttpInterceptor {
             case 403:
               if (errorResponse.error === 'requiresInitialization=True') {
                 errorMessage = 'setup_required';
-                if (this.router.url !== '/configuration/setup') {
+                if (this.router.url !== '/setup') {
                   this.router.navigate(['setup']);
                 }
               } else {

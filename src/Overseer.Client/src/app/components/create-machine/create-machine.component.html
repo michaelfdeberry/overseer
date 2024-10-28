@@ -5,7 +5,7 @@
       <label for="machineType" class="form-label">{{ 'machineType' | i18next }}</label>
       <select id="machineType" class="form-select" required formControlName="machineType">
         @for (option of machineTypes; track $index) {
-        <option [value]="option.value">{{ option.translationKey | i18next }}</option>
+        <option [ngValue]="option.value">{{ option.translationKey | i18next }}</option>
         }
       </select>
     </div>

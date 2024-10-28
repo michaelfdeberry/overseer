@@ -7,10 +7,7 @@ import { BaseMachineProvider } from './machine.provider';
 import { MachineStatus, MachineState, TemperatureStatus } from '../../../models/machine-status.model';
 
 export class RepRapFirmwareMachineProvider extends BaseMachineProvider {
-  constructor(
-    machine: Machine,
-    private http: HttpClient
-  ) {
+  constructor(machine: Machine, private http: HttpClient) {
     super();
     this.machine = machine;
   }
@@ -35,7 +32,7 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider {
             tools.push({
               name: auxToolType,
               index: auxTool.heater,
-              toolType: MachineToolType.Heater,
+              toolType: 'Heater',
             });
           }
         });
@@ -45,7 +42,7 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider {
             tools.push({
               name: `heater ${heaterIndex}`,
               index: heaterIndex,
-              toolType: MachineToolType.Heater,
+              toolType: 'Heater',
             });
           });
 
@@ -53,7 +50,7 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider {
             tools.push({
               name: `extruder ${extruderIndex}`,
               index: extruderIndex,
-              toolType: MachineToolType.Extruder,
+              toolType: 'Extruder',
             });
           });
         });
@@ -77,23 +74,23 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider {
       map(([machineStatus, jobStatus, fileStatus]) => {
         const status: MachineStatus = {
           machineId: this.machine.id,
-          state: MachineState.Idle,
+          state: 'Idle',
         };
 
         switch (machineStatus.status) {
           case 'P':
           case 'R':
-            status.state = MachineState.Operational;
+            status.state = 'Operational';
             break;
           case 'D':
           case 'S':
-            status.state = MachineState.Paused;
+            status.state = 'Paused';
             break;
         }
 
         status.temperatures = this.readTemperatures(machineStatus);
 
-        if (status.state === MachineState.Operational || status.state === MachineState.Paused) {
+        if (status.state === 'Operational' || status.state === 'Paused') {
           const completion = this.calculateCompletion(jobStatus, fileStatus);
           status.progress = completion[0];
           status.estimatedTimeRemaining = completion[1];
@@ -116,7 +113,7 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider {
     const temperatures: { [key: number]: TemperatureStatus } = {};
 
     for (let heaterIndex = 0; heaterIndex < machineStatus.temps.current.length; heaterIndex++) {
-      const currentHeater = this.machine.tools.find((tool) => tool.toolType === MachineToolType.Heater && tool.index === heaterIndex);
+      const currentHeater = this.machine.tools.find((tool) => tool.toolType === 'Heater' && tool.index === heaterIndex);
       if (!currentHeater) {
         continue;
       }

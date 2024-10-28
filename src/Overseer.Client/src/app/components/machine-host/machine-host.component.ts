@@ -21,16 +21,22 @@ export class MachineHostComponent implements OnInit {
 
   constructor() {
     effect(() => {
+      console.log('Machine changed', this.machine());
+      this.form()?.controls.machineType?.patchValue(this.machine()?.machineType);
+    });
+    effect(() => {
+      console.log('Machine type changed', this.machineType());
       this.viewContainerRef.clear();
       const machineType = this.machineType();
       if (!machineType) return;
+      if (machineType === 'Unknown') return;
 
       let componentRef: ComponentRef<OctoprintMachineComponent> | ComponentRef<RepRapFirmwareMachineComponent>;
-      switch (Number(machineType)) {
-        case MachineType.Octoprint:
+      switch (machineType) {
+        case 'Octoprint':
           componentRef = this.viewContainerRef.createComponent(OctoprintMachineComponent);
           break;
-        case MachineType.RepRapFirmware:
+        case 'RepRapFirmware':
           componentRef = this.viewContainerRef.createComponent(RepRapFirmwareMachineComponent);
           break;
       }
@@ -45,9 +51,9 @@ export class MachineHostComponent implements OnInit {
     const form = this.form();
     if (!form) return;
 
-    form.addControl('machineType', new FormControl(MachineType.Octoprint));
+    form.addControl('machineType', new FormControl('Unknown'));
     form.controls
       .machineType!.valueChanges.pipe(takeUntilDestroyed(this.destroy))
-      .subscribe((machineType: MachineType | null | undefined) => this.machineType.set(machineType ?? undefined));
+      .subscribe((machineType) => this.machineType.set(machineType ?? undefined));
   }
 }

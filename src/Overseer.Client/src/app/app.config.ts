@@ -1,11 +1,10 @@
-import { ApplicationConfig, importProvidersFrom, Provider, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, importProvidersFrom, Provider, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { I18NextModule } from 'angular-i18next';
 import { NgxIndexedDBModule } from 'ngx-indexed-db';
-import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 import { environment } from '../environments/environment';
 import { dbConfig } from './app.db.config';
 import { routes } from './app.routes';
@@ -38,6 +37,7 @@ import { RemoteUsersService } from './services/remote/users.service';
 import { SettingsService } from './services/settings.service';
 import { ThemeService } from './services/theme.service';
 import { UsersService } from './services/users.service';
+import { OverseerErrorHandler } from './services/error-handler.service';
 
 const services: Provider[] =
   environment.serviceType === 'remote'
@@ -71,17 +71,13 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(withInterceptorsFromDi(), withInterceptors([progressInterceptor])),
-    importProvidersFrom(
-      ...modules,
-      I18NextModule.forRoot(),
-      ThemeService,
-      LoggerModule.forRoot({
-        level: NgxLoggerLevel.DEBUG,
-        serverLogLevel: NgxLoggerLevel.INFO,
-      })
-    ),
+    importProvidersFrom(...modules, I18NextModule.forRoot(), ThemeService),
     I18N_PROVIDERS,
     LocalStorageService,
+    {
+      provide: ErrorHandler,
+      useClass: OverseerErrorHandler,
+    },
     ...services,
   ],
 };

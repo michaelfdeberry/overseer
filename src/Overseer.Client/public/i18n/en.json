@@ -123,6 +123,7 @@
   "preauthenticationDescription": "The purpose of generating a preauthenticated url is to allow to read-only access to Overseer when typical user input isn't available such as a from kiosk or while live-streaming. The generated url is good for one time use and will only remain active for 2 minutes. Once used the session will remain active for what is configured for this user.",
   "repoLinkLabel": "Overseer on GitHub",
   "attribution": "Illuration by Andrei Yushchenko from the Noun Project.",
+  "savedChanges": "Update Completed!",
   "about": {
     "title": "Overseer is a utility that allows you to monitor multiple automated machines, such as 3D Printers, from a single web interface.",
     "helpDescription": "Have a suggestion, a request, or just need some help? Please create an item in the",
@@ -139,12 +140,11 @@
     }
   },
   "themes": {
-    "default-theme": "Overseer Dark (Default)",
-    "overseer-light": "Overseer Light",
-    "deeppurple-amber": "Deep Purple / Amber",
-    "indigo-pink": "Indigo / Pink",
-    "pink-bluegrey": "Pink / Blue-Grey",
-    "purple-green": "Purple Green"
+    "auto": "Auto",
+    "light": "Light",
+    "dark": "Dark",
+    "scheme": "Scheme",
+    "theme": "Theme"
   },
   "errors": {
     "unknown_exception": "An Unknown Error Occurred",
@@ -161,8 +161,6 @@
   "pages": {
     "login": {
       "message": "Please sign in to continue.",
-      "username": "XXXXXXXX",
-      "password": "XXXXXXXX",
       "submit": "Sign In"
     },
     "setup": {

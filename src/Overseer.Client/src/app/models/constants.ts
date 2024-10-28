@@ -5,15 +5,17 @@ export class DisplayOption<TValue> {
   constructor(public translationKey: string, public value: TValue) {}
 }
 
-export const sessionLifetimes = [
-  new DisplayOption('indefinite', ''),
+export type SessionLifetime = undefined | 1 | 7 | 30 | 90;
+export const sessionLifetimes: DisplayOption<SessionLifetime>[] = [
+  new DisplayOption('indefinite', undefined),
   new DisplayOption('day', 1),
   new DisplayOption('days', 7),
   new DisplayOption('days', 30),
   new DisplayOption('days', 90),
 ];
 
-export const pollIntervals = [
+export type PollInterval = 1000 | 5000 | 10000 | 20000 | 30000;
+export const pollIntervals: DisplayOption<PollInterval>[] = [
   new DisplayOption('second', 1000),
   new DisplayOption('seconds', 5000),
   new DisplayOption('seconds', 10000),
@@ -21,14 +23,20 @@ export const pollIntervals = [
   new DisplayOption('seconds', 30000),
 ];
 
-export const machineTypes = [new DisplayOption('Octoprint', MachineType.Octoprint), new DisplayOption('RepRapFirmware', MachineType.RepRapFirmware)];
+export const machineTypes: DisplayOption<MachineType>[] = [
+  new DisplayOption('Octoprint', 'Octoprint'),
+  new DisplayOption('RepRapFirmware', 'RepRapFirmware'),
+];
 
-export const accessLevels = [new DisplayOption('readonly', AccessLevel.Readonly), new DisplayOption('administrator', AccessLevel.Administrator)];
+export const accessLevels: DisplayOption<AccessLevel>[] = [
+  new DisplayOption('readonly', 'Readonly'),
+  new DisplayOption('administrator', 'Administrator'),
+];
 
-export const webCamOrientations = [
-  new DisplayOption('default', WebCamOrientation.Default),
-  new DisplayOption('flipVertically', WebCamOrientation.FlippedVertically),
-  new DisplayOption('flipHorizontally', WebCamOrientation.FlippedHorizontally),
+export const webCamOrientations: DisplayOption<WebCamOrientation>[] = [
+  new DisplayOption('default', 'Default'),
+  new DisplayOption('flipVertically', 'FlippedVertically'),
+  new DisplayOption('flipHorizontally', 'FlippedHorizontally'),
 ];
 
 export const themes = ['blue', 'indigo', 'purple', 'pink', 'red', 'orange', 'yellow', 'green', 'teal', 'cyan'];

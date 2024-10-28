@@ -4,7 +4,7 @@
     <label for="accessLevel" class="form-label">{{ 'accessLevel' | i18next }}</label>
     <select id="accessLevel" class="form-select" formControlName="accessLevel">
       @for (option of accessLevels; track $index) {
-      <option [value]="option.value">{{ option.translationKey | i18next }}</option>
+      <option [ngValue]="option.value">{{ option.translationKey | i18next }}</option>
       }
     </select>
   </div>
@@ -24,7 +24,7 @@
     <label for="sessionLifetime" class="form-label">{{ 'sessionLifetime' | i18next }}</label>
     <select required id="sessionLifetime" class="form-select" formControlName="sessionLifetime">
       @for (option of lifetimes; track $index) {
-      <option [value]="option.value">{{ option.value }} {{ option.translationKey | i18next }}</option>
+      <option [ngValue]="option.value">{{ option.value }} {{ option.translationKey | i18next }}</option>
       }
     </select>
   </div>

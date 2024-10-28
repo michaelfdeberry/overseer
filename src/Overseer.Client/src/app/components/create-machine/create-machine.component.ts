@@ -16,6 +16,6 @@ export class CreateMachineComponent implements OnInit {
   form = input<FormGroup<MachineForm>>();
 
   ngOnInit(): void {
-    this.form()?.addControl('machineType', new FormControl());
+    this.form()?.addControl('machineType', new FormControl('Unknown'));
   }
 }

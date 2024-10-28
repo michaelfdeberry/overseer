@@ -1,15 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { INGXLoggerMetadata } from 'ngx-logger';
 import { map, Observable } from 'rxjs';
 import { Machine } from '../../models/machine.model';
 import { PersistedUser } from '../../models/user.model';
+import { LogEntry } from '../../models/log-entry.model';
 
 export class Store<T> {
-  constructor(
-    private storeName: string,
-    private db: NgxIndexedDBService
-  ) {}
+  constructor(private storeName: string, private db: NgxIndexedDBService) {}
 
   add(value: T, key?: number): Observable<number> {
     return this.db.add<T>(this.storeName, value, key).pipe(map((value) => value.id));
@@ -66,7 +63,7 @@ export class IndexedStorageService {
     return this.getStore('users');
   }
 
-  get logging(): Store<INGXLoggerMetadata> {
+  get logging(): Store<LogEntry> {
     return this.getStore('logging');
   }
 

@@ -9,6 +9,6 @@ export function authorizationGuard(): CanActivateFn {
     const user = authenticationService.activeUser();
     if (!user) return false;
 
-    return user.accessLevel === AccessLevel.Administrator;
+    return user.accessLevel === 'Administrator';
   };
 }
