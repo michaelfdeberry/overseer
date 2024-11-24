@@ -1,10 +1,10 @@
 .main {
   .logo {
     width: 120px;
-    fill: var(--bs-primary);
+    fill: light-dark(var(--bs-primary), #fff);
 
-    @media (prefers-color-scheme: dark) {
-      fill: #fff;
+    body[data-bs-theme='light'] & {
+      fill: var(--bs-primary) !important;
     }
   }
 }
