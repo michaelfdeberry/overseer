@@ -1,13 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { I18NextModule } from 'angular-i18next';
-import { pollIntervals } from '../../models/constants';
+import { defaultPollInterval, pollIntervals } from '../../models/constants';
 import { ApplicationSettings } from '../../models/settings.model';
 import { SettingsService } from '../../services/settings.service';
 import { ThemeService } from '../../services/theme.service';
 import { ToastsService } from '../../services/toast.service';
-
-const defaultInterval = 10000;
 
 @Component({
   selector: 'app-settings',
@@ -32,7 +30,7 @@ export class SettingsComponent {
   constructor() {
     this.settingsService.getSettings().subscribe((settings) => {
       this.form = this.formBuilder.nonNullable.group({
-        interval: settings.interval ?? defaultInterval,
+        interval: settings.interval ?? defaultPollInterval,
         hideDisabledMachines: settings.hideDisabledMachines ?? false,
         hideIdleMachines: settings.hideIdleMachines ?? false,
         sortByTimeRemaining: settings.sortByTimeRemaining ?? false,

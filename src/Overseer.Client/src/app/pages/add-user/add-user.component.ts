@@ -1,6 +1,7 @@
+import { Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { I18NextModule } from 'angular-i18next';
 import { CreateUserComponent } from '../../components/create-user/create-user.component';
 import { CreateUserForm } from '../../models/form.types';
@@ -16,12 +17,12 @@ import { UsersService } from '../../services/users.service';
 export class AddUserComponent {
   private builder = inject(FormBuilder);
   private usersService = inject(UsersService);
-  private router = inject(Router);
+  private location = inject(Location);
 
   form: FormGroup<CreateUserForm> = this.builder.group({});
 
   save(): void {
     this.form.disable();
-    this.usersService.createUser(this.form.getRawValue() as User).subscribe(() => this.router.navigate(['settings', 'users']));
+    this.usersService.createUser(this.form.getRawValue() as User).subscribe(() => this.location.back());
   }
 }

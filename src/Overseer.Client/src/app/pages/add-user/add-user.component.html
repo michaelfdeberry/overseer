@@ -6,7 +6,7 @@
   <app-create-user [form]="form" />
 
   <div class="d-grid gap-2 d-sm-block">
-    <button type="submit" class="btn btn-primary" [disabled]="form.invalid || form.disabled">{{ 'save' | i18next }}</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.pristine || form.invalid || form.disabled">{{ 'save' | i18next }}</button>
     <a class="btn btn-secondary ms-sm-2" routerLink="../">{{ 'cancel' | i18next }}</a>
   </div>
 </form>

@@ -1,6 +1,6 @@
 export type AccessLevel = 'Readonly' | 'Administrator';
 
-export class User {
+export type User = {
   id?: number;
   username?: string;
   password?: string;
@@ -8,9 +8,9 @@ export class User {
   token?: string;
   isLoggedIn?: boolean;
   accessLevel?: AccessLevel;
-}
+};
 
-export class PersistedUser {
+export type PersistedUser = {
   id?: number;
   username?: string;
   passwordHash?: string;
@@ -19,7 +19,7 @@ export class PersistedUser {
   token?: string;
   tokenExpiration?: number;
   accessLevel?: AccessLevel;
-}
+};
 
 export function isTokenExpired(user: PersistedUser): boolean {
   // if the user or token is null it's considered expired
@@ -38,12 +38,12 @@ export function isTokenExpired(user: PersistedUser): boolean {
 }
 
 export function toUser(user: PersistedUser, includeToken?: boolean): User {
-  return Object.assign(new User(), {
+  return {
     id: user.id,
     username: user.username,
     sessionLifetime: user.sessionLifetime,
-    token: includeToken ? user.token : null,
+    token: includeToken ? user.token : undefined,
     isLoggedIn: !isTokenExpired(user),
     accessLevel: user.accessLevel,
-  });
+  };
 }

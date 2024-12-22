@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, merge, Observable, Subject, Subscription, timer } from 'rxjs';
+import { forkJoin, merge, Observable, ReplaySubject, Subject, Subscription, timer } from 'rxjs';
 import { MachineStatus } from '../../models/machine-status.model';
 import { MachinesService } from '../machines.service';
 import { MonitoringService } from '../monitoring.service';
 import { SettingsService } from '../settings.service';
 import { MachineProviderService } from './providers/machine-provider.service';
+import { defaultPollInterval } from '../../models/constants';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocalMonitoringService implements MonitoringService {
-  public readonly statusEvent$ = new Subject<MachineStatus>();
-
-  private timer?: Observable<number>;
+  private statusEvent$ = new ReplaySubject<MachineStatus>(10, defaultPollInterval, { now: () => Date.now() });
   private timerSubscription?: Subscription;
 
   constructor(
@@ -21,26 +20,29 @@ export class LocalMonitoringService implements MonitoringService {
     private machineProviders: MachineProviderService
   ) {}
 
-  enableMonitoring(): void {
-    if (this.timer) {
-      return;
+  enableMonitoring(): Observable<MachineStatus> {
+    if (!this.timerSubscription) {
+      this.settingsService.getSettings().subscribe((settings) => {
+        this.timerSubscription = timer(0, settings.interval ?? defaultPollInterval).subscribe(() => this.fetchStatus());
+      });
     }
 
-    forkJoin([this.settingsService.getSettings(), this.machineService.getMachines()]).subscribe(([settings, machines]) => {
-      this.timer = timer(0, settings.interval ?? 10000);
-
-      this.timerSubscription = this.timer.subscribe(() => {
-        const providers = this.machineProviders.getProviders(machines);
-        merge(...providers.map((provider) => provider.getStatus())).subscribe((status) => {
-          this.statusEvent$.next(status);
-        });
-      });
-    });
+    return this.statusEvent$;
   }
 
   disableMonitoring(): void {
+    if (!this.timerSubscription) return;
+
     this.timerSubscription?.unsubscribe();
     this.timerSubscription = undefined;
-    this.timer = undefined;
+  }
+
+  private fetchStatus(): void {
+    this.machineService.getMachines().subscribe((machines) => {
+      const providers = this.machineProviders.getProviders(machines);
+      merge(...providers.map((provider) => provider.getStatus())).subscribe((status) => {
+        this.statusEvent$.next(status);
+      });
+    });
   }
 }

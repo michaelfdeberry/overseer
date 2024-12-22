@@ -8,33 +8,27 @@ Overseer is a small utility that allows for monitoring multiple 3D Printers from
 
 ## Usage
 
-There are currently three ways to use the Overseer application. Which way will work best for you depends on your specific use-case and/or server configuration experience.
+There are two ways to use the Overseer application. Which way will work best for you depends on your specific use-case and/or server configuration experience.
 
 ### 1. Standalone Web Application
 
-This is the easiest way to get started with Overseer and recommended for users that aren't comfortable configuring network services. The downside of using the standalone application is that all configuration data is stored local to the browser, so each browser/device will need to be configured individually. However, there are plans to add support for exporting and importing data in a future version.
+This is the easiest way to get started with Overseer and recommended for users that aren't comfortable configuring network services. The downside of using the standalone application is that all configuration data is stored local to the browser, so each browser/device will need to be configured individually.
+
+<span style="color:red">**CAUTION:** The standalone web application has support for readonly accounts, and readonly accounts are restricted from preforming certain operations through the user interface, however since the data is stored in the browser it is accessible through the browsers development tools. This means a savvy user would be able to access the printer information and invoke the APIs directly.</span>
 
 #### Overseer.live
 
 The Standalone Web Application has been published online and is available at [https://overseer.live](https://overseer.live). Again, this works completely in the browser and no data is sent to any 3rd party servers.
 
+
 #### Self Hosting
 
-You can also host the application on your local network if you prefer. Since the application consist of only static files the configuration is very simple and can be hosted on a Octopi instance along with Octoprint with minimal overhead. 
+You can also host the application on your local network if you prefer. Since the application consist of only static files the configuration is very simple and can be hosted on a Octopi instance along with Octoprint with minimal overhead.
 
-Please refer to the [wiki page](https://github.com/michaelfdeberry/overseer/wiki/Overseer-Standalone-Web-App) for configuration instructions. 
+Please refer to the [wiki page](https://github.com/michaelfdeberry/overseer/wiki/Overseer-Standalone-Web-App) for configuration instructions.
 
-### 2. Cross Platform Server
+### 2.  Server
 
-This is a cross platform server based solution that will allow you to host Overseer on your local network. All configuration will be stored on a centralized database allowing the application to be configured once and accessible from multiple browsers/devices. 
+This is a cross platform server based solution that will allow you to host Overseer on your local network. All configuration will be stored on a centralized database allowing the application to be configured once and accessible from multiple browsers/devices.
 
-Please refer to the [wiki page](https://github.com/michaelfdeberry/overseer/wiki/Overseer-Daemon-%28.Net-Core%29) for configuration instructions. 
-
-### 3. Low-end Single Board Computers.
-
-Overseer is a fairly lightweight application and can run fine on low-end devices such as a Raspberry Pi Zero and 1 series of devices. However, the cross platform implementation requires support for ARMV7 instructions so a special version of the server base application is available.
-
-This version contains all the same functionality of the Cross Platform Server version, however the configuration is slightly more involved. 
-
-Please refer to the [wiki page](https://github.com/michaelfdeberry/overseer/wiki/Overseer-Daemon-%28Mono%29) for configuration instructions.
-
+Please refer to the [wiki page](https://github.com/michaelfdeberry/overseer/wiki/Overseer-Daemon-%28.Net-Core%29) for configuration instructions.

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Overseer.Models
 {
@@ -13,6 +14,7 @@ namespace Overseer.Models
     {
         public static IReadOnlyList<string> AuxiliaryHeaterTypes = new List<string> { "bed", "chamber", "cabinet" };
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public MachineToolType ToolType { get; set; }
 
         public int Index { get; set; }

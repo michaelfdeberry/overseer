@@ -1,13 +1,12 @@
-import { Component, computed, effect, inject, Renderer2, signal } from '@angular/core';
+import { Component, computed, effect, inject, Renderer2 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { I18NextModule } from 'angular-i18next';
 import { NgProgressbar } from 'ngx-progressbar';
 import { NgProgressHttp } from 'ngx-progressbar/http';
 import { SvgComponent } from './components/svg/svg.component';
+import { ToastsComponent } from './components/toasts/toasts.component';
 import { AuthenticationService } from './services/authentication.service';
 import { ThemeService } from './services/theme.service';
-import { ToastsComponent } from './components/toasts/toasts.component';
-import { AccessLevel } from './models/user.model';
 
 @Component({
   selector: 'app-root',

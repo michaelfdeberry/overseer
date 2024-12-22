@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Overseer.Models
 {
@@ -6,7 +7,8 @@ namespace Overseer.Models
     {
         public string FileName { get; set; }
 
-        public int Level { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public LogLevel Level { get; set; }
 
         public string LineNumber { get; set; }
 
@@ -18,7 +20,7 @@ namespace Overseer.Models
 
         public override string ToString()
         {
-            return $"{Timestamp} - {(LogLevel)Level} in {FileName}: {Message}{Environment.NewLine}{string.Join(",", Additional ?? new object[] { })}";
+            return $"{Timestamp} - {Level} in {FileName}: {Message}{Environment.NewLine}{string.Join(",", Additional ?? new object[] { })}";
         }
     }
 }

@@ -4,7 +4,7 @@
     <span class="me-1">{{ 'about.helpDescription' | i18next }}</span>
     <a class="link" target="_blank" href="https://github.com/michaelfdeberry/overseer/issues">{{ 'about.issueTracker' | i18next }}</a>
   </p>
-  <table class="table table-striped mx-auto text-start" style="max-width: 320px">
+  <table class="table mx-auto text-start" style="max-width: 320px">
     <tbody>
       @for (infoItem of applicationInfo(); track $index) {
       <tr>

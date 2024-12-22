@@ -2,17 +2,18 @@ export type MachineState = 'Disabled' | 'Connecting' | 'Offline' | 'Idle' | 'Pau
 
 export const idleStates: MachineState[] = ['Disabled', 'Connecting', 'Offline', 'Idle'];
 
-export function isIdle(state: MachineState) {
+export function isIdle(state?: MachineState) {
+  if (!state) return true;
   return idleStates.includes(state);
 }
 
-export interface TemperatureStatus {
+export type TemperatureStatus = {
   heaterIndex: number;
   actual: number;
   target: number;
-}
+};
 
-export interface MachineStatus {
+export type MachineStatus = {
   machineId: number;
   state: MachineState;
   temperatures?: { [key: number]: TemperatureStatus };
@@ -22,4 +23,4 @@ export interface MachineStatus {
   fanSpeed?: number;
   feedRate?: number;
   flowRates?: { [key: number]: number };
-}
+};

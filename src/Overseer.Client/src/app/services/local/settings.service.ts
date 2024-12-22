@@ -1,27 +1,31 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, map, mergeMap, Observable, of } from 'rxjs';
+import { forkJoin, map, Observable, of } from 'rxjs';
 import { UAParser } from 'ua-parser-js';
 import { environment } from '../../../environments/environment';
+import { RequireAdministrator } from '../../decorators/require-admin.decorator';
 import { ApplicationInfo } from '../../models/application-info.model';
 import { CertificateDetails } from '../../models/certificate-details.model';
+import { defaultPollInterval } from '../../models/constants';
 import { Machine } from '../../models/machine.model';
 import { ApplicationSettings } from '../../models/settings.model';
 import { toUser, User } from '../../models/user.model';
+import { LocalStorageService } from '../local-storage.service';
 import { SettingsService } from '../settings.service';
 import { IndexedStorageService } from './indexed-storage.service';
-import { RequireAdministrator } from '../../decorators/require-admin.decorator';
-import { LocalStorageService } from '../local-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class LocalSettingsService implements SettingsService {
-  constructor(private localStorage: LocalStorageService, private indexedStorage: IndexedStorageService) {}
+  constructor(
+    private localStorage: LocalStorageService,
+    private indexedStorage: IndexedStorageService
+  ) {}
 
   createAppSettings(): ApplicationSettings {
     const settings: ApplicationSettings = {
       hideDisabledMachines: false,
       hideIdleMachines: false,
       sortByTimeRemaining: false,
-      interval: 10000,
+      interval: defaultPollInterval,
     };
 
     this.localStorage.set('settings', settings);

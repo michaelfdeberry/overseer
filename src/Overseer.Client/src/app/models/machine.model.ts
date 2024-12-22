@@ -6,14 +6,14 @@ export type MachineType = 'Unknown' | 'Octoprint' | 'RepRapFirmware';
 
 export type WebCamOrientation = 'Default' | 'FlippedVertically' | 'FlippedHorizontally';
 
-export interface MachineTool {
+export type MachineTool = {
   toolType: MachineToolType;
   index: number;
   name: string;
-}
+};
 
 // all the needed properties will just go on the machine
-export interface Machine {
+export type Machine = {
   machineType: MachineType;
   id: number;
   url: string;
@@ -28,4 +28,4 @@ export interface Machine {
   apiKey?: string;
   profile: string;
   availableProfiles: Map<string, string>;
-}
+};

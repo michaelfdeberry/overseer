@@ -4,15 +4,17 @@ import { CertificateWarningComponent } from '../components/certificate-warning/c
 import { Certificate } from '../models/certificate';
 import { DialogService } from './dialog.service';
 import { SettingsService } from './settings.service';
-import { environment } from '../../environments/environment';
+import { MachinesService } from './machines.service';
 
 @Injectable()
 export class CertificateErrorService {
   private settingsService = inject(SettingsService);
   private dialogService = inject(DialogService);
+  private machinesService = inject(MachinesService);
 
   handleCertificateException(ex: { key: string; properties: Certificate }): Observable<boolean> {
-    if (environment.serviceType === 'local') return of(false);
+    // Certificate exceptions is a advanced setting of the remote backend, if not using remote backend, return false
+    if (!this.machinesService.supportsAdvanceSettings) return of(false);
 
     if (!ex || !ex.key || ex.key !== 'certificate_exception') {
       return of(false);

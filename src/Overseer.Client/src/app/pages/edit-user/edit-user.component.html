@@ -14,7 +14,7 @@
       <input required id="confirmPassword" type="password" class="form-control" autocomplete="new-password" formControlName="confirmPassword" />
     </div>
     <div class="d-grid gap-2 d-sm-block">
-      <button type="submit" class="btn btn-primary" [disabled]="passwordForm.invalid || passwordForm.disabled">
+      <button type="submit" class="btn btn-primary" [disabled]="passwordForm.pristine || passwordForm.invalid || passwordForm.disabled">
         {{ 'changePassword' | i18next }}
       </button>
     </div>
@@ -27,7 +27,7 @@
       <label for="accessLevel" class="form-label">{{ 'accessLevel' | i18next }}</label>
       <select id="accessLevel" class="form-select" formControlName="accessLevel">
         @for (option of accessLevels(); track option.value) {
-        <option [ngValue]="option.value">{{ option.translationKey | i18next }}</option>
+          <option [ngValue]="option.value">{{ option.translationKey | i18next }}</option>
         }
       </select>
     </div>
@@ -35,12 +35,12 @@
       <label for="sessionLifetime" class="form-label">{{ 'sessionLifetime' | i18next }}</label>
       <select required id="sessionLifetime" class="form-select" formControlName="sessionLifetime">
         @for (option of lifetimes(); track option.value) {
-        <option [ngValue]="option.value">{{ option.value }} {{ option.translationKey | i18next }}</option>
+          <option [ngValue]="option.value">{{ option.value }} {{ option.translationKey | i18next }}</option>
         }
       </select>
     </div>
     <div class="d-grid gap-2 d-sm-block">
-      <button type="submit" class="btn btn-primary" [disabled]="!updateForm.touched || updateForm.invalid || updateForm.disabled">
+      <button type="submit" class="btn btn-primary" [disabled]="updateForm.pristine || updateForm.invalid || updateForm.disabled">
         {{ 'save' | i18next }}
       </button>
       <a class="btn btn-secondary ms-sm-2" routerLink="/settings/users" routerLinkActive="router-link-active">{{ 'cancel' | i18next }}</a>

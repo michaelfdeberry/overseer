@@ -2,7 +2,10 @@ import { MachineType, WebCamOrientation } from './machine.model';
 import { AccessLevel } from './user.model';
 
 export class DisplayOption<TValue> {
-  constructor(public translationKey: string, public value: TValue) {}
+  constructor(
+    public translationKey: string,
+    public value: TValue
+  ) {}
 }
 
 export type SessionLifetime = undefined | 1 | 7 | 30 | 90;
@@ -14,6 +17,7 @@ export const sessionLifetimes: DisplayOption<SessionLifetime>[] = [
   new DisplayOption('days', 90),
 ];
 
+export const defaultPollInterval = 10000;
 export type PollInterval = 1000 | 5000 | 10000 | 20000 | 30000;
 export const pollIntervals: DisplayOption<PollInterval>[] = [
   new DisplayOption('second', 1000),

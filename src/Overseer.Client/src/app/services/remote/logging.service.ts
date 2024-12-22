@@ -3,7 +3,7 @@ import { LoggingService } from '../logging.service';
 import { LogEntry } from '../../models/log-entry.model';
 import { HttpClient } from '@angular/common/http';
 import { endpointFactory } from './endpoint-factory';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class RemoteLoggingService extends LoggingService {
@@ -15,6 +15,6 @@ export class RemoteLoggingService extends LoggingService {
   }
 
   override download(): Observable<string> {
-    return this.http.get<string>(this.getEndpoint());
+    return this.http.get<{ content: string }>(this.getEndpoint()).pipe(map((response) => response.content));
   }
 }

@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -19,6 +20,7 @@ import { UsersService } from '../../services/users.service';
 })
 export class EditUserComponent {
   private router = inject(Router);
+  private location = inject(Location);
   private route = inject(ActivatedRoute);
   private formBuilder = inject(FormBuilder);
   private usersService = inject(UsersService);
@@ -79,8 +81,7 @@ export class EditUserComponent {
     ]).subscribe(([users, userId]) => {
       const user = users.find((u) => u.id === userId);
       if (!user) {
-        // todo: show toast saying invalid route.
-        this.router.navigate(['/users']);
+        this.location.back();
         return;
       }
 
@@ -148,7 +149,7 @@ export class EditUserComponent {
     observable.subscribe({
       next: () => {
         this.toastsService.show({ message: 'savedChanges', type: 'success' });
-        this.router.navigate(['/settings/users']);
+        this.location.back();
       },
       error: () => this.updateForm.enable(),
     });

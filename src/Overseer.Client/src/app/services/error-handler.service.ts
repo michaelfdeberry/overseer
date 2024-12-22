@@ -17,7 +17,7 @@ export class ErrorHandlerService {
     const translation = this.i18NextService.t(`errors.${errorMessage}`);
     if (translation && translation !== errorMessage) {
       if (error !== 'unknown_exception') {
-        this.loggingService.error(translation);
+        //this.loggingService.error(translation);
       }
 
       this.toastsService.show({
@@ -26,7 +26,7 @@ export class ErrorHandlerService {
       });
       console.error(translation);
     } else {
-      this.loggingService.error(error);
+      //this.loggingService.error(error);
       this.handle('unknown_exception');
     }
 
@@ -37,10 +37,11 @@ export class ErrorHandlerService {
 // Global unhandled exception handler
 @Injectable({ providedIn: 'root' })
 export class OverseerErrorHandler implements ErrorHandler {
-  constructor(private loggingService: LoggingService) {}
+  private loggingService = inject(LoggingService);
+  private errorHandlerService = inject(ErrorHandlerService);
 
   handleError(error: any): void {
-    console.error(error);
-    this.loggingService.error(error);
+    this.errorHandlerService.handle(error);
+    // this.loggingService.error(error);
   }
 }

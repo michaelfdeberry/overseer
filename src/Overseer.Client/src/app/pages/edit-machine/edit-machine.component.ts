@@ -1,6 +1,7 @@
+import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { I18NextModule } from 'angular-i18next';
 import { filter, map, Observable, switchMap } from 'rxjs';
 import { MachineHostComponent } from '../../components/machine-host/machine-host.component';
@@ -19,7 +20,7 @@ import { ToastsService } from '../../services/toast.service';
   providers: [DialogService, CertificateErrorService],
 })
 export class EditMachineComponent {
-  private router = inject(Router);
+  private location = inject(Location);
   private route = inject(ActivatedRoute);
   private formBuilder = inject(FormBuilder);
   private machinesService = inject(MachinesService);
@@ -40,7 +41,7 @@ export class EditMachineComponent {
       .subscribe((machine: Machine) => {
         console.log('Machine', machine);
         this.machine.set(machine);
-        this.form = this.formBuilder.nonNullable.group({});
+        this.form = this.formBuilder.nonNullable.group({}, { updateOn: 'change' });
         this.form.addControl('id', new FormControl(machine?.id));
         this.form.addControl('machineType', new FormControl(null));
         this.form.addControl('disabled', new FormControl(machine?.disabled));
@@ -65,7 +66,7 @@ export class EditMachineComponent {
       complete: () => {
         console.log('saved');
         this.toastsService.show({ message: 'savedChanges', type: 'success' });
-        this.router.navigate(['/settings/machines']);
+        this.location.back();
       },
       error: (ex) => {
         this.form?.enable();

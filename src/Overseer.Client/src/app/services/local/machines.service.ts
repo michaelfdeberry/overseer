@@ -70,7 +70,7 @@ export class LocalMachinesService implements MachinesService {
       switchMap((machines) => {
         machines.forEach((machine) => {
           machine.sortIndex = sortOrder.indexOf(machine.id);
-          this.storage.machines.update(machine);
+          this.storage.machines.update(machine).subscribe();
         });
         return NEVER;
       })
