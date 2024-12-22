@@ -16,7 +16,7 @@ namespace Overseer.Models
             Platform = Environment.OSVersion.Platform.ToString();
             OperatingSystem = Environment.OSVersion.VersionString;
             MachineName = Environment.MachineName;
-            Version = FileVersionInfo.GetVersionInfo(Assembly.GetAssembly(GetType()).Location).ProductVersion;
+            Version = FileVersionInfo.GetVersionInfo(Assembly.GetAssembly(GetType()).Location).FileVersion;
             Runtime = RuntimeInformation.FrameworkDescription;
         }
 
