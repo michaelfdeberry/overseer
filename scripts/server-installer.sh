@@ -2,7 +2,7 @@
 
 overseerVersion='2.0.0'
 overseerDirectory=${PWD}'/overseer'
-overseerExecutable='Overseer.Daemon'
+overseerExecutable='Overseer.Server'
 overseerExecutablePath=${overseerDirectory}'/'${overseerExecutable}
 overseerPID=$(ps auxf | grep ${overseerExecutable} | grep -v grep  | awk '{print $2}')
 overseerZipFile=overseer-server-${overseerVersion}.zip
@@ -16,6 +16,13 @@ apt-get update
 
 # install the prerequisites 
 apt-get install curl libunwind8 gettext apt-transport-https
+
+# download the latest and unzip the archive
+wget $overseerZipUrl
+unzip -o ${overseerZipFile}
+
+#change the permissions of the executable
+chmod 744 $overseerExecutablePath
 
 if [ -n "${overseerPID}" ]; then
     # stop the service if it's is running
@@ -44,22 +51,11 @@ echo [Install] >> $servicePath
 echo WantedBy=multi-user.target >> $servicePath
 echo >> $servicePath
 
-# download the latest and unzip the archive
-wget $overseerZipUrl
-unzip -o ${overseerZipFile}
-
-#change the permissions of the executable
-chmod 744 $overseerExecutablePath
-
 # enable the service
 systemctl enable overseer
 
 # start the service
 service overseer start
-
-# TODO
-# - prompt the user and ask if they want to install a reverse proxy
-# - if yes, install nginx and configure it to forward requests to the overseer service
 
 if [ ! -f /etc/nginx/sites-available/overseer ]; then
     read -p "Do you want to install a reverse proxy with Nginx? (y/n): " installNginx
@@ -99,6 +95,7 @@ if [ "$installNginx" == "y" ]; then
     systemctl restart nginx
 
     echo "Nginx has been installed and configured as a reverse proxy."
+    echo "This only provides a basic configuration. You may need to make additional changes to suit your needs."
 else
     echo "Nginx installation skipped."
 fi

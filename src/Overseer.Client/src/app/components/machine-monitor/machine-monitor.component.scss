@@ -12,6 +12,18 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  margin: 1rem 1rem 0;
+
+  @media (min-width: 576px) {
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .display {
+    min-height: 300px;
+  }
 
   .video {
     position: absolute;
@@ -19,6 +31,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
+    background-color: #000;
 
     &.FlippedHorizontally {
       transform: scaleX(-1);
@@ -51,6 +64,7 @@
 }
 
 .info {
+  container-type: inline-size;
   position: relative;
   margin: 0 auto;
   width: 100%;
@@ -58,6 +72,29 @@
   max-height: 100%;
   overflow-y: auto;
   transition: all 0.5s ease;
+
+  .progress-info {
+    display: flex;
+    flex-direction: column;
+
+    &__actions {
+      display: flex;
+      justify-content: end;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  @container (min-width: 576px) {
+    .progress-info {
+      flex-direction: row;
+
+      &__actions {
+        display: block;
+        margin-bottom: 0;
+        margin-inline-start: 1rem;
+      }
+    }
+  }
 }
 
 .temperatures {

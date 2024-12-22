@@ -38,7 +38,7 @@ export class ListMachinesComponent {
     if (!machines?.length) return;
 
     moveItemInArray(machines, previousIndex, currentIndex);
-    this.machinesService.sortMachines(machines.map((m) => m.id));
+    this.machinesService.sortMachines(machines.map((m) => m.id)).subscribe();
   }
 
   drop(event: CdkDragDrop<string[]>) {

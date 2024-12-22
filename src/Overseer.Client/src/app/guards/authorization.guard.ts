@@ -1,7 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
-import { AccessLevel } from '../models/user.model';
 
 export function authorizationGuard(): CanActivateFn {
   return () => {

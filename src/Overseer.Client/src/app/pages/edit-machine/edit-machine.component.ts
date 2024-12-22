@@ -39,7 +39,6 @@ export class EditMachineComponent {
         switchMap((id) => this.machinesService.getMachine(id))
       )
       .subscribe((machine: Machine) => {
-        console.log('Machine', machine);
         this.machine.set(machine);
         this.form = this.formBuilder.nonNullable.group({}, { updateOn: 'change' });
         this.form.addControl('id', new FormControl(machine?.id));
@@ -64,7 +63,6 @@ export class EditMachineComponent {
 
     observable.subscribe({
       complete: () => {
-        console.log('saved');
         this.toastsService.show({ message: 'savedChanges', type: 'success' });
         this.location.back();
       },

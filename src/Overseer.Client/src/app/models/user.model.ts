@@ -22,19 +22,19 @@ export type PersistedUser = {
 };
 
 export function isTokenExpired(user: PersistedUser): boolean {
-  // if the user or token is null it's considered expired
-  if (!user.token || user.token === '') {
+  // if the user or token is not defined it's considered expired
+  if (!user.token?.trim().length) {
     return true;
   }
 
-  // if there is no expiration set the, with the presence of a token, the user
-  // is configured for indefinite session length
-  if (!user.tokenExpiration) {
-    return false;
-  }
+  // if there is not session lifetime, the token doesn't expire
+  if (!user.sessionLifetime) return false;
+
+  // if there is a session lifetime set, but no expiration date, the token is considered expired
+  if (!user.tokenExpiration) return true;
 
   // otherwise the tokens is expired if it's expiration date is less than the current date
-  return user.tokenExpiration < Date.now();
+  return Date.now() >= user.tokenExpiration;
 }
 
 export function toUser(user: PersistedUser, includeToken?: boolean): User {

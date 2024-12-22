@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { Observable, ReplaySubject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { defaultPollInterval } from '../../models/constants';
@@ -24,7 +24,14 @@ export class RemoteMonitoringService implements MonitoringService {
   }
 
   enableMonitoring(): Observable<MachineStatus> {
-    if (!this.isConnected) {
+    if (this.isConnected) return this.statusEvent$;
+    if (this.hubConnection.state === HubConnectionState.Connecting) return this.statusEvent$;
+    if (this.hubConnection.state === HubConnectionState.Connected) {
+      this.isConnected = true;
+      return this.statusEvent$;
+    }
+
+    if (this.hubConnection.state === HubConnectionState.Disconnected) {
       this.hubConnection.start().then(() => {
         this.hubConnection.invoke('startMonitoring');
         this.isConnected = true;

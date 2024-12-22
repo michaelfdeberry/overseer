@@ -21,11 +21,9 @@ export class MachineHostComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      console.log('Machine changed', this.machine());
       this.form()?.controls.machineType?.patchValue(this.machine()?.machineType);
     });
     effect(() => {
-      console.log('Machine type changed', this.machineType());
       this.viewContainerRef.clear();
       const machineType = this.machineType();
       if (!machineType) return;

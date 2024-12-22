@@ -13,7 +13,7 @@ export class RemoteAuthenticationService extends AuthenticationService {
 
   supportsPreauthentication = true;
 
-  requiresLogin(): Observable<boolean> {
+  checkLogin(): Observable<boolean> {
     return this.http
       .get(this.getEndpoint())
       .pipe(map(() => true))

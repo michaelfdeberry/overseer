@@ -1,10 +1,12 @@
-![Screenshot](https://i.imgur.com/XYDRmhU.jpg)
-
 # Overseer
 
-Overseer is a small utility that allows for monitoring multiple 3D Printers from a single user interface. There is currently support for [Octoprint](https://github.com/foosel/OctoPrint) and [RepRapFirmware](https://github.com/dc42/RepRapFirmware). 
+Overseer is a small utility that allows for monitoring multiple 3D Printers from a single user interface. There is currently support for [Octoprint](https://github.com/foosel/OctoPrint) and [RepRapFirmware](https://github.com/dc42/RepRapFirmware).
 
-<span style="color:red">**WARNING:** It is recommended that you do **not** configure Overseer to be accessible outside of your local network.</span>
+**WARNING:** It is recommended that you do **not** configure Overseer to be accessible outside of your local network.
+
+![Screenshot](/preview.jpg)
+
+//TODO: replace place holder image.
 
 ## Usage
 
@@ -12,14 +14,19 @@ There are two ways to use the Overseer application. Which way will work best for
 
 ### 1. Standalone Web Application
 
-This is the easiest way to get started with Overseer and recommended for users that aren't comfortable configuring network services. The downside of using the standalone application is that all configuration data is stored local to the browser, so each browser/device will need to be configured individually.
+The standalone application is that all configuration data is stored local to the browser, so each browser/device will need to be configured individually.
 
-<span style="color:red">**CAUTION:** The standalone web application has support for readonly accounts, and readonly accounts are restricted from preforming certain operations through the user interface, however since the data is stored in the browser it is accessible through the browsers development tools. This means a savvy user would be able to access the printer information and invoke the APIs directly.</span>
+**CAUTION:** The standalone web application has support for readonly accounts, and readonly accounts are restricted from preforming certain operations through the user interface, however since the data is stored in the browser it is accessible through the browsers development tools. This means a savvy user would be able to access the printer information and invoke the APIs directly.
+
+**CAUTION:** The standalone web application can connect to instances using self signed certificates, and even certificate authentication. However it is required certificate to .
+
+**CAUTION:** The standalone web application requires CORS to be enabled.
+
+**CAUTION:** If you do not understand any of the other cautions messages, please don't use web app version. That applies to overseer.live and the self hosted site.
 
 #### Overseer.live
 
-The Standalone Web Application has been published online and is available at [https://overseer.live](https://overseer.live). Again, this works completely in the browser and no data is sent to any 3rd party servers.
-
+The Standalone Web Application has been published online and is available at [https://overseer.live](https://overseer.live). This works completely in the browser and no data is sent to any 3rd party servers.
 
 #### Self Hosting
 

@@ -1,6 +1,8 @@
 ﻿using log4net;
 using log4net.Appender;
+
 using Overseer.Models;
+
 using LogLevel = Overseer.Models.LogLevel;
 
 namespace Overseer.Server.Api
@@ -12,7 +14,7 @@ namespace Overseer.Server.Api
         public static RouteGroupBuilder MapLoggingApi(this RouteGroupBuilder builder)
         {
             var group = builder.MapGroup("/logging");
-            group.AllowAnonymous();
+            group.RequireAuthorization();
 
             group.MapGet("/", () =>
             {
@@ -55,8 +57,7 @@ namespace Overseer.Server.Api
                 }
 
                 return Results.Ok();
-            });
-
+            }).AllowAnonymous();
 
             return builder;
         }

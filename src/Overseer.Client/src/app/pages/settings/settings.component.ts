@@ -36,14 +36,13 @@ export class SettingsComponent {
         sortByTimeRemaining: settings.sortByTimeRemaining ?? false,
       });
 
-      this.form.valueChanges.subscribe((changes) => {
-        console.log(changes);
-        this.settingsService.updateSettings(this.form!.value as ApplicationSettings).subscribe(() => this.updateComplate());
+      this.form.valueChanges.subscribe(() => {
+        this.settingsService.updateSettings(this.form!.value as ApplicationSettings).subscribe(() => this.updateComplete());
       });
     });
   }
 
-  updateComplate(): void {
+  updateComplete(): void {
     this.toastsService.show({
       delay: 1000,
       type: 'success',
@@ -54,11 +53,11 @@ export class SettingsComponent {
   handleSchemeChange(scheme: string): void {
     if (!['auto', 'light', 'dark'].includes(scheme)) return;
     this.themeService.scheme.set(scheme as 'auto' | 'light' | 'dark');
-    this.updateComplate();
+    this.updateComplete();
   }
 
   handleThemeChange(theme: string): void {
     this.themeService.theme.set(theme);
-    this.updateComplate();
+    this.updateComplete();
   }
 }

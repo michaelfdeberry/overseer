@@ -45,18 +45,8 @@ export function overseerInterceptor(request: HttpRequest<unknown>, next: HttpHan
           case 403:
             if (errorResponse.error === 'requiresInitialization=True') {
               errorMessage = 'setup_required';
-              if (router.url !== '/setup') {
-                router.navigate(['setup']);
-              }
             } else {
               errorMessage = 'unauthorized_access';
-              if (router.url.startsWith('/sso')) {
-                return throwError(() => new Error(errorMessage));
-              }
-
-              if (router.url !== '/login') {
-                router.navigate(['login']);
-              }
             }
             break;
           default:

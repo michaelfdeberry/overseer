@@ -121,7 +121,6 @@ export class EditUserComponent {
   }
 
   save() {
-    console.log(this.updateForm.value, this.user());
     this.handleNetworkAction(this.usersService.updateUser(this.updateForm.value as User));
   }
 

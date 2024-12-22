@@ -8,7 +8,11 @@ import { AuthenticationService } from '../../services/authentication.service';
   standalone: true,
 })
 export class SsoComponent implements OnInit {
-  constructor(private authenticationService: AuthenticationService, private router: Router, private route: ActivatedRoute) {}
+  constructor(
+    private authenticationService: AuthenticationService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   redirectLogin() {
     this.redirect('/login');
@@ -23,7 +27,7 @@ export class SsoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authenticationService.requiresLogin().subscribe((isAuthenticated) => {
+    this.authenticationService.checkLogin().subscribe((isAuthenticated) => {
       if (isAuthenticated) {
         this.redirectHome();
       } else {

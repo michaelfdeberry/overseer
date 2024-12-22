@@ -2,7 +2,7 @@
 @let statusRef = status();
 
 <div #machineMonitor class="machine-monitor border" [ngClass]="{ expanded: expanded() }">
-  <div class="flex-1 position-relative">
+  <div class="display flex-1 position-relative">
     <div
       class="video position-absolute"
       class="{{ machineRef?.webCamOrientation }}"
@@ -21,7 +21,7 @@
       <img class="logo" src="{{ '/images/' + machineRef.machineType + '.png' }}" alt="logo" />
     }
   </div>
-  <div class="info p-4">
+  <div class="info p-3">
     <div class="d-flex pb-2">
       <div class="flex-1">
         <div class="fs-5 fw-bold">{{ machineRef?.name }}</div>
@@ -62,7 +62,7 @@
         }
       </div>
     </div>
-    <div class="d-flex py-2">
+    <div class="progress-info py-2">
       <div class="flex-1">
         <div class="d-flex flex-row py-1 fs-7">
           <div class="flex-1">
@@ -73,11 +73,11 @@
           </div>
         </div>
         <div>
-          <ngb-progressbar class="mb-3" type="warning" [value]="statusRef?.progress ?? 0" height="0.4rem" />
+          <ngb-progressbar class="mb-3" type="primary" [value]="statusRef?.progress ?? 0" height="0.4rem" />
         </div>
       </div>
       @if (isAdmin()) {
-        <div class="ms-3">
+        <div class="progress-info__actions">
           @if (machineRef?.disabled) {
             <a class="btn btn-outline-secondary" [routerLink]="['/settings/machines', machineRef?.id, 'edit']">{{ 'enable' | i18next }}</a>
           } @else {
@@ -85,10 +85,10 @@
               <a class="btn btn-primary" href="{{ machineRef?.url }}" target="_blank">{{ 'openWebsite' | i18next }}</a>
             }
             @if (operational()) {
-              <button class="btn btn-outline-danger" (click)="pause()">{{ 'pause' | i18next }}</button>
+              <button class="btn btn-warning" (click)="pause()">{{ 'pause' | i18next }}</button>
             }
             @if (paused()) {
-              <button class="btn btn-warning-success" (click)="resume()">{{ 'continue' | i18next }}</button>
+              <button class="btn btn-success" (click)="resume()">{{ 'continue' | i18next }}</button>
             }
             @if (!idle()) {
               <button class="btn btn-outline-danger ms-2" [disabled]="idle()" (click)="cancel()">{{ 'stop' | i18next }}</button>
@@ -167,10 +167,14 @@
               step="1"
               value="{{ statusRef?.fanSpeed }}"
               [disabled]="busy()"
+              (input)="fanSpeedDisplay.innerText = fanSpeed.value"
               (change)="setFanSpeed(fanSpeed.valueAsNumber)"
             />
           </div>
-          <div class="col-1 text-end">{{ statusRef?.fanSpeed ?? '0' | number }}%</div>
+          <div class="col-1 text-end">
+            <span #fanSpeedDisplay>{{ statusRef?.fanSpeed | number }}</span
+            >%
+          </div>
         </div>
         <div class="row py-3">
           <div class="col-3">
@@ -186,10 +190,14 @@
               step="1"
               value="{{ statusRef?.feedRate }}"
               [disabled]="busy()"
+              (input)="feedRateDisplay.innerText = feedRate.value"
               (change)="setFeedRate(feedRate.valueAsNumber)"
             />
           </div>
-          <div class="col-1 text-end">{{ statusRef?.feedRate ?? '0' | number }}%</div>
+          <div class="col-1 text-end">
+            <span #feedRateDisplay>{{ feedRate.valueAsNumber | number }}</span
+            >%
+          </div>
         </div>
         @for (extruder of extruders(); track $index) {
           @let value = statusRef?.flowRates?.[extruder.index];
@@ -205,10 +213,14 @@
                 step="1"
                 value="{{ value }}"
                 [disabled]="busy()"
+                (input)="flowRateDisplay.innerText = flowRate.value"
                 (change)="setFlowRate(extruder.index, flowRate.valueAsNumber)"
               />
             </div>
-            <div class="col-1 text-end">{{ value ?? '0' | number }}%</div>
+            <div class="col-1 text-end">
+              <span #flowRateDisplay>{{ flowRate.valueAsNumber | number }}</span
+              >%
+            </div>
           </div>
         }
       </div>

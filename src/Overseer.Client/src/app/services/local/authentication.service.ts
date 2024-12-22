@@ -1,5 +1,4 @@
 import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
-import { Router } from '@angular/router';
 import * as bcrypt from 'bcryptjs';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
@@ -12,28 +11,32 @@ import { createUser } from './users.service';
 @Injectable({ providedIn: 'root' })
 export class LocalAuthenticationService extends AuthenticationService {
   private storage = inject(IndexedStorageService);
-  private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
   private injector = inject(EnvironmentInjector);
 
   supportsPreauthentication = false;
 
-  requiresLogin(): Observable<boolean> {
+  checkLogin(): Observable<boolean> {
     return this.storage.users.getAll().pipe(
       map((users) => {
         const admins = users.filter((u) => u.accessLevel === 'Administrator');
+        const requiresLogin = () => {
+          this.activeUser.set(undefined);
+          this.errorHandler.handle('unauthorized_access');
+          return false;
+        };
 
         if (!admins.length) {
-          this.router.navigate(['setup']);
           this.errorHandler.handle('setup_required');
           return false;
         }
 
-        if (!this.activeUser()) {
-          this.router.navigate(['/login']);
-          this.errorHandler.handle('unauthorized_access');
-          return false;
-        }
+        const activeUser = this.activeUser();
+        if (!activeUser) return requiresLogin();
+
+        const user = users.find((u) => u.token === activeUser.token);
+        if (!user) return requiresLogin();
+        if (isTokenExpired(user)) return requiresLogin();
 
         return true;
       })
@@ -61,8 +64,8 @@ export class LocalAuthenticationService extends AuthenticationService {
 
         if (isTokenExpired(pUser)) {
           pUser.token = bcrypt.genSaltSync(16);
-          if (user.sessionLifetime) {
-            pUser.tokenExpiration = Date.now() + user.sessionLifetime * 86400;
+          if (pUser.sessionLifetime) {
+            pUser.tokenExpiration = Date.now() + pUser.sessionLifetime * 86400000;
           } else {
             pUser.tokenExpiration = undefined;
           }

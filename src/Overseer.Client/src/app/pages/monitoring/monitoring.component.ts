@@ -109,12 +109,7 @@ export class MonitoringComponent {
       // figure out what to do on mobile. maybe it scrolls horizontally? maybe swipe through the machines.
     } else {
       let base = document.body.clientWidth < 1024 ? 2 : 4;
-      // if it's less than the base, just tile them
-      // if (count <= base) {
-      //   base /= 2;
-      // }
       const factor = Math.ceil(count / (Math.floor(count / base) + (count % base > 0 ? 1 : 0)));
-      console.log(factor);
       this.column.set(`col-${12 / factor}`);
     }
   }

@@ -1,6 +1,5 @@
-﻿using System.Net.Mime;
-using System.Text.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
+
 using Overseer.Models;
 
 namespace Overseer.Server.Api
@@ -27,7 +26,7 @@ namespace Overseer.Server.Api
         public static RouteGroupBuilder MapMachineApi(this RouteGroupBuilder builder)
         {
             var group = builder.MapGroup("/machines");
-            //group.RequireAuthorization();
+            group.RequireAuthorization();
 
             group.MapGet("/", (IMachineManager machines) => Results.Ok(machines.GetMachines()));
 

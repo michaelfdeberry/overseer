@@ -21,7 +21,7 @@ export abstract class AuthenticationService {
     });
   }
 
-  abstract requiresLogin(): Observable<boolean>;
+  abstract checkLogin(): Observable<boolean>;
 
   abstract login(user: User): Observable<User>;
 

@@ -6,6 +6,7 @@
   "save": "Save",
   "start": "Start",
   "stop": "Stop",
+  "pause": "Pause",
   "continue": "Continue",
   "cancel": "Cancel",
   "delete": "Delete",
