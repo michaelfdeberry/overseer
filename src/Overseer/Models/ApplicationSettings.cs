@@ -4,7 +4,7 @@
     {
         public const int DefaultPort = 9000;
         public const int DefaultInterval = 10000;
-        
+
         /// <summary>
         /// How often the app will poll the machine for information
         /// </summary>
@@ -22,14 +22,14 @@
         public bool HideIdleMachines { get; set; }
 
         /// <summary>
-        /// If true the monitoring view will be sorted by the etimated 
+        /// If true the monitoring view will be sorted by the estimated 
         /// remaining time. 
         /// </summary>
         public bool SortByTimeRemaining { get; set; }
-        
+
         /// <summary>
         /// Gets/Sets the port which the overseer daemon listens on
         /// </summary>
-        public int LocalPort { get; set; } = DefaultPort;        
+        public int LocalPort { get; set; } = DefaultPort;
     }
 }

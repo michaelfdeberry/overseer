@@ -21,6 +21,4 @@ export abstract class SettingsService {
   abstract addCertificateException(certificateDetails: CertificateDetails): Observable<CertificateDetails>;
 
   abstract getApplicationInfo(): Observable<ApplicationInfo>;
-
-  abstract getLog(): Observable<string>;
 }

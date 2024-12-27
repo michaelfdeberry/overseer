@@ -4,27 +4,14 @@ using Overseer.Models;
 
 namespace Overseer.Server.Hubs
 {
-    public class StatusHub : Hub
+    public class StatusHub(IMonitoringService monitoringService) : Hub
     {
         static readonly ILog Log = LogManager.GetLogger(typeof(StatusHub));
 
         public const string MonitoringGroupName = "MonitoringGroup";
-        readonly IMonitoringService _monitoringService;
-        readonly HashSet<string> _monitoringGroup = new HashSet<string>();
+        readonly IMonitoringService _monitoringService = monitoringService;
+        readonly HashSet<string> _monitoringGroup = [];
 
-        public StatusHub(IMonitoringService monitoringService, IHubContext<StatusHub> hubContext)
-        {
-            _monitoringService = monitoringService;
-
-            _monitoringService.StatusUpdate += (object? sender, EventArgs<MachineStatus> e)  =>
-            {
-                hubContext
-                    .Clients
-                    .Group(MonitoringGroupName)
-                    .SendAsync("StatusUpdate", e.Data);
-            };
-        }
-         
         public async Task StartMonitoring()
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, MonitoringGroupName);

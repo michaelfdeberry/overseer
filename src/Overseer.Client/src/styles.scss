@@ -1,0 +1,45 @@
+/* You can add global styles to this file, and also import other style files */
+
+$primary: #5cb248;
+
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons';
+
+html,
+body,
+app-root,
+main {
+  font-family: 'Inter';
+  height: 100%;
+}
+
+router-outlet {
+  display: contents;
+}
+
+.table-fixed {
+  table-layout: fixed;
+}
+
+.table {
+  tr {
+    th,
+    td {
+      vertical-align: middle;
+
+      &.action {
+        width: 120px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.fs-7 {
+  font-size: 0.875rem;
+}

@@ -20,12 +20,13 @@ namespace Overseer
 
         public Machine GetMachine(int id)
         {
-            return _machines.GetById(id);
+            return _machines.GetById(id); 
         }
 
         public IReadOnlyList<Machine> GetMachines()
         {
-            return _machines.GetAll();
+            var machines = _machines.GetAll();
+            return machines;
         }
         
         public async Task<Machine> CreateMachine(Machine machine)

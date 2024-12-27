@@ -1,7 +1,7 @@
-﻿using Overseer.Data;
+﻿using System.Security.Claims;
+
+using Overseer.Data;
 using Overseer.Models;
-using System.Linq;
-using System.Security.Claims;
 
 namespace Overseer
 {
@@ -10,10 +10,10 @@ namespace Overseer
         readonly IAuthenticationManager _authenticationManager;
         readonly IRepository<User> _users;
 
-        public AuthorizationManager(IDataContext context, IAuthenticationManager authentiactionManager)
+        public AuthorizationManager(IDataContext context, IAuthenticationManager authenticationManager)
         {
             _users = context.GetRepository<User>();
-            _authenticationManager = authentiactionManager;
+            _authenticationManager = authenticationManager;
         }
 
         public bool RequiresAuthorization()

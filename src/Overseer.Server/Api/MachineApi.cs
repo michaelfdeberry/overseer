@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+
 using Overseer.Models;
 
 namespace Overseer.Server.Api
@@ -16,8 +17,8 @@ namespace Overseer.Server.Api
                 var jObject = JObject.Parse(machineJson);
                 string machineTypeName = jObject["machineType"]?.Value<string>() ?? "Unknown";
 
-                return jObject.ToObject(Machine.GetMachineType(machineTypeName)) is not Machine machine ? 
-                    throw new Exception("Unable to parse machine") : 
+                return jObject.ToObject(Machine.GetMachineType(machineTypeName)) is not Machine machine ?
+                    throw new Exception("Unable to parse machine") :
                     new MachineBindingModel(machine);
             }
         }
@@ -25,9 +26,9 @@ namespace Overseer.Server.Api
         public static RouteGroupBuilder MapMachineApi(this RouteGroupBuilder builder)
         {
             var group = builder.MapGroup("/machines");
-            //group.RequireAuthorization();
+            group.RequireAuthorization();
 
-            group.MapGet("/", (IMachineManager machines) => Results.Ok(machines.GetMachines()));    
+            group.MapGet("/", (IMachineManager machines) => Results.Ok(machines.GetMachines()));
 
             group.MapGet("/{id}", (int id, IMachineManager machines) => Results.Ok(machines.GetMachine(id)));
 

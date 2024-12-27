@@ -8,10 +8,7 @@ import { BaseMachineProvider } from './machine.provider';
 import { processUrl } from './url-processor';
 
 export class OctoprintMachineProvider extends BaseMachineProvider {
-  constructor(
-    machine: Machine,
-    private http: HttpClient
-  ) {
+  constructor(machine: Machine, private http: HttpClient) {
     super();
     this.machine = machine;
   }
@@ -48,11 +45,11 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
           machine.webCamUrl = processUrl(machine.url, settings.webcam.streamUrl);
 
           if (settings.webcam.flipH) {
-            machine.webCamOrientation = WebCamOrientation.FlippedHorizontally;
+            machine.webCamOrientation = 'FlippedHorizontally';
           } else if (settings.webcam.flipV) {
-            machine.webCamOrientation = WebCamOrientation.FlippedVertically;
+            machine.webCamOrientation = 'FlippedVertically';
           } else {
-            machine.webCamOrientation = WebCamOrientation.Default;
+            machine.webCamOrientation = 'Default';
           }
         }
 
@@ -74,7 +71,7 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
 
             if (profile.heatedBed) {
               tools.push({
-                toolType: MachineToolType.Heater,
+                toolType: 'Heater',
                 index: -1,
                 name: 'bed',
               });
@@ -82,7 +79,7 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
 
             if (profile.extruder.sharedNozzle) {
               tools.push({
-                toolType: MachineToolType.Heater,
+                toolType: 'Heater',
                 index: 0,
                 name: 'heater 0',
               });
@@ -91,14 +88,14 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
             for (let index = 0; index < profile.extruder.count; index++) {
               if (!profile.extruder.sharedNozzle) {
                 tools.push({
-                  toolType: MachineToolType.Heater,
+                  toolType: 'Heater',
                   index: index,
                   name: `heater ${index}`,
                 });
               }
 
               tools.push({
-                toolType: MachineToolType.Extruder,
+                toolType: 'Extruder',
                 index: index,
                 name: `extruder ${index}`,
               });
@@ -132,7 +129,7 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
   acquireStatus(): Observable<MachineStatus> {
     const status: MachineStatus = {
       machineId: this.machine.id,
-      state: MachineState.Idle,
+      state: 'Idle',
       temperatures: {},
     };
 
@@ -152,14 +149,14 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
 
         const flags = machineState.state.flags;
         if (flags.paused || flags.pausing) {
-          status.state = MachineState.Paused;
+          status.state = 'Paused';
         } else if (flags.printing || flags.resuming) {
-          status.state = MachineState.Operational;
+          status.state = 'Operational';
         } else {
-          status.state = MachineState.Idle;
+          status.state = 'Idle';
         }
 
-        if (status.state === MachineState.Operational || status.state === MachineState.Paused) {
+        if (status.state === 'Operational' || status.state === 'Paused') {
           return this.http.get<any>(this.getUrl('api/job'), this.httpOptions).pipe(
             map((jobStatus) => {
               status.elapsedJobTime = jobStatus.progress.printTime;
@@ -168,7 +165,7 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
               status.fanSpeed = 100;
               status.feedRate = 100;
               status.flowRates = this.machine.tools
-                .filter((tool) => tool.toolType === MachineToolType.Extruder)
+                .filter((tool) => tool.toolType === 'Extruder')
                 .reduce<{ [key: number]: number }>((obj, tool) => {
                   obj[tool.index] = 100;
                   return obj;

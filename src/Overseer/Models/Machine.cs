@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
-using Overseer.Data;
+﻿using Overseer.Data;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Overseer.Models
 {
@@ -21,6 +21,8 @@ namespace Overseer.Models
         FlippedHorizontally
     }
 
+    [JsonDerivedType(typeof(OctoprintMachine))]
+    [JsonDerivedType(typeof(RepRapFirmwareMachine))]
     public abstract class Machine : IEntity
     {
         static readonly Lazy<ConcurrentDictionary<MachineType, Type>> _machineTypeMap = new Lazy<ConcurrentDictionary<MachineType, Type>>(() =>
@@ -39,12 +41,14 @@ namespace Overseer.Models
 
         public string WebCamUrl { get; set; }
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public WebCamOrientation WebCamOrientation { get; set; }
 
         public string SnapshotUrl { get; set; }
 
         public IEnumerable<MachineTool> Tools { get; set; } = new List<MachineTool>();
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public abstract MachineType MachineType { get; }
 
         public int SortIndex { get; set; }
@@ -84,6 +88,7 @@ namespace Overseer.Models
 
     public class OctoprintMachine : Machine, IRestMachine
     {
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public override MachineType MachineType => MachineType.Octoprint;
 
         public string ApiKey { get; set; }
@@ -98,10 +103,12 @@ namespace Overseer.Models
 
         [JsonIgnore]
         public Dictionary<string, string> Headers => new Dictionary<string, string> { { "X-Api-Key", ApiKey } };
+
     }
 
     public class RepRapFirmwareMachine : Machine, IRestMachine
     {
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public override MachineType MachineType => MachineType.RepRapFirmware;
 
         public bool RequiresPassword { get; set; }

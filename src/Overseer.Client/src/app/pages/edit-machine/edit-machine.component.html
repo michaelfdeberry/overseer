@@ -1,0 +1,23 @@
+@if (form) {
+  <form [formGroup]="form" (submit)="save()">
+    <div class="d-flex">
+      <div class="flex-1">
+        <p>
+          <i class="bi bi-person-fill-add me-1"></i>
+          {{ 'editing' | i18next }} {{ machine()?.name }}
+        </p>
+      </div>
+      <div class="form-check form-switch mb-3">
+        <input class="form-check-input" type="checkbox" role="switch" id="disabled" formControlName="disabled" />
+        <label class="form-check-label" for="disabled">{{ 'disableMonitoring' | i18next }}</label>
+      </div>
+    </div>
+    <app-machine [form]="form" [machine]="machine()"></app-machine>
+
+    <div class="d-grid gap-2 d-sm-block">
+      <button type="submit" class="btn btn-primary" [disabled]="form.pristine || form.invalid || form.disabled">{{ 'save' | i18next }}</button>
+      <a class="btn btn-secondary ms-sm-2" routerLink="/settings/machines">{{ 'cancel' | i18next }}</a>
+      <button type="button" class="btn btn-outline-danger ms-sm-2" (click)="deleteMachine()">{{ 'delete' | i18next }}</button>
+    </div>
+  </form>
+}

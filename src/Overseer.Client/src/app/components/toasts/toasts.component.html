@@ -1,0 +1,21 @@
+@for(toast of toastService.toasts(); track toast.id) {
+<ngb-toast
+  class="text-light"
+  [ngClass]="{
+    'bg-success': toast.type === 'success',
+    'bg-danger': toast.type === 'error',
+    'bg-info': toast.type === 'info',
+    'bg-warning': toast.type === 'warning'
+  }"
+  [header]="toast.header ?? ''"
+  [delay]="toast.delay ?? 10000"
+  (hidden)="toastService.remove(toast.id)"
+>
+  <div class="d-flex flex-row">
+    <div class="d-flex flex-fill align-self-center px-2">{{ toast.message }}</div>
+    @if(!toast.header) {
+    <button class="btn btn-text" (click)="toastService.remove(toast.id)">{{ 'dismiss' | i18next }}</button>
+    }
+  </div>
+</ngb-toast>
+}

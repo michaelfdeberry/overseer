@@ -1,30 +1,19 @@
-export enum MachineState {
-  Disabled = -2,
-  Connecting = -1,
-  Offline,
-  Idle,
-  Paused,
-  Operational,
+export type MachineState = 'Disabled' | 'Connecting' | 'Offline' | 'Idle' | 'Paused' | 'Operational';
+
+export const idleStates: MachineState[] = ['Disabled', 'Connecting', 'Offline', 'Idle'];
+
+export function isIdle(state?: MachineState) {
+  if (!state) return true;
+  return idleStates.includes(state);
 }
 
-export const idleStates = [
-  MachineState.Disabled,
-  MachineState.Connecting,
-  MachineState.Offline,
-  MachineState.Idle,
-];
-
-export function isIdle(state: MachineState) {
-  return state <= MachineState.Idle;
-}
-
-export interface TemperatureStatus {
+export type TemperatureStatus = {
   heaterIndex: number;
   actual: number;
   target: number;
-}
+};
 
-export interface MachineStatus {
+export type MachineStatus = {
   machineId: number;
   state: MachineState;
   temperatures?: { [key: number]: TemperatureStatus };
@@ -34,4 +23,4 @@ export interface MachineStatus {
   fanSpeed?: number;
   feedRate?: number;
   flowRates?: { [key: number]: number };
-}
+};

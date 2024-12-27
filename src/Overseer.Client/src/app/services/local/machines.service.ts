@@ -1,38 +1,34 @@
 import { Injectable } from '@angular/core';
 
-import { defer, EMPTY, empty, forkJoin, NEVER, Observable, of, zip } from 'rxjs';
+import { iif, NEVER, Observable } from 'rxjs';
 
+import { catchError, map, switchMap, take } from 'rxjs/operators';
+import { RequireAdministrator } from '../../decorators/require-admin.decorator';
 import { Machine } from '../../models/machine.model';
-import { MachinesService } from '../machines.service';
-import { MachineProviderService } from './providers/machine-provider.service';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { ErrorHandlerService } from '../error-handler.service';
-import { RequireAdministrator } from '../../shared/require-admin.decorator';
+import { MachinesService } from '../machines.service';
 import { IndexedStorageService } from './indexed-storage.service';
+import { MachineProviderService } from './providers/machine-provider.service';
 
 @Injectable({ providedIn: 'root' })
 export class LocalMachinesService implements MachinesService {
   supportsAdvanceSettings = false;
 
-  constructor(
-    private storage: IndexedStorageService,
-    private machineProviders: MachineProviderService,
-    private errorHandler: ErrorHandlerService
-  ) {}
+  constructor(private storage: IndexedStorageService, private machineProviders: MachineProviderService, private errorHandler: ErrorHandlerService) {}
 
   getMachines(): Observable<Machine[]> {
-    return defer(() => this.storage.machines.getAll());
+    return this.storage.machines.getAll();
   }
 
   getMachine(machineId: number): Observable<Machine> {
-    return defer(() => this.storage.machines.getByID(machineId));
+    return this.storage.machines.getByID(machineId);
   }
 
   @RequireAdministrator()
   createMachine(machine: Machine): Observable<Machine> {
     const provider = this.machineProviders.getProvider(machine);
     return provider.loadConfiguration(machine).pipe(
-      mergeMap(() => {
+      switchMap(() => {
         return this.storage.machines.add(machine).pipe(
           map(() => machine),
           catchError((err) => this.errorHandler.handle(err))
@@ -45,20 +41,18 @@ export class LocalMachinesService implements MachinesService {
   @RequireAdministrator()
   updateMachine(machine: Machine): Observable<Machine> {
     return this.storage.machines.getByID(machine.id!).pipe(
-      mergeMap((pMachine) => {
-        Object.assign(pMachine, machine);
-
-        const updateAction = () => this.storage.machines.update(pMachine).pipe(catchError((err) => this.errorHandler.handle(err)));
-        if (!pMachine.disabled) {
-          const provider = this.machineProviders.getProvider(pMachine);
-          return provider.loadConfiguration(pMachine).pipe(
-            mergeMap(updateAction),
-            catchError((err) => this.errorHandler.handle(err))
-          );
-        }
-        return updateAction();
-      }),
-      catchError((err) => this.errorHandler.handle(err))
+      take(1),
+      map((pMachine) => Object.assign(pMachine, machine)),
+      switchMap((pMachine) =>
+        iif(
+          () => pMachine.disabled,
+          this.machineProviders
+            .getProvider(pMachine)
+            .loadConfiguration(pMachine)
+            .pipe(switchMap(() => this.storage.machines.update(pMachine))),
+          this.storage.machines.update(pMachine)
+        )
+      )
     );
   }
 
@@ -73,10 +67,10 @@ export class LocalMachinesService implements MachinesService {
   @RequireAdministrator()
   sortMachines(sortOrder: number[]): Observable<never> {
     return this.storage.machines.getAll().pipe(
-      mergeMap((machines) => {
+      switchMap((machines) => {
         machines.forEach((machine) => {
           machine.sortIndex = sortOrder.indexOf(machine.id);
-          this.storage.machines.update(machine);
+          this.storage.machines.update(machine).subscribe();
         });
         return NEVER;
       })

@@ -36,10 +36,10 @@ namespace Overseer.Server
         }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
-        {
+        { 
             var identity = _authorizationManager.Authorize(Context.Request.Headers.Authorization);
             if (identity == null)
-                return Task.FromResult(AuthenticateResult.Fail("invalid_token"));
+                return Task.FromResult(AuthenticateResult.NoResult());
             
             var ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), OverseerAuthenticationOptions.OverseerAuthenticationScheme);
             return Task.FromResult(AuthenticateResult.Success(ticket));

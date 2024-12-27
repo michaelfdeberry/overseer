@@ -1,0 +1,14 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ options()?.titleKey! | i18next }}</h4>
+</div>
+<div class="modal-body">
+  <p>{{ options()?.messageKey! | i18next }}</p>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-secondary" (click)="activeModal.close(false)">
+    {{ options()?.negativeActionTextKey! | i18next }}
+  </button>
+  <button class="btn btn-primary" (click)="activeModal.close(true)">
+    {{ options()?.positiveActionTextKey! | i18next }}
+  </button>
+</div>

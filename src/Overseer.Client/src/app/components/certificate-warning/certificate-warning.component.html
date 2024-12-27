@@ -1,0 +1,34 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ 'certificateException' | i18next }}</h4>
+</div>
+<div class="modal-body">
+  <p>{{ 'certificateWarning' | i18next }}</p>
+  <h4>{{ 'certificateInformation' | i18next }}</h4>
+  <table class="config-table">
+    <tr>
+      <th>{{ 'issuedTo' | i18next }}</th>
+      <td>{{ data?.issuedTo }}</td>
+    </tr>
+    <tr>
+      <th>{{ 'issuedBy' | i18next }}</th>
+      <td>{{ data?.issuedBy }}</td>
+    </tr>
+    <tr>
+      <th>{{ 'issueDate' | i18next }}</th>
+      <td>{{ data?.issueDate }}</td>
+    </tr>
+    <tr>
+      <th>{{ 'expireDate' | i18next }}</th>
+      <td>{{ data?.expireDate }}</td>
+    </tr>
+    <tr>
+      <th>{{ 'thumbprint' | i18next }}</th>
+      <td>{{ data?.thumbprint }}</td>
+    </tr>
+  </table>
+  <p>{{ 'certificateCaution' | i18next }}</p>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-secondary" (click)="activeModal.close(false)">{{ 'no' | i18next }}</button>
+  <button class="btn btn-primary" (click)="activeModal.close(true)">{{ 'yes' | i18next }}</button>
+</div>

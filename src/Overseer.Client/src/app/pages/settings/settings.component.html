@@ -1,0 +1,45 @@
+@if(form){
+<form [formGroup]="form">
+  <div class="mb-3">
+    <label for="scheme" class="form-label">{{ 'themes.scheme' | i18next }}</label>
+    <select #schemeSelect id="scheme" class="form-select" [value]="themeService.scheme()" (change)="handleSchemeChange(schemeSelect.value)">
+      <option value="auto">{{ 'themes.auto' | i18next }}</option>
+      <option value="light">{{ 'themes.light' | i18next }}</option>
+      <option value="dark">{{ 'themes.dark' | i18next }}</option>
+    </select>
+  </div>
+  <!-- <div class="mb-3">
+    <label for="theme" class="form-label">{{ 'themes.theme' | i18next }}</label>
+    <div class="d-flex">
+      <input
+        #themeInput
+        id="theme"
+        type="color"
+        class="form-control form-control-color flex-fill"
+        [value]="themeService.theme()"
+        (change)="handleThemeChange(themeInput.value)"
+      />
+    </div>
+  </div> -->
+  <div class="mb-4">
+    <label for="interval" class="form-label">{{ 'pollInterval' | i18next }}</label>
+    <select id="interval" class="form-select" formControlName="interval">
+      @for (option of intervals; track $index) {
+      <option [ngValue]="option.value">{{ option.value / 1000 }} {{ option.translationKey | i18next }}</option>
+      }
+    </select>
+  </div>
+  <div class="form-check form-switch mb-3">
+    <input class="form-check-input" type="checkbox" role="switch" id="hideDisabledMachines" formControlName="hideDisabledMachines" />
+    <label class="form-check-label" for="hideDisabledMachines">{{ 'hideDisabledMachines' | i18next }}</label>
+  </div>
+  <div class="form-check form-switch mb-3">
+    <input class="form-check-input" type="checkbox" role="switch" id="hideIdleMachines" formControlName="hideIdleMachines" />
+    <label class="form-check-label" for="hideIdleMachines">{{ 'hideIdleMachines' | i18next }}</label>
+  </div>
+  <div class="form-check form-switch mb-3">
+    <input class="form-check-input" type="checkbox" role="switch" id="sortByTimeRemaining" formControlName="sortByTimeRemaining" />
+    <label class="form-check-label" for="sortByTimeRemaining">{{ 'sortByTimeRemaining' | i18next }}</label>
+  </div>
+</form>
+}

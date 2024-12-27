@@ -1,20 +1,18 @@
-import { Injectable } from '@angular/core';
+import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
 
 import { genSaltSync, hashSync } from 'bcryptjs';
 import { Observable, throwError } from 'rxjs';
 
 import { catchError, map, mergeMap } from 'rxjs/operators';
+import { RequireAdministrator } from '../../decorators/require-admin.decorator';
 import { AccessLevel, PersistedUser, toUser, User } from '../../models/user.model';
-import { RequireAdministrator } from '../../shared/require-admin.decorator';
 import { ErrorHandlerService } from '../error-handler.service';
 import { UsersService } from '../users.service';
 import { IndexedStorageService } from './indexed-storage.service';
 
-export interface UserManager {
-  storage: IndexedStorageService;
-}
+export function createUser(user: User): Observable<User> {
+  const storage = inject(IndexedStorageService);
 
-export function createUser(userManager: UserManager, user: User): Observable<User> {
   if (!user) {
     return throwError(() => new Error('invalid_user'));
   }
@@ -25,7 +23,7 @@ export function createUser(userManager: UserManager, user: User): Observable<Use
     return throwError(() => new Error('invalid_password'));
   }
 
-  return userManager.storage.users.getByIndex('username', user.username).pipe(
+  return storage.users.getByIndex('username', user.username).pipe(
     mergeMap((u) => {
       if (u) return throwError(() => new Error('unavailable_username'));
 
@@ -39,17 +37,16 @@ export function createUser(userManager: UserManager, user: User): Observable<Use
         accessLevel: user.accessLevel,
       };
 
-      return userManager.storage.users.add(pUser).pipe(map(() => toUser(pUser)));
+      return storage.users.add(pUser).pipe(map(() => toUser(pUser)));
     })
   );
 }
 
 @Injectable({ providedIn: 'root' })
-export class LocalUsersService implements UsersService, UserManager {
-  constructor(
-    public storage: IndexedStorageService,
-    private errorHandler: ErrorHandlerService
-  ) {}
+export class LocalUsersService implements UsersService {
+  private storage = inject(IndexedStorageService);
+  private errorHandler = inject(ErrorHandlerService);
+  private injector = inject(EnvironmentInjector);
 
   @RequireAdministrator()
   getUsers(): Observable<User[]> {
@@ -69,7 +66,7 @@ export class LocalUsersService implements UsersService, UserManager {
 
   @RequireAdministrator()
   createUser(user: User): Observable<User> {
-    return createUser(this, user).pipe(catchError((err) => this.errorHandler.handle(err)));
+    return runInInjectionContext(this.injector, () => createUser(user).pipe(catchError((err) => this.errorHandler.handle(err))));
   }
 
   @RequireAdministrator()
@@ -98,8 +95,8 @@ export class LocalUsersService implements UsersService, UserManager {
           throw new Error('delete_user_unavailable');
         }
 
-        const remainingAdmins = users.filter((u) => u.accessLevel === AccessLevel.Administrator);
-        if (user.accessLevel === AccessLevel.Administrator && remainingAdmins.length === 1) {
+        const remainingAdmins = users.filter((u) => u.accessLevel === 'Administrator');
+        if (user.accessLevel === 'Administrator' && remainingAdmins.length === 1) {
           throw new Error('delete_user_unavailable');
         }
 

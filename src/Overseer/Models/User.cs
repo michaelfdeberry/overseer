@@ -1,5 +1,6 @@
 ﻿using Overseer.Data;
 using System;
+using System.Text.Json.Serialization;
 
 namespace Overseer.Models
 {
@@ -30,6 +31,7 @@ namespace Overseer.Models
 
         public bool IsLoggedIn { get; set; }
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public AccessLevel AccessLevel { get; set; }
     }
 
@@ -52,6 +54,7 @@ namespace Overseer.Models
 
         public int? SessionLifetime { get; set; }
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public AccessLevel AccessLevel { get; set; }
 
         public string PreauthenticatedToken { get; set; }

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Overseer.Models;
-using System.Net;
+﻿using System.Net;
 using System.Security.Claims;
+
+using Microsoft.AspNetCore.Mvc;
+
+using Overseer.Models;
 
 namespace Overseer.Server.Api
 {
