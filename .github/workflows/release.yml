@@ -33,6 +33,7 @@ jobs:
         run: |
           npm version ${{ github.event.inputs.release_version }} --no-git-tag-version
           sed -i 's/appVersion: .*?,/appVersion: "${{ github.event.inputs.release_version }}",/' src/environments/versions.ts
+          cat src/environments/versions.ts 
           npm ci
           npm run build -- --output-path dist/Overseer.Client.Local
           npm run build:remote -- --output-path dist/Overseer.Client.Remote
@@ -46,12 +47,13 @@ jobs:
 
       - name: Copy Angular build to output
         run: |
-          cp -r src/Overseer.Client/dist/overseer.client.remote/* src/Overseer.Server/bin/Release/net8.0/
+          cp -r ./Overseer.Client/dist/overseer.client.remote/* ./Overseer.Server/bin/Release/net8.0/
+        working-directory: src
 
       - name: Create Artifacts
         run: |
-          zip -r overseer_server_${{ github.event.inputs.release_version }}.zip src/Overseer.Server/bin/Release/net8.0/
-          zip -r overseer_webapp_${{ github.event.inputs.release_version }}.zip src/Overseer.Client/dist/overseer.client.local/
+          zip -r overseer_server_${{ github.event.inputs.release_version }}.zip ./src/Overseer.Server/bin/Release/net8.0/
+          zip -r overseer_webapp_${{ github.event.inputs.release_version }}.zip ./src/Overseer.Client/dist/overseer.client.local/
 
       - name: Create GitHub Release
         id: create_release
