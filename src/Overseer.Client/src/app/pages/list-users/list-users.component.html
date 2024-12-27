@@ -1,0 +1,44 @@
+<table class="table table-fixed">
+  <thead>
+    <tr>
+      <th scope="col">{{ 'username' | i18next }}</th>
+      <th scope="col">{{ 'accessLevel' | i18next }}</th>
+      <th scope="col" class="d-none d-sm-table-cell">{{ 'sessionLifetime' | i18next }}</th>
+      <th scope="col" class="text-center d-none d-sm-table-cell">{{ 'isLoggedIn' | i18next }}</th>
+      <th scope="col" class="action">
+        <a class="btn btn-primary" routerLink="new">
+          <i class="bi bi-plus"></i>
+          {{ 'add' | i18next }}
+        </a>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (user of users(); track user.id) {
+    <tr>
+      <td>{{ user.username }}</td>
+      <td>{{ user.accessLevel }}</td>
+      <td class="d-none d-sm-table-cell">
+        @if(user.sessionLifetime){
+        {{ user.sessionLifetime }} {{ 'days' | i18next }}
+        } @else{
+        {{ 'indefinite' | i18next }}
+        }
+      </td>
+      <td class="text-center d-none d-sm-table-cell">
+        @if(user.isLoggedIn) {
+        <i class="bi bi-check-circle-fill"></i>
+        } @else {
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        }
+      </td>
+      <td class="action">
+        <a class="btn btn-outline-primary" [routerLink]="[user.id, 'edit']">
+          <i class="bi bi-pencil"></i>
+          {{ 'edit' | i18next }}
+        </a>
+      </td>
+    </tr>
+    }
+  </tbody>
+</table>

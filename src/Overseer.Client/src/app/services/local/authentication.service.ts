@@ -1,48 +1,42 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
 import * as bcrypt from 'bcryptjs';
-import { LocalStorageService } from 'ngx-store';
-import { defer, Observable, Subject, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
-import { isTokenExpired, toUser, User, AccessLevel } from '../../models/user.model';
+import { isTokenExpired, toUser, User } from '../../models/user.model';
 import { AuthenticationService } from '../authentication.service';
 import { ErrorHandlerService } from '../error-handler.service';
 import { IndexedStorageService } from './indexed-storage.service';
-import { createUser, UserManager } from './users.service';
+import { createUser } from './users.service';
 
 @Injectable({ providedIn: 'root' })
-export class LocalAuthenticationService implements AuthenticationService, UserManager {
+export class LocalAuthenticationService extends AuthenticationService {
+  private storage = inject(IndexedStorageService);
+  private errorHandler = inject(ErrorHandlerService);
+  private injector = inject(EnvironmentInjector);
+
   supportsPreauthentication = false;
 
-  public readonly authenticationChangeEvent$ = new Subject<User | undefined>();
-
-  constructor(
-    public storage: IndexedStorageService,
-    private localStorageService: LocalStorageService,
-    private router: Router,
-    private errorHandler: ErrorHandlerService
-  ) {}
-
-  get activeUser(): User {
-    return this.localStorageService.get('activeUser');
-  }
-
-  requiresLogin(): Observable<boolean> {
+  checkLogin(): Observable<boolean> {
     return this.storage.users.getAll().pipe(
       map((users) => {
-        const admins = users.filter((u) => u.accessLevel === AccessLevel.Administrator);
+        const admins = users.filter((u) => u.accessLevel === 'Administrator');
+        const requiresLogin = () => {
+          this.activeUser.set(undefined);
+          this.errorHandler.handle('unauthorized_access');
+          return false;
+        };
 
         if (!admins.length) {
-          this.router.navigate(['/configuration', 'setup']);
           this.errorHandler.handle('setup_required');
           return false;
         }
 
-        if (!this.localStorageService.get('activeUser')) {
-          this.router.navigate(['/login']);
-          this.errorHandler.handle('unauthorized_access');
-          return false;
-        }
+        const activeUser = this.activeUser();
+        if (!activeUser) return requiresLogin();
+
+        const user = users.find((u) => u.token === activeUser.token);
+        if (!user) return requiresLogin();
+        if (isTokenExpired(user)) return requiresLogin();
 
         return true;
       })
@@ -70,8 +64,8 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
 
         if (isTokenExpired(pUser)) {
           pUser.token = bcrypt.genSaltSync(16);
-          if (user.sessionLifetime) {
-            pUser.tokenExpiration = Date.now() + user.sessionLifetime * 86400;
+          if (pUser.sessionLifetime) {
+            pUser.tokenExpiration = Date.now() + pUser.sessionLifetime * 86400000;
           } else {
             pUser.tokenExpiration = undefined;
           }
@@ -80,8 +74,7 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
         return this.storage.users.update(pUser).pipe(
           map(() => {
             const activeUser = toUser(pUser, true);
-            this.localStorageService.set('activeUser', activeUser);
-            this.authenticationChangeEvent$.next(activeUser);
+            this.activeUser.set(activeUser);
             return activeUser;
           })
         );
@@ -91,11 +84,13 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
   }
 
   logout(): Observable<Object> {
-    return this.logoutUser(this.activeUser.id!)
+    const user = this.activeUser();
+    if (!user?.id) return of({});
+
+    return this.logoutUser(user.id)
       .pipe(
         tap(() => {
-          this.localStorageService.remove('activeUser');
-          this.authenticationChangeEvent$.next(undefined);
+          this.activeUser.set(undefined);
         })
       )
       .pipe(catchError((err) => this.errorHandler.handle(err)));
@@ -117,7 +112,7 @@ export class LocalAuthenticationService implements AuthenticationService, UserMa
   }
 
   createInitialUser(user: User): Observable<User> {
-    return defer(() => createUser(this, user)).pipe(catchError((err) => this.errorHandler.handle(err)));
+    return runInInjectionContext(this.injector, () => createUser(user).pipe(catchError((err) => this.errorHandler.handle(err))));
   }
 
   getPreauthenticatedToken(userId: number): Observable<string> {

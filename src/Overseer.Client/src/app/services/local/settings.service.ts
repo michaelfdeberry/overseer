@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { NgxLoggerLevel } from 'ngx-logger';
-import { LocalStorageService } from 'ngx-store';
-import { defer, forkJoin, map, mergeMap, Observable, of } from 'rxjs';
+import { forkJoin, map, Observable, of } from 'rxjs';
 import { UAParser } from 'ua-parser-js';
-import { environment } from '../../../environments/environment.local';
+import { environment } from '../../../environments/environment';
+import { RequireAdministrator } from '../../decorators/require-admin.decorator';
+import { ApplicationInfo } from '../../models/application-info.model';
+import { CertificateDetails } from '../../models/certificate-details.model';
+import { defaultPollInterval } from '../../models/constants';
 import { Machine } from '../../models/machine.model';
 import { ApplicationSettings } from '../../models/settings.model';
 import { toUser, User } from '../../models/user.model';
-import { RequireAdministrator } from '../../shared/require-admin.decorator';
+import { LocalStorageService } from '../local-storage.service';
 import { SettingsService } from '../settings.service';
 import { IndexedStorageService } from './indexed-storage.service';
-import { ApplicationInfo } from '../../models/application-info.model';
-import { CertificateDetails } from '../../models/certificate-details.model';
 
 @Injectable({ providedIn: 'root' })
 export class LocalSettingsService implements SettingsService {
@@ -25,14 +25,18 @@ export class LocalSettingsService implements SettingsService {
       hideDisabledMachines: false,
       hideIdleMachines: false,
       sortByTimeRemaining: false,
-      interval: 10000,
+      interval: defaultPollInterval,
     };
 
     this.localStorage.set('settings', settings);
     return settings;
   }
 
-  getConfigurationBundle(): Observable<{ users: User[]; machines: Machine[]; settings: ApplicationSettings }> {
+  getConfigurationBundle(): Observable<{
+    users: User[];
+    machines: Machine[];
+    settings: ApplicationSettings;
+  }> {
     return forkJoin([this.indexedStorage.users.getAll(), this.indexedStorage.machines.getAll()]).pipe(
       map(([users, machines]) => ({
         machines: machines,
@@ -70,19 +74,5 @@ export class LocalSettingsService implements SettingsService {
       version: environment.appVersion ?? undefined,
       runtime: 'N/A',
     });
-  }
-
-  getLog(): Observable<string> {
-    return this.indexedStorage.logging.getAll().pipe(
-      mergeMap((logEntries) => {
-        return logEntries
-          .map((e) => {
-            let message: any = e.message;
-            message = typeof message === 'string' ? message : message.stack;
-            return `${e.timestamp} - ${NgxLoggerLevel[e.level]} in ${e.fileName}(${e.lineNumber}): ${message}`;
-          })
-          .join('\n');
-      })
-    );
   }
 }

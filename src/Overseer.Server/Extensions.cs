@@ -1,8 +1,10 @@
 ﻿using log4net;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.SignalR;
 using Overseer.Data;
 using Overseer.Machines;
 using Overseer.Models;
+using Overseer.Server.Hubs;
 using System.Net;
 
 namespace Overseer.Server
@@ -12,9 +14,9 @@ namespace Overseer.Server
         readonly static ILog Log = LogManager.GetLogger("Overseer.Server");
 
         public static IServiceCollection AddOverseerDependencies(this IServiceCollection services, IDataContext context)
-        {
+        {            
             services.AddSingleton(context);
-            services.AddTransient<Func<Machine, IMachineProvider>>((IServiceProvider provider) => machine =>
+            services.AddSingleton<Func<Machine, IMachineProvider>>((IServiceProvider provider) => machine =>
             {
                 var machineType = MachineProviderManager.GetProviderType(machine) ?? throw new Exception("Unable to get machine type");
                 var provider = (IMachineProvider?)Activator.CreateInstance(machineType, machine) ?? throw new Exception("Unable to create provider");
@@ -31,6 +33,22 @@ namespace Overseer.Server
             services.AddCors();
 
             return services;
+        }
+
+        public static WebApplication LinkMonitorToStatusHub(this WebApplication app)
+        { 
+            var hubContext = app.Services.GetRequiredService<IHubContext<StatusHub>>();
+            var monitoringService = app.Services.GetRequiredService<IMonitoringService>();
+
+            monitoringService.StatusUpdate += (object? sender, EventArgs<MachineStatus> e) =>
+            {
+                hubContext
+                    .Clients
+                    .Group(StatusHub.MonitoringGroupName)
+                    .SendAsync("StatusUpdate", e.Data);
+            };
+
+            return app;
         }
 
         public static WebApplication HandleOverseerExceptions(this WebApplication app)

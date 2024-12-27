@@ -3,6 +3,7 @@ using Overseer.Machines;
 using Overseer.Models;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Timer = System.Timers.Timer;
@@ -43,8 +44,11 @@ namespace Overseer
             if (_timer != null) return;
 
             var settings = _configurationManager.GetApplicationSettings();
-            _timer = new Timer(settings.Interval);
-            _timer.Elapsed += (sender, args) => PollProviders();
+            _timer = new Timer(settings.Interval);            
+            _timer.Elapsed += (sender, args) =>
+            {
+                PollProviders();
+            };
         }
 
         public void StartMonitoring()

@@ -4,7 +4,7 @@
     {
         public static WebApplication MapOverseerApi(this WebApplication app)
         {
-            app.MapGroup("/api")
+            app.MapGroup("/api")                
             .MapAuthenticationApi()
             .MapConfigurationApi()
             .MapControlApi()

@@ -82,8 +82,9 @@ export abstract class BaseMachineProvider implements MachineProvider {
   abstract acquireStatus(): Observable<MachineStatus>;
 
   getStatus(): Observable<MachineStatus> {
+    const offlineStatus: MachineStatus = { machineId: this.machine.id, state: 'Offline' };
     if (this.exceptionTimestamp && Date.now() - this.exceptionTimestamp < this.exceptionTimeout) {
-      return of({ machineId: this.machine.id, state: MachineState.Offline });
+      return of(offlineStatus);
     }
 
     return this.acquireStatus()
@@ -101,10 +102,7 @@ export abstract class BaseMachineProvider implements MachineProvider {
             this.exceptionTimestamp = Date.now();
           }
 
-          return of({
-            machineId: this.machine.id,
-            state: MachineState.Offline,
-          });
+          return of(offlineStatus);
         })
       );
   }

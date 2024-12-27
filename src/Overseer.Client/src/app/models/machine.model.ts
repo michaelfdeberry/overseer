@@ -1,31 +1,19 @@
 export const auxiliaryHeaterTypes = ['bed', 'chamber', 'cabinet'];
 
-export enum MachineToolType {
-  Undetermined,
-  Heater,
-  Extruder,
-}
+export type MachineToolType = 'Undetermined' | 'Heater' | 'Extruder';
 
-export enum MachineType {
-  Unknown,
-  Octoprint,
-  RepRapFirmware,
-}
+export type MachineType = 'Unknown' | 'Octoprint' | 'RepRapFirmware';
 
-export enum WebCamOrientation {
-  Default,
-  FlippedVertically,
-  FlippedHorizontally,
-}
+export type WebCamOrientation = 'Default' | 'FlippedVertically' | 'FlippedHorizontally';
 
-export interface MachineTool {
+export type MachineTool = {
   toolType: MachineToolType;
   index: number;
   name: string;
-}
+};
 
 // all the needed properties will just go on the machine
-export interface Machine {
+export type Machine = {
   machineType: MachineType;
   id: number;
   url: string;
@@ -40,4 +28,4 @@ export interface Machine {
   apiKey?: string;
   profile: string;
   availableProfiles: Map<string, string>;
-}
+};

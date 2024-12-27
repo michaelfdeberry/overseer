@@ -1,7 +1,7 @@
+import { versions } from './versions';
+
 export const environment = {
-  serviceType: 'remote',
+  ...versions,
   production: false,
-  dbVersion: 10,
-  appVersion: '1.0.22',
-  apiHost: 'http://localhost:52376',
+  apiHost: 'https://localhost:52375',
 };

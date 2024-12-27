@@ -1,4 +1,4 @@
-import { environment } from '../../../environments/environment.remote';
+import { environment } from '../../../environments/environment';
 
 export function endpointFactory(baseEndpoint: string): (...s: any[]) => string {
   return (...segments: any[]) => {

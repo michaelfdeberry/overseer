@@ -1,6 +1,6 @@
-export class ApplicationSettings {
+export type ApplicationSettings = {
   interval?: number;
   hideDisabledMachines?: boolean;
   hideIdleMachines?: boolean;
-  sortByTimeRemaining = false;
-}
+  sortByTimeRemaining: boolean;
+};

@@ -9,6 +9,7 @@ namespace Overseer.Server.Api
         {
             var group = builder.MapGroup("/settings");
             group.RequireAuthorization();
+
             group.MapGet("/bundle", (IConfigurationManager configuration, IMachineManager machines, IUserManager users) =>
             {
                 return Results.Ok(new

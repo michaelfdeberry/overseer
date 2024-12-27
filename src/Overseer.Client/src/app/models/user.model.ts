@@ -1,9 +1,6 @@
-export enum AccessLevel {
-  Readonly = 0,
-  Administrator = 2,
-}
+export type AccessLevel = 'Readonly' | 'Administrator';
 
-export class User {
+export type User = {
   id?: number;
   username?: string;
   password?: string;
@@ -11,9 +8,9 @@ export class User {
   token?: string;
   isLoggedIn?: boolean;
   accessLevel?: AccessLevel;
-}
+};
 
-export class PersistedUser {
+export type PersistedUser = {
   id?: number;
   username?: string;
   passwordHash?: string;
@@ -22,31 +19,31 @@ export class PersistedUser {
   token?: string;
   tokenExpiration?: number;
   accessLevel?: AccessLevel;
-}
+};
 
 export function isTokenExpired(user: PersistedUser): boolean {
-  // if the user or token is null it's considered expired
-  if (!user.token || user.token === '') {
+  // if the user or token is not defined it's considered expired
+  if (!user.token?.trim().length) {
     return true;
   }
 
-  // if there is no expiration set the, with the presence of a token, the user
-  // is configured for indefinite session length
-  if (!user.tokenExpiration) {
-    return false;
-  }
+  // if there is not session lifetime, the token doesn't expire
+  if (!user.sessionLifetime) return false;
+
+  // if there is a session lifetime set, but no expiration date, the token is considered expired
+  if (!user.tokenExpiration) return true;
 
   // otherwise the tokens is expired if it's expiration date is less than the current date
-  return user.tokenExpiration < Date.now();
+  return Date.now() >= user.tokenExpiration;
 }
 
 export function toUser(user: PersistedUser, includeToken?: boolean): User {
-  return Object.assign(new User(), {
+  return {
     id: user.id,
     username: user.username,
     sessionLifetime: user.sessionLifetime,
-    token: includeToken ? user.token : null,
+    token: includeToken ? user.token : undefined,
     isLoggedIn: !isTokenExpired(user),
     accessLevel: user.accessLevel,
-  });
+  };
 }

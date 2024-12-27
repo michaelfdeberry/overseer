@@ -1,0 +1,10 @@
+{
+  "configurations": [
+  {
+    "name": "C#: Overseer.Server Debug",
+    "type": "dotnet",
+    "request": "launch",
+    "projectPath": "${workspaceFolder}/src/Overseer.Server/Overseer.Server.csproj"
+  }
+  ]
+}

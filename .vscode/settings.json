@@ -1,0 +1,22 @@
+{
+  "cSpell.words": [
+    "Octoprint"
+  ],
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.rulers": [
+    150
+  ],
+  "prettier.configPath": "src/Overseer.Client/prettierrc.json",
+  "editor.tabSize": 2,
+  "[typescript]":{
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "always"
+    }
+  },
+  "[csharp]": {
+    "editor.codeActionsOnSave": [
+      "source.organizeImports"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+:host {
+  display: flex;
+  flex: 1;
+}
+
+.container-fluid {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  .row {
+    flex: 1;
+
+    .col {
+      min-height: 500px;
+      padding: 0;
+    }
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}

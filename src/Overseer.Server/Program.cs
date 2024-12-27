@@ -1,6 +1,7 @@
 using log4net.Config;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.FileProviders;
+using Overseer;
 using Overseer.Data;
 using Overseer.Models;
 using Overseer.Server;
@@ -8,15 +9,13 @@ using Overseer.Server.Api;
 using Overseer.Server.Hubs;
 using System.CommandLine;
 
-
 using (var context = new LiteDataContext())
 {
-
     var values = context.GetValueStore();
     var settings = values.GetOrPut(() => new ApplicationSettings());
     var portOption = new Option<int?>(name: "--port", description: "The Overseer Server Port");
     var intervalOption = new Option<int?>(name: "--interval", description: "How often Overseer will poll for updates.");
-    var options = new RootCommand("Overseer CLI Options...");    
+    var options = new RootCommand("Overseer CLI Options...");
     var parseResults = options.Parse(args);
     settings.LocalPort = parseResults.GetValueForOption(portOption) ?? ApplicationSettings.DefaultPort;
     settings.Interval = parseResults.GetValueForOption(intervalOption) ?? ApplicationSettings.DefaultInterval;
@@ -32,8 +31,8 @@ using (var context = new LiteDataContext())
 
     builder.Services.AddAuthorizationBuilder()
         .AddPolicy("Readonly", policy => policy.RequireRole(AccessLevel.Readonly.ToString()))
-        .AddPolicy("Administrator", policy => policy.RequireRole(AccessLevel.Administrator.ToString())); 
-    
+        .AddPolicy("Administrator", policy => policy.RequireRole(AccessLevel.Administrator.ToString()));
+
     var app = builder.Build();
 
     XmlConfigurator.Configure(new FileInfo(Path.Combine(app.Environment.ContentRootPath, "log4net.config")));
@@ -46,9 +45,11 @@ using (var context = new LiteDataContext())
         app.UseCors((builder) => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().SetIsOriginAllowedToAllowWildcardSubdomains());
     }
 
-    app.HandleOverseerExceptions();    
+    app.HandleOverseerExceptions();
     app.MapOverseerApi();
     app.MapHub<StatusHub>("/push/status");
+    app.LinkMonitorToStatusHub();
+
 
     if (!isDev)
     {
@@ -65,7 +66,8 @@ using (var context = new LiteDataContext())
                 FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "browser")),
             };
         });
-    }  
+    }
+
 
 
     app.Run();

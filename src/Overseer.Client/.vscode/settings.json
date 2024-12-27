@@ -4,5 +4,6 @@
   "editor.rulers": [
     150
   ],
-  "prettier.configPath": "prettierrc.json"
+  "prettier.configPath": "prettierrc.json",
+  "editor.tabSize": 2
 }

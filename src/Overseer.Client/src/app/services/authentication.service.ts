@@ -1,16 +1,30 @@
-import { Observable, Subject } from 'rxjs';
+import { effect, inject, Injectable, signal, Signal } from '@angular/core';
+import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
-import { Injectable } from '@angular/core';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export abstract class AuthenticationService {
-  readonly authenticationChangeEvent$!: Subject<User | undefined>;
+  private localStorageService = inject(LocalStorageService);
 
   abstract readonly supportsPreauthentication: boolean;
+  activeUser = signal(this.localStorageService.get<User>('activeUser'));
 
-  abstract readonly activeUser: User;
+  constructor() {
+    effect(() => {
+      this.updateActiveUser(this.activeUser());
+    });
+  }
 
-  abstract requiresLogin(): Observable<boolean>;
+  updateActiveUser(user: User | undefined) {
+    if (user) {
+      this.localStorageService.set('activeUser', user);
+    } else {
+      this.localStorageService.remove('activeUser');
+    }
+  }
+
+  abstract checkLogin(): Observable<boolean>;
 
   abstract login(user: User): Observable<User>;
 

@@ -1,0 +1,29 @@
+<div class="text-center">
+  <h4>{{ 'about.appSystemDetails' | i18next }}</h4>
+  <p>
+    <span class="me-1">{{ 'about.helpDescription' | i18next }}</span>
+    <a class="link" target="_blank" href="https://github.com/michaelfdeberry/overseer/issues">{{ 'about.issueTracker' | i18next }}</a>
+  </p>
+  <table class="table mx-auto text-start" style="max-width: 320px">
+    <tbody>
+      @for (infoItem of applicationInfo(); track $index) {
+      <tr>
+        <th>{{ 'about.info.' + infoItem.label | i18next }}</th>
+        <td>{{ infoItem.value }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <div class="py-3">
+    <button class="btn btn-primary btn-block" (click)="downloadLog()">Download Log</button>
+  </div>
+  <div class="py-3">
+    <div class="copy">&copy;{{ currentYear() }} Overseer</div>
+    <div>
+      {{ 'about.openSourceNotice' | i18next }}
+      <a href="https://en.wikipedia.org/wiki/GNU_Affero_General_Public_License" target="_blank">
+        {{ 'about.license' | i18next }}
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Overseer.Models
 {
@@ -29,6 +30,7 @@ namespace Overseer.Models
         /// <summary>
         /// The current state of the machine
         /// </summary>
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public MachineState State { get; set; }
 
         /// <summary>

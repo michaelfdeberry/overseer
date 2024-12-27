@@ -1,0 +1,31 @@
+<div class="container-md py-5">
+  <ul class="nav nav-tabs d-flex">
+    <li class="nav-item text-center flex-1">
+      <a class="nav-link" routerLink="./" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" href="#">
+        <i class="bi bi-gear-fill me-sm-1"></i>
+        <span class="d-none d-sm-inline">{{ 'generalSettings' | i18next }}</span>
+      </a>
+    </li>
+    <li class="nav-item text-center flex-1">
+      <a class="nav-link" routerLink="machines" routerLinkActive="active" href="#">
+        <i class="bi bi-robot me-sm-1"></i>
+        <span class="d-none d-sm-inline">{{ 'machines' | i18next }}</span>
+      </a>
+    </li>
+    <li class="nav-item text-center flex-1">
+      <a class="nav-link" routerLink="users" routerLinkActive="active" href="#">
+        <i class="bi bi-people-fill me-sm-1"></i>
+        <span class="d-none d-sm-inline">{{ 'users' | i18next }}</span>
+      </a>
+    </li>
+    <li class="nav-item text-center flex-1">
+      <a class="nav-link" routerLink="about" routerLinkActive="active">
+        <i class="bi bi-info-circle-fill me-sm-1"></i>
+        <span class="d-none d-sm-inline">{{ 'aboutSettings' | i18next }}</span>
+      </a>
+    </li>
+  </ul>
+  <div class="py-3">
+    <router-outlet></router-outlet>
+  </div>
+</div>
