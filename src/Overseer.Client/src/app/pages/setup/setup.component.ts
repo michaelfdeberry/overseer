@@ -61,18 +61,17 @@ export class SetupComponent {
         switchMap(() => this.authenticationService.login(user)),
         tap(() => this.step.set('machines')),
         switchMap(() => this.machinesService.getMachines()),
-        switchMap((machines) =>
-          iif(
-            () => !!machines.length,
-            this.dialogService.prompt({
+        switchMap((machines) => {
+          if (machines.length > 0) {
+            return this.dialogService.prompt({
               titleKey: 'pages.setup.existingMachinesTitle',
               messageKey: 'pages.setup.existingMachinesMessage',
               positiveActionTextKey: 'pages.setup.skip',
               negativeActionTextKey: 'addMachine',
-            }).closed,
-            of(false)
-          )
-        ),
+            }).closed;
+          }
+          return of(false);
+        }),
         filter((result) => result),
         tap(() => this.step.set('complete'))
       )
@@ -97,7 +96,7 @@ export class SetupComponent {
       }
     } else {
       this.machinesForm.disable();
-      const machine = this.machinesForm.value as Machine;
+      const machine = this.machinesForm.getRawValue() as Machine;
       this.machinesService.createMachine(machine).subscribe({
         next: (result) => {
           if (!this.machines) {

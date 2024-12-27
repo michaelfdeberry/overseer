@@ -13,10 +13,11 @@ namespace Overseer.Models
 
         public ApplicationInfo()
         {
+            var version = FileVersionInfo.GetVersionInfo(Assembly.GetAssembly(GetType()).Location).ProductVersion;
             Platform = Environment.OSVersion.Platform.ToString();
             OperatingSystem = Environment.OSVersion.VersionString;
             MachineName = Environment.MachineName;
-            Version = FileVersionInfo.GetVersionInfo(Assembly.GetAssembly(GetType()).Location).FileVersion;
+            Version = version.Substring(0, version.LastIndexOf('+'));
             Runtime = RuntimeInformation.FrameworkDescription;
         }
 

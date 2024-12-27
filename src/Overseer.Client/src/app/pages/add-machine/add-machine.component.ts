@@ -29,7 +29,7 @@ export class AddMachineComponent {
 
   save(): void {
     this.form.disable();
-    this.machinesService.createMachine(this.form.value as Machine).subscribe({
+    this.machinesService.createMachine(this.form.getRawValue() as Machine).subscribe({
       complete: () => {
         this.toastsService.show({ type: 'success', message: 'savedChanges' });
         this.router.navigate(['settings', 'machines']);

@@ -121,11 +121,11 @@ export class EditUserComponent {
   }
 
   save() {
-    this.handleNetworkAction(this.usersService.updateUser(this.updateForm.value as User));
+    this.handleNetworkAction(this.usersService.updateUser(this.updateForm.getRawValue() as User));
   }
 
   changePassword() {
-    this.handleNetworkAction(this.usersService.changePassword(this.passwordForm.value as User));
+    this.handleNetworkAction(this.usersService.changePassword(this.passwordForm.getRawValue() as User));
   }
 
   generatePreAuthentication() {

@@ -12,13 +12,16 @@ export abstract class AuthenticationService {
 
   constructor() {
     effect(() => {
-      const activeUser = this.activeUser();
-      if (activeUser) {
-        this.localStorageService.set('activeUser', activeUser);
-      } else {
-        this.localStorageService.remove('activeUser');
-      }
+      this.updateActiveUser(this.activeUser());
     });
+  }
+
+  updateActiveUser(user: User | undefined) {
+    if (user) {
+      this.localStorageService.set('activeUser', user);
+    } else {
+      this.localStorageService.remove('activeUser');
+    }
   }
 
   abstract checkLogin(): Observable<boolean>;

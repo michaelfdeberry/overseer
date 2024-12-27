@@ -55,7 +55,7 @@ export class EditMachineComponent {
   }
 
   save() {
-    this.handleNetworkAction(this.machinesService.updateMachine(this.form!.value as Machine));
+    this.handleNetworkAction(this.machinesService.updateMachine(this.form!.getRawValue() as Machine));
   }
 
   private handleNetworkAction(observable: Observable<any>) {

@@ -4,15 +4,14 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { I18NextModule } from 'angular-i18next';
 import { webCamOrientations } from '../../models/constants';
 import { OctoprintMachineForm } from '../../models/form.types';
-import { Machine, MachineType } from '../../models/machine.model';
+import { Machine } from '../../models/machine.model';
 import { MachinesService } from '../../services/machines.service';
-import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-octoprint',
   templateUrl: './octoprint-machine.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule, NgbCollapseModule, I18NextModule, NgIf],
+  imports: [ReactiveFormsModule, NgbCollapseModule, I18NextModule],
 })
 export class OctoprintMachineComponent {
   private destroy = inject(DestroyRef);

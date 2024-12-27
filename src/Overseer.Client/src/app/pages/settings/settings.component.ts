@@ -37,7 +37,7 @@ export class SettingsComponent {
       });
 
       this.form.valueChanges.subscribe(() => {
-        this.settingsService.updateSettings(this.form!.value as ApplicationSettings).subscribe(() => this.updateComplete());
+        this.settingsService.updateSettings(this.form!.getRawValue() as ApplicationSettings).subscribe(() => this.updateComplete());
       });
     });
   }

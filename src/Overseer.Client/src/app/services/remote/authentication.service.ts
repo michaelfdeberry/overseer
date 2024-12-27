@@ -21,7 +21,7 @@ export class RemoteAuthenticationService extends AuthenticationService {
   }
 
   login(user: User): Observable<User> {
-    return this.http.post<User>(this.getEndpoint('login'), user).pipe(tap((activeUser) => this.activeUser.set(activeUser)));
+    return this.http.post<User>(this.getEndpoint('login'), user).pipe(tap((activeUser) => this.updateActiveUser(activeUser)));
   }
 
   logout(): Observable<Object> {

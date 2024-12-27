@@ -29,34 +29,42 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
+        canActivate: [authenticationGuard(), authorizationGuard()],
         loadComponent: () => import('./pages/settings/settings.component').then((m) => m.SettingsComponent),
       },
       {
         path: 'machines',
+        canActivate: [authenticationGuard(), authorizationGuard()],
         loadComponent: () => import('./pages/list-machines/list-machines.component').then((m) => m.ListMachinesComponent),
       },
       {
         path: 'machines/new',
+        canActivate: [authenticationGuard(), authorizationGuard()],
         loadComponent: () => import('./pages/add-machine/add-machine.component').then((m) => m.AddMachineComponent),
       },
       {
         path: 'machines/:id/edit',
+        canActivate: [authenticationGuard(), authorizationGuard()],
         loadComponent: () => import('./pages/edit-machine/edit-machine.component').then((m) => m.EditMachineComponent),
       },
       {
         path: 'users',
+        canActivate: [authenticationGuard(), authorizationGuard()],
         loadComponent: () => import('./pages/list-users/list-users.component').then((m) => m.ListUsersComponent),
       },
       {
         path: 'users/new',
+        canActivate: [authenticationGuard(), authorizationGuard()],
         loadComponent: () => import('./pages/add-user/add-user.component').then((m) => m.AddUserComponent),
       },
       {
         path: 'users/:id/edit',
+        canActivate: [authenticationGuard(), authorizationGuard()],
         loadComponent: () => import('./pages/edit-user/edit-user.component').then((m) => m.EditUserComponent),
       },
       {
         path: 'about',
+        canActivate: [authenticationGuard(), authorizationGuard()],
         loadComponent: () => import('./pages/about/about.component').then((m) => m.AboutComponent),
       },
     ],
