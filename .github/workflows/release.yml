@@ -48,10 +48,15 @@ jobs:
         run: |
           cp -r ./src/Overseer.Client/dist/overseer.client.remote/* ./src/Overseer.Server/bin/Release/net8.0
 
-      - name: Create Artifacts
+      - name: Create Server Build Artifacts
         run: |
-          zip -m overseer_server_${{ github.event.inputs.release_version }}.zip ./src/Overseer.Server/bin/Release/net8.0/*
-          zip -m overseer_webapp_${{ github.event.inputs.release_version }}.zip ./src/Overseer.Client/dist/overseer.client.local/*
+          zip -r overseer_server.zip *
+        working-directory: src/Overseer.Server/bin/Release/net8.0
+
+      - name: Create WebApp Build Artifacts
+        run: |
+          zip -r overseer_webapp.zip *
+        working-directory: src/Overseer.Client/dist/overseer.client.local
 
       - name: Create GitHub Release
         id: create_release
@@ -70,7 +75,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: overseer_server_${{ github.event.inputs.release_version }}.zip
+          asset_path: src/Overseer.Server/bin/Release/net8.0/overseer_server.zip
           asset_name: overseer_server_${{ github.event.inputs.release_version }}.zip
           asset_content_type: application/zip
 
@@ -80,7 +85,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: overseer_webapp_${{ github.event.inputs.release_version }}.zip
+          asset_path: cd src/Overseer.Client/dist/overseer.client.local/overseer_webapp.zip
           asset_name: overseer_webapp_${{ github.event.inputs.release_version }}.zip
           asset_content_type: application/zip
 

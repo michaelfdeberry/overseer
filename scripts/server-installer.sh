@@ -17,9 +17,15 @@ apt-get update
 # install the prerequisites 
 apt-get install curl libunwind8 gettext apt-transport-https
 
+# check if the overseer directory exists, if not create it
+if [ ! -d "$overseerDirectory" ]; then
+    mkdir -p $overseerDirectory
+    echo "Created directory $overseerDirectory"
+fi
+
 # download the latest and unzip the archive
 wget $overseerZipUrl
-unzip -o ${overseerZipFile}
+unzip -o ${overseerZipFile} -d ${overseerDirectory}
 
 #change the permissions of the executable
 chmod 744 $overseerExecutablePath
