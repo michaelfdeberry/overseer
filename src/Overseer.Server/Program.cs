@@ -1,13 +1,14 @@
+using System.CommandLine;
+
 using log4net.Config;
-using Microsoft.AspNetCore.SignalR;
+
 using Microsoft.Extensions.FileProviders;
-using Overseer;
+
 using Overseer.Data;
 using Overseer.Models;
 using Overseer.Server;
 using Overseer.Server.Api;
 using Overseer.Server.Hubs;
-using System.CommandLine;
 
 using (var context = new LiteDataContext())
 {
@@ -50,7 +51,6 @@ using (var context = new LiteDataContext())
     app.MapHub<StatusHub>("/push/status");
     app.LinkMonitorToStatusHub();
 
-
     if (!isDev)
     {
         app.UseStaticFiles(new StaticFileOptions
@@ -66,9 +66,11 @@ using (var context = new LiteDataContext())
                 FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "browser")),
             };
         });
+
+        app.Run($"http://*:{settings.LocalPort}");
     }
-
-
-
-    app.Run();
+    else
+    {
+        app.Run();
+    }
 }

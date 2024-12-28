@@ -26,16 +26,15 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Set version in shell script
-        run: |
-          sed -i 's/overseerVersion.*$/overseerVersion=\'${{ github.event.inputs.release_version }}\'/' scripts/server-installer.sh
+        run: sed -i "s/overseerVersion='.*'/overseerVersion='${{ github.event.inputs.release_version }}'/" scripts/server-installer.sh
 
       - name: Build Angular project
         run: |
           npm version ${{ github.event.inputs.release_version }} --no-git-tag-version
-          sed -i 's/appVersion: .*?,/appVersion: "${{ github.event.inputs.release_version }}",/' src/environments/versions.ts
+          sed -i 's/appVersion.*,/appVersion: "${{ github.event.inputs.release_version }}",/' src/environments/versions.ts   
           npm ci
-          npm run build -- --output-path dist/Overseer.Client.Local
-          npm run build:remote -- --output-path dist/Overseer.Client.Remote
+          npm run build
+          npm run build:remote
         working-directory: src/Overseer.Client
 
       - name: Build .NET project
@@ -44,14 +43,16 @@ jobs:
           dotnet build --configuration Release --no-restore /p:Version=${{ github.event.inputs.release_version }}
         working-directory: src/Overseer.Server
 
-      - name: Copy Angular build to output
-        run: |
-          cp -r src/Overseer.Client/dist/overseer.client.remote/* src/Overseer.Server/bin/Release/net8.0/
+      - name: Copy Angular project build to output
+        run: cp -r ./src/Overseer.Client/dist/overseer.client.remote/* ./src/Overseer.Server/bin/Release/net8.0
 
-      - name: Create Artifacts
-        run: |
-          zip -r overseer_server_${{ github.event.inputs.release_version }}.zip src/Overseer.Server/bin/Release/net8.0/
-          zip -r overseer_webapp_${{ github.event.inputs.release_version }}.zip src/Overseer.Client/dist/overseer.client.local/
+      - name: Create Server Build Artifacts
+        run: zip -r overseer_server.zip *
+        working-directory: src/Overseer.Server/bin/Release/net8.0
+
+      - name: Create WebApp Build Artifacts
+        run: zip -r overseer_webapp.zip *
+        working-directory: src/Overseer.Client/dist/overseer.client.local/browser
 
       - name: Create GitHub Release
         id: create_release
@@ -70,7 +71,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: overseer_server_${{ github.event.inputs.release_version }}.zip
+          asset_path: src/Overseer.Server/bin/Release/net8.0/overseer_server.zip
           asset_name: overseer_server_${{ github.event.inputs.release_version }}.zip
           asset_content_type: application/zip
 
@@ -80,7 +81,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: overseer_webapp_${{ github.event.inputs.release_version }}.zip
+          asset_path: src/Overseer.Client/dist/overseer.client.local/browser/overseer_webapp.zip
           asset_name: overseer_webapp_${{ github.event.inputs.release_version }}.zip
           asset_content_type: application/zip
 
@@ -91,5 +92,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: scripts/server-installer.sh
-          asset_name: overseer_server_installer.sh
+          asset_name: install.sh
           asset_content_type: application/x-sh
