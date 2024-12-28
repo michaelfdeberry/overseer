@@ -1,7 +1,8 @@
 #!/bin/bash
 
-overseerVersion='2.0.0'
-dotnetExecPath=${PWD}'/.dotnet/dotnet'
+overseerVersion='2.0.0-alpha.1'
+dotnetPath=${PWD}'/.dotnet'
+dotnetExecPath=${dotnetPath}'/dotnet'
 overseerDirectory=${PWD}'/overseer'
 overseerExecutable='Overseer.Server.dll'
 overseerExecutablePath=${overseerDirectory}'/'${overseerExecutable}
@@ -17,18 +18,18 @@ apt-get update
 
 # install the prerequisites  
 
-if [ ! -f "$dotnetExecPath" ]
+if [ ! -f "$dotnetPath" ]
 then
     echo ".NET is not installed. Installing .NET..."        
     apt-get install libc6 libgcc1 libgssapi-krb5-2 libicu70 libssl3 libstdc++6 zlib1g
     
     wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh 
     chmod +x ./dotnet-install.sh 
-    ./dotnet-install.sh --version latest --runtime dotnet 
+    ./dotnet-install.sh --version latest --runtime aspnetcore --install-dir ${dotnetPath}
 else
     echo ".NET is already installed. Skipping .NET installation."
 fi
-
+ 
 # check if the overseer directory exists, if not create it
 if [ ! -d "$overseerDirectory" ]; then
     mkdir -p $overseerDirectory
@@ -39,9 +40,6 @@ fi
 wget $overseerZipUrl
 unzip -o ${overseerZipFile} -d ${overseerDirectory} 
 rm ${overseerZipFile}
-
-#change the permissions of the executable
-chmod 744 $overseerExecutablePath
 
 if [ -n "${overseerPID}" ]; then
     # stop the service if it's is running
@@ -115,6 +113,8 @@ if [ "$installNginx" == "y" ]; then
 
     # enable the new configuration by creating a symlink
     ln -s $nginxConfigPath /etc/nginx/sites-enabled/
+    # remove the default configuration to disable it
+    rm /etc/nginx/sites-enabled/default
 
     # test the nginx configuration
     nginx -t

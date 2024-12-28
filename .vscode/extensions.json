@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit",
+    "dbaeumer.vscode-eslint",
+    "streetsidesoftware.code-spell-checker",
+    "jeremycaron.csharp-organize-usings",
+    "angular.ng-template",
+    "johnpapa.angular2"
+  ]
+}
