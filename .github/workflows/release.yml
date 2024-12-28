@@ -50,8 +50,8 @@ jobs:
 
       - name: Create Artifacts
         run: |
-          zip -jrm overseer_server_${{ github.event.inputs.release_version }}.zip ./src/Overseer.Server/bin/Release/net8.0/
-          zip -jrm overseer_webapp_${{ github.event.inputs.release_version }}.zip ./src/Overseer.Client/dist/overseer.client.local/
+          zip -m overseer_server_${{ github.event.inputs.release_version }}.zip ./src/Overseer.Server/bin/Release/net8.0/*
+          zip -m overseer_webapp_${{ github.event.inputs.release_version }}.zip ./src/Overseer.Client/dist/overseer.client.local/*
 
       - name: Create GitHub Release
         id: create_release
