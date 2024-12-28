@@ -1,17 +1,16 @@
 import { Component, inject } from '@angular/core';
-import { I18NextModule } from 'angular-i18next';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SvgComponent } from '../../components/svg/svg.component';
+import { Router } from '@angular/router';
+import { I18NextModule } from 'angular-i18next';
 import { UnauthenticatedComponent } from '../../components/unauthenticated/unauthenticated.component';
 import { AuthenticationService } from '../../services/authentication.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [SvgComponent, UnauthenticatedComponent, I18NextModule, ReactiveFormsModule],
+  imports: [UnauthenticatedComponent, I18NextModule, ReactiveFormsModule],
 })
 export class LoginComponent {
   authenticationService = inject(AuthenticationService);

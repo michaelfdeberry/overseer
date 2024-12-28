@@ -5,7 +5,7 @@ overseerDirectory=${PWD}'/overseer'
 overseerExecutable='Overseer.Server'
 overseerExecutablePath=${overseerDirectory}'/'${overseerExecutable}
 overseerPID=$(ps auxf | grep ${overseerExecutable} | grep -v grep  | awk '{print $2}')
-overseerZipFile=overseer-server-${overseerVersion}.zip
+overseerZipFile=overseer_server_${overseerVersion}.zip
 overseerZipUrl=https://github.com/michaelfdeberry/overseer/releases/download/${overseerVersion}/${overseerZipFile}
 servicePath='/lib/systemd/system/overseer.service'
 
