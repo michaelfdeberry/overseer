@@ -1,8 +1,9 @@
 #!/bin/bash
 
 overseerVersion='2.0.0'
+dotnetExecPath=${PWD}'/.dotnet/dotnet'
 overseerDirectory=${PWD}'/overseer'
-overseerExecutable='Overseer.Server'
+overseerExecutable='Overseer.Server.dll'
 overseerExecutablePath=${overseerDirectory}'/'${overseerExecutable}
 overseerPID=$(ps auxf | grep ${overseerExecutable} | grep -v grep  | awk '{print $2}')
 overseerZipFile=overseer_server_${overseerVersion}.zip
@@ -14,8 +15,19 @@ echo Installing Overseer...
 # update the system
 apt-get update
 
-# install the prerequisites 
-apt-get install curl libunwind8 gettext apt-transport-https
+# install the prerequisites  
+
+if [ ! -f "$dotnetExecPath" ]
+then
+    echo ".NET is not installed. Installing .NET..."        
+    apt-get install libc6 libgcc1 libgssapi-krb5-2 libicu70 libssl3 libstdc++6 zlib1g
+    
+    wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh 
+    chmod +x ./dotnet-install.sh 
+    ./dotnet-install.sh --version latest --runtime dotnet 
+else
+    echo ".NET is already installed. Skipping .NET installation."
+fi
 
 # check if the overseer directory exists, if not create it
 if [ ! -d "$overseerDirectory" ]; then
@@ -45,11 +57,11 @@ echo Description=Overseer Daemon >> $servicePath
 echo >> $servicePath
 echo [Service] >> $servicePath
 echo WorkingDirectory=${overseerDirectory} >> $servicePath
-echo ExecStart=${overseerExecutablePath} >> $servicePath
-echo Restart=alsways >> $servicePath
+echo ExecStart=${dotnetExecPath} ${overseerExecutablePath} >> $servicePath
+echo Restart=always >> $servicePath
 echo RestartSec=10 >> $servicePath
 echo KillSignal=SIGINT >> $servicePath
-echo SyslogIndentifier=overseer >> $servicePath
+echo SyslogIdentifier=overseer >> $servicePath 
 echo Environment=ASPNETCORE_ENVIRONMENT=Production >> $servicePath
 echo Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false >> $servicePath
 echo >> $servicePath
@@ -72,13 +84,22 @@ fi
 
 if [ "$installNginx" == "y" ]; then
     # install nginx
-    apt-get install nginx
+    if ! command -v nginx &> /dev/null
+    then
+        echo "Nginx is not installed. Installing Nginx..."
+        apt-get install nginx
+    else
+        echo "Nginx is already installed. Skipping Nginx installation."
+    fi
+
+    read -p "Enter the external port for Nginx (default is 80): " externalPort
+    externalPort=${externalPort:-80}
     
     # create a new nginx configuration file
     nginxConfigPath='/etc/nginx/sites-available/overseer'
     > $nginxConfigPath
     echo server { >> $nginxConfigPath
-    echo '    listen 80;' >> $nginxConfigPath 
+    echo '    listen ' + ${externalPort} + ';' >> $nginxConfigPath 
     echo '    location / {' >> $nginxConfigPath
     echo '        proxy_pass http://localhost:9000;' >> $nginxConfigPath
     echo '        proxy_http_version 1.1;' >> $nginxConfigPath
@@ -99,7 +120,9 @@ if [ "$installNginx" == "y" ]; then
 
     # restart nginx to apply the changes
     systemctl restart nginx
-
+    echo ""
+    echo "-----------------------------------------------------------------------------------------------------"
+    echo ""
     echo "Nginx has been installed and configured as a reverse proxy."
     echo "This only provides a basic configuration. You may need to make additional changes to suit your needs."
 else
