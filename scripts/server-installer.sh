@@ -37,7 +37,8 @@ fi
 
 # download the latest and unzip the archive
 wget $overseerZipUrl
-unzip -o ${overseerZipFile} -d ${overseerDirectory}
+unzip -o ${overseerZipFile} -d ${overseerDirectory} 
+rm ${overseerZipFile}
 
 #change the permissions of the executable
 chmod 744 $overseerExecutablePath
@@ -99,7 +100,7 @@ if [ "$installNginx" == "y" ]; then
     nginxConfigPath='/etc/nginx/sites-available/overseer'
     > $nginxConfigPath
     echo server { >> $nginxConfigPath
-    echo '    listen ' + ${externalPort} + ';' >> $nginxConfigPath 
+    echo '    listen ' ${externalPort}';' >> $nginxConfigPath 
     echo '    location / {' >> $nginxConfigPath
     echo '        proxy_pass http://localhost:9000;' >> $nginxConfigPath
     echo '        proxy_http_version 1.1;' >> $nginxConfigPath
