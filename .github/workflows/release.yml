@@ -25,15 +25,14 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      # - name: Set version in shell script
-      #   run: |
-      #     sed -i 's/overseerVersion.*$/overseerVersion=\'${{ github.event.inputs.release_version }}\'/' scripts/server-installer.sh
+      - name: Set version in shell script
+        run: |
+          sed -i "s/overseerVersion='.*'/overseerVersion='${{ github.event.inputs.release_version }}'/" scripts/server-installer.sh
 
       - name: Build Angular project
         run: |
           npm version ${{ github.event.inputs.release_version }} --no-git-tag-version
-          sed -i 's/appVersion.*,/appVersion: "${{ github.event.inputs.release_version }}",/' src/environments/versions.ts  
-          cat src/environments/versions.ts 
+          sed -i 's/appVersion.*,/appVersion: "${{ github.event.inputs.release_version }}",/' src/environments/versions.ts   
           npm ci
           npm run build -- --output-path dist/Overseer.Client.Local
           npm run build:remote -- --output-path dist/Overseer.Client.Remote
@@ -47,8 +46,8 @@ jobs:
 
       - name: Copy Angular project build to output
         run: |
-          cp -r "./Overseer.Client/dist/overseer.client.remote/"* "./Overseer.Server/bin/Release/net8.0/"
-        working-directory: src
+          cp -r ./src/Overseer.Client/dist/overseer.client.remote ./src/Overseer.Server/bin/Release/net8.0
+          ls -la ./src/Overseer.Server/bin/Release/net8.0/browser
 
       - name: Create Artifacts
         run: |
