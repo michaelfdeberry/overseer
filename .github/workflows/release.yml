@@ -47,8 +47,7 @@ jobs:
 
       - name: Copy Angular project build to output
         run: |
-          cp -r ./src/Overseer.Client/dist/overseer.client.remote ./src/Overseer.Server/bin/Release/net8.0
-          ls -la ./src/Overseer.Server/bin/Release/net8.0
+          cp -r ./src/Overseer.Client/dist/overseer.client.remote/* ./src/Overseer.Server/bin/Release/net8.0 
           ls -la ./src/Overseer.Server/bin/Release/net8.0/browser
 
       - name: Create Artifacts
@@ -88,12 +87,12 @@ jobs:
           asset_name: overseer_webapp_${{ github.event.inputs.release_version }}.zip
           asset_content_type: application/zip
 
-      # - name: Upload Release Asset - Server Installer
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: scripts/server-installer.sh
-      #     asset_name: overseer_server_installer.sh
-      #     asset_content_type: application/x-sh
+      - name: Upload Release Asset - Server Installer
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: scripts/server-installer.sh
+          asset_name: install.sh
+          asset_content_type: application/x-sh
