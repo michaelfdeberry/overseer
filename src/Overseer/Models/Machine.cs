@@ -1,9 +1,10 @@
-﻿using Overseer.Data;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+
+using Overseer.Data;
 
 namespace Overseer.Models
 {
@@ -11,7 +12,8 @@ namespace Overseer.Models
     {
         Unknown,
         Octoprint,
-        RepRapFirmware
+        RepRapFirmware,
+        Bambu
     }
 
     public enum WebCamOrientation
@@ -21,6 +23,7 @@ namespace Overseer.Models
         FlippedHorizontally
     }
 
+    [JsonDerivedType(typeof(BambuMachine))]
     [JsonDerivedType(typeof(OctoprintMachine))]
     [JsonDerivedType(typeof(RepRapFirmwareMachine))]
     public abstract class Machine : IEntity
@@ -43,8 +46,6 @@ namespace Overseer.Models
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public WebCamOrientation WebCamOrientation { get; set; }
-
-        public string SnapshotUrl { get; set; }
 
         public IEnumerable<MachineTool> Tools { get; set; } = new List<MachineTool>();
 
@@ -77,7 +78,7 @@ namespace Overseer.Models
         }
     }
 
-    public interface IRestMachine
+    public interface IPollingMachine
     {
         string Url { get; set; }
 
@@ -86,7 +87,7 @@ namespace Overseer.Models
         Dictionary<string, string> Headers { get; }
     }
 
-    public class OctoprintMachine : Machine, IRestMachine
+    public class OctoprintMachine : Machine, IPollingMachine
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public override MachineType MachineType => MachineType.Octoprint;
@@ -106,7 +107,7 @@ namespace Overseer.Models
 
     }
 
-    public class RepRapFirmwareMachine : Machine, IRestMachine
+    public class RepRapFirmwareMachine : Machine, IPollingMachine
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public override MachineType MachineType => MachineType.RepRapFirmware;
@@ -121,5 +122,17 @@ namespace Overseer.Models
 
         [JsonIgnore]
         public Dictionary<string, string> Headers => new Dictionary<string, string>();
+    }
+
+    public class BambuMachine : Machine
+    {
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public override MachineType MachineType => MachineType.Bambu;
+
+        public string Url { get; set; }
+
+        public string Serial { get; set; }
+
+        public string AccessCode { get; set; }
     }
 }

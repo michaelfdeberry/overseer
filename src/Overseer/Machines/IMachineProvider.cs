@@ -1,11 +1,14 @@
-﻿using System.Threading;
+﻿using System;
 using System.Threading.Tasks;
+
 using Overseer.Models;
 
 namespace Overseer.Machines
 {
     public interface IMachineProvider
     {
+        event EventHandler<EventArgs<MachineStatus>> StatusUpdate;
+
         int MachineId { get; }
 
         Task SetToolTemperature(int heaterIndex, int targetTemperature);
@@ -28,11 +31,13 @@ namespace Overseer.Machines
 
         Task LoadConfiguration(Machine machine);
 
-        Task<MachineStatus> GetStatus(CancellationToken cancellationToken);
+        void Start(int interval);
+
+        void Stop();
     }
 
     public interface IMachineProvider<out TMachine> : IMachineProvider where TMachine : Machine, new()
     {
-        TMachine Machine { get; }        
+        TMachine Machine { get; }
     }
 }

@@ -27,4 +27,13 @@ export type OctoprintMachineForm = MachineFormBase & {
 
 export type RepRapMachineForm = MachineFormBase;
 
-export type MachineForm = RepRapMachineForm | OctoprintMachineForm;
+export type BambuMachineForm = {
+  machineType?: FormControl<MachineType | undefined | null>;
+  name?: FormControl<string | undefined | null>;
+  url?: FormControl<string | undefined | null>;
+  accessCode?: FormControl<string | undefined | null>;
+  serial?: FormControl<string | undefined | null>;
+  disabled?: FormControl<boolean | undefined | null>;
+};
+
+export type MachineForm = RepRapMachineForm | OctoprintMachineForm | BambuMachineForm;

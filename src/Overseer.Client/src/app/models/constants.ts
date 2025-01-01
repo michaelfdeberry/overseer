@@ -27,11 +27,6 @@ export const pollIntervals: DisplayOption<PollInterval>[] = [
   new DisplayOption('seconds', 30000),
 ];
 
-export const machineTypes: DisplayOption<MachineType>[] = [
-  new DisplayOption('Octoprint', 'Octoprint'),
-  new DisplayOption('RepRapFirmware', 'RepRapFirmware'),
-];
-
 export const accessLevels: DisplayOption<AccessLevel>[] = [
   new DisplayOption('readonly', 'Readonly'),
   new DisplayOption('administrator', 'Administrator'),

@@ -1,27 +1,20 @@
-﻿using Overseer.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Overseer.Models;
+
 namespace Overseer.Machines.Providers
 {
-    public class OctoprintMachineProvider : MachineProvider<OctoprintMachine>
+    public class OctoprintMachineProvider : PollingMachineProvider<OctoprintMachine>
     {
-        readonly RestMachineConnector<OctoprintMachine> _connector;
-
         public OctoprintMachineProvider(OctoprintMachine machine)
-            : this(new RestMachineConnector<OctoprintMachine>(), machine)
-        {
-        }
-
-        public OctoprintMachineProvider(RestMachineConnector<OctoprintMachine> connector, OctoprintMachine machine)
         {
             Machine = machine;
-            _connector = connector;
         }
-        
+
         /// <summary>
         /// This uses the Octoprint API to pause the print,
         /// this is needed because the Gcode command only works
@@ -30,7 +23,7 @@ namespace Overseer.Machines.Providers
         /// </summary>
         public override Task PauseJob()
         {
-            return _connector.Request(Machine, "api/job", "POST", body: new { command = "pause", action = "pause" });
+            return Fetch("api/job", "POST", body: new { command = "pause", action = "pause" });
         }
 
         /// <summary>
@@ -41,7 +34,7 @@ namespace Overseer.Machines.Providers
         /// </summary>
         public override Task ResumeJob()
         {
-            return _connector.Request(Machine, "api/job", "POST", body: new { command = "pause", action = "resume" });
+            return Fetch("api/job", "POST", body: new { command = "pause", action = "resume" });
         }
 
         /// <summary>
@@ -52,26 +45,26 @@ namespace Overseer.Machines.Providers
         /// </summary>
         public override Task CancelJob()
         {
-            return _connector.Request(Machine, "api/job", "POST", body: new { command = "cancel" });
+            return Fetch("api/job", "POST", body: new { command = "cancel" });
         }
 
         public override Task ExecuteGcode(string command)
         {
-            return _connector.Request(Machine, "api/printer/command", "POST", body: new { command });
+            return Fetch("api/printer/command", "POST", body: new { command });
         }
 
         public override async Task LoadConfiguration(Machine machine)
-        {            
+        {
             try
             {
                 OctoprintMachine updatedMachine = machine as OctoprintMachine;
                 //the api path will be auto generated, so make sure the machine has the root path
-                updatedMachine.Url = _connector.ProcessUrl(updatedMachine.Url, string.Empty);
+                updatedMachine.Url = ProcessUri(updatedMachine.Url, string.Empty).ToString();
 
-                var settings = await _connector.Request(updatedMachine, "api/settings");                
+                var settings = await Fetch("api/settings");
                 if (string.IsNullOrWhiteSpace(updatedMachine.WebCamUrl))
                 {
-                    updatedMachine.WebCamUrl = _connector.ProcessUrl(updatedMachine.Url, (string)settings["webcam"]["streamUrl"]);
+                    updatedMachine.WebCamUrl = ProcessUri(updatedMachine.Url, (string)settings["webcam"]["streamUrl"]).ToString();
 
                     if ((bool)settings["webcam"]["flipH"])
                     {
@@ -83,18 +76,13 @@ namespace Overseer.Machines.Providers
                     }
                 }
 
-                if (string.IsNullOrWhiteSpace(updatedMachine.SnapshotUrl))
-                {
-                    updatedMachine.SnapshotUrl = _connector.ProcessUrl(updatedMachine.Url, (string)settings["webcam"]["snapshotUrl"]);
-                }
-
                 updatedMachine.AvailableProfiles.Clear();
-                dynamic profiles = await _connector.Request(updatedMachine, "api/printerprofiles");               
+                dynamic profiles = await Fetch("api/printerprofiles");
                 foreach (dynamic profileProperty in profiles["profiles"])
                 {
                     var profile = profileProperty.Value;
                     updatedMachine.AvailableProfiles.Add((string)profile.id, (string)profile.name);
- 
+
                     if ((bool)profile.current)
                     {
                         var tools = new List<MachineTool>();
@@ -135,10 +123,10 @@ namespace Overseer.Machines.Providers
 
                 //checks if the exception, or any inner exceptions, is an overseer exception and if so throws it
                 OverseerException.Unwrap(ex);
-                
+
                 if (ex.Message.Contains("Invalid API key"))
                     throw new OverseerException("octoprint_invalid_key", Machine);
-                
+
                 throw new OverseerException("machine_connect_failure", Machine);
             }
         }
@@ -151,10 +139,10 @@ namespace Overseer.Machines.Providers
 
         protected override async Task<MachineStatus> AcquireStatus(CancellationToken cancellationToken)
         {
-            dynamic machineState = await _connector.Request(Machine, "api/printer", cancellation: cancellationToken);
+            dynamic machineState = await Fetch("api/printer", cancellation: cancellationToken);
             var status = new MachineStatus { MachineId = MachineId };
 
-            foreach(dynamic pair in machineState.temperature)
+            foreach (dynamic pair in machineState.temperature)
             {
                 var heaterIndex = GetHeaterIndex(pair.Name);
                 status.Temperatures.Add(heaterIndex, new TemperatureStatus
@@ -181,7 +169,7 @@ namespace Overseer.Machines.Providers
                     status.State = MachineState.Idle;
                 }
 
-                var jobStatus = await _connector.Request(Machine, "api/job", cancellation: cancellationToken);
+                var jobStatus = await Fetch("api/job", cancellation: cancellationToken);
                 status.ElapsedJobTime = (int?)jobStatus["progress"]["printTime"] ?? 0;
                 status.EstimatedTimeRemaining = (int?)jobStatus["progress"]["printTimeLeft"] ?? 0;
                 status.Progress = (float)Math.Round(((float?)jobStatus["progress"]["completion"] ?? 0f), 1);

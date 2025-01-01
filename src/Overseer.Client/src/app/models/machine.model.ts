@@ -2,7 +2,7 @@ export const auxiliaryHeaterTypes = ['bed', 'chamber', 'cabinet'];
 
 export type MachineToolType = 'Undetermined' | 'Heater' | 'Extruder';
 
-export type MachineType = 'Unknown' | 'Octoprint' | 'RepRapFirmware';
+export type MachineType = 'Unknown' | 'Octoprint' | 'RepRapFirmware' | 'Bambu';
 
 export type WebCamOrientation = 'Default' | 'FlippedVertically' | 'FlippedHorizontally';
 
@@ -12,8 +12,7 @@ export type MachineTool = {
   name: string;
 };
 
-// all the needed properties will just go on the machine
-export type Machine = {
+type MachineBase = {
   machineType: MachineType;
   id: number;
   url: string;
@@ -21,11 +20,26 @@ export type Machine = {
   disabled: boolean;
   webCamUrl: string;
   webCamOrientation: WebCamOrientation;
-  snapshotUrl: string;
   tools: MachineTool[];
   sortIndex: number;
+};
 
-  apiKey?: string;
+export type OctoprintMachine = MachineBase & {
+  machineType: 'Octoprint';
+  apiKey: string;
   profile: string;
   availableProfiles: Map<string, string>;
 };
+
+export type RepRapFirmwareMachine = MachineBase & {
+  machineType: 'RepRapFirmware';
+};
+
+export type BambuMachine = MachineBase & {
+  machineType: 'Bambu';
+  serial: string;
+  accessCode: string;
+};
+
+// all the needed properties will just go on the machine
+export type Machine = OctoprintMachine | RepRapFirmwareMachine | BambuMachine;

@@ -2,9 +2,9 @@ import { Component, DestroyRef, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { I18NextModule } from 'angular-i18next';
-import { machineTypes, webCamOrientations } from '../../models/constants';
+import { webCamOrientations } from '../../models/constants';
 import { RepRapMachineForm } from '../../models/form.types';
-import { Machine, MachineType } from '../../models/machine.model';
+import { Machine, RepRapFirmwareMachine } from '../../models/machine.model';
 import { MachinesService } from '../../services/machines.service';
 
 @Component({
@@ -16,11 +16,10 @@ import { MachinesService } from '../../services/machines.service';
 export class RepRapFirmwareMachineComponent {
   private destroy = inject(DestroyRef);
 
-  machineTypes = machineTypes;
   advancedOptionsVisible = false;
   machinesService = inject(MachinesService);
   webCamOrientations = webCamOrientations;
-  machine?: Machine;
+  machine?: RepRapFirmwareMachine;
   form?: FormGroup<RepRapMachineForm>;
 
   constructor() {
@@ -36,7 +35,7 @@ export class RepRapFirmwareMachineComponent {
     if (!form) return;
 
     this.form = form;
-    this.machine = machine;
+    this.machine = machine as RepRapFirmwareMachine;
 
     this.form.addControl('name', new FormControl(null, Validators.required));
     this.form.addControl('url', new FormControl(null, Validators.required));

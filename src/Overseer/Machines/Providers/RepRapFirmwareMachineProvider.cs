@@ -1,26 +1,19 @@
-﻿using Overseer.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Overseer.Models;
+
 namespace Overseer.Machines.Providers
 {
-    public class RepRapFirmwareMachineProvider : MachineProvider<RepRapFirmwareMachine> 
+    public class RepRapFirmwareMachineProvider : PollingMachineProvider<RepRapFirmwareMachine>
     {
-        readonly RestMachineConnector<RepRapFirmwareMachine> _connector;
-
         public RepRapFirmwareMachineProvider(RepRapFirmwareMachine machine)
-            : this(new RestMachineConnector<RepRapFirmwareMachine>(), machine)
-        {
-        }
-
-        public RepRapFirmwareMachineProvider(RestMachineConnector<RepRapFirmwareMachine> connector, RepRapFirmwareMachine machine)
         {
             Machine = machine;
-            _connector = connector;
-        }                     
+        }
 
         public override async Task CancelJob()
         {
@@ -30,7 +23,7 @@ namespace Overseer.Machines.Providers
 
         public override async Task ExecuteGcode(string command)
         {
-            await _connector.Request(Machine, "rr_gcode", query: new[] { ("gcode", command) });
+            await Fetch("rr_gcode", query: [("gcode", command)]);
         }
 
         public override async Task LoadConfiguration(Machine machine)
@@ -38,7 +31,7 @@ namespace Overseer.Machines.Providers
             try
             {
                 var updatedMachine = machine as RepRapFirmwareMachine;
-                dynamic status = await _connector.Request(updatedMachine, "rr_status", query: new[] { ("type", "2") });
+                dynamic status = await Fetch("rr_status", query: [("type", "2")]);
 
                 var tools = new List<MachineTool>();
                 MachineTool.AuxiliaryHeaterTypes.ToList().ForEach(auxToolType =>
@@ -50,7 +43,7 @@ namespace Overseer.Machines.Providers
                     }
                 });
 
-                foreach(var tool in status["tools"])
+                foreach (var tool in status["tools"])
                 {
                     List<int> heaters = tool["heaters"].ToObject<List<int>>();
                     List<int> extruders = tool["drives"].ToObject<List<int>>();
@@ -64,7 +57,6 @@ namespace Overseer.Machines.Providers
             catch (Exception ex)
             {
                 Log.Error("Load Configuration Failure", ex);
-
                 OverseerException.Unwrap(ex);
                 throw new OverseerException("machine_connect_failure", Machine);
             }
@@ -73,7 +65,7 @@ namespace Overseer.Machines.Providers
         protected override async Task<MachineStatus> AcquireStatus(CancellationToken cancellationToken)
         {
             var status = new MachineStatus { MachineId = MachineId };
-            dynamic machineStatus = await _connector.Request(Machine, "rr_status", query: new[] { ("type", "2") }, cancellation: cancellationToken);
+            dynamic machineStatus = await Fetch("rr_status", query: [("type", "2")], cancellation: cancellationToken);
 
             switch ((string)machineStatus.status)
             {
@@ -95,12 +87,12 @@ namespace Overseer.Machines.Providers
             //if there is an active job get the status
             if (status.State == MachineState.Operational || status.State == MachineState.Paused)
             {
-                dynamic jobStatus = await _connector.Request(Machine, "rr_status", query: new[] { ("type", "3") }, cancellation: cancellationToken);
+                dynamic jobStatus = await Fetch("rr_status", query: [("type", "3")], cancellation: cancellationToken);
 
                 var parameters = jobStatus["params"];
                 List<float> extruderFactors = parameters.extrFactors.ToObject<List<float>>();
 
-                status.FanSpeed = ReadFanSpeed(jobStatus, machineStatus);                
+                status.FanSpeed = ReadFanSpeed(jobStatus, machineStatus);
                 status.FeedRate = parameters.speedFactor;
                 status.ElapsedJobTime = jobStatus.printDuration;
                 status.FlowRates = Enumerable.Range(0, extruderFactors.Count)
@@ -110,7 +102,7 @@ namespace Overseer.Machines.Providers
                 status.Progress = completion.progress;
                 status.EstimatedTimeRemaining = completion.timeRemaining;
             }
-            
+
             return status;
         }
 
@@ -128,14 +120,14 @@ namespace Overseer.Machines.Providers
 
                 if (MachineTool.AuxiliaryHeaterTypes.Contains(currentHeater.Name))
                 {
-                    var auxilaryTemp = temps[currentHeater.Name];
-                    if (auxilaryTemp == null) continue;
+                    var auxiliaryTemp = temps[currentHeater.Name];
+                    if (auxiliaryTemp == null) continue;
 
                     temperatures.Add(currentHeater.Index, new TemperatureStatus
                     {
                         HeaterIndex = currentHeater.Index,
-                        Actual = auxilaryTemp.current,
-                        Target = auxilaryTemp.active
+                        Actual = auxiliaryTemp.current,
+                        Target = auxiliaryTemp.active
                     });
                 }
                 else
@@ -147,7 +139,7 @@ namespace Overseer.Machines.Providers
                     //in a shared nozzle configuration. 
                     for (int toolIndex = 0; toolIndex < tools.Count; toolIndex++)
                     {
-                        var tool = tools[toolIndex]; 
+                        var tool = tools[toolIndex];
                         if (!tool.heaters.ToObject<List<int>>().Contains(currentHeater.Index)) continue;
 
                         //This finds the position of the heater index in the heater configuration section,
@@ -173,11 +165,11 @@ namespace Overseer.Machines.Providers
         protected float ReadFanSpeed(dynamic jobStatus, dynamic machineStatus)
         {
             var parameters = jobStatus["params"];
-            if (parameters == null) return 0; 
+            if (parameters == null) return 0;
             if (parameters["fanPercent"] == null) return 0;
-            
+
             if (!_fanIndex.HasValue)
-            {           
+            {
                 var tools = machineStatus.tools;
                 var currentToolIndex = (int)jobStatus.currentTool;
                 var currentTool = tools[currentToolIndex];
@@ -193,11 +185,11 @@ namespace Overseer.Machines.Providers
                     if ((currentToolFanMask & (1 << fanIndex)) != 0)
                     {
                         _fanIndex = fanIndex;
-                        break;                        
+                        break;
                     }
                 }
             }
-            
+
             return parameters.fanPercent[_fanIndex];
         }
 
@@ -208,7 +200,7 @@ namespace Overseer.Machines.Providers
         {
             try
             {
-                dynamic fileInfo = await _connector.Request(Machine, "rr_fileinfo", cancellation: cancellationToken);
+                dynamic fileInfo = await Fetch("rr_fileinfo", cancellation: cancellationToken);
                 if (fileInfo != null && fileInfo.err == 0)
                 {
                     if (fileInfo.filament.Count > 0)
@@ -220,7 +212,7 @@ namespace Overseer.Machines.Providers
                         var totalRawFilament = rawFilament.Aggregate((product, next) => product + next);
                         var progress = totalRawFilament / totalFilament * 100;
 
-                        return (jobStatus.timesLeft.filament, Math.Max(0, (float)Math.Round(progress, 1)));    
+                        return (jobStatus.timesLeft.filament, Math.Max(0, (float)Math.Round(progress, 1)));
                     }
 
                     if (fileInfo.height > 0)

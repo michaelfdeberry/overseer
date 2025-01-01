@@ -46,15 +46,17 @@
                 <i class="bi bi-tools"></i>
               }
             </button>
-            <a
-              class="btn btn-outline-secondary ms-2"
-              href="{{ machineRef?.url }}"
-              target="_blank"
-              rel="noopener"
-              title="{{ 'openWebsite' | i18next }}"
-            >
-              <i class="bi bi-box-arrow-up-right"></i>
-            </a>
+            @if (machineRef?.url?.startsWith('http')) {
+              <a
+                class="btn btn-outline-secondary ms-2"
+                href="{{ machineRef?.url }}"
+                target="_blank"
+                rel="noopener"
+                title="{{ 'openWebsite' | i18next }}"
+              >
+                <i class="bi bi-box-arrow-up-right"></i>
+              </a>
+            }
           }
           <button class="btn btn-outline-secondary ms-2" title="{{ 'fullScreen' | i18next }}" (click)="fullScreen.set(!fullScreen())">
             <i class="bi bi-arrows-fullscreen"></i>
@@ -81,7 +83,7 @@
           @if (machineRef?.disabled) {
             <a class="btn btn-outline-secondary" [routerLink]="['/settings/machines', machineRef?.id, 'edit']">{{ 'enable' | i18next }}</a>
           } @else {
-            @if (statusRef?.state !== 'Disabled' && idle()) {
+            @if (statusRef?.state !== 'Disabled' && idle() && machineRef?.url?.startsWith('http')) {
               <a class="btn btn-primary" href="{{ machineRef?.url }}" target="_blank">{{ 'openWebsite' | i18next }}</a>
             }
             @if (operational()) {
@@ -103,7 +105,7 @@
 
         <div class="temperature border rounded p-2">
           <div class="temperature__title">
-            @if (heater.name === 'bed') {
+            @if (heater.name.toLowerCase() === 'bed') {
               <span>{{ 'bed' | i18next }}</span>
             } @else {
               <span>{{ 'heater' | i18next }} {{ heater.index | number }}</span>

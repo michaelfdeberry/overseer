@@ -1,8 +1,9 @@
-﻿using Overseer.Models;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+
+using Overseer.Models;
 
 namespace Overseer.Machines
 {
@@ -16,15 +17,15 @@ namespace Overseer.Machines
                 .GetAssignableTypes()
                 .ToDictionary(type =>
                 {
-                    return (from iface in type.GetInterfaces()
-                            from arg in iface.GetGenericArguments()
+                    return (from i in type.GetInterfaces()
+                            from arg in i.GetGenericArguments()
                             where typeof(Machine).IsAssignableFrom(arg)
                             select arg).First();
                 });
 
             return new ConcurrentDictionary<Type, Type>(mapping);
         });
-        
+
         readonly Func<Machine, IMachineProvider> _providerFactory;
 
         public MachineProviderManager(Func<Machine, IMachineProvider> providerFactory)
@@ -41,12 +42,12 @@ namespace Overseer.Machines
 
         public IMachineProvider GetProvider(Machine machine)
         {
-            return _providerCache.GetOrAdd(machine.Id, id => _providerFactory.Invoke(machine));            
+            return _providerCache.GetOrAdd(machine.Id, id => _providerFactory.Invoke(machine));
         }
 
         public static Type GetProviderType(Machine machine)
         {
-            if(_machineToProviderTypeMap.Value.TryGetValue(machine.GetType(), out Type providerType)) return providerType;
+            if (_machineToProviderTypeMap.Value.TryGetValue(machine.GetType(), out Type providerType)) return providerType;
 
             throw new InvalidOperationException("Unmapped Machine Type");
         }

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import { iif, NEVER, Observable } from 'rxjs';
+import { iif, NEVER, Observable, of } from 'rxjs';
 
 import { catchError, map, switchMap, take } from 'rxjs/operators';
 import { RequireAdministrator } from '../../decorators/require-admin.decorator';
-import { Machine } from '../../models/machine.model';
+import { Machine, MachineType } from '../../models/machine.model';
 import { ErrorHandlerService } from '../error-handler.service';
 import { MachinesService } from '../machines.service';
 import { IndexedStorageService } from './indexed-storage.service';
@@ -14,7 +14,11 @@ import { MachineProviderService } from './providers/machine-provider.service';
 export class LocalMachinesService implements MachinesService {
   supportsAdvanceSettings = false;
 
-  constructor(private storage: IndexedStorageService, private machineProviders: MachineProviderService, private errorHandler: ErrorHandlerService) {}
+  constructor(
+    private storage: IndexedStorageService,
+    private machineProviders: MachineProviderService,
+    private errorHandler: ErrorHandlerService
+  ) {}
 
   getMachines(): Observable<Machine[]> {
     return this.storage.machines.getAll();
@@ -75,5 +79,10 @@ export class LocalMachinesService implements MachinesService {
         return NEVER;
       })
     );
+  }
+
+  getMachineTypes(): Observable<MachineType[]> {
+    // no bambu on the web app version, at least for now
+    return of(['Octoprint', 'RepRapFirmware']);
   }
 }

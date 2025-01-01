@@ -32,10 +32,10 @@ namespace Overseer.Server.Api
 
             group.MapGet("/{id}", (int id, IMachineManager machines) => Results.Ok(machines.GetMachine(id)));
 
-            group.MapPut("/", async (MachineBindingModel model, IMachineManager machines) => Results.Ok(await machines.CreateMachine(model.Machine)))
+            group.MapPost("/", async (MachineBindingModel model, IMachineManager machines) => Results.Ok(await machines.CreateMachine(model.Machine)))
                 .RequireAuthorization(AccessLevel.Administrator.ToString());
 
-            group.MapPost("/", async (MachineBindingModel model, IMachineManager machines) => Results.Ok(await machines.UpdateMachine(model.Machine)))
+            group.MapPut("/", async (MachineBindingModel model, IMachineManager machines) => Results.Ok(await machines.UpdateMachine(model.Machine)))
                 .RequireAuthorization(AccessLevel.Administrator.ToString());
 
             group.MapDelete("/{id}", (int id, IMachineManager machines) => Results.Ok(machines.DeleteMachine(id)))
@@ -47,6 +47,8 @@ namespace Overseer.Server.Api
                 return Results.Ok();
             })
                 .RequireAuthorization(AccessLevel.Administrator.ToString());
+
+            group.MapGet("/types", (IMachineManager machines) => Results.Ok(machines.GetMachineTypes()));
 
             return builder;
         }

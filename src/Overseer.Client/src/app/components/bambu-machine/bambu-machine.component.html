@@ -1,0 +1,20 @@
+@if (form) {
+  <div [formGroup]="form">
+    <div class="mb-3">
+      <label for="name" class="form-label">{{ 'name' | i18next }}</label>
+      <input type="text" class="form-control" id="name" required formControlName="name" />
+    </div>
+    <div class="mb-3">
+      <label for="url" class="form-label">{{ 'ipAddress' | i18next }}</label>
+      <input type="text" class="form-control" id="url" required formControlName="url" />
+    </div>
+    <div class="mb-3">
+      <label for="accessCode" class="form-label">{{ 'accessCode' | i18next }}</label>
+      <input type="password" class="form-control" id="accessCode" required formControlName="accessCode" />
+    </div>
+    <div class="mb-3">
+      <label for="serial" class="form-label">{{ 'serial' | i18next }}</label>
+      <input type="text" class="form-control" id="serial" required formControlName="serial" />
+    </div>
+  </div>
+}
