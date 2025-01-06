@@ -60,11 +60,15 @@ namespace Overseer.Machines.Providers
 
     public override Task LoadConfiguration(Machine machine)
     {
-      machine.WebCamUrl = $"rtsps://{Machine.Url}:322/streaming/live/1";
-      // not supporting webcam orientation since it's fixed
+      Machine = machine as BambuMachine;
+      // this url seems to be x1 series only, and it's not accessible from a browser
+      // and will require some kind of proxy to access it. So this will need to be provided 
+      // by the user. 
+      // Machine.WebCamUrl = $"rtsps://{Machine.Url}:322/streaming/live/1";
+
       // not supporting ams in overseer
       // all bambu printers have a single bed, hot end, and extruder 
-      machine.Tools =
+      Machine.Tools =
       [
         new (MachineToolType.Heater, 0, "bed"),
         new (MachineToolType.Heater, 1),
@@ -82,7 +86,6 @@ namespace Overseer.Machines.Providers
       _timer = new(interval);
       _timer.Elapsed += async (sender, args) =>
       {
-        // if we're not connected, try to reconnect
         if (_mqttClient == null || !_mqttClient.IsConnected)
         {
           await Connect();
@@ -131,7 +134,7 @@ namespace Overseer.Machines.Providers
     {
       var payload = args.ApplicationMessage.PayloadSegment;
       var json = Encoding.UTF8.GetString(payload.Array.Where(b => b != 0).ToArray());
-      dynamic message = JsonConvert.DeserializeObject(json);
+      var message = JsonConvert.DeserializeObject<dynamic>(json);
 
       // if the gcode_state is not present, ignore the message
       if (message.print?.gcode_state == null)
@@ -143,7 +146,7 @@ namespace Overseer.Machines.Providers
       var status = new MachineStatus
       {
         MachineId = Machine.Id,
-        State = print.gcode_state switch
+        State = (string)print.gcode_state switch
         {
           "RUNNING" => MachineState.Operational,
           "PREPARING" => MachineState.Operational,
@@ -159,10 +162,10 @@ namespace Overseer.Machines.Providers
         status.Progress = print.mc_percent;
         status.EstimatedTimeRemaining = print.mc_remaining_time * 60;
         // only the remaining time is available, so we calculate the elapsed time
-        status.ElapsedJobTime = Convert.ToInt32(status.EstimatedTimeRemaining / (100 - status.Progress));
-
-        // the feed rate and flow rate are not available from the printer
-        status.FeedRate = 100;
+        var total = (int)(status.EstimatedTimeRemaining / (1 - (status.Progress / 100)));
+        status.ElapsedJobTime = total - status.EstimatedTimeRemaining;
+        status.FeedRate = print.spd_mag;
+        // the flow rate is not available from the printer, just default to 100%
         status.FlowRates = new() { { 0, 100f } };
       }
 

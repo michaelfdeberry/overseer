@@ -8,131 +8,43 @@ using Overseer.Data;
 
 namespace Overseer.Models
 {
-    public enum MachineType
+  [JsonDerivedType(typeof(BambuMachine))]
+  [JsonDerivedType(typeof(OctoprintMachine))]
+  [JsonDerivedType(typeof(RepRapFirmwareMachine))]
+  public abstract class Machine : IEntity
+  {
+    static readonly Lazy<ConcurrentDictionary<MachineType, Type>> _machineTypeMap = new(() =>
     {
-        Unknown,
-        Octoprint,
-        RepRapFirmware,
-        Bambu
-    }
+      var mapping = typeof(Machine).GetAssignableTypes()
+        .ToDictionary(type => ((Machine)Activator.CreateInstance(type)).MachineType);
 
-    public enum WebCamOrientation
+      return new ConcurrentDictionary<MachineType, Type>(mapping);
+    });
+
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+
+    public bool Disabled { get; set; }
+
+    public string WebCamUrl { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public WebCamOrientation WebCamOrientation { get; set; }
+
+    public IEnumerable<MachineTool> Tools { get; set; } = new List<MachineTool>();
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public abstract MachineType MachineType { get; }
+
+    public int SortIndex { get; set; }
+
+    public static Type GetMachineType(string machineTypeName)
     {
-        Default,
-        FlippedVertically,
-        FlippedHorizontally
+      var machineType = (MachineType)Enum.Parse(typeof(MachineType), machineTypeName, ignoreCase: true);
+      if (_machineTypeMap.Value.TryGetValue(machineType, out Type type)) return type;
+
+      throw new InvalidOperationException("Invalid Machine Type");
     }
-
-    [JsonDerivedType(typeof(BambuMachine))]
-    [JsonDerivedType(typeof(OctoprintMachine))]
-    [JsonDerivedType(typeof(RepRapFirmwareMachine))]
-    public abstract class Machine : IEntity
-    {
-        static readonly Lazy<ConcurrentDictionary<MachineType, Type>> _machineTypeMap = new Lazy<ConcurrentDictionary<MachineType, Type>>(() =>
-        {
-            var mapping = typeof(Machine).GetAssignableTypes()
-                .ToDictionary(type => ((Machine)Activator.CreateInstance(type)).MachineType);
-
-            return new ConcurrentDictionary<MachineType, Type>(mapping);
-        });
-
-        public int Id { get; set; }
-
-        public string Name { get; set; }
-
-        public bool Disabled { get; set; }
-
-        public string WebCamUrl { get; set; }
-
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public WebCamOrientation WebCamOrientation { get; set; }
-
-        public IEnumerable<MachineTool> Tools { get; set; } = new List<MachineTool>();
-
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public abstract MachineType MachineType { get; }
-
-        public int SortIndex { get; set; }
-
-        public MachineTool GetHeater(int heaterIndex)
-        {
-            return GetTool(MachineToolType.Heater, heaterIndex);
-        }
-
-        public MachineTool GetExtruder(int extruderIndex)
-        {
-            return GetTool(MachineToolType.Extruder, extruderIndex);
-        }
-
-        public MachineTool GetTool(MachineToolType machineToolType, int index)
-        {
-            return Tools.FirstOrDefault(tool => tool.ToolType == machineToolType && tool.Index == index);
-        }
-
-        public static Type GetMachineType(string machineTypeName)
-        {
-            var machineType = (MachineType)Enum.Parse(typeof(MachineType), machineTypeName, ignoreCase: true);
-            if (_machineTypeMap.Value.TryGetValue(machineType, out Type type)) return type;
-
-            throw new InvalidOperationException("Invalid Machine Type");
-        }
-    }
-
-    public interface IPollingMachine
-    {
-        string Url { get; set; }
-
-        string ClientCertificate { get; set; }
-
-        Dictionary<string, string> Headers { get; }
-    }
-
-    public class OctoprintMachine : Machine, IPollingMachine
-    {
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public override MachineType MachineType => MachineType.Octoprint;
-
-        public string ApiKey { get; set; }
-
-        public string Profile { get; set; }
-
-        public Dictionary<string, string> AvailableProfiles { get; set; } = new Dictionary<string, string>();
-
-        public string Url { get; set; }
-
-        public string ClientCertificate { get; set; }
-
-        [JsonIgnore]
-        public Dictionary<string, string> Headers => new Dictionary<string, string> { { "X-Api-Key", ApiKey } };
-
-    }
-
-    public class RepRapFirmwareMachine : Machine, IPollingMachine
-    {
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public override MachineType MachineType => MachineType.RepRapFirmware;
-
-        public bool RequiresPassword { get; set; }
-
-        public string Password { get; set; }
-
-        public string Url { get; set; }
-
-        public string ClientCertificate { get; set; }
-
-        [JsonIgnore]
-        public Dictionary<string, string> Headers => new Dictionary<string, string>();
-    }
-
-    public class BambuMachine : Machine
-    {
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public override MachineType MachineType => MachineType.Bambu;
-
-        public string Url { get; set; }
-
-        public string Serial { get; set; }
-
-        public string AccessCode { get; set; }
-    }
+  }
 }

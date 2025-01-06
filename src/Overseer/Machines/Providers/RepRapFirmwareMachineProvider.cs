@@ -8,228 +8,166 @@ using Overseer.Models;
 
 namespace Overseer.Machines.Providers
 {
-    public class RepRapFirmwareMachineProvider : PollingMachineProvider<RepRapFirmwareMachine>
+  public class RepRapFirmwareMachineProvider : PollingMachineProvider<RepRapFirmwareMachine>
+  {
+
+    public RepRapFirmwareMachineProvider(RepRapFirmwareMachine machine)
     {
-        public RepRapFirmwareMachineProvider(RepRapFirmwareMachine machine)
-        {
-            Machine = machine;
-        }
-
-        public override async Task CancelJob()
-        {
-            await PauseJob();
-            await base.CancelJob();
-        }
-
-        public override async Task ExecuteGcode(string command)
-        {
-            await Fetch("rr_gcode", query: [("gcode", command)]);
-        }
-
-        public override async Task LoadConfiguration(Machine machine)
-        {
-            try
-            {
-                var updatedMachine = machine as RepRapFirmwareMachine;
-                dynamic status = await Fetch("rr_status", query: [("type", "2")]);
-
-                var tools = new List<MachineTool>();
-                MachineTool.AuxiliaryHeaterTypes.ToList().ForEach(auxToolType =>
-                {
-                    var auxTool = status["temps"][auxToolType];
-                    if (auxTool != null)
-                    {
-                        tools.Add(new MachineTool(MachineToolType.Heater, (int)auxTool["heater"], auxToolType));
-                    }
-                });
-
-                foreach (var tool in status["tools"])
-                {
-                    List<int> heaters = tool["heaters"].ToObject<List<int>>();
-                    List<int> extruders = tool["drives"].ToObject<List<int>>();
-                    heaters.ForEach(heaterIndex => tools.Add(new MachineTool(MachineToolType.Heater, heaterIndex)));
-                    extruders.ForEach(extruderIndex => tools.Add(new MachineTool(MachineToolType.Extruder, extruderIndex)));
-                }
-
-                updatedMachine.Tools = tools;
-                Machine = updatedMachine;
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Load Configuration Failure", ex);
-                OverseerException.Unwrap(ex);
-                throw new OverseerException("machine_connect_failure", Machine);
-            }
-        }
-
-        protected override async Task<MachineStatus> AcquireStatus(CancellationToken cancellationToken)
-        {
-            var status = new MachineStatus { MachineId = MachineId };
-            dynamic machineStatus = await Fetch("rr_status", query: [("type", "2")], cancellation: cancellationToken);
-
-            switch ((string)machineStatus.status)
-            {
-                case "P":
-                case "R":
-                    status.State = MachineState.Operational;
-                    break;
-                case "D":
-                case "S":
-                    status.State = MachineState.Paused;
-                    break;
-                default:
-                    status.State = MachineState.Idle;
-                    break;
-            }
-
-            status.Temperatures = ReadTemperatures(machineStatus);
-
-            //if there is an active job get the status
-            if (status.State == MachineState.Operational || status.State == MachineState.Paused)
-            {
-                dynamic jobStatus = await Fetch("rr_status", query: [("type", "3")], cancellation: cancellationToken);
-
-                var parameters = jobStatus["params"];
-                List<float> extruderFactors = parameters.extrFactors.ToObject<List<float>>();
-
-                status.FanSpeed = ReadFanSpeed(jobStatus, machineStatus);
-                status.FeedRate = parameters.speedFactor;
-                status.ElapsedJobTime = jobStatus.printDuration;
-                status.FlowRates = Enumerable.Range(0, extruderFactors.Count)
-                    .ToDictionary(index => index, index => extruderFactors[index]);
-
-                (int timeRemaining, float progress) completion = await CalculateCompletion(jobStatus, cancellationToken);
-                status.Progress = completion.progress;
-                status.EstimatedTimeRemaining = completion.timeRemaining;
-            }
-
-            return status;
-        }
-
-        protected Dictionary<int, TemperatureStatus> ReadTemperatures(dynamic machineStatus)
-        {
-            Dictionary<int, TemperatureStatus> temperatures = new Dictionary<int, TemperatureStatus>();
-
-            var tools = machineStatus.tools;
-            var temps = machineStatus.temps;
-            List<int> currentTemps = temps.current.ToObject<List<int>>();
-            for (var heaterIndex = 0; heaterIndex < currentTemps.Count; heaterIndex++)
-            {
-                var currentHeater = Machine.GetHeater(heaterIndex);
-                if (currentHeater == null) continue;
-
-                if (MachineTool.AuxiliaryHeaterTypes.Contains(currentHeater.Name))
-                {
-                    var auxiliaryTemp = temps[currentHeater.Name];
-                    if (auxiliaryTemp == null) continue;
-
-                    temperatures.Add(currentHeater.Index, new TemperatureStatus
-                    {
-                        HeaterIndex = currentHeater.Index,
-                        Actual = auxiliaryTemp.current,
-                        Target = auxiliaryTemp.active
-                    });
-                }
-                else
-                {
-                    //Overseer doesn't have a concept of tools similar to RRF, just heaters and drives. 
-                    //So no matter the configuration it will just list all the heaters and drives. So,
-                    //something like a tool changing system with 2 tool heads each configured with 
-                    //a dual extruder setup it will show up as 4 heaters and 4 drives. Or, 2 heaters and 4 drives
-                    //in a shared nozzle configuration. 
-                    for (int toolIndex = 0; toolIndex < tools.Count; toolIndex++)
-                    {
-                        var tool = tools[toolIndex];
-                        if (!tool.heaters.ToObject<List<int>>().Contains(currentHeater.Index)) continue;
-
-                        //This finds the position of the heater index in the heater configuration section,
-                        //so if tool 0 has is configured to use to use heater 1 as it's only heater, then 
-                        //then 1, specifying the heater index, will be in the 0 position. That position, 0, 
-                        //will correspond to the position of the active temp for that heater in the active 
-                        //temps section.
-                        var toolHeaterIndex = tool.heaters.ToObject<List<int>>().IndexOf(currentHeater.Index);
-                        temperatures.Add(currentHeater.Index, new TemperatureStatus
-                        {
-                            HeaterIndex = currentHeater.Index,
-                            Actual = currentTemps[currentHeater.Index],
-                            Target = temps.tools.active.ToObject<List<List<float>>>()[toolIndex][toolHeaterIndex]
-                        });
-                    }
-                }
-            }
-
-            return temperatures;
-        }
-
-        int? _fanIndex;
-        protected float ReadFanSpeed(dynamic jobStatus, dynamic machineStatus)
-        {
-            var parameters = jobStatus["params"];
-            if (parameters == null) return 0;
-            if (parameters["fanPercent"] == null) return 0;
-
-            if (!_fanIndex.HasValue)
-            {
-                var tools = machineStatus.tools;
-                var currentToolIndex = (int)jobStatus.currentTool;
-                var currentTool = tools[currentToolIndex];
-
-                if (currentTool == null) return 0;
-                if (currentTool["fans"] == null) return 0;
-
-                var currentToolFanMask = (int)currentTool.fans;
-                var controllableFans = (int)machineStatus.controllableFans;
-                var fanPercentCount = parameters.fanPercent.Count;
-                for (var fanIndex = 0; fanIndex < Math.Min(controllableFans, fanPercentCount); fanIndex++)
-                {
-                    if ((currentToolFanMask & (1 << fanIndex)) != 0)
-                    {
-                        _fanIndex = fanIndex;
-                        break;
-                    }
-                }
-            }
-
-            return parameters.fanPercent[_fanIndex];
-        }
-
-        /// <summary>
-        /// This attempts to replicate what's being done by Duet Web Control to calculate the current progress. 
-        /// </summary>
-        protected async Task<(int timeRemaining, float progress)> CalculateCompletion(dynamic jobStatus, CancellationToken cancellationToken)
-        {
-            try
-            {
-                dynamic fileInfo = await Fetch("rr_fileinfo", cancellation: cancellationToken);
-                if (fileInfo != null && fileInfo.err == 0)
-                {
-                    if (fileInfo.filament.Count > 0)
-                    {
-                        //determine progress based on the amount of filament used compared to how much is required
-                        var filament = (IEnumerable<float>)fileInfo.filament.ToObject<IEnumerable<float>>();
-                        var rawFilament = (IEnumerable<float>)jobStatus.extrRaw.ToObject<IEnumerable<float>>();
-                        var totalFilament = filament.Aggregate((product, next) => product + next);
-                        var totalRawFilament = rawFilament.Aggregate((product, next) => product + next);
-                        var progress = totalRawFilament / totalFilament * 100;
-
-                        return (jobStatus.timesLeft.filament, Math.Max(0, (float)Math.Round(progress, 1)));
-                    }
-
-                    if (fileInfo.height > 0)
-                    {
-                        //determine the progress based on the current height compared to the total print height
-                        var progress = (float)jobStatus.coords.xyz[2] / (float)fileInfo.height * 100;
-                        return (jobStatus.timesLeft.layer, Math.Max(0, (float)Math.Round(progress)));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Calculate Progress Failure", ex);
-            }
-
-            //there was an issue with the file info, just use the fraction printed. 
-            return (jobStatus.timesLeft.file, jobStatus.fractionPrinted);
-        }
+      Machine = machine;
     }
+
+    protected override async Task<dynamic> Fetch(string resource, FetchRequest request = default, CancellationToken cancellation = default)
+    {
+      var password = string.IsNullOrWhiteSpace(Machine.Password) ? "reprap" : Machine.Password;
+      var response = await base.Fetch($"rr_connect", new() { Query = new() { { "password", password } } }, cancellation);
+
+      request ??= new();
+      request.Headers.TryAdd("X-Session-Key", (string)response.sessionKey);
+      return await base.Fetch(resource, request, cancellation);
+    }
+
+    Task<dynamic> FetchModel(string key = null, string flags = "d99fno", CancellationToken cancellation = default)
+    {
+      // https://github.com/Duet3D/RepRapFirmware/wiki/HTTP-requests#get-rr_model
+      var query = new Dictionary<string, string>() { { "flags", flags } };
+      if (!string.IsNullOrWhiteSpace(key))
+      {
+        query.Add("key", key);
+      }
+
+      return Fetch("rr_model", new() { Query = query }, cancellation: cancellation);
+    }
+
+    public override async Task CancelJob()
+    {
+      await PauseJob();
+      await base.CancelJob();
+    }
+
+    public override async Task ExecuteGcode(string command)
+    {
+      await Fetch("rr_gcode", new() { Query = new() { { "gcode", command } } });
+    }
+
+    public override async Task LoadConfiguration(Machine machine)
+    {
+      try
+      {
+        var machineTools = new List<MachineTool>();
+        var updatedMachine = machine as RepRapFirmwareMachine;
+        dynamic tools = await FetchModel("tools");
+        dynamic heat = await FetchModel("heat");
+
+        foreach (var bedIndex in heat.result.bedHeaters)
+        {
+          if (bedIndex < 0) continue;
+          machineTools.Add(new MachineTool(MachineToolType.Heater, bedIndex, "bed"));
+        }
+
+        foreach (var chamberIndex in heat.result.chamberHeaters)
+        {
+          if (chamberIndex < 0) continue;
+          machineTools.Add(new MachineTool(MachineToolType.Heater, chamberIndex, "chamber"));
+        }
+
+        foreach (var tool in tools.result)
+        {
+          foreach (var heaterIndex in tool.heaters)
+            machineTools.Add(new MachineTool(MachineToolType.Heater, heaterIndex));
+
+          foreach (var extruderIndex in tool.extruders)
+            machineTools.Add(new MachineTool(MachineToolType.Extruder, extruderIndex));
+        }
+
+        updatedMachine.Tools = machineTools;
+        Machine = updatedMachine;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Load Configuration Failure", ex);
+        OverseerException.Unwrap(ex);
+        throw new OverseerException("machine_connect_failure", Machine);
+      }
+    }
+
+    protected override async Task<MachineStatus> AcquireStatus(CancellationToken cancellation)
+    {
+      var status = new MachineStatus { MachineId = MachineId };
+      var modelResponse = await FetchModel(cancellation: cancellation);
+      status.State = (string)modelResponse.result.state.status switch
+      {
+        "processing" or "resuming" => MachineState.Operational,
+        "paused" or "pausing" => MachineState.Paused,
+        _ => MachineState.Idle,
+      };
+
+      status.Temperatures = ReadTemperatures(modelResponse.result.heat);
+      if (status.State == MachineState.Operational || status.State == MachineState.Paused)
+      {
+        // It looks like I can get everything with the single call except the fan speed.
+        // The fan speeds are returned, but it wouldn't be possible to know which one to use
+        // without fetching the tools to get the fan index for the active tool since Overseer
+        // doesn't store that information. 
+        // For me defaulting to the first one would work, because that is how my machines are setup.
+        // However, that won't work for everyone. I don't think it's worth the making the 
+        // extra call, or updating the Overseer model, to support this. At least at this time.
+        // So it's going to work like the Octoprint provider.
+        status.FanSpeed = 100;
+        status.FeedRate = modelResponse.result.move.speedFactor * 100;
+
+        status.FlowRates = [];
+        Machine.Tools
+          .Where(t => t.ToolType == MachineToolType.Extruder)
+          .ToList()
+          .ForEach(e => status.FlowRates.Add(e.Index, modelResponse.result.move.extruders[e.Index].factor * 100));
+
+        status.ElapsedJobTime = modelResponse.result.job.duration;
+        (int timeRemaining, float progress) completion = await CalculateCompletion(modelResponse.result);
+        status.Progress = completion.progress;
+        status.EstimatedTimeRemaining = completion.timeRemaining;
+      }
+
+      return status;
+    }
+
+    protected Dictionary<int, TemperatureStatus> ReadTemperatures(dynamic heat)
+    {
+      List<dynamic> heaters = heat.heaters.ToObject<List<dynamic>>();
+      return Machine.Tools.Where(m => m.ToolType == MachineToolType.Heater).Select(m =>
+      {
+        var heater = heaters.ElementAt(m.Index);
+        return new TemperatureStatus
+        {
+          Actual = heater.current,
+          Target = heater.active,
+          HeaterIndex = m.Index
+        };
+      })
+      .ToDictionary(x => x.HeaterIndex);
+    }
+
+    static (int timeRemaining, float progress) CalculateCompletion(dynamic model)
+    {
+      if (model.job.file.filament?.Count > 0)
+      {
+        var filament = (IEnumerable<float>)model.job.file.filament.ToObject<IEnumerable<float>>();
+        var totalFilament = filament.Aggregate((product, next) => product + next);
+        var extrudedFilaments = (IEnumerable<dynamic>)model.move.extruders<IEnumerable<dynamic>>();
+        var totalExtruded = extrudedFilaments.Aggregate((product, next) => product + next.rawPosition);
+        var progress = totalExtruded / totalFilament * 100;
+
+        return (model.job.timesLeft.filament, Math.Max(0, (float)Math.Round(progress, 1)));
+      }
+
+      if (model.job.timesLeft.slicer != null && model.job.timesLeft.slicer > 0)
+      {
+        var estimatedTotal = model.job.duration + model.job.timesLeft.slicer;
+        var progress = model.job.timesLeft.slicer / estimatedTotal;
+        return (model.job.timesLeft.slicer, Math.Max(0, (float)Math.Round(progress * 100)));
+      }
+
+      var fractionPrinted = model.job.filePosition / model.job.file.size;
+      return (model.job.file.timesLeft.file, fractionPrinted);
+    }
+  }
 }

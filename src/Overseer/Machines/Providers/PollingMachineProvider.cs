@@ -19,6 +19,13 @@ namespace Overseer.Machines.Providers
 {
   public abstract class PollingMachineProvider<TMachine> : MachineProvider<TMachine> where TMachine : Machine, IPollingMachine, new()
   {
+    public class FetchRequest
+    {
+      public string Method { get; set; } = "GET";
+      public Dictionary<string, string> Query { get; set; } = [];
+      public Dictionary<string, string> Headers { get; set; } = [];
+      public object Body { get; set; } = null;
+    }
 
     //if there are 5 consecutive errors 
     const int MaxExceptionCount = 5;
@@ -100,14 +107,7 @@ namespace Overseer.Machines.Providers
     }
 
 
-    protected async Task<dynamic> Fetch
-    (
-      string resource,
-      string method = "GET",
-      IEnumerable<(string name, string value)> query = null,
-      object body = null,
-      CancellationToken cancellation = default
-    )
+    protected virtual async Task<dynamic> Fetch(string resource, FetchRequest fetchRequest = default, CancellationToken cancellation = default)
     {
       using var client = new RestClient(new RestClientOptions
       {
@@ -115,14 +115,14 @@ namespace Overseer.Machines.Providers
         ClientCertificates = GetClientCertificate(Machine.ClientCertificate)
       });
 
-      var request = new RestRequest(resource, (Method)Enum.Parse(typeof(Method), method, true));
-      if (body != null)
+      var request = new RestRequest(resource, (Method)Enum.Parse(typeof(Method), fetchRequest?.Method ?? "Get", true));
+      if (fetchRequest.Body != null)
       {
-        request.AddJsonBody(body);
+        request.AddJsonBody(fetchRequest.Body);
       }
 
-      Machine.Headers?.ToList().ForEach(header => client.AddDefaultHeader(header.Key, header.Value));
-      query?.ToList().ForEach(p => request.AddParameter(p.name, p.value, ParameterType.QueryString));
+      fetchRequest.Headers?.ToList().ForEach(header => request.AddParameter(header.Key, header.Value, ParameterType.HttpHeader));
+      fetchRequest.Query?.ToList().ForEach(p => request.AddParameter(p.Key, p.Value, ParameterType.QueryString));
 
       var response = await client.ExecuteAsync(request, cancellation);
 
