@@ -65,6 +65,12 @@ namespace Overseer.Machines.Providers
       try
       {
         OctoprintMachine updatedMachine = machine as OctoprintMachine;
+        // if the api key is changing this needs to update right away. 
+        if (updatedMachine.ApiKey != Machine.ApiKey)
+        {
+          Machine.ApiKey = updatedMachine.ApiKey;
+        }
+
         //the api path will be auto generated, so make sure the machine has the root path
         updatedMachine.Url = ProcessUri(updatedMachine.Url, string.Empty).ToString();
 

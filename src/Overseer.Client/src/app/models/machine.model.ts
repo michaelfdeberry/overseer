@@ -1,5 +1,3 @@
-export const auxiliaryHeaterTypes = ['bed', 'chamber', 'cabinet'];
-
 export type MachineToolType = 'Undetermined' | 'Heater' | 'Extruder';
 
 export type MachineType = 'Unknown' | 'Octoprint' | 'RepRapFirmware' | 'Bambu';
@@ -33,6 +31,7 @@ export type OctoprintMachine = MachineBase & {
 
 export type RepRapFirmwareMachine = MachineBase & {
   machineType: 'RepRapFirmware';
+  password: string;
 };
 
 export type BambuMachine = MachineBase & {

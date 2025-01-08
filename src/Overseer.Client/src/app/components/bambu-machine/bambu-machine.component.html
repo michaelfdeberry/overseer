@@ -16,5 +16,17 @@
       <label for="serial" class="form-label">{{ 'serial' | i18next }}</label>
       <input type="text" class="form-control" id="serial" required formControlName="serial" />
     </div>
+    <div class="mb-3">
+      <label for="webCamUrl" class="form-label">{{ 'webCamUrl' | i18next }}</label>
+      <input type="text" class="form-control" id="webCamUrl" required formControlName="webCamUrl" />
+    </div>
+    <div class="mb-3">
+      <label for="webCamOrientation" class="form-label">{{ 'webCamOrientation' | i18next }}</label>
+      <select id="webCamOrientation" class="form-select" required formControlName="webCamOrientation">
+        @for (option of webCamOrientations; track $index) {
+          <option [ngValue]="option.value">{{ option.translationKey | i18next }}</option>
+        }
+      </select>
+    </div>
   </div>
 }

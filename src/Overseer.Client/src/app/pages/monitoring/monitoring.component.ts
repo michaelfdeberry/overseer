@@ -1,15 +1,14 @@
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { I18NextModule } from 'angular-i18next';
 import { forkJoin } from 'rxjs';
+import { MachineMonitorComponent } from '../../components/machine-monitor/machine-monitor.component';
 import { isIdle, MachineStatus } from '../../models/machine-status.model';
 import { Machine } from '../../models/machine.model';
 import { ApplicationSettings } from '../../models/settings.model';
-import { DurationPipe } from '../../pipes/duration.pipe';
 import { MachinesService } from '../../services/machines.service';
 import { MonitoringService } from '../../services/monitoring.service';
 import { SettingsService } from '../../services/settings.service';
-import { MachineMonitorComponent } from '../../components/machine-monitor/machine-monitor.component';
-import { I18NextModule } from 'angular-i18next';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-monitoring',

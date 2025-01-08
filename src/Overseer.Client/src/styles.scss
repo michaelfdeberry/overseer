@@ -12,6 +12,7 @@ app-root,
 main {
   font-family: 'Inter';
   height: 100%;
+  --ng-progress-color: #5cb248;
 }
 
 router-outlet {

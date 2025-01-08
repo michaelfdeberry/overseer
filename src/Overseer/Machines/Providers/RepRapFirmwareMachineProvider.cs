@@ -19,10 +19,10 @@ namespace Overseer.Machines.Providers
     protected override async Task<dynamic> Fetch(string resource, FetchRequest request = default, CancellationToken cancellation = default)
     {
       var password = string.IsNullOrWhiteSpace(Machine.Password) ? "reprap" : Machine.Password;
-      var response = await base.Fetch($"rr_connect", new() { Query = new() { { "password", password } } }, cancellation);
+      var response = await base.Fetch("rr_connect", new() { Query = new() { { "password", password }, { "sessionKey", "yes" } } }, cancellation);
 
       request ??= new();
-      request.Headers.TryAdd("X-Session-Key", (string)response.sessionKey);
+      request.Headers.TryAdd("X-Session-Key", response.sessionKey.ToString());
       return await base.Fetch(resource, request, cancellation);
     }
 
@@ -55,8 +55,15 @@ namespace Overseer.Machines.Providers
       {
         var machineTools = new List<MachineTool>();
         var updatedMachine = machine as RepRapFirmwareMachine;
-        dynamic tools = await FetchModel("tools");
-        dynamic heat = await FetchModel("heat");
+        // if the password is being updated it needs to be updated before 
+        // making the web request, else it can't log in. 
+        if (Machine.Password != updatedMachine.Password)
+        {
+          Machine.Password = updatedMachine.Password;
+        }
+
+        dynamic tools = await FetchModel("tools", string.Empty);
+        dynamic heat = await FetchModel("heat", string.Empty);
 
         foreach (var bedIndex in heat.result.bedHeaters)
         {
@@ -166,7 +173,7 @@ namespace Overseer.Machines.Providers
         return (model.job.timesLeft.slicer, Math.Max(0, (float)Math.Round(progress * 100)));
       }
 
-      var fractionPrinted = model.job.filePosition / model.job.file.size;
+      var fractionPrinted = model.job.filePosition / model.job.file.size * 100;
       return (model.job.file.timesLeft.file, fractionPrinted);
     }
   }

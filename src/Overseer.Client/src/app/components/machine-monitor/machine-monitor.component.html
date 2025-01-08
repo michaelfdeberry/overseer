@@ -93,7 +93,7 @@
               <button class="btn btn-success" (click)="resume()">{{ 'continue' | i18next }}</button>
             }
             @if (!idle()) {
-              <button class="btn btn-outline-danger ms-2" [disabled]="idle()" (click)="cancel()">{{ 'stop' | i18next }}</button>
+              <button class="btn btn-outline-danger" [disabled]="idle()" (click)="cancel()">{{ 'stop' | i18next }}</button>
             }
           }
         </div>

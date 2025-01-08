@@ -2,15 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 
-import { MachineState, MachineStatus } from '../../../models/machine-status.model';
-import { Machine, MachineTool, MachineToolType, WebCamOrientation } from '../../../models/machine.model';
+import { MachineStatus } from '../../../models/machine-status.model';
+import { Machine, MachineTool, OctoprintMachine } from '../../../models/machine.model';
 import { BaseMachineProvider } from './machine.provider';
 import { processUrl } from './url-processor';
 
-export class OctoprintMachineProvider extends BaseMachineProvider {
-  constructor(machine: Machine, private http: HttpClient) {
+export class OctoprintMachineProvider extends BaseMachineProvider<OctoprintMachine> {
+  constructor(
+    machine: Machine,
+    private http: HttpClient
+  ) {
     super();
-    this.machine = machine;
+    this.machine = machine as OctoprintMachine;
   }
 
   get httpOptions(): { headers?: { [header: string]: string | string[] } } {
@@ -18,22 +21,24 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
   }
 
   override pauseJob(): Observable<void> {
-    return this.http.post<void>(this.getUrl('api/job'), { command: 'pause', action: 'pause' }, this.httpOptions);
+    return this.http.post<void>(processUrl(this.machine.url, 'api/job'), { command: 'pause', action: 'pause' }, this.httpOptions);
   }
 
   override resumeJob(): Observable<void> {
-    return this.http.post<void>(this.getUrl('api/job'), { command: 'pause', action: 'resume' }, this.httpOptions);
+    return this.http.post<void>(processUrl(this.machine.url, 'api/job'), { command: 'pause', action: 'resume' }, this.httpOptions);
   }
 
   override cancelJob(): Observable<void> {
-    return this.http.post<void>(this.getUrl('api/job'), { command: 'cancel' }, this.httpOptions);
+    return this.http.post<void>(processUrl(this.machine.url, 'api/job'), { command: 'cancel' }, this.httpOptions);
   }
 
   override executeGcode(command: string): Observable<void> {
-    return this.http.post<void>(this.getUrl('api/printer/command'), { command: command }, this.httpOptions);
+    return this.http.post<void>(processUrl(this.machine.url, 'api/printer/command'), { command: command }, this.httpOptions);
   }
 
   loadConfiguration(machine: Machine): Observable<Machine> {
+    if (machine.machineType !== 'Octoprint') return of(machine);
+
     machine.url = processUrl(machine.url);
 
     return forkJoin([
@@ -51,10 +56,6 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
           } else {
             machine.webCamOrientation = 'Default';
           }
-        }
-
-        if (!machine.snapshotUrl) {
-          machine.snapshotUrl = processUrl(machine.url, settings.webcam.snapshotUrl);
         }
 
         machine.availableProfiles = new Map();
@@ -133,7 +134,7 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
       temperatures: {},
     };
 
-    return this.http.get<any>(this.getUrl('api/printer'), this.httpOptions).pipe(
+    return this.http.get<any>(processUrl(this.machine.url, 'api/printer'), this.httpOptions).pipe(
       mergeMap((machineState) => {
         status.temperatures = {};
         for (const key in machineState.temperature) {
@@ -157,7 +158,7 @@ export class OctoprintMachineProvider extends BaseMachineProvider {
         }
 
         if (status.state === 'Operational' || status.state === 'Paused') {
-          return this.http.get<any>(this.getUrl('api/job'), this.httpOptions).pipe(
+          return this.http.get<any>(processUrl(this.machine.url, 'api/job'), this.httpOptions).pipe(
             map((jobStatus) => {
               status.elapsedJobTime = jobStatus.progress.printTime;
               status.estimatedTimeRemaining = jobStatus.progress.printTimeLeft;

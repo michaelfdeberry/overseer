@@ -5,6 +5,16 @@
       <input type="text" class="form-control" id="name" required formControlName="name" />
     </div>
     <div class="mb-3">
+      <label for="password" class="form-label">{{ 'password' | i18next }}</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password"
+        formControlName="password"
+        placeholder="{{ 'repRapFirmwarePasswordPlaceholder' | i18next }}"
+      />
+    </div>
+    <div class="mb-3">
       <label for="url" class="form-label">{{ 'url' | i18next }}</label>
       <input type="text" class="form-control" id="url" required formControlName="url" />
     </div>

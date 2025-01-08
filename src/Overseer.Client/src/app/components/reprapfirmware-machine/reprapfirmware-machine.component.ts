@@ -25,6 +25,7 @@ export class RepRapFirmwareMachineComponent {
   constructor() {
     this.destroy.onDestroy(() => {
       if (this.form?.controls['url']) this.form?.removeControl('url');
+      if (this.form?.controls['password']) this.form?.removeControl('password');
       if (this.form?.controls['webCamUrl']) this.form?.removeControl('webCamUrl');
       if (this.form?.controls['webCamOrientation']) this.form?.removeControl('webCamOrientation');
       if (this.form?.controls['clientCertificate']) this.form?.removeControl('clientCertificate');
@@ -42,6 +43,7 @@ export class RepRapFirmwareMachineComponent {
     this.form.addControl('webCamUrl', new FormControl(null, Validators.required));
     this.form.addControl('webCamOrientation', new FormControl(null, Validators.required));
     this.form.addControl('clientCertificate', new FormControl());
+    this.form.addControl('password', new FormControl());
 
     if (this.machine) {
       this.form.addControl('id', new FormControl(this.machine.id));
@@ -50,6 +52,7 @@ export class RepRapFirmwareMachineComponent {
         url: this.machine.url,
         webCamUrl: this.machine.webCamUrl,
         webCamOrientation: this.machine.webCamOrientation,
+        password: this.machine.password,
       });
     }
   }

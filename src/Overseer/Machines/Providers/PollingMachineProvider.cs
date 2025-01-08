@@ -106,7 +106,6 @@ namespace Overseer.Machines.Providers
       }
     }
 
-
     protected virtual async Task<dynamic> Fetch(string resource, FetchRequest fetchRequest = default, CancellationToken cancellation = default)
     {
       using var client = new RestClient(new RestClientOptions

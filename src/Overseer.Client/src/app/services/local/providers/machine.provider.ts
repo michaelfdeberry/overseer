@@ -2,8 +2,7 @@ import { Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
 import { Machine } from '../../../models/machine.model';
-import { MachineStatus, MachineState } from '../../../models/machine-status.model';
-import { processUrl } from './url-processor';
+import { MachineStatus } from '../../../models/machine-status.model';
 
 export interface MachineProvider {
   readonly machine: Machine;
@@ -31,17 +30,13 @@ export interface MachineProvider {
   getStatus(): Observable<MachineStatus>;
 }
 
-export abstract class BaseMachineProvider implements MachineProvider {
+export abstract class BaseMachineProvider<TMachine extends Machine> implements MachineProvider {
   maxExceptionCount = 5;
   exceptionTimeout = 1000 * 60 * 2; // 2 minutes
   exceptionCount = 0;
   exceptionTimestamp?: number;
 
-  machine!: Machine;
-
-  getUrl(resource: string): string {
-    return processUrl(this.machine.url, resource);
-  }
+  machine!: TMachine;
 
   setToolTemperature(heaterIndex: number, targetTemperature: number): Observable<void> {
     return this.executeGcode(`M104 P${heaterIndex} S${targetTemperature}`);

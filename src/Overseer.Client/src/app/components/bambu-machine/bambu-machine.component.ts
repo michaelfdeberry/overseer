@@ -24,6 +24,8 @@ export class BambuMachineComponent {
       if (this.form?.controls['url']) this.form?.removeControl('url');
       if (this.form?.controls['accessCode']) this.form?.removeControl('accessCode');
       if (this.form?.controls['serial']) this.form?.removeControl('serial');
+      if (this.form?.controls['webCamUrl']) this.form?.removeControl('webCamUrl');
+      if (this.form?.controls['webCamOrientation']) this.form?.removeControl('webCamOrientation');
     });
   }
 
@@ -37,6 +39,8 @@ export class BambuMachineComponent {
     this.form.addControl('url', new FormControl(null, Validators.required));
     this.form.addControl('accessCode', new FormControl(null, Validators.required));
     this.form.addControl('serial', new FormControl(null, Validators.required));
+    this.form.addControl('webCamUrl', new FormControl(null, Validators.required));
+    this.form.addControl('webCamOrientation', new FormControl(null, Validators.required));
 
     if (this.machine) {
       this.form.addControl('id', new FormControl(this.machine.id));
@@ -45,6 +49,8 @@ export class BambuMachineComponent {
         url: this.machine.url,
         accessCode: this.machine.accessCode,
         serial: this.machine.serial,
+        webCamUrl: this.machine.webCamUrl,
+        webCamOrientation: this.machine.webCamOrientation,
       });
     }
   }
