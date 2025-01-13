@@ -171,8 +171,6 @@ namespace Overseer.Machines.Providers
     {
       refPath ??= string.Empty;
       var uri = new Uri(url);
-      var refQuery = string.Empty;
-      var refPort = uri.Port;
 
       if (Uri.TryCreate(refPath, UriKind.Absolute, out var refUri) && refUri.Scheme.StartsWith("http"))
       {
@@ -180,7 +178,6 @@ namespace Overseer.Machines.Providers
         if (refUri.Host == "localhost" || (IPAddress.TryParse(refUri.Host, out var ip) && IPAddress.IsLoopback(ip)))
         {
           refPath = refUri.PathAndQuery;
-          refPort = refUri.Port;
         }
         else
         {
@@ -189,22 +186,7 @@ namespace Overseer.Machines.Providers
         }
       }
 
-      refPath = refPath.TrimStart('/');
-      if (refPath.Contains('?'))
-      {
-        var parts = refPath.Split('?');
-        refPath = parts.First();
-        refQuery = $"?{parts.Last()}";
-      }
-
-      // if the ports are the same, join the paths. 
-      if (refPort == uri.Port)
-      {
-        var delimiter = uri.LocalPath.EndsWith('/') ? string.Empty : "/";
-        refPath = $"{uri.LocalPath}{delimiter}{refPath}";
-      }
-
-      return new UriBuilder(uri.Scheme, uri.Host, refPort, refPath, refQuery).Uri;
+      return new Uri(uri, refPath);
     }
   }
 }
