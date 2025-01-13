@@ -64,13 +64,13 @@ namespace Overseer.Machines.Providers
         dynamic tools = await FetchModel("tools", string.Empty);
         dynamic heat = await FetchModel("heat", string.Empty);
 
-        foreach (var bedIndex in heat.result.bedHeaters)
+        foreach (int bedIndex in heat.result.bedHeaters)
         {
           if (bedIndex < 0) continue;
           machineTools.Add(new MachineTool(MachineToolType.Heater, bedIndex, "bed"));
         }
 
-        foreach (var chamberIndex in heat.result.chamberHeaters)
+        foreach (int chamberIndex in heat.result.chamberHeaters)
         {
           if (chamberIndex < 0) continue;
           machineTools.Add(new MachineTool(MachineToolType.Heater, chamberIndex, "chamber"));
