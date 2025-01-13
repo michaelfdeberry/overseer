@@ -1,6 +1,6 @@
-import { Machine } from '../models/machine.model';
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Machine, MachineType } from '../models/machine.model';
 
 @Injectable({ providedIn: 'root' })
 export abstract class MachinesService {
@@ -17,4 +17,6 @@ export abstract class MachinesService {
   abstract deleteMachine(machine: Machine): Observable<Machine>;
 
   abstract sortMachines(sortOrder: number[]): Observable<never>;
+
+  abstract getMachineTypes(): Observable<MachineType[]>;
 }

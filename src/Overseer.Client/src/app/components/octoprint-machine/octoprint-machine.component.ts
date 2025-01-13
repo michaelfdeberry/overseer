@@ -4,7 +4,7 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { I18NextModule } from 'angular-i18next';
 import { webCamOrientations } from '../../models/constants';
 import { OctoprintMachineForm } from '../../models/form.types';
-import { Machine } from '../../models/machine.model';
+import { Machine, OctoprintMachine } from '../../models/machine.model';
 import { MachinesService } from '../../services/machines.service';
 
 @Component({
@@ -19,7 +19,7 @@ export class OctoprintMachineComponent {
   advancedOptionsVisible = false;
   webCamOrientations = webCamOrientations;
   machinesService = inject(MachinesService);
-  machine?: Machine;
+  machine?: OctoprintMachine;
   form?: FormGroup<OctoprintMachineForm>;
 
   constructor() {
@@ -37,7 +37,7 @@ export class OctoprintMachineComponent {
     if (!form) return;
 
     this.form = form;
-    this.machine = machine;
+    this.machine = machine as OctoprintMachine;
 
     this.form.addControl('name', new FormControl(null, Validators.required));
     this.form.addControl('url', new FormControl(null, Validators.required));

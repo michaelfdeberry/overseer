@@ -1,64 +1,72 @@
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError, forkJoin } from 'rxjs';
-import { catchError, tap, map } from 'rxjs/operators';
+import ObjectModel, { Heat, Tool, GCodeFileInfo, Move } from '@duet3d/objectmodel';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
-import { auxiliaryHeaterTypes, Machine, MachineTool, MachineToolType } from '../../../models/machine.model';
+import { isIdle, MachineStatus, TemperatureStatus } from '../../../models/machine-status.model';
+import { Machine, MachineTool, RepRapFirmwareMachine } from '../../../models/machine.model';
 import { BaseMachineProvider } from './machine.provider';
-import { MachineStatus, MachineState, TemperatureStatus } from '../../../models/machine-status.model';
+import { processUrl } from './url-processor';
 
-export class RepRapFirmwareMachineProvider extends BaseMachineProvider {
-  constructor(machine: Machine, private http: HttpClient) {
+export class RepRapFirmwareMachineProvider extends BaseMachineProvider<RepRapFirmwareMachine> {
+  constructor(
+    machine: Machine,
+    private http: HttpClient
+  ) {
     super();
-    this.machine = machine;
+    this.machine = machine as RepRapFirmwareMachine;
   }
 
   override cancelJob(): Observable<void> {
-    return super.pauseJob().pipe(tap(() => super.cancelJob()));
+    return super.pauseJob().pipe(switchMap(() => super.cancelJob()));
   }
 
   override executeGcode(command: string): Observable<void> {
-    return this.http.get<any>(this.getUrl('rr_gcode'), {
-      params: { gcode: command },
-    });
+    return this.login().pipe(
+      switchMap((headers) =>
+        this.http.get<any>(processUrl(this.machine.url, 'rr_gcode'), {
+          params: { gcode: command },
+          headers,
+        })
+      )
+    );
+  }
+
+  private login(): Observable<Record<string, string>> {
+    return this.http
+      .get<{
+        sessionKey: string;
+      }>(processUrl(this.machine.url, 'rr_connect'), { params: { password: this.machine.password ?? 'reprap', sessionKey: 'yes' } })
+      .pipe(map(({ sessionKey }) => ({ 'X-Session-Key': sessionKey })));
   }
 
   loadConfiguration(machine: Machine): Observable<Machine> {
-    return this.http.get<any>(this.getUrl('rr_status'), { params: { type: '2' } }).pipe(
-      tap((status) => {
-        const tools: MachineTool[] = [];
-        auxiliaryHeaterTypes.forEach((auxToolType) => {
-          const auxTool = status.temps[auxToolType];
-          if (auxTool != null) {
-            tools.push({
-              name: auxToolType,
-              index: auxTool.heater,
-              toolType: 'Heater',
-            });
-          }
-        });
+    if (machine.machineType !== 'RepRapFirmware') return of(machine);
 
-        status.tools.forEach((tool: any) => {
-          tool.heaters.forEach((heaterIndex: number) => {
-            tools.push({
-              name: `heater ${heaterIndex}`,
-              index: heaterIndex,
-              toolType: 'Heater',
+    return this.login().pipe(
+      switchMap((headers) =>
+        forkJoin([
+          this.http.get<{ result: Tool[] }>(processUrl(this.machine.url, 'rr_model'), { params: { key: 'tools' }, headers }),
+          this.http.get<{ result: Heat }>(processUrl(this.machine.url, 'rr_model'), { params: { key: 'heat' }, headers }),
+        ]).pipe(
+          map(([{ result: tools }, { result: heat }]) => {
+            const machineTools: MachineTool[] = [];
+            heat.bedHeaters.filter((b) => b >= 0).forEach((b) => machineTools.push({ index: b, toolType: 'Heater', name: 'bed' }));
+            heat.chamberHeaters.filter((c) => c >= 0).forEach((c) => machineTools.push({ index: c, toolType: 'Heater', name: 'chamber' }));
+            tools.forEach((tool) => {
+              tool.heaters.forEach((h) => machineTools.push({ index: h, toolType: 'Heater', name: `heater ${h}` }));
+              tool.extruders.forEach((e) => machineTools.push({ index: e, toolType: 'Extruder', name: `extruder ${e}` }));
             });
-          });
 
-          tool.drives.forEach((extruderIndex: number) => {
-            tools.push({
-              name: `extruder ${extruderIndex}`,
-              index: extruderIndex,
-              toolType: 'Extruder',
-            });
-          });
-        });
-
-        machine.tools = tools;
-        this.machine = machine;
-        return machine;
-      }),
+            machine.tools = machineTools;
+            this.machine = machine;
+            return machine;
+          }),
+          catchError(() => {
+            return throwError(() => new Error('machine_connect_failure'));
+          })
+        )
+      ),
       catchError(() => {
         return throwError(() => new Error('machine_connect_failure'));
       })
@@ -66,139 +74,82 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider {
   }
 
   acquireStatus(): Observable<MachineStatus> {
-    return forkJoin([
-      this.http.get<any>(this.getUrl('rr_status'), { params: { type: '2' } }),
-      this.http.get<any>(this.getUrl('rr_status'), { params: { type: '3' } }),
-      this.http.get<any>(this.getUrl('rr_fileinfo')),
-    ]).pipe(
-      map(([machineStatus, jobStatus, fileStatus]) => {
-        const status: MachineStatus = {
-          machineId: this.machine.id,
-          state: 'Idle',
-        };
+    return this.login().pipe(
+      switchMap((headers) =>
+        forkJoin([
+          this.http.get<{ result: ObjectModel }>(processUrl(this.machine.url, 'rr_model'), { params: { flags: 'd99fno' }, headers }),
+          this.http.get<{ result: Tool[] }>(processUrl(this.machine.url, 'rr_model'), { params: { key: 'tools' }, headers }),
+          this.http.get<{ result: Move }>(processUrl(this.machine.url, 'rr_model'), { params: { key: 'move' }, headers }),
+          this.http.get<{ result: GCodeFileInfo }>(processUrl(this.machine.url, 'rr_model'), { params: { key: 'job.file' }, headers }),
+        ]).pipe(
+          map(([{ result: model }, { result: tools }, { result: move }, { result: file }]) => {
+            const status: MachineStatus = {
+              machineId: this.machine.id,
+              state: 'Idle',
+            };
 
-        switch (machineStatus.status) {
-          case 'P':
-          case 'R':
-            status.state = 'Operational';
-            break;
-          case 'D':
-          case 'S':
-            status.state = 'Paused';
-            break;
-        }
+            switch (model.state.status) {
+              case 'processing':
+              case 'resuming':
+                status.state = 'Operational';
+                break;
+              case 'paused':
+              case 'pausing':
+                status.state = 'Paused';
+                break;
+            }
 
-        status.temperatures = this.readTemperatures(machineStatus);
+            status.temperatures = this.readTemperatures(model);
+            if (!isIdle(status.state)) {
+              const [timeLeft, progress] = this.calculateCompletion(model, file);
+              const activeTool = tools.find((t) => t.state === 'active');
+              const fanIndex = activeTool?.fans[0] ?? 0;
 
-        if (status.state === 'Operational' || status.state === 'Paused') {
-          const completion = this.calculateCompletion(jobStatus, fileStatus);
-          status.progress = completion[0];
-          status.estimatedTimeRemaining = completion[1];
-          status.elapsedJobTime = jobStatus.printDuration;
-          status.fanSpeed = this.readFanSpeed(jobStatus, machineStatus);
-          status.feedRate = jobStatus.params.speedFactor;
-          const factors = [...jobStatus.params.extrFactors];
-          status.flowRates = factors.reduce<{ [key: number]: number }>((acc, factor, index) => {
-            acc[index] = factor;
-            return acc;
-          }, {});
-        }
+              status.progress = progress;
+              status.estimatedTimeRemaining = timeLeft;
+              status.elapsedJobTime = model.job.duration ?? 0;
+              status.fanSpeed = model.fans.at(fanIndex)?.requestedValue;
+              status.feedRate = move.speedFactor * 100;
+              status.flowRates = this.machine.tools
+                .filter((t) => t.toolType === 'Extruder')
+                .reduce((a, n) => ({ ...a, [n.index]: move.extruders[n.index].factor * 100 }), {});
+            }
 
-        return status;
-      })
+            return status;
+          })
+        )
+      )
     );
   }
 
-  private readTemperatures(machineStatus: any): { [key: number]: TemperatureStatus } {
-    const temperatures: { [key: number]: TemperatureStatus } = {};
-
-    for (let heaterIndex = 0; heaterIndex < machineStatus.temps.current.length; heaterIndex++) {
-      const currentHeater = this.machine.tools.find((tool) => tool.toolType === 'Heater' && tool.index === heaterIndex);
-      if (!currentHeater) {
-        continue;
-      }
-
-      if (auxiliaryHeaterTypes.indexOf(currentHeater.name) >= 0) {
-        const auxTemp = machineStatus.temps[currentHeater.name];
-        if (!auxTemp) {
-          continue;
-        }
-
-        temperatures[currentHeater.index] = {
-          heaterIndex: currentHeater.index,
-          actual: auxTemp.current,
-          target: auxTemp.active,
-        };
-      } else {
-        for (let toolIndex = 0; toolIndex < machineStatus.tools.length; toolIndex++) {
-          const tool = machineStatus.tools[toolIndex];
-          const toolHeaterIndex = tool.heaters.indexOf(currentHeater.index);
-
-          if (toolHeaterIndex < 0) {
-            continue;
-          }
-
-          temperatures[currentHeater.index] = {
-            heaterIndex: currentHeater.index,
-            actual: machineStatus.temps.current[currentHeater.index],
-            target: machineStatus.temps.tools.active[toolIndex][toolHeaterIndex],
-          };
-        }
-      }
-    }
-
-    return temperatures;
+  private readTemperatures(model: ObjectModel): { [key: number]: TemperatureStatus } {
+    return this.machine.tools
+      .filter((t) => t.toolType === 'Heater')
+      .reduce((a, n) => {
+        const heater = model.heat.heaters[n.index];
+        return { ...a, [n.index]: { heaterIndex: n.index, actual: heater?.current ?? 0, target: heater?.active ?? 0 } };
+      }, {});
   }
 
-  readFanSpeed(jobStatus: any, machineStatus: any): number {
-    if (!jobStatus.params.fanPercent) {
-      return 0;
+  calculateCompletion(model: ObjectModel, file: GCodeFileInfo): [number, number] {
+    if (file?.filament?.length) {
+      const filamentNeeded = file.filament.reduce((r, n) => r + n, 0);
+      const filamentExtruded = model.move.extruders.reduce((r, n) => r + n.rawPosition, 0);
+      const progress = (filamentExtruded / filamentNeeded) * 100;
+      return [model.job.timesLeft.filament ?? 0, progress];
     }
 
-    const currentTool = machineStatus.tools[jobStatus.currentTool];
-    if (!currentTool) {
-      return 0;
-    }
-    if (!currentTool.fans) {
-      return 0;
+    if (model.job.timesLeft.slicer) {
+      const estimatedTotal = (model.job.duration ?? 0) + model.job.timesLeft.slicer;
+      const progress = model.job.timesLeft.slicer / estimatedTotal;
+      return [model.job.timesLeft.slicer, progress];
     }
 
-    let activeFanIndex: number | undefined;
-    for (let fanIndex = 0; fanIndex < Math.min(machineStatus.controllableFans, jobStatus.params.fanPercent.length); fanIndex++) {
-      // tslint:disable-next-line:no-bitwise
-      if ((currentTool.fans & (1 << fanIndex)) !== 0) {
-        activeFanIndex = fanIndex;
-        break;
-      }
+    if (model.job.filePosition && model.job.file?.size) {
+      const fractionPrinted = (model.job.filePosition as number) / (model.job.file.size as number);
+      return [model.job.timesLeft.file ?? 0, fractionPrinted * 100];
     }
 
-    if (!activeFanIndex) return 0;
-    return jobStatus.params.fanPercent[activeFanIndex];
-  }
-
-  calculateCompletion(jobStatus: any, fileStatus: any): [number, number] {
-    if (!fileStatus) {
-      return [0, 0];
-    }
-    if (fileStatus.err !== 0) {
-      return [0, 0];
-    }
-
-    try {
-      if (fileStatus.filament.length > 0) {
-        const filamentNeeded = fileStatus.filament.reduce((result: number, next: number) => result + next, 0);
-        const filamentExtruded = fileStatus.extrRaw.reduce((result: number, next: number) => result + next, 0);
-        const progress = (filamentExtruded / filamentNeeded) * 100;
-
-        return [jobStatus.timesLeft.filament, Math.max(0, progress)];
-      } else {
-        const progress = (jobStatus.coords.xyz[2] / fileStatus.height) * 100;
-        return [jobStatus.timesLeft.layer, Math.max(0, progress)];
-      }
-    } catch {
-      // noop
-    }
-
-    return [jobStatus.timesLeft.file, jobStatus.fractionPrinted];
+    return [0, 0];
   }
 }

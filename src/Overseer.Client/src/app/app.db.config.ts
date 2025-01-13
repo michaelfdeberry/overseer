@@ -1,6 +1,6 @@
 import { DBConfig } from 'ngx-indexed-db';
 import { environment } from '../environments/environment';
-import { Machine, MachineToolType, MachineType, WebCamOrientation } from './models/machine.model';
+import { Machine, MachineTool, MachineToolType, MachineType, WebCamOrientation } from './models/machine.model';
 import { AccessLevel } from './models/user.model';
 import { LogEntry, LogLevel } from './models/log-entry.model';
 
@@ -87,7 +87,7 @@ export function migrationFactory(): { [key: number]: (db: IDBDatabase, transacti
         const cursor: IDBCursorWithValue = event.target.result;
 
         if (cursor) {
-          const machine: Machine = cursor.value;
+          const machine = cursor.value;
           if (typeof machine.webCamOrientation === 'number') {
             machine.webCamOrientation = webCamOrientations[machine.webCamOrientation];
           }
@@ -96,7 +96,7 @@ export function migrationFactory(): { [key: number]: (db: IDBDatabase, transacti
             machine.machineType = machineTypes[machine.machineType];
           }
 
-          machine.tools.forEach((tool) => {
+          machine.tools.forEach((tool: MachineTool) => {
             if (typeof tool.toolType === 'number') {
               tool.toolType = machineToolTypes[tool.toolType];
             }

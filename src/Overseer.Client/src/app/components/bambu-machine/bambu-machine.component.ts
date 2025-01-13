@@ -3,32 +3,29 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { I18NextModule } from 'angular-i18next';
 import { webCamOrientations } from '../../models/constants';
-import { RepRapMachineForm } from '../../models/form.types';
-import { Machine, RepRapFirmwareMachine } from '../../models/machine.model';
-import { MachinesService } from '../../services/machines.service';
+import { BambuMachineForm, RepRapMachineForm } from '../../models/form.types';
+import { BambuMachine, Machine } from '../../models/machine.model';
 
 @Component({
-  selector: 'app-reprap-firmware-machine',
-  templateUrl: './reprapfirmware-machine.component.html',
+  selector: 'app-bambu-machine',
+  templateUrl: './bambu-machine.component.html',
   standalone: true,
   imports: [ReactiveFormsModule, I18NextModule, NgbCollapseModule],
 })
-export class RepRapFirmwareMachineComponent {
+export class BambuMachineComponent {
   private destroy = inject(DestroyRef);
 
-  advancedOptionsVisible = false;
-  machinesService = inject(MachinesService);
   webCamOrientations = webCamOrientations;
-  machine?: RepRapFirmwareMachine;
-  form?: FormGroup<RepRapMachineForm>;
+  machine?: BambuMachine;
+  form?: FormGroup<BambuMachineForm>;
 
   constructor() {
     this.destroy.onDestroy(() => {
       if (this.form?.controls['url']) this.form?.removeControl('url');
-      if (this.form?.controls['password']) this.form?.removeControl('password');
+      if (this.form?.controls['accessCode']) this.form?.removeControl('accessCode');
+      if (this.form?.controls['serial']) this.form?.removeControl('serial');
       if (this.form?.controls['webCamUrl']) this.form?.removeControl('webCamUrl');
       if (this.form?.controls['webCamOrientation']) this.form?.removeControl('webCamOrientation');
-      if (this.form?.controls['clientCertificate']) this.form?.removeControl('clientCertificate');
     });
   }
 
@@ -36,23 +33,24 @@ export class RepRapFirmwareMachineComponent {
     if (!form) return;
 
     this.form = form;
-    this.machine = machine as RepRapFirmwareMachine;
+    this.machine = machine as BambuMachine | undefined;
 
     this.form.addControl('name', new FormControl(null, Validators.required));
     this.form.addControl('url', new FormControl(null, Validators.required));
+    this.form.addControl('accessCode', new FormControl(null, Validators.required));
+    this.form.addControl('serial', new FormControl(null, Validators.required));
     this.form.addControl('webCamUrl', new FormControl(null, Validators.required));
     this.form.addControl('webCamOrientation', new FormControl(null, Validators.required));
-    this.form.addControl('clientCertificate', new FormControl());
-    this.form.addControl('password', new FormControl());
 
     if (this.machine) {
       this.form.addControl('id', new FormControl(this.machine.id));
       this.form.patchValue({
         name: this.machine.name,
         url: this.machine.url,
+        accessCode: this.machine.accessCode,
+        serial: this.machine.serial,
         webCamUrl: this.machine.webCamUrl,
         webCamOrientation: this.machine.webCamOrientation,
-        password: this.machine.password,
       });
     }
   }

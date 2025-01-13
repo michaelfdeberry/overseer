@@ -1,27 +1,22 @@
-﻿using log4net;
+﻿using System;
+using System.Linq;
+
+using log4net;
+
 using Overseer.Machines;
 using Overseer.Models;
-using System;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using Timer = System.Timers.Timer;
 
 namespace Overseer
 {
-    public class MonitoringService : IDisposable, IMonitoringService
+    public sealed class MonitoringService : IDisposable, IMonitoringService
     {
         static readonly ILog Log = LogManager.GetLogger(typeof(MonitoringService));
 
         public event EventHandler<EventArgs<MachineStatus>> StatusUpdate;
 
-        Timer _timer;
         readonly IMachineManager _machineManager;
         readonly IConfigurationManager _configurationManager;
         readonly MachineProviderManager _providerManager;
-
-        readonly ConcurrentDictionary<int, CancellationTokenSource> _pendingUpdates = new ConcurrentDictionary<int, CancellationTokenSource>();
 
         public MonitoringService(IMachineManager machineManager, IConfigurationManager configurationManager, MachineProviderManager providerManager)
         {
@@ -31,89 +26,43 @@ namespace Overseer
 
             _configurationManager.ApplicationSettingsUpdated += (sender, args) =>
             {
-                if (_timer == null) return;
-
-                _timer.Interval = args.Data.Interval;
-            };
-        }
-
-        public bool Enabled => _timer != null ? _timer.Enabled : false;
-
-        void AssertTimer()
-        {
-            if (_timer != null) return;
-
-            var settings = _configurationManager.GetApplicationSettings();
-            _timer = new Timer(settings.Interval);            
-            _timer.Elapsed += (sender, args) =>
-            {
-                PollProviders();
+                var providers = _providerManager.GetProviders(_machineManager.GetMachines());
+                providers.ToList().ForEach(provider => provider.Start(args.Data.Interval));
             };
         }
 
         public void StartMonitoring()
         {
-            AssertTimer();
-
-            if (_timer.Enabled) return;
-
-            _timer.Start();
-            Log.Info("Monitoring initiated.");
+            Log.Info("Starting monitoring service");
+            var interval = _configurationManager.GetApplicationSettings().Interval;
+            var providers = _providerManager.GetProviders(_machineManager.GetMachines());
+            foreach (var provider in providers)
+            {
+                provider.Start(interval);
+                provider.StatusUpdate += OnStatusUpdate;
+            }
         }
 
         public void StopMonitoring()
         {
-            AssertTimer();
-
-            if (!_timer.Enabled) return;
-
-            _timer.Stop();
-            CancelPendingUpdates();
-            Log.Info("Monitoring suspended.");
-        }
-        
-        public void PollProviders()
-        {
-            try
+            Log.Info("Stopping monitoring service");
+            var providers = _providerManager.GetProviders(_machineManager.GetMachines());
+            foreach (var provider in providers)
             {
-                //cancel any pending update that hasn't completed, it's likely timing out
-                CancelPendingUpdates();
-
-                //poll all the providers
-                foreach (var provider in _providerManager.GetProviders(_machineManager.GetMachines()))
-                {
-                    var cancellation = new CancellationTokenSource();
-                    provider.GetStatus(cancellation.Token)
-                        .ContinueWith(RaiseStatusUpdate, cancellation.Token)
-                        .DoNotAwait();
-
-                    _pendingUpdates[provider.MachineId] = cancellation;
-                }
+                provider.Stop();
+                provider.StatusUpdate -= OnStatusUpdate;
             }
-            catch (Exception ex)
-            {
-                Log.Error("Monitoring Error", ex);
-            }
-        }
-
-        void RaiseStatusUpdate(Task<MachineStatus> completedTask)
-        {
-            StatusUpdate?.Invoke(this, new EventArgs<MachineStatus>(completedTask.Result));
-        }
-
-        void CancelPendingUpdates()
-        {
-            foreach (var pendingUpdate in _pendingUpdates)
-            {
-                pendingUpdate.Value.Cancel();
-            }
-
-            _pendingUpdates.Clear();
         }
 
         public void Dispose()
         {
-            _timer?.Dispose();
+            Log.Info("Disposing monitoring service");
+            StopMonitoring();
+        }
+
+        private void OnStatusUpdate(object sender, EventArgs<MachineStatus> e)
+        {
+            StatusUpdate?.Invoke(sender, e);
         }
     }
 }

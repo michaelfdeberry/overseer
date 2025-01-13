@@ -1,8 +1,9 @@
-﻿using Overseer.Data;
+﻿using System;
+using System.Linq;
+
+using Overseer.Data;
 using Overseer.Machines.Providers;
 using Overseer.Models;
-using System;
-using System.Linq;
 
 namespace Overseer.Updates
 {
@@ -50,7 +51,7 @@ namespace Overseer.Updates
                             settings["LocalPort"].AsInt32 :
                             ApplicationSettings.DefaultPort,
                     };
-                
+
                     context.GetValueStore().Put(newSettings);
                     db.DropCollection(nameof(ApplicationSettings));
                 }
@@ -80,7 +81,6 @@ namespace Overseer.Updates
                                 ApiKey = config["ApiKey"].AsString,
                                 Url = config["Url"].AsString,
                                 WebCamUrl = config["WebCamUrl"].AsString,
-                                SnapshotUrl = config["SnapshotUrl"].AsString,
                                 ClientCertificate = config["ClientCertificate"].AsString
                             };
 
@@ -96,7 +96,6 @@ namespace Overseer.Updates
                                 Disabled = printer["Disabled"].AsBoolean,
                                 Url = config["Url"].AsString,
                                 WebCamUrl = config["WebCamUrl"].AsString,
-                                SnapshotUrl = config["SnapshotUrl"].AsString,
                                 ClientCertificate = config["ClientCertificate"].AsString
                             };
 
@@ -108,7 +107,7 @@ namespace Overseer.Updates
                 }
 
                 db.DropCollection("Printer");
-            }        
+            }
         }
     }
 }

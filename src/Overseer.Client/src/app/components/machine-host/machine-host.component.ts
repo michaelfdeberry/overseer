@@ -1,8 +1,9 @@
-import { Component, ComponentRef, DestroyRef, effect, inject, input, OnInit, signal, untracked, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, DestroyRef, effect, inject, input, OnInit, signal, Type, untracked, ViewContainerRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MachineForm } from '../../models/form.types';
 import { Machine, MachineType } from '../../models/machine.model';
+import { BambuMachineComponent } from '../bambu-machine/bambu-machine.component';
 import { OctoprintMachineComponent } from '../octoprint-machine/octoprint-machine.component';
 import { RepRapFirmwareMachineComponent } from '../reprapfirmware-machine/reprapfirmware-machine.component';
 
@@ -15,6 +16,11 @@ export class MachineHostComponent implements OnInit {
   private destroy = inject(DestroyRef);
   private viewContainerRef = inject(ViewContainerRef);
   private machineType = signal<MachineType | undefined>(undefined);
+  private machineComponentMap = {
+    Octoprint: OctoprintMachineComponent,
+    RepRapFirmware: RepRapFirmwareMachineComponent,
+    Bambu: BambuMachineComponent,
+  };
 
   form = input<FormGroup<MachineForm>>();
   machine = input<Machine | undefined>();
@@ -29,15 +35,10 @@ export class MachineHostComponent implements OnInit {
       if (!machineType) return;
       if (machineType === 'Unknown') return;
 
-      let componentRef: ComponentRef<OctoprintMachineComponent> | ComponentRef<RepRapFirmwareMachineComponent>;
-      switch (machineType) {
-        case 'Octoprint':
-          componentRef = this.viewContainerRef.createComponent(OctoprintMachineComponent);
-          break;
-        case 'RepRapFirmware':
-          componentRef = this.viewContainerRef.createComponent(RepRapFirmwareMachineComponent);
-          break;
-      }
+      type MachineFormComponent = { build(form: FormGroup<MachineForm>, machine: Machine): void };
+      const componentRef: ComponentRef<MachineFormComponent> = this.viewContainerRef.createComponent(
+        this.machineComponentMap[machineType] as Type<MachineFormComponent>
+      );
 
       untracked(() => {
         componentRef.instance.build(this.form()!, this.machine()!);

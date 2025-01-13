@@ -81,6 +81,14 @@
       display: flex;
       justify-content: end;
       margin-bottom: 0.5rem;
+
+      .btn {
+        margin-inline-start: 0.5rem;
+
+        &:first-child {
+          margin-inline-start: 1rem;
+        }
+      }
     }
   }
 
@@ -91,7 +99,6 @@
       &__actions {
         display: block;
         margin-bottom: 0;
-        margin-inline-start: 1rem;
       }
     }
   }

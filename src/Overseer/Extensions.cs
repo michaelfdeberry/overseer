@@ -6,30 +6,38 @@ using System.Threading.Tasks;
 
 namespace Overseer
 {
-    public static class Extensions
-    {                
-        public static void DoNotAwait(this Task task) { }
-        
-        /// <summary>
-        /// Will return all non-abstract class types that are assignable to the base type
-        /// that exist within the assembly for that type
-        /// </summary>        
-        public static IReadOnlyList<Type> GetAssignableTypes(this Type baseType)
-        {
-            IEnumerable<Type> types;
+  public static class Extensions
+  {
+    public static void DoNotAwait(this Task task) { }
 
-            try
-            {
-                types = baseType.Assembly.GetTypes();
-            }
-            catch (ReflectionTypeLoadException ex)
-            {
-                types = ex.Types;
-            }
+    /// <summary>
+    /// Will return all non-abstract class types that are assignable to the base type
+    /// that exist within the assembly for that type
+    /// </summary>        
+    public static IReadOnlyList<Type> GetAssignableTypes(this Type baseType)
+    {
+      IEnumerable<Type> types;
 
-            return types
-                .Where(type => baseType.IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
-                .ToList();
-        }
+      try
+      {
+        types = baseType.Assembly.GetTypes();
+      }
+      catch (ReflectionTypeLoadException ex)
+      {
+        types = ex.Types;
+      }
+
+      return types
+          .Where(type => baseType.IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
+          .ToList();
     }
+
+    public static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+    {
+      if (!dictionary.TryAdd(key, value))
+      {
+        dictionary[key] = value;
+      }
+    }
+  }
 }

@@ -2,6 +2,7 @@ import { APP_INITIALIZER, LOCALE_ID } from '@angular/core';
 import { ITranslationService, I18NEXT_SERVICE } from 'angular-i18next';
 import HttpApi from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import { environment } from '../environments/environment';
 
 export function appInit(i18next: ITranslationService) {
   return () =>
@@ -10,7 +11,7 @@ export function appInit(i18next: ITranslationService) {
       .use(LanguageDetector)
       .init({
         backend: {
-          loadPath: '/i18n/{{lng}}.json',
+          loadPath: `/i18n/{{lng}}.json?v=${environment.appVersion}`,
         },
         supportedLngs: ['en'],
         fallbackLng: 'en',
