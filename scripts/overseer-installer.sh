@@ -109,6 +109,17 @@ if [ "$installNginx" == "y" ]; then
     echo '        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;' >> $nginxConfigPath
     echo '        proxy_set_header Host $host;' >> $nginxConfigPath
     echo '    }' >> $nginxConfigPath
+    echo '' >> $nginxConfigPath
+    echo '    location /push {' >> $nginxConfigPath
+    echo '        proxy_pass              http://localhost:9000/push;' >> $nginxConfigPath
+    echo '        proxy_http_version      1.1;' >> $nginxConfigPath
+    echo '        proxy_cache_bypass      $http_upgrade;' >> $nginxConfigPath
+    echo '        proxy_set_header        Upgrade $http_upgrade;' >> $nginxConfigPath
+    echo '        proxy_set_header        Connection "upgrade";' >> $nginxConfigPath
+    echo '        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;' >> $nginxConfigPath
+    echo '        proxy_set_header        X-Forwarded-Proto $scheme;' >> $nginxConfigPath
+    echo '        proxy_set_header        Host $host;' >> $nginxConfigPath
+    echo '    }' >> $nginxConfigPath
     echo } >> $nginxConfigPath
 
     # enable the new configuration by creating a symlink

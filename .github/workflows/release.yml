@@ -26,7 +26,7 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Set version in shell script
-        run: sed -i "s/overseerVersion='.*'/overseerVersion='${{ github.event.inputs.release_version }}'/" scripts/server-installer.sh
+        run: sed -i "s/overseerVersion='.*'/overseerVersion='${{ github.event.inputs.release_version }}'/" scripts/overseer-installer.sh
 
       - name: Build Angular project
         run: |
@@ -91,6 +91,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: scripts/server-installer.sh
-          asset_name: install.sh
+          asset_path: scripts/overseer-installer.sh
+          asset_name: overseer-installer-${{ github.event.inputs.release_version }}.sh
           asset_content_type: application/x-sh
