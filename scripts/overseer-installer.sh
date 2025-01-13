@@ -45,8 +45,11 @@ if [ -n "${overseerPID}" ]; then
     # stop the service if it's is running
     service overseer stop
     
-    # also send the kill command in case it was running manually
-    kill ${overseerPID} 
+    # check if the process is still running and send the kill command if it is
+    # This is needed in case it was started manually
+    if ps -p ${overseerPID} > /dev/null; then
+        kill ${overseerPID}
+    fi
 fi
 
 # create or overwrite the service file
