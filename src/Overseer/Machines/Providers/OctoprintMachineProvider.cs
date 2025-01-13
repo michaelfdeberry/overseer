@@ -144,27 +144,28 @@ namespace Overseer.Machines.Providers
       }
     }
 
-    private int GetHeaterIndex(string heaterKey)
-    {
-      if (heaterKey.ToLower() == "bed") return -1;
-      return Convert.ToInt32(heaterKey.Replace("tool", string.Empty));
-    }
-
     protected override async Task<MachineStatus> AcquireStatus(CancellationToken cancellationToken)
     {
       dynamic machineState = await Fetch("api/printer", cancellation: cancellationToken);
       var status = new MachineStatus { MachineId = MachineId };
-
-      foreach (dynamic pair in machineState.temperature)
+      var temperatures = machineState.temperature.ToObject<Dictionary<string, dynamic>>() as Dictionary<string, dynamic>;
+      // there are reports of what seems to be unexpected data in the response. Unlikely to be a problem with the 
+      // changes made to get the temps, but logging anyway just in case. 
+      Log.Warn($"Received Temperatures: ${temperatures}");
+      // looping through the tools instead of relying on the response data
+      Machine.Tools.Where(t => t.ToolType == MachineToolType.Heater).ToList().ForEach(t =>
       {
-        var heaterIndex = GetHeaterIndex(pair.Name);
-        status.Temperatures.Add(heaterIndex, new TemperatureStatus
+        var key = t.Index == -1 ? "bed" : $"tool{t.Index}";
+        if (temperatures.TryGetValue(key, out var temp))
         {
-          HeaterIndex = heaterIndex,
-          Actual = pair.Value.actual,
-          Target = pair.Value.target
-        });
-      }
+          status.Temperatures.Add(t.Index, new()
+          {
+            HeaterIndex = t.Index,
+            Actual = temp.actual,
+            Target = temp.target
+          });
+        }
+      });
 
       var flags = machineState.state.flags;
       if ((bool)flags.operational)
