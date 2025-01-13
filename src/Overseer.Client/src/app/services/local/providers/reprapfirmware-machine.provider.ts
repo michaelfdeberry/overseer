@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import ObjectModel, { Heat, Tool } from '@duet3d/objectmodel';
+import ObjectModel, { Heat, Tool, GCodeFileInfo, Move } from '@duet3d/objectmodel';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
@@ -18,7 +18,7 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider<RepRapFir
   }
 
   override cancelJob(): Observable<void> {
-    return super.pauseJob().pipe(tap(() => super.cancelJob()));
+    return super.pauseJob().pipe(switchMap(() => super.cancelJob()));
   }
 
   override executeGcode(command: string): Observable<void> {
@@ -76,8 +76,13 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider<RepRapFir
   acquireStatus(): Observable<MachineStatus> {
     return this.login().pipe(
       switchMap((headers) =>
-        this.http.get<{ result: ObjectModel }>(processUrl(this.machine.url, 'rr_model'), { params: { flags: 'd99fno' }, headers }).pipe(
-          map(({ result: model }) => {
+        forkJoin([
+          this.http.get<{ result: ObjectModel }>(processUrl(this.machine.url, 'rr_model'), { params: { flags: 'd99fno' }, headers }),
+          this.http.get<{ result: Tool[] }>(processUrl(this.machine.url, 'rr_model'), { params: { key: 'tools' }, headers }),
+          this.http.get<{ result: Move }>(processUrl(this.machine.url, 'rr_model'), { params: { key: 'move' }, headers }),
+          this.http.get<{ result: GCodeFileInfo }>(processUrl(this.machine.url, 'rr_model'), { params: { key: 'job.file' }, headers }),
+        ]).pipe(
+          map(([{ result: model }, { result: tools }, { result: move }, { result: file }]) => {
             const status: MachineStatus = {
               machineId: this.machine.id,
               state: 'Idle',
@@ -96,15 +101,18 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider<RepRapFir
 
             status.temperatures = this.readTemperatures(model);
             if (!isIdle(status.state)) {
-              const [progress, timeLeft] = this.calculateCompletion(model);
+              const [timeLeft, progress] = this.calculateCompletion(model, file);
+              const activeTool = tools.find((t) => t.state === 'active');
+              const fanIndex = activeTool?.fans[0] ?? 0;
+
               status.progress = progress;
               status.estimatedTimeRemaining = timeLeft;
               status.elapsedJobTime = model.job.duration ?? 0;
-              status.fanSpeed = 100;
-              status.feedRate = model.move.speedFactor * 100;
+              status.fanSpeed = model.fans.at(fanIndex)?.requestedValue;
+              status.feedRate = move.speedFactor * 100;
               status.flowRates = this.machine.tools
                 .filter((t) => t.toolType === 'Extruder')
-                .reduce((a, n) => ({ ...a, [n.index]: model.move.extruders[n.index].factor * 100 }), {});
+                .reduce((a, n) => ({ ...a, [n.index]: move.extruders[n.index].factor * 100 }), {});
             }
 
             return status;
@@ -123,9 +131,9 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider<RepRapFir
       }, {});
   }
 
-  calculateCompletion(model: ObjectModel): [number, number] {
-    if (model.job.file?.filament?.length) {
-      const filamentNeeded = model.job.file.filament.reduce((r, n) => r + n, 0);
+  calculateCompletion(model: ObjectModel, file: GCodeFileInfo): [number, number] {
+    if (file?.filament?.length) {
+      const filamentNeeded = file.filament.reduce((r, n) => r + n, 0);
       const filamentExtruded = model.move.extruders.reduce((r, n) => r + n.rawPosition, 0);
       const progress = (filamentExtruded / filamentNeeded) * 100;
       return [model.job.timesLeft.filament ?? 0, progress];

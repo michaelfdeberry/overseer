@@ -47,16 +47,16 @@ export class LocalMachinesService implements MachinesService {
     return this.storage.machines.getByID(machine.id!).pipe(
       take(1),
       map((pMachine) => Object.assign(pMachine, machine)),
-      switchMap((pMachine) =>
-        iif(
-          () => pMachine.disabled,
-          this.machineProviders
-            .getProvider(pMachine)
-            .loadConfiguration(pMachine)
-            .pipe(switchMap(() => this.storage.machines.update(pMachine))),
-          this.storage.machines.update(pMachine)
-        )
-      )
+      switchMap((pMachine) => {
+        if (machine.disabled) {
+          return this.storage.machines.update(pMachine);
+        }
+
+        return this.machineProviders
+          .getProvider(pMachine)
+          .loadConfiguration(pMachine)
+          .pipe(switchMap(() => this.storage.machines.update(pMachine)));
+      })
     );
   }
 

@@ -10,7 +10,6 @@ namespace Overseer.Machines.Providers
 {
   public class RepRapFirmwareMachineProvider : PollingMachineProvider<RepRapFirmwareMachine>
   {
-
     public RepRapFirmwareMachineProvider(RepRapFirmwareMachine machine)
     {
       Machine = machine;
@@ -111,25 +110,21 @@ namespace Overseer.Machines.Providers
       status.Temperatures = ReadTemperatures(modelResponse.result.heat);
       if (status.State == MachineState.Operational || status.State == MachineState.Paused)
       {
-        // It looks like I can get everything with the single call except the fan speed.
-        // The fan speeds are returned, but it wouldn't be possible to know which one to use
-        // without fetching the tools to get the fan index for the active tool since Overseer
-        // doesn't store that information. 
-        // For me defaulting to the first one would work, because that is how my machines are setup.
-        // However, that won't work for everyone. I don't think it's worth the making the 
-        // extra call, or updating the Overseer model, to support this. At least at this time.
-        // So it's going to work like the Octoprint provider.
-        status.FanSpeed = 100;
-        status.FeedRate = modelResponse.result.move.speedFactor * 100;
-
+        var move = await FetchModel("move", string.Empty, cancellation);
+        var tools = await FetchModel("tools", string.Empty, cancellation);
+        var toolList = tools.result.ToObject<List<dynamic>>() as List<dynamic>;
+        var activeTool = toolList.First(t => t.state == "active");
+        var fanIndex = (int)activeTool.fans[0];
+        status.FanSpeed = (float)modelResponse.result.fans[fanIndex].requestedValue * 100;
+        status.FeedRate = (float)move.result.speedFactor * 100;
         status.FlowRates = [];
         Machine.Tools
           .Where(t => t.ToolType == MachineToolType.Extruder)
           .ToList()
-          .ForEach(e => status.FlowRates.Add(e.Index, modelResponse.result.move.extruders[e.Index].factor * 100));
+          .ForEach(e => status.FlowRates.Add(e.Index, (float)move.result.extruders[e.Index].factor * 100));
 
         status.ElapsedJobTime = modelResponse.result.job.duration;
-        (int timeRemaining, float progress) completion = await CalculateCompletion(modelResponse.result);
+        (int timeRemaining, float progress) completion = await CalculateCompletion(modelResponse.result, cancellation);
         status.Progress = completion.progress;
         status.EstimatedTimeRemaining = completion.timeRemaining;
       }
@@ -153,14 +148,15 @@ namespace Overseer.Machines.Providers
       .ToDictionary(x => x.HeaterIndex);
     }
 
-    static (int timeRemaining, float progress) CalculateCompletion(dynamic model)
+    async Task<(int timeRemaining, float progress)> CalculateCompletion(dynamic model, CancellationToken cancellation)
     {
-      if (model.job.file.filament?.Count > 0)
+      var file = await FetchModel("job.file", string.Empty, cancellation);
+      if (file.result.filament?.Count > 0)
       {
-        var filament = (IEnumerable<float>)model.job.file.filament.ToObject<IEnumerable<float>>();
+        var filament = (IEnumerable<float>)file.result.filament.ToObject<IEnumerable<float>>();
         var totalFilament = filament.Aggregate((product, next) => product + next);
-        var extrudedFilaments = (IEnumerable<dynamic>)model.move.extruders<IEnumerable<dynamic>>();
-        var totalExtruded = extrudedFilaments.Aggregate((product, next) => product + next.rawPosition);
+        var extrudedFilaments = (IEnumerable<dynamic>)model.move.extruders.ToObject<IEnumerable<dynamic>>();
+        var totalExtruded = extrudedFilaments.Select(x => (float)x.rawPosition).Aggregate((product, next) => product + next);
         var progress = totalExtruded / totalFilament * 100;
 
         return (model.job.timesLeft.filament, Math.Max(0, (float)Math.Round(progress, 1)));
@@ -173,7 +169,7 @@ namespace Overseer.Machines.Providers
         return (model.job.timesLeft.slicer, Math.Max(0, (float)Math.Round(progress * 100)));
       }
 
-      var fractionPrinted = model.job.filePosition / model.job.file.size * 100;
+      var fractionPrinted = model.job.filePosition / file.result.size * 100;
       return (model.job.file.timesLeft.file, fractionPrinted);
     }
   }
