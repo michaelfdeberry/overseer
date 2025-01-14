@@ -45,8 +45,11 @@ if [ -n "${overseerPID}" ]; then
     # stop the service if it's is running
     service overseer stop
     
-    # also send the kill command in case it was running manually
-    kill ${overseerPID} 
+    # check if the process is still running and send the kill command if it is
+    # This is needed in case it was started manually
+    if ps -p ${overseerPID} > /dev/null; then
+        kill ${overseerPID}
+    fi
 fi
 
 # create or overwrite the service file
@@ -108,6 +111,17 @@ if [ "$installNginx" == "y" ]; then
     echo '        proxy_set_header X-Forwarded-Proto $scheme;' >> $nginxConfigPath
     echo '        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;' >> $nginxConfigPath
     echo '        proxy_set_header Host $host;' >> $nginxConfigPath
+    echo '    }' >> $nginxConfigPath
+    echo '' >> $nginxConfigPath
+    echo '    location /push {' >> $nginxConfigPath
+    echo '        proxy_pass              http://localhost:9000/push;' >> $nginxConfigPath
+    echo '        proxy_http_version      1.1;' >> $nginxConfigPath
+    echo '        proxy_cache_bypass      $http_upgrade;' >> $nginxConfigPath
+    echo '        proxy_set_header        Upgrade $http_upgrade;' >> $nginxConfigPath
+    echo '        proxy_set_header        Connection "upgrade";' >> $nginxConfigPath
+    echo '        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;' >> $nginxConfigPath
+    echo '        proxy_set_header        X-Forwarded-Proto $scheme;' >> $nginxConfigPath
+    echo '        proxy_set_header        Host $host;' >> $nginxConfigPath
     echo '    }' >> $nginxConfigPath
     echo } >> $nginxConfigPath
 
