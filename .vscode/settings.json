@@ -1,25 +1,16 @@
 {
-  "cSpell.words": [
-    "Bambu",
-    "Gcode",
-    "Newtonsoft",
-    "Octoprint"
-  ],
+  "cSpell.words": ["Bambu", "Filepos", "Gcode", "Newtonsoft", "Octoprint"],
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
-  "editor.rulers": [
-    150
-  ],
+  "editor.rulers": [150],
   "prettier.configPath": "src/Overseer.Client/prettierrc.json",
   "editor.tabSize": 2,
-  "[typescript]":{
+  "[typescript]": {
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "always"
     }
   },
   "[csharp]": {
-    "editor.codeActionsOnSave": [
-      "source.organizeImports"
-    ]
+    "editor.codeActionsOnSave": ["source.organizeImports"]
   }
 }
