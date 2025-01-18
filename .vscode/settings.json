@@ -1,5 +1,13 @@
 {
-  "cSpell.words": ["Bambu", "Filepos", "Gcode", "Newtonsoft", "Octoprint"],
+  "cSpell.words": [
+    "Bambu",
+    "Filepos",
+    "Gcode",
+    "Newtonsoft",
+    "Octoprint",
+    "Preauthenticated",
+    "reprapfirmware"
+  ],
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
   "editor.rulers": [150],
@@ -7,10 +15,16 @@
   "editor.tabSize": 2,
   "[typescript]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "always"
+      "source.addMissingImports.ts": "explicit",      
+      "source.fixAll.eslint": "always",
+      "source.organizeImports": "always", 
+      "source.removeUnusedImports": "always"
     }
   },
   "[csharp]": {
-    "editor.codeActionsOnSave": ["source.organizeImports"]
-  }
+    "editor.codeActionsOnSave": ["source.organizeImports"],
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  }, 
 }

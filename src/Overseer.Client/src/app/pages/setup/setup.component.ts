@@ -106,15 +106,15 @@ export class SetupComponent {
           }
 
           if (createAnother) {
-            const machineType = this.machinesForm.controls.machineType!.value;
             this.machinesForm.reset();
-            this.machinesForm.controls.machineType!.setValue(machineType);
+            this.machinesForm.enable();
           } else {
             this.step.set('complete');
           }
         },
         error: (ex) => {
           this.certErrorService.handleCertificateException(ex).subscribe((exclusionAdded) => {
+            this.machinesForm.enable();
             if (exclusionAdded) {
               this.handleMachineSubmit(createAnother);
             }

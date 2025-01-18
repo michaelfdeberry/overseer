@@ -108,7 +108,7 @@ export class RepRapFirmwareMachineProvider extends BaseMachineProvider<RepRapFir
               status.progress = progress;
               status.estimatedTimeRemaining = timeLeft;
               status.elapsedJobTime = model.job.duration ?? 0;
-              status.fanSpeed = model.fans.at(fanIndex)?.requestedValue;
+              status.fanSpeed = (model.fans.at(fanIndex)?.requestedValue ?? 1) * 100;
               status.feedRate = move.speedFactor * 100;
               status.flowRates = this.machine.tools
                 .filter((t) => t.toolType === 'Extruder')

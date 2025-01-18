@@ -1,8 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Machine, MachineType } from '../../../models/machine.model';
+import { Machine } from '../../../models/machine.model';
 import { MachineProvider } from './machine.provider';
 import { OctoprintMachineProvider } from './octoprint-machine.provider';
-import { HttpClient } from '@angular/common/http';
 import { RepRapFirmwareMachineProvider } from './reprapfirmware-machine.provider';
 
 @Injectable({
@@ -11,7 +11,7 @@ import { RepRapFirmwareMachineProvider } from './reprapfirmware-machine.provider
 export class MachineProviderService {
   providerCache = new Map<number, MachineProvider>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getProvider(machine: Machine): MachineProvider {
     let provider = this.providerCache.get(machine.id);
