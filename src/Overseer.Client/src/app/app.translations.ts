@@ -1,7 +1,7 @@
 import { APP_INITIALIZER, LOCALE_ID } from '@angular/core';
-import { ITranslationService, I18NEXT_SERVICE } from 'angular-i18next';
-import HttpApi from 'i18next-http-backend';
+import { I18NEXT_SERVICE, ITranslationService } from 'angular-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import HttpApi from 'i18next-http-backend';
 import { environment } from '../environments/environment';
 
 export function appInit(i18next: ITranslationService) {

@@ -15,9 +15,9 @@ namespace Overseer.Models
     {
         public int HeaterIndex { get; set; }
 
-        public float Actual { get; set; }
+        public double Actual { get; set; }
 
-        public float Target { get; set; }
+        public double Target { get; set; }
     }
 
     public class MachineStatus
@@ -47,22 +47,22 @@ namespace Overseer.Models
         /// <summary>
         /// The percentage of completion
         /// </summary>
-        public float Progress { get; set; }
+        public double Progress { get; set; }
 
         /// <summary>
         /// The current speed of the fan
         /// </summary>
-        public float FanSpeed { get; set; }
+        public double FanSpeed { get; set; }
 
         /// <summary>
         /// The current feed rate of the operation
         /// </summary>
-        public float FeedRate { get; set; }
+        public double FeedRate { get; set; }
 
         /// <summary>
         /// The current flow rates for each extruder
         /// </summary>
-        public Dictionary<int, float> FlowRates { get; set; } = new Dictionary<int, float>();
+        public Dictionary<int, double> FlowRates { get; set; } = new Dictionary<int, double>();
 
         /// <summary>
         /// The current temperatures for each heater

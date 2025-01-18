@@ -6,6 +6,9 @@
     "streetsidesoftware.code-spell-checker",
     "jeremycaron.csharp-organize-usings",
     "angular.ng-template",
-    "johnpapa.angular2"
+    "johnpapa.angular2",
+    "ms-dotnettools.vscode-dotnet-runtime",
+    "github.vscode-github-actions",
+    "esbenp.prettier-vscode"
   ]
 }

@@ -6,7 +6,6 @@ import { defaultPollInterval } from '../../models/constants';
 import { MachineStatus } from '../../models/machine-status.model';
 import { MonitoringService } from '../monitoring.service';
 
-// This is used when the .net core host is used.
 @Injectable({
   providedIn: 'root',
 })
@@ -21,6 +20,24 @@ export class RemoteMonitoringService implements MonitoringService {
       .build();
 
     this.hubConnection.on('statusUpdate', (statusUpdate: MachineStatus) => this.statusEvent$.next(statusUpdate));
+    this.hubConnection.onclose(() => {
+      if (!this.isConnected) return;
+      this.start();
+    });
+  }
+
+  private async start(): Promise<void> {
+    try {
+      this.hubConnection.start().then(() => {
+        this.hubConnection.invoke('startMonitoring');
+        this.isConnected = true;
+      });
+    } catch (error) {
+      setTimeout(() => {
+        if (!this.isConnected) return;
+        this.start();
+      }, defaultPollInterval);
+    }
   }
 
   enableMonitoring(): Observable<MachineStatus> {
@@ -32,10 +49,7 @@ export class RemoteMonitoringService implements MonitoringService {
     }
 
     if (this.hubConnection.state === HubConnectionState.Disconnected) {
-      this.hubConnection.start().then(() => {
-        this.hubConnection.invoke('startMonitoring');
-        this.isConnected = true;
-      });
+      this.start();
     }
 
     return this.statusEvent$;
@@ -44,7 +58,7 @@ export class RemoteMonitoringService implements MonitoringService {
   disableMonitoring() {
     if (!this.isConnected) return;
 
-    this.hubConnection.stop();
     this.isConnected = false;
+    this.hubConnection.stop();
   }
 }

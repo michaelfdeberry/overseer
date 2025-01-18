@@ -2,7 +2,8 @@
 using System.Linq;
 
 using Overseer.Data;
-using Overseer.Machines.Providers;
+using Overseer.Machines.Octoprint;
+using Overseer.Machines.RepRapFirmware;
 using Overseer.Models;
 
 namespace Overseer.Updates

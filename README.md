@@ -6,7 +6,7 @@ Includes support for:
 
 - [Octoprint](https://github.com/foosel/OctoPrint)
 - [RepRapFirmware](https://github.com/dc42/RepRapFirmware) - Firmware Versions 3.5.0 and beyond.
-- [Bambu Labs](https://wiki.bambulab.com/en/home) - Only supported in the server version of Overseer. Only tested in LAN only mode.
+- [Bambu Labs](https://wiki.bambulab.com/en/home) - Only supported in the server version of Overseer. Only tested in LAN only mode with an X1C.
 
 **WARNING:** It is recommended that you do **not** configure Overseer to be accessible outside of your local network.
 

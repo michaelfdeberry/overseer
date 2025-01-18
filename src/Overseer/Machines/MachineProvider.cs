@@ -5,7 +5,7 @@ using log4net;
 
 using Overseer.Models;
 
-namespace Overseer.Machines.Providers
+namespace Overseer.Machines
 {
     public abstract class MachineProvider<TMachine> : IMachineProvider<TMachine> where TMachine : Machine, new()
     {
