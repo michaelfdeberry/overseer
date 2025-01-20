@@ -13,9 +13,9 @@ public class Layer
 
 public class TimesLeft
 {
-  public int? Filament { get; set; };
-  public int? File { get; set; };
-  public int? Slicer { get; set; };
+  public int? Filament { get; set; }
+  public int? File { get; set; }
+  public int? Slicer { get; set; }
 }
 
 public class GCodeFileInfo
