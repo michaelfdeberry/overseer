@@ -160,18 +160,18 @@ namespace Overseer.Machines.RepRapFirmware
         var totalExtruded = extruders.Select(x => x.RawPosition).Aggregate((product, next) => product + next);
         var progress = totalExtruded / totalFilament * 100d;
 
-        return (model.Job.TimesLeft.Filament ?? 0, Math.Max(0d, Math.Round(progress, 1)));
+        return (model.Job.TimesLeft?.Filament ?? 0, Math.Max(0d, Math.Round(progress, 1)));
       }
 
-      if (model.Job.TimesLeft.Slicer != null && model.Job.TimesLeft.Slicer > 0 && model.Job.Duration != null)
+      if (model.Job.TimesLeft?.Slicer != null && model.Job.TimesLeft?.Slicer > 0 && model.Job.Duration != null)
       {
-        var estimatedTotal = model.Job.Duration + model.Job.TimesLeft.Slicer;
+        var estimatedTotal = model.Job.Duration + model.Job.TimesLeft?.Slicer;
         var progress = model.Job.TimesLeft.Slicer / estimatedTotal * 100f; ;
-        return (model.Job.TimesLeft.Slicer ?? 0, Math.Max(0, Math.Round(progress ?? -1 * 100)));
+        return (model.Job.TimesLeft?.Slicer ?? 0, Math.Max(0, Math.Round(progress ?? -1 * 100)));
       }
 
       var fractionPrinted = model.Job.FilePosition / file.Size * 100f;
-      return (model.Job.TimesLeft.File ?? 0, fractionPrinted ?? 0);
+      return (model.Job.TimesLeft?.File ?? 0, fractionPrinted ?? 0);
     }
   }
 }
