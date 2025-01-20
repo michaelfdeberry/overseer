@@ -15,18 +15,18 @@ public enum HeaterState
 
 public class Heater
 {
-  public double Active { get; set; } = 0;
-  public double AvgPwm { get; set; } = 0;
-  public double Current { get; set; } = -273.15f;
-  public double Max { get; set; } = 285;
-  public int MaxBadReadings { get; set; } = 3;
-  public double MaxHeatingFaultTime { get; set; } = 5;
-  public double MaxTempExcursion { get; set; } = 15;
-  public double Min { get; set; } = -10;
-  public int Sensor { get; set; } = -1;
-  public double Standby { get; set; } = 0;
+  public double Active { get; set; }
+  public double AvgPwm { get; set; }
+  public double Current { get; set; }
+  public double Max { get; set; }
+  public int MaxBadReadings { get; set; }
+  public double MaxHeatingFaultTime { get; set; }
+  public double MaxTempExcursion { get; set; }
+  public double Min { get; set; }
+  public int Sensor { get; set; }
+  public double Standby { get; set; }
   [JsonConverter(typeof(JsonStringEnumConverter))]
-  public HeaterState State { get; set; } = HeaterState.Off;
+  public HeaterState State { get; set; }
 }
 
 public class Heat
