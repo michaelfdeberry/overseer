@@ -164,8 +164,8 @@ public class OctoprintMachineProvider : PollingMachineProvider<OctoprintMachine>
         status.Temperatures.Add(t.Index, new()
         {
           HeaterIndex = t.Index,
-          Actual = temp.Actual,
-          Target = temp.Target
+          Actual = temp.Actual ?? 0,
+          Target = temp.Target ?? 0
         });
       }
     });
