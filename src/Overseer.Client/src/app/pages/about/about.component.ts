@@ -5,10 +5,9 @@ import { ApplicationInfo } from '../../models/application-info.model';
 import { LoggingService } from '../../services/logging.service';
 
 @Component({
-  selector: 'app-about',
-  templateUrl: './about.component.html',
-  standalone: true,
-  imports: [I18NextModule],
+    selector: 'app-about',
+    templateUrl: './about.component.html',
+    imports: [I18NextModule]
 })
 export class AboutComponent implements OnInit {
   private settingsService = inject(SettingsService);

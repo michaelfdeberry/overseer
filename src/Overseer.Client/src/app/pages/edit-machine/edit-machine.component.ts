@@ -13,11 +13,10 @@ import { MachinesService } from '../../services/machines.service';
 import { ToastsService } from '../../services/toast.service';
 
 @Component({
-  selector: 'app-edit-machine',
-  templateUrl: './edit-machine.component.html',
-  standalone: true,
-  imports: [I18NextModule, ReactiveFormsModule, RouterLink, MachineHostComponent],
-  providers: [DialogService, CertificateErrorService],
+    selector: 'app-edit-machine',
+    templateUrl: './edit-machine.component.html',
+    imports: [I18NextModule, ReactiveFormsModule, RouterLink, MachineHostComponent],
+    providers: [DialogService, CertificateErrorService]
 })
 export class EditMachineComponent {
   private location = inject(Location);

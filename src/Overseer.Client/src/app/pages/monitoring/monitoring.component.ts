@@ -11,11 +11,10 @@ import { MonitoringService } from '../../services/monitoring.service';
 import { SettingsService } from '../../services/settings.service';
 
 @Component({
-  selector: 'app-monitoring',
-  templateUrl: './monitoring.component.html',
-  styleUrls: ['./monitoring.component.scss'],
-  standalone: true,
-  imports: [MachineMonitorComponent, I18NextModule, RouterLink],
+    selector: 'app-monitoring',
+    templateUrl: './monitoring.component.html',
+    styleUrls: ['./monitoring.component.scss'],
+    imports: [MachineMonitorComponent, I18NextModule, RouterLink]
 })
 export class MonitoringComponent {
   private destroyRef = inject(DestroyRef);

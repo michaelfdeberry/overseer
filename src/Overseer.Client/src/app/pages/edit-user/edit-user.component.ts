@@ -12,11 +12,10 @@ import { ToastsService } from '../../services/toast.service';
 import { UsersService } from '../../services/users.service';
 
 @Component({
-  selector: 'app-edit-user',
-  templateUrl: './edit-user.component.html',
-  standalone: true,
-  imports: [I18NextModule, ReactiveFormsModule, RouterLink],
-  providers: [DialogService],
+    selector: 'app-edit-user',
+    templateUrl: './edit-user.component.html',
+    imports: [I18NextModule, ReactiveFormsModule, RouterLink],
+    providers: [DialogService]
 })
 export class EditUserComponent {
   private router = inject(Router);

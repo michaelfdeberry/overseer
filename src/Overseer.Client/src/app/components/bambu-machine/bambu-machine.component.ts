@@ -7,10 +7,9 @@ import { BambuMachineForm, RepRapMachineForm } from '../../models/form.types';
 import { BambuMachine, Machine } from '../../models/machine.model';
 
 @Component({
-  selector: 'app-bambu-machine',
-  templateUrl: './bambu-machine.component.html',
-  standalone: true,
-  imports: [ReactiveFormsModule, I18NextModule, NgbCollapseModule],
+    selector: 'app-bambu-machine',
+    templateUrl: './bambu-machine.component.html',
+    imports: [ReactiveFormsModule, I18NextModule, NgbCollapseModule]
 })
 export class BambuMachineComponent {
   private destroy = inject(DestroyRef);

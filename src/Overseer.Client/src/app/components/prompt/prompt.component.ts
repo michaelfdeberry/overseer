@@ -10,10 +10,9 @@ export type PromptOptions = {
 };
 
 @Component({
-  selector: 'app-prompt',
-  templateUrl: './prompt.component.html',
-  standalone: true,
-  imports: [I18NextModule],
+    selector: 'app-prompt',
+    templateUrl: './prompt.component.html',
+    imports: [I18NextModule]
 })
 export class PromptComponent {
   activeModal = inject(NgbActiveModal);

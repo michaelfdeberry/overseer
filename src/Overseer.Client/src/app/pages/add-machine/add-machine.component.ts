@@ -12,11 +12,10 @@ import { MachinesService } from '../../services/machines.service';
 import { ToastsService } from '../../services/toast.service';
 
 @Component({
-  selector: 'app-add-machine',
-  templateUrl: './add-machine.component.html',
-  standalone: true,
-  imports: [I18NextModule, ReactiveFormsModule, RouterLink, CreateMachineComponent],
-  providers: [DialogService, CertificateErrorService],
+    selector: 'app-add-machine',
+    templateUrl: './add-machine.component.html',
+    imports: [I18NextModule, ReactiveFormsModule, RouterLink, CreateMachineComponent],
+    providers: [DialogService, CertificateErrorService]
 })
 export class AddMachineComponent {
   private router = inject(Router);

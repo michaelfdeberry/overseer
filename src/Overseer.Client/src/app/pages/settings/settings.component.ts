@@ -8,10 +8,9 @@ import { ThemeService } from '../../services/theme.service';
 import { ToastsService } from '../../services/toast.service';
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  standalone: true,
-  imports: [ReactiveFormsModule, I18NextModule, FormsModule],
+    selector: 'app-settings',
+    templateUrl: './settings.component.html',
+    imports: [ReactiveFormsModule, I18NextModule, FormsModule]
 })
 export class SettingsComponent {
   intervals = pollIntervals;

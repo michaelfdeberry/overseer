@@ -6,11 +6,10 @@ import { UnauthenticatedComponent } from '../../components/unauthenticated/unaut
 import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
-  standalone: true,
-  imports: [UnauthenticatedComponent, I18NextModule, ReactiveFormsModule],
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    imports: [UnauthenticatedComponent, I18NextModule, ReactiveFormsModule]
 })
 export class LoginComponent {
   authenticationService = inject(AuthenticationService);

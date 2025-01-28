@@ -16,11 +16,10 @@ import { MachinesService } from '../../services/machines.service';
 import { ToastsService } from '../../services/toast.service';
 
 @Component({
-  selector: 'app-setup',
-  templateUrl: './setup.component.html',
-  standalone: true,
-  imports: [UnauthenticatedComponent, I18NextModule, ReactiveFormsModule, CreateUserComponent, CreateMachineComponent],
-  providers: [DialogService, CertificateErrorService],
+    selector: 'app-setup',
+    templateUrl: './setup.component.html',
+    imports: [UnauthenticatedComponent, I18NextModule, ReactiveFormsModule, CreateUserComponent, CreateMachineComponent],
+    providers: [DialogService, CertificateErrorService]
 })
 export class SetupComponent {
   private router = inject(Router);

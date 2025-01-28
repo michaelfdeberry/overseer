@@ -1,10 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
-$primary: #5cb248;
+// $primary: #5cb248;
 
 /* Importing Bootstrap SCSS file. */
-@import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-icons/font/bootstrap-icons';
+@use 'bootstrap/scss/bootstrap' as *;
+@use 'bootstrap-icons/font/bootstrap-icons' as *;
 
 html,
 body,

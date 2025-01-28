@@ -6,11 +6,10 @@ import { Machine } from '../../models/machine.model';
 import { MachinesService } from '../../services/machines.service';
 
 @Component({
-  selector: 'app-list-machines',
-  templateUrl: './list-machines.component.html',
-  styleUrl: './list-machines.component.scss',
-  standalone: true,
-  imports: [I18NextModule, RouterLink, CdkDropList, CdkDrag],
+    selector: 'app-list-machines',
+    templateUrl: './list-machines.component.html',
+    styleUrl: './list-machines.component.scss',
+    imports: [I18NextModule, RouterLink, CdkDropList, CdkDrag]
 })
 export class ListMachinesComponent {
   private machinesService = inject(MachinesService);

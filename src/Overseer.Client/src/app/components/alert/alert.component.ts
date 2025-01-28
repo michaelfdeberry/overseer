@@ -9,10 +9,9 @@ export type AlertOptions = {
 };
 
 @Component({
-  selector: 'app-alert',
-  templateUrl: './alert.component.html',
-  standalone: true,
-  imports: [I18NextModule],
+    selector: 'app-alert',
+    templateUrl: './alert.component.html',
+    imports: [I18NextModule]
 })
 export class AlertComponent {
   activeModal = inject(NgbActiveModal);
