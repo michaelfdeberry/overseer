@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, LOCALE_ID } from '@angular/core';
+import { LOCALE_ID, inject, provideAppInitializer } from '@angular/core';
 import { I18NEXT_SERVICE, ITranslationService } from 'angular-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpApi from 'i18next-http-backend';
@@ -26,12 +26,10 @@ export function localeIdFactory(i18next: ITranslationService) {
 }
 
 export const I18N_PROVIDERS = [
-  {
-    provide: APP_INITIALIZER,
-    useFactory: appInit,
-    deps: [I18NEXT_SERVICE],
-    multi: true,
-  },
+  provideAppInitializer(() => {
+        const initializerFn = (appInit)(inject(I18NEXT_SERVICE));
+        return initializerFn();
+      }),
   {
     provide: LOCALE_ID,
     deps: [I18NEXT_SERVICE],

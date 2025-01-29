@@ -14,12 +14,11 @@ import { MonitoringService } from '../../services/monitoring.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'app-machine-monitor',
-  templateUrl: './machine-monitor.component.html',
-  styleUrls: ['./machine-monitor.component.scss'],
-  imports: [CommonModule, I18NextModule, DurationPipe, NgbProgressbarModule, RouterLink],
-  providers: [DialogService],
-  standalone: true,
+    selector: 'app-machine-monitor',
+    templateUrl: './machine-monitor.component.html',
+    styleUrls: ['./machine-monitor.component.scss'],
+    imports: [CommonModule, I18NextModule, DurationPipe, NgbProgressbarModule, RouterLink],
+    providers: [DialogService]
 })
 export class MachineMonitorComponent {
   private host = inject(ElementRef);

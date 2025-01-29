@@ -9,10 +9,9 @@ import { User } from '../../models/user.model';
 import { UsersService } from '../../services/users.service';
 
 @Component({
-  selector: 'app-add-user',
-  templateUrl: './add-user.component.html',
-  standalone: true,
-  imports: [I18NextModule, ReactiveFormsModule, RouterLink, CreateUserComponent],
+    selector: 'app-add-user',
+    templateUrl: './add-user.component.html',
+    imports: [I18NextModule, ReactiveFormsModule, RouterLink, CreateUserComponent]
 })
 export class AddUserComponent {
   private builder = inject(FormBuilder);

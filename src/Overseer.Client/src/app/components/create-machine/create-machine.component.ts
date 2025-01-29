@@ -8,10 +8,9 @@ import { MachineHostComponent } from '../machine-host/machine-host.component';
 import { MachinesService } from '../../services/machines.service';
 
 @Component({
-  selector: 'app-create-machine',
-  templateUrl: './create-machine.component.html',
-  standalone: true,
-  imports: [MachineHostComponent, I18NextModule, ReactiveFormsModule],
+    selector: 'app-create-machine',
+    templateUrl: './create-machine.component.html',
+    imports: [MachineHostComponent, I18NextModule, ReactiveFormsModule]
 })
 export class CreateMachineComponent implements OnInit {
   private machinesService = inject(MachinesService);

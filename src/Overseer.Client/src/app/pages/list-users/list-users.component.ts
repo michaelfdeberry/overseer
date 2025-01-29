@@ -5,10 +5,9 @@ import { User } from '../../models/user.model';
 import { UsersService } from '../../services/users.service';
 
 @Component({
-  selector: 'app-list-users',
-  templateUrl: './list-users.component.html',
-  standalone: true,
-  imports: [I18NextModule, RouterLink],
+    selector: 'app-list-users',
+    templateUrl: './list-users.component.html',
+    imports: [I18NextModule, RouterLink]
 })
 export class ListUsersComponent {
   private usersService = inject(UsersService);

@@ -6,10 +6,9 @@ import { CreateUserForm } from '../../models/form.types';
 import { AccessLevel } from '../../models/user.model';
 
 @Component({
-  selector: 'app-create-user',
-  templateUrl: './create-user.component.html',
-  standalone: true,
-  imports: [ReactiveFormsModule, I18NextModule],
+    selector: 'app-create-user',
+    templateUrl: './create-user.component.html',
+    imports: [ReactiveFormsModule, I18NextModule]
 })
 export class CreateUserComponent implements OnInit {
   accessLevel = input<AccessLevel | undefined>();

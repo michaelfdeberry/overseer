@@ -9,11 +9,10 @@ import { AuthenticationService } from './services/authentication.service';
 import { ThemeService } from './services/theme.service';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, NgProgressbar, NgProgressHttp, SvgComponent, I18NextModule, RouterLink, RouterLinkActive, ToastsComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+    selector: 'app-root',
+    imports: [RouterOutlet, NgProgressbar, NgProgressHttp, SvgComponent, I18NextModule, RouterLink, RouterLinkActive, ToastsComponent],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent {
   private router = inject(Router);

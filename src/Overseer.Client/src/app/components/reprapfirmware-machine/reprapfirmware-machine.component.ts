@@ -8,10 +8,9 @@ import { Machine, RepRapFirmwareMachine } from '../../models/machine.model';
 import { MachinesService } from '../../services/machines.service';
 
 @Component({
-  selector: 'app-reprap-firmware-machine',
-  templateUrl: './reprapfirmware-machine.component.html',
-  standalone: true,
-  imports: [ReactiveFormsModule, I18NextModule, NgbCollapseModule],
+    selector: 'app-reprap-firmware-machine',
+    templateUrl: './reprapfirmware-machine.component.html',
+    imports: [ReactiveFormsModule, I18NextModule, NgbCollapseModule]
 })
 export class RepRapFirmwareMachineComponent {
   private destroy = inject(DestroyRef);
