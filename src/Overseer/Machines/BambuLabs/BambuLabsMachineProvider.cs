@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -6,7 +7,6 @@ using System.Threading.Tasks;
 using System.Timers;
 
 using MQTTnet;
-using MQTTnet.Client;
 
 using Overseer.Machines.BambuLabs.Models;
 using Overseer.Models;
@@ -105,7 +105,8 @@ public class BambuMachineProvider : MachineProvider<BambuMachine>
     _mqttClient?.DisconnectAsync().Wait();
     _mqttClient?.Dispose();
 
-    _mqttClient = new MqttFactory().CreateMqttClient();
+    var mqttFactory = new MqttClientFactory();
+    _mqttClient = mqttFactory.CreateMqttClient();
     var mqttClientOptions = new MqttClientOptionsBuilder()
         .WithProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion.V311)
         .WithCredentials("bblp", Machine.AccessCode)
@@ -130,8 +131,8 @@ public class BambuMachineProvider : MachineProvider<BambuMachine>
 
   Task OnMessage(MqttApplicationMessageReceivedEventArgs args)
   {
-    var payload = args.ApplicationMessage.PayloadSegment;
-    var json = Encoding.UTF8.GetString(payload.Array.Where(b => b != 0).ToArray());
+    var payload = args.ApplicationMessage.Payload;
+    var json = Encoding.UTF8.GetString([.. payload.ToArray().Where(b => b != 0)]);
     var message = JsonSerializer.Deserialize<Message>(json);
 
     // if the gcode_state is not present, ignore the message
