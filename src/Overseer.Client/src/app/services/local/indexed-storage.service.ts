@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { map, Observable } from 'rxjs';
+import { LogEntry } from '../../models/log-entry.model';
 import { Machine } from '../../models/machine.model';
 import { PersistedUser } from '../../models/user.model';
-import { LogEntry } from '../../models/log-entry.model';
 
 export class Store<T> {
-  constructor(private storeName: string, private db: NgxIndexedDBService) {}
+  constructor(
+    private storeName: string,
+    private db: NgxIndexedDBService
+  ) {}
 
   add(value: T, key?: number): Observable<number> {
     return this.db.add<T>(this.storeName, value, key).pipe(map((value) => value.id));
@@ -28,7 +31,7 @@ export class Store<T> {
     return this.db.update<T>(this.storeName, value);
   }
 
-  deleteRecord(key: number): Observable<boolean> {
+  deleteRecord(key: number): Observable<void> {
     return this.db.deleteByKey(this.storeName, key);
   }
 
@@ -36,12 +39,8 @@ export class Store<T> {
     return this.db.delete<T>(this.storeName, key);
   }
 
-  clear(): Observable<boolean> {
+  clear(): Observable<void> {
     return this.db.clear(this.storeName);
-  }
-
-  openCursor(keyRange?: IDBKeyRange): Observable<Event> {
-    return this.db.openCursor(this.storeName, keyRange);
   }
 
   getByIndex(indexName: string, key: IDBValidKey): Observable<T> {

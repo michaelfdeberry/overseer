@@ -9,6 +9,7 @@ using Overseer.Data;
 namespace Overseer.Models
 {
   [JsonDerivedType(typeof(BambuMachine))]
+  [JsonDerivedType(typeof(ElegooMachine))]
   [JsonDerivedType(typeof(OctoprintMachine))]
   [JsonDerivedType(typeof(RepRapFirmwareMachine))]
   public abstract class Machine : IEntity

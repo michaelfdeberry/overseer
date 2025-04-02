@@ -69,9 +69,9 @@ public class BambuMachineProvider : MachineProvider<BambuMachine>
     Machine.Tools =
     [
       new (MachineToolType.Heater, 0, "bed"),
-        new (MachineToolType.Heater, 1),
-        new (MachineToolType.Extruder, 0),
-      ];
+      new (MachineToolType.Heater, 1),
+      new (MachineToolType.Extruder, 0),
+    ];
 
     return Task.CompletedTask;
   }
@@ -90,7 +90,7 @@ public class BambuMachineProvider : MachineProvider<BambuMachine>
       }
 
       // since it's mqtt updates are pushed, but if we haven't received an update in the last interval, request one
-      if (_lastStatusUpdate.HasValue && DateTime.Now.Subtract(_lastStatusUpdate.Value).TotalSeconds < interval) return;
+      if (_lastStatusUpdate.HasValue && DateTime.UtcNow.Subtract(_lastStatusUpdate.Value).TotalSeconds < interval) return;
 
       await _mqttClient?.PublishAsync(new MqttApplicationMessageBuilder()
         .WithTopic($"device/{Machine.Serial}/request")
@@ -173,7 +173,7 @@ public class BambuMachineProvider : MachineProvider<BambuMachine>
     };
 
     StatusUpdate?.Invoke(this, new EventArgs<MachineStatus>(status));
-    _lastStatusUpdate = DateTime.Now;
+    _lastStatusUpdate = DateTime.UtcNow;
     return Task.CompletedTask;
   }
 

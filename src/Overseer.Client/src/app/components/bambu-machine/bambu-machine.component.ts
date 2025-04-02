@@ -1,15 +1,14 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { I18NextModule } from 'angular-i18next';
 import { webCamOrientations } from '../../models/constants';
-import { BambuMachineForm, RepRapMachineForm } from '../../models/form.types';
+import { BambuMachineForm } from '../../models/form.types';
 import { BambuMachine, Machine } from '../../models/machine.model';
 
 @Component({
-    selector: 'app-bambu-machine',
-    templateUrl: './bambu-machine.component.html',
-    imports: [ReactiveFormsModule, I18NextModule, NgbCollapseModule]
+  selector: 'app-bambu-machine',
+  templateUrl: './bambu-machine.component.html',
+  imports: [ReactiveFormsModule, I18NextModule],
 })
 export class BambuMachineComponent {
   private destroy = inject(DestroyRef);
@@ -28,7 +27,7 @@ export class BambuMachineComponent {
     });
   }
 
-  build(form?: FormGroup<RepRapMachineForm>, machine?: Machine) {
+  build(form?: FormGroup<BambuMachineForm>, machine?: Machine) {
     if (!form) return;
 
     this.form = form;

@@ -5,6 +5,7 @@ namespace Overseer.Models
     Unknown,
     Octoprint,
     RepRapFirmware,
-    Bambu
+    Bambu,
+    Elegoo,
   }
 }

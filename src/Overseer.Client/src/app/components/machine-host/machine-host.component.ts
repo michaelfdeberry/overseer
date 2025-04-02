@@ -4,6 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MachineForm } from '../../models/form.types';
 import { Machine, MachineType } from '../../models/machine.model';
 import { BambuMachineComponent } from '../bambu-machine/bambu-machine.component';
+import { ElegooMachineComponent } from '../elegoo-machine/elegoo-machine.component';
 import { OctoprintMachineComponent } from '../octoprint-machine/octoprint-machine.component';
 import { RepRapFirmwareMachineComponent } from '../reprapfirmware-machine/reprapfirmware-machine.component';
 
@@ -20,6 +21,7 @@ export class MachineHostComponent implements OnInit {
     Octoprint: OctoprintMachineComponent,
     RepRapFirmware: RepRapFirmwareMachineComponent,
     Bambu: BambuMachineComponent,
+    Elegoo: ElegooMachineComponent,
   };
 
   form = input<FormGroup<MachineForm>>();
