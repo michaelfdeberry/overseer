@@ -1,4 +1,4 @@
-import { MachineType, WebCamOrientation } from './machine.model';
+import { WebCamOrientation } from './machine.model';
 import { AccessLevel } from './user.model';
 
 export class DisplayOption<TValue> {

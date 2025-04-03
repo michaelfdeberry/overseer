@@ -1,8 +1,7 @@
 import { Observable, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
-
-import { Machine } from '../../../models/machine.model';
+import { catchError, tap } from 'rxjs/operators';
 import { MachineStatus } from '../../../models/machine-status.model';
+import { Machine } from '../../../models/machine.model';
 
 export interface MachineProvider {
   readonly machine: Machine;

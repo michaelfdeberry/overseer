@@ -15,7 +15,7 @@ public class ElegooMachineProvider : MachineProvider<ElegooMachine>
 {
   const int PAUSE_COMMAND = 129;
   const int RESUME_COMMAND = 131;
-  const int CANCEL_COMMAND = 130; // TODO: figure this out
+  const int CANCEL_COMMAND = 130;
   const int PRINTER_COMMANDS = 403;
   const int ENABLE_CAMERA_COMMAND = 386;
 

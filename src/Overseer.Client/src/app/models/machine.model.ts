@@ -41,8 +41,9 @@ export type BambuMachine = MachineBase & {
 };
 
 export type ElegooMachine = MachineBase & {
+  machineType: 'Elegoo';
   ipAddress: string;
 };
 
 // all the needed properties will just go on the machine
-export type Machine = OctoprintMachine | RepRapFirmwareMachine | BambuMachine;
+export type Machine = OctoprintMachine | RepRapFirmwareMachine | BambuMachine | ElegooMachine;

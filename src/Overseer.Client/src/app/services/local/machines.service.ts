@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { iif, NEVER, Observable, of } from 'rxjs';
+import { NEVER, Observable, of } from 'rxjs';
 
 import { catchError, map, switchMap, take } from 'rxjs/operators';
 import { RequireAdministrator } from '../../decorators/require-admin.decorator';
@@ -83,6 +83,6 @@ export class LocalMachinesService implements MachinesService {
 
   getMachineTypes(): Observable<MachineType[]> {
     // no bambu on the web app version, at least for now
-    return of(['Octoprint', 'RepRapFirmware']);
+    return of(['Octoprint', 'RepRapFirmware', 'Elegoo']);
   }
 }
