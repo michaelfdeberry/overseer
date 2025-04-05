@@ -130,7 +130,7 @@ public class ElegooMachineProvider : MachineProvider<ElegooMachine>
 
     _timer.Elapsed += (sender, args) =>
     {
-      if (_lastStatusUpdate.HasValue && DateTime.UtcNow.Subtract(_lastStatusUpdate.Value).Milliseconds <= interval)
+      if (_lastStatusUpdate.HasValue && DateTime.UtcNow.Subtract(_lastStatusUpdate.Value).TotalMilliseconds <= interval)
       {
         // there has been no updates, so we can just send the last message again
         ReceiveMessage(_lastMessage);
