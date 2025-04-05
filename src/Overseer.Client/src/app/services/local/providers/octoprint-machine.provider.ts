@@ -4,10 +4,10 @@ import { catchError, map, mergeMap } from 'rxjs/operators';
 
 import { MachineStatus } from '../../../models/machine-status.model';
 import { Machine, MachineTool, OctoprintMachine } from '../../../models/machine.model';
-import { BaseMachineProvider } from './machine.provider';
+import { PollingMachineProvider } from './machine.provider';
 import { processUrl } from './url-processor';
 
-export class OctoprintMachineProvider extends BaseMachineProvider<OctoprintMachine> {
+export class OctoprintMachineProvider extends PollingMachineProvider<OctoprintMachine> {
   constructor(
     machine: Machine,
     private http: HttpClient

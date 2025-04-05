@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, merge, Observable, ReplaySubject, Subject, Subscription, timer } from 'rxjs';
+import { forkJoin, Observable, ReplaySubject, Subscription } from 'rxjs';
 import { MachineStatus } from '../../models/machine-status.model';
 import { MachinesService } from '../machines.service';
 import { MonitoringService } from '../monitoring.service';
 import { SettingsService } from '../settings.service';
 import { MachineProviderService } from './providers/machine-provider.service';
-import { defaultPollInterval } from '../../models/constants';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocalMonitoringService implements MonitoringService {
-  private statusEvent$ = new ReplaySubject<MachineStatus>(10, defaultPollInterval, { now: () => Date.now() });
-  private timerSubscription?: Subscription;
+  private machineSubscriptions: Record<number, Subscription> = {};
+  private status$?: ReplaySubject<MachineStatus>;
 
   constructor(
     private settingsService: SettingsService,
@@ -21,28 +20,30 @@ export class LocalMonitoringService implements MonitoringService {
   ) {}
 
   enableMonitoring(): Observable<MachineStatus> {
-    if (!this.timerSubscription) {
-      this.settingsService.getSettings().subscribe((settings) => {
-        this.timerSubscription = timer(0, settings.interval ?? defaultPollInterval).subscribe(() => this.fetchStatus());
+    if (!this.status$) {
+      this.status$ = new ReplaySubject<MachineStatus>(10);
+      forkJoin([this.settingsService.getSettings(), this.machineService.getMachines()]).subscribe(([settings, machines]) => {
+        this.machineProviders.getProviders(machines).forEach((p) => {
+          if (this.machineSubscriptions[p.machine.id]) {
+            return;
+          }
+
+          const subscription = p.listen$(settings).subscribe((s) => {
+            console.log('Update from', p.machine.name, s);
+            this.status$?.next(s);
+          });
+          this.machineSubscriptions[p.machine.id] = subscription;
+        });
       });
     }
 
-    return this.statusEvent$;
+    return this.status$;
   }
 
   disableMonitoring(): void {
-    if (!this.timerSubscription) return;
-
-    this.timerSubscription?.unsubscribe();
-    this.timerSubscription = undefined;
-  }
-
-  private fetchStatus(): void {
-    this.machineService.getMachines().subscribe((machines) => {
-      const providers = this.machineProviders.getProviders(machines);
-      merge(...providers.map((provider) => provider.getStatus())).subscribe((status) => {
-        this.statusEvent$.next(status);
-      });
-    });
+    Object.values(this.machineSubscriptions || {}).forEach((s) => s.unsubscribe());
+    this.machineSubscriptions = {};
+    this.status$?.complete();
+    this.status$ = undefined;
   }
 }

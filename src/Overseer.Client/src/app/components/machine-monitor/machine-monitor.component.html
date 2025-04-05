@@ -64,7 +64,7 @@
       <div class="flex-1">
         <div class="d-flex flex-row py-1 fs-7">
           <div class="flex-1">
-            {{ 'progress' | i18next }}: <b>{{ statusRef?.elapsedJobTime | duration }}</b>
+            {{ 'elapsed' | i18next }}: <b>{{ statusRef?.elapsedJobTime | duration }}</b>
           </div>
           <div>
             {{ 'remaining' | i18next }}: <b>{{ statusRef?.estimatedTimeRemaining | duration }}</b>
@@ -111,7 +111,7 @@
               @if (temperature) {
                 {{ temperature.actual | number: '1.0-0' }} &deg;C
               } @else {
-                {{ 'n/a' | i18next }}
+                {{ 'nonApplicable' | i18next }}
               }
             </div>
           </div>
@@ -139,7 +139,7 @@
                   {{ temperature.target | number: '1.0-0' }} &deg;C
                 }
               } @else {
-                <span>n/a</span>
+                <span>{{'nonApplicable' | i18next}}</span>
               }
             </div>
           </div>

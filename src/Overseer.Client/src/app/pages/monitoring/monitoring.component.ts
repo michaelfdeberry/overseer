@@ -1,4 +1,5 @@
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { I18NextModule } from 'angular-i18next';
 import { forkJoin } from 'rxjs';
@@ -11,10 +12,10 @@ import { MonitoringService } from '../../services/monitoring.service';
 import { SettingsService } from '../../services/settings.service';
 
 @Component({
-    selector: 'app-monitoring',
-    templateUrl: './monitoring.component.html',
-    styleUrls: ['./monitoring.component.scss'],
-    imports: [MachineMonitorComponent, I18NextModule, RouterLink]
+  selector: 'app-monitoring',
+  templateUrl: './monitoring.component.html',
+  styleUrls: ['./monitoring.component.scss'],
+  imports: [MachineMonitorComponent, I18NextModule, RouterLink],
 })
 export class MonitoringComponent {
   private destroyRef = inject(DestroyRef);
@@ -81,12 +82,15 @@ export class MonitoringComponent {
       setTimeout(() => this.loading.set(false), 250);
     });
 
-    this.monitoringService.enableMonitoring().subscribe((status) => {
-      this.statuses.update((statuses) => ({ ...statuses, [status.machineId]: status }));
-    });
+    console.log('monitoring component created');
+    this.monitoringService
+      .enableMonitoring()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((status) => {
+        this.statuses.update((statuses) => ({ ...statuses, [status.machineId]: status }));
+      });
 
     this.destroyRef.onDestroy(() => {
-      this.monitoringService.disableMonitoring();
       resizeObserver.disconnect();
     });
   }
@@ -106,7 +110,7 @@ export class MonitoringComponent {
       this.column.set('col-12');
       // figure out what to do on mobile. maybe it scrolls horizontally? maybe swipe through the machines.
     } else {
-      let base = document.body.clientWidth < 1024 ? 2 : 4;
+      let base = document.body.clientWidth > 1920 ? 4 : 2;
       const factor = Math.ceil(count / (Math.floor(count / base) + (count % base > 0 ? 1 : 0)));
       this.column.set(`col-${12 / factor}`);
     }

@@ -5,10 +5,10 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { isIdle, MachineStatus, TemperatureStatus } from '../../../models/machine-status.model';
 import { Machine, MachineTool, RepRapFirmwareMachine } from '../../../models/machine.model';
-import { BaseMachineProvider } from './machine.provider';
+import { PollingMachineProvider } from './machine.provider';
 import { processUrl } from './url-processor';
 
-export class RepRapFirmwareMachineProvider extends BaseMachineProvider<RepRapFirmwareMachine> {
+export class RepRapFirmwareMachineProvider extends PollingMachineProvider<RepRapFirmwareMachine> {
   constructor(
     machine: Machine,
     private http: HttpClient

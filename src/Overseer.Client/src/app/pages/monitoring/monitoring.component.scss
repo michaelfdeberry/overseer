@@ -10,10 +10,21 @@
 
   .row {
     flex: 1;
+    gap: 1rem;
+    padding: 1rem 0;
+
+    @media (min-width: 576px) {
+      gap: 0;
+      padding: 0;
+    }
 
     .col {
       min-height: 500px;
-      padding: 0;
+      padding: 0 1rem;
+
+      @media (min-width: 576px) {
+        padding: 0;
+      }
     }
   }
 }

@@ -1,7 +1,9 @@
-import { Observable, of } from 'rxjs';
+import { interval, Observable, of, ReplaySubject, Subscription } from 'rxjs';
 import { v4 as uuid } from 'uuid';
+import { defaultPollInterval } from '../../../models/constants';
 import { isIdle, MachineStatus } from '../../../models/machine-status.model';
 import { ElegooMachine, Machine } from '../../../models/machine.model';
+import { ApplicationSettings } from '../../../models/settings.model';
 import { MachineProvider } from './machine.provider';
 
 const pauseCommand = 129;
@@ -24,8 +26,10 @@ const retryDelay = 1000; // 1 second
 // This was the a quick proof of concept to determine if the websocket connection could be established with issues
 export class ElegooMachineProvider implements MachineProvider {
   private socket?: WebSocket;
-  private lastStatus?: MachineStatus;
   private lastMessage: any;
+  private lastMessageTimestamp?: number;
+  private status$?: ReplaySubject<MachineStatus>;
+  private intervalSubscription?: Subscription;
 
   machine: ElegooMachine;
 
@@ -53,7 +57,7 @@ export class ElegooMachineProvider implements MachineProvider {
   }
 
   setFanSpeed(percentage: number): Observable<void> {
-    if (this.lastStatus) {
+    if (this.lastMessage) {
       this.sendCommand(printerCommand, {
         ModelFan: percentage,
         AuxiliaryFan: this.lastMessage.Status.CurrentFanSpeed.AuxiliaryFan,
@@ -98,18 +102,6 @@ export class ElegooMachineProvider implements MachineProvider {
     return of(machine);
   }
 
-  getStatus(): Observable<MachineStatus> {
-    if (this.socket?.readyState !== WebSocket.OPEN) {
-      this.connect();
-    }
-
-    if (!this.lastStatus) {
-      this.lastStatus = { machineId: this.machine.id, state: 'Offline' };
-    }
-
-    return of(this.lastStatus);
-  }
-
   private receiveMessage(event: MessageEvent): void {
     const message = JSON.parse(event.data);
 
@@ -148,8 +140,9 @@ export class ElegooMachineProvider implements MachineProvider {
       status.flowRates = { 0: 100 };
     }
 
-    this.lastStatus = status;
     this.lastMessage = message;
+    this.lastMessageTimestamp = Date.now();
+    this.status$?.next(status);
   }
 
   private sendCommand(command: number, data?: unknown): void {
@@ -170,18 +163,57 @@ export class ElegooMachineProvider implements MachineProvider {
     this.socket?.send(message);
   }
 
-  private connect(): void {
-    if (this.socket?.readyState === WebSocket.OPEN) return;
+  listen$(settings: ApplicationSettings): Observable<MachineStatus> {
+    if (this.status$ && this.socket?.readyState === WebSocket.OPEN) {
+      this.receiveMessage(this.lastMessage);
+      return this.status$.asObservable();
+    }
 
+    const currentInterval = settings.interval ?? defaultPollInterval;
+    this.intervalSubscription = interval(currentInterval).subscribe(() => {
+      if (this.socket?.readyState === WebSocket.OPEN) {
+        // if there hasn't been an update, request one
+        if (this.lastMessageTimestamp && Date.now() - this.lastMessageTimestamp > currentInterval) {
+          this.sendCommand(0);
+        }
+      } else {
+        // if the socket closed since the last message, reconnect
+        this.connect();
+      }
+    });
+
+    return this.connect();
+  }
+
+  private disconnect(): void {
+    this.socket?.close(1000, 'Disconnecting');
+    this.socket = undefined;
+    this.status$?.complete();
+    this.status$ = undefined;
+    this.intervalSubscription?.unsubscribe();
+    this.intervalSubscription = undefined;
+  }
+
+  private connect(): Observable<MachineStatus> {
+    if (this.socket?.readyState === WebSocket.OPEN && !this.status$) {
+      // shouldn't really happen, but just in case
+      this.socket.close(1000, 'Already connected');
+    }
+
+    this.status$ = new ReplaySubject<MachineStatus>(1);
     this.socket = new WebSocket(`ws://${this.machine.ipAddress}:3030/websocket`);
-
     this.socket.addEventListener('open', () => {
+      retryCount = 0;
       this.sendCommand(0);
       this.sendCommand(enableCameraCommand, { enable: true });
     });
 
     this.socket.addEventListener('message', (event) => {
-      this.receiveMessage(event);
+      if (this.status$ && !this.status$.observed) {
+        this.disconnect();
+      } else {
+        this.receiveMessage(event);
+      }
     });
 
     this.socket.addEventListener('close', (event) => {
@@ -192,7 +224,7 @@ export class ElegooMachineProvider implements MachineProvider {
           if (retryCount < maxRetries) {
             console.log(`Connection lost, attempting reconnect ${retryCount + 1}/${maxRetries}`);
             retryCount++;
-            setTimeout(() => this.connect(), retryDelay);
+            setTimeout(() => this.connect(), retryDelay * Math.pow(2, retryCount - 1));
           } else {
             console.error('Connection failed after maximum retries');
           }
@@ -201,5 +233,7 @@ export class ElegooMachineProvider implements MachineProvider {
         tryReconnect();
       }
     });
+
+    return this.status$.asObservable();
   }
 }
