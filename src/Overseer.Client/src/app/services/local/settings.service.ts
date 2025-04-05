@@ -72,7 +72,7 @@ export class LocalSettingsService implements SettingsService {
       operatingSystem: parser.getOS().name ?? undefined,
       machineName: parser.getBrowser().name ?? undefined,
       version: environment.appVersion ?? undefined,
-      runtime: 'N/A',
+      runtime: '-',
     });
   }
 }

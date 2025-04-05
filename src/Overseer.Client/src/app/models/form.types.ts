@@ -34,4 +34,8 @@ export type BambuMachineForm = MachineFormBase & {
   serial?: FormControl<string | undefined | null>;
 };
 
+export type ElegooMachineForm = Exclude<MachineFormBase, 'url'> & {
+  ipAddress?: FormControl<string | undefined | null>;
+};
+
 export type MachineForm = RepRapMachineForm | OctoprintMachineForm | BambuMachineForm;

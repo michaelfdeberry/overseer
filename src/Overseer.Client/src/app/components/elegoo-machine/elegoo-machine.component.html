@@ -1,0 +1,12 @@
+@if (form) {
+  <div [formGroup]="form">
+    <div class="mb-3">
+      <label for="name" class="form-label">{{ 'name' | i18next }}</label>
+      <input type="text" class="form-control" id="name" required formControlName="name" />
+    </div>
+    <div class="mb-3">
+      <label for="ipAddress" class="form-label">{{ 'ipAddress' | i18next }}</label>
+      <input type="text" class="form-control" id="ipAddress" required formControlName="ipAddress" />
+    </div> 
+  </div>
+}

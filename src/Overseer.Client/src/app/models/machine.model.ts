@@ -1,6 +1,6 @@
 export type MachineToolType = 'Undetermined' | 'Heater' | 'Extruder';
 
-export type MachineType = 'Unknown' | 'Octoprint' | 'RepRapFirmware' | 'Bambu';
+export type MachineType = 'Unknown' | 'Octoprint' | 'RepRapFirmware' | 'Bambu' | 'Elegoo';
 
 export type WebCamOrientation = 'Default' | 'FlippedVertically' | 'FlippedHorizontally';
 
@@ -40,5 +40,10 @@ export type BambuMachine = MachineBase & {
   accessCode: string;
 };
 
+export type ElegooMachine = MachineBase & {
+  machineType: 'Elegoo';
+  ipAddress: string;
+};
+
 // all the needed properties will just go on the machine
-export type Machine = OctoprintMachine | RepRapFirmwareMachine | BambuMachine;
+export type Machine = OctoprintMachine | RepRapFirmwareMachine | BambuMachine | ElegooMachine;

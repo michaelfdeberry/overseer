@@ -1,6 +1,7 @@
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextPipe } from 'angular-i18next';
 import { forkJoin } from 'rxjs';
 import { MachineMonitorComponent } from '../../components/machine-monitor/machine-monitor.component';
 import { isIdle, MachineStatus } from '../../models/machine-status.model';
@@ -11,10 +12,10 @@ import { MonitoringService } from '../../services/monitoring.service';
 import { SettingsService } from '../../services/settings.service';
 
 @Component({
-    selector: 'app-monitoring',
-    templateUrl: './monitoring.component.html',
-    styleUrls: ['./monitoring.component.scss'],
-    imports: [MachineMonitorComponent, I18NextModule, RouterLink]
+  selector: 'app-monitoring',
+  templateUrl: './monitoring.component.html',
+  styleUrls: ['./monitoring.component.scss'],
+  imports: [MachineMonitorComponent, I18NextPipe, RouterLink],
 })
 export class MonitoringComponent {
   private destroyRef = inject(DestroyRef);
@@ -45,24 +46,17 @@ export class MonitoringComponent {
         const bStatus = statuses[b.id];
 
         if (!aStatus && !bStatus) return defaultSort;
+        if (!aStatus) return 1;
+        if (!bStatus) return -1;
 
-        const checkUndefined = (left: unknown | undefined, right: unknown | undefined): number | undefined => {
-          if (left === undefined && right === undefined) return defaultSort;
-          if (left !== undefined && right === undefined) return -1;
-          if (left === undefined && right !== undefined) return 1;
-          return undefined;
-        };
+        if (isIdle(aStatus.state) && isIdle(bStatus.state)) return defaultSort;
+        if (isIdle(aStatus.state)) return 1;
+        if (isIdle(bStatus.state)) return -1;
 
-        // idle machines will get moved to the end of the list
-        const idleCheck = checkUndefined(isIdle(aStatus?.state), isIdle(bStatus?.state));
-        if (idleCheck !== undefined) return idleCheck;
+        var remainingA = aStatus?.estimatedTimeRemaining || Infinity;
+        var remainingB = bStatus?.estimatedTimeRemaining || Infinity;
 
-        // it's possible the ETR won't be available initially, so it could be undefined here even if not idle.
-        const remainingCheck = checkUndefined(aStatus?.estimatedTimeRemaining, bStatus?.estimatedTimeRemaining);
-        if (remainingCheck !== undefined) return remainingCheck;
-
-        // if it can get here they are both numbers
-        return aStatus?.estimatedTimeRemaining! - bStatus?.estimatedTimeRemaining!;
+        return remainingA - remainingB || defaultSort;
       });
     }
 
@@ -81,12 +75,14 @@ export class MonitoringComponent {
       setTimeout(() => this.loading.set(false), 250);
     });
 
-    this.monitoringService.enableMonitoring().subscribe((status) => {
-      this.statuses.update((statuses) => ({ ...statuses, [status.machineId]: status }));
-    });
+    this.monitoringService
+      .enableMonitoring()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((status) => {
+        this.statuses.update((statuses) => ({ ...statuses, [status.machineId]: status }));
+      });
 
     this.destroyRef.onDestroy(() => {
-      this.monitoringService.disableMonitoring();
       resizeObserver.disconnect();
     });
   }
@@ -106,7 +102,7 @@ export class MonitoringComponent {
       this.column.set('col-12');
       // figure out what to do on mobile. maybe it scrolls horizontally? maybe swipe through the machines.
     } else {
-      let base = document.body.clientWidth < 1024 ? 2 : 4;
+      let base = document.body.clientWidth > 1920 ? 4 : 2;
       const factor = Math.ceil(count / (Math.floor(count / base) + (count % base > 0 ? 1 : 0)));
       this.column.set(`col-${12 / factor}`);
     }

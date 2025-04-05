@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, Renderer2 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextPipe } from 'angular-i18next';
 import { NgProgressbar } from 'ngx-progressbar';
 import { NgProgressHttp } from 'ngx-progressbar/http';
 import { SvgComponent } from './components/svg/svg.component';
@@ -9,10 +9,10 @@ import { AuthenticationService } from './services/authentication.service';
 import { ThemeService } from './services/theme.service';
 
 @Component({
-    selector: 'app-root',
-    imports: [RouterOutlet, NgProgressbar, NgProgressHttp, SvgComponent, I18NextModule, RouterLink, RouterLinkActive, ToastsComponent],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+  selector: 'app-root',
+  imports: [RouterOutlet, NgProgressbar, NgProgressHttp, SvgComponent, I18NextPipe, RouterLink, RouterLinkActive, ToastsComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
   private router = inject(Router);

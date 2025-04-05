@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextPipe } from 'angular-i18next';
 import { filter, map, Observable, switchMap } from 'rxjs';
 import { MachineHostComponent } from '../../components/machine-host/machine-host.component';
 import { MachineForm } from '../../models/form.types';
@@ -13,10 +13,10 @@ import { MachinesService } from '../../services/machines.service';
 import { ToastsService } from '../../services/toast.service';
 
 @Component({
-    selector: 'app-edit-machine',
-    templateUrl: './edit-machine.component.html',
-    imports: [I18NextModule, ReactiveFormsModule, RouterLink, MachineHostComponent],
-    providers: [DialogService, CertificateErrorService]
+  selector: 'app-edit-machine',
+  templateUrl: './edit-machine.component.html',
+  imports: [I18NextPipe, ReactiveFormsModule, RouterLink, MachineHostComponent],
+  providers: [DialogService, CertificateErrorService],
 })
 export class EditMachineComponent {
   private location = inject(Location);
@@ -54,7 +54,7 @@ export class EditMachineComponent {
   }
 
   save() {
-    this.handleNetworkAction(this.machinesService.updateMachine(this.form!.getRawValue() as Machine));
+    this.handleNetworkAction(this.machinesService.updateMachine({ ...this.machine(), ...this.form!.getRawValue() } as Machine));
   }
 
   private handleNetworkAction(observable: Observable<any>) {

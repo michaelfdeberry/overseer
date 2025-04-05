@@ -1,8 +1,8 @@
 import { Component, effect, inject, signal, untracked } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { I18NextModule } from 'angular-i18next';
-import { filter, iif, of, switchMap, tap } from 'rxjs';
+import { I18NextPipe } from 'angular-i18next';
+import { filter, of, switchMap, tap } from 'rxjs';
 import { CreateMachineComponent } from '../../components/create-machine/create-machine.component';
 import { CreateUserComponent } from '../../components/create-user/create-user.component';
 import { UnauthenticatedComponent } from '../../components/unauthenticated/unauthenticated.component';
@@ -16,10 +16,10 @@ import { MachinesService } from '../../services/machines.service';
 import { ToastsService } from '../../services/toast.service';
 
 @Component({
-    selector: 'app-setup',
-    templateUrl: './setup.component.html',
-    imports: [UnauthenticatedComponent, I18NextModule, ReactiveFormsModule, CreateUserComponent, CreateMachineComponent],
-    providers: [DialogService, CertificateErrorService]
+  selector: 'app-setup',
+  templateUrl: './setup.component.html',
+  imports: [UnauthenticatedComponent, I18NextPipe, ReactiveFormsModule, CreateUserComponent, CreateMachineComponent],
+  providers: [DialogService, CertificateErrorService],
 })
 export class SetupComponent {
   private router = inject(Router);

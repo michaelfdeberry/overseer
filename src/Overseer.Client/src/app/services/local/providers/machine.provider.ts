@@ -1,8 +1,9 @@
-import { Observable, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
-
-import { Machine } from '../../../models/machine.model';
+import { interval, Observable, of, Subscription } from 'rxjs';
+import { catchError, mergeMap, startWith, tap } from 'rxjs/operators';
+import { defaultPollInterval } from '../../../models/constants';
 import { MachineStatus } from '../../../models/machine-status.model';
+import { Machine } from '../../../models/machine.model';
+import { ApplicationSettings } from '../../../models/settings.model';
 
 export interface MachineProvider {
   readonly machine: Machine;
@@ -27,14 +28,15 @@ export interface MachineProvider {
 
   loadConfiguration(machine: Machine): Observable<Machine>;
 
-  getStatus(): Observable<MachineStatus>;
+  listen$(settings: ApplicationSettings): Observable<MachineStatus>;
 }
 
-export abstract class BaseMachineProvider<TMachine extends Machine> implements MachineProvider {
+export abstract class PollingMachineProvider<TMachine extends Machine> implements MachineProvider {
   maxExceptionCount = 5;
   exceptionTimeout = 1000 * 60 * 2; // 2 minutes
   exceptionCount = 0;
   exceptionTimestamp?: number;
+  timerSubscription?: Subscription;
 
   machine!: TMachine;
 
@@ -76,29 +78,34 @@ export abstract class BaseMachineProvider<TMachine extends Machine> implements M
 
   abstract acquireStatus(): Observable<MachineStatus>;
 
-  getStatus(): Observable<MachineStatus> {
-    const offlineStatus: MachineStatus = { machineId: this.machine.id, state: 'Offline' };
-    if (this.exceptionTimestamp && Date.now() - this.exceptionTimestamp < this.exceptionTimeout) {
-      return of(offlineStatus);
-    }
-
-    return this.acquireStatus()
-      .pipe(
-        tap((status) => {
-          this.exceptionCount = 0;
-          this.exceptionTimestamp = undefined;
-
-          return status;
-        })
-      )
-      .pipe(
-        catchError((ex) => {
-          if (++this.exceptionCount >= this.maxExceptionCount) {
-            this.exceptionTimestamp = Date.now();
-          }
-
+  listen$(settings: ApplicationSettings): Observable<MachineStatus> {
+    return interval(settings.interval ?? defaultPollInterval).pipe(
+      startWith(0),
+      mergeMap(() => {
+        const offlineStatus: MachineStatus = { machineId: this.machine.id, state: 'Offline' };
+        if (this.exceptionTimestamp && Date.now() - this.exceptionTimestamp < this.exceptionTimeout) {
           return of(offlineStatus);
-        })
-      );
+        }
+
+        return this.acquireStatus()
+          .pipe(
+            tap((status) => {
+              this.exceptionCount = 0;
+              this.exceptionTimestamp = undefined;
+
+              return status;
+            })
+          )
+          .pipe(
+            catchError((ex) => {
+              if (++this.exceptionCount >= this.maxExceptionCount) {
+                this.exceptionTimestamp = Date.now();
+              }
+
+              return of(offlineStatus);
+            })
+          );
+      })
+    );
   }
 }
