@@ -46,24 +46,17 @@ export class MonitoringComponent {
         const bStatus = statuses[b.id];
 
         if (!aStatus && !bStatus) return defaultSort;
+        if (!aStatus) return 1;
+        if (!bStatus) return -1;
 
-        const checkUndefined = (left: unknown | undefined, right: unknown | undefined): number | undefined => {
-          if (left === undefined && right === undefined) return defaultSort;
-          if (left !== undefined && right === undefined) return -1;
-          if (left === undefined && right !== undefined) return 1;
-          return undefined;
-        };
+        if (isIdle(aStatus.state) && isIdle(bStatus.state)) return defaultSort;
+        if (isIdle(aStatus.state)) return 1;
+        if (isIdle(bStatus.state)) return -1;
 
-        // idle machines will get moved to the end of the list
-        const idleCheck = checkUndefined(isIdle(aStatus?.state), isIdle(bStatus?.state));
-        if (idleCheck !== undefined) return idleCheck;
+        var remainingA = aStatus?.estimatedTimeRemaining || Infinity;
+        var remainingB = bStatus?.estimatedTimeRemaining || Infinity;
 
-        // it's possible the ETR won't be available initially, so it could be undefined here even if not idle.
-        const remainingCheck = checkUndefined(aStatus?.estimatedTimeRemaining, bStatus?.estimatedTimeRemaining);
-        if (remainingCheck !== undefined) return remainingCheck;
-
-        // if it can get here they are both numbers
-        return aStatus?.estimatedTimeRemaining! - bStatus?.estimatedTimeRemaining!;
+        return remainingA - remainingB || defaultSort;
       });
     }
 
@@ -82,7 +75,6 @@ export class MonitoringComponent {
       setTimeout(() => this.loading.set(false), 250);
     });
 
-    console.log('monitoring component created');
     this.monitoringService
       .enableMonitoring()
       .pipe(takeUntilDestroyed(this.destroyRef))
