@@ -13,6 +13,7 @@ namespace Overseer.Machines.Elegoo;
 
 public class ElegooMachineProvider : MachineProvider<ElegooMachine>
 {
+  const int PING_COMMAND = 0;
   const int PAUSE_COMMAND = 129;
   const int RESUME_COMMAND = 131;
   const int CANCEL_COMMAND = 130;
@@ -129,15 +130,23 @@ public class ElegooMachineProvider : MachineProvider<ElegooMachine>
 
     _timer.Elapsed += (sender, args) =>
     {
-      if (_lastStatusUpdate.HasValue && DateTime.UtcNow.Subtract(_lastStatusUpdate.Value).TotalSeconds <= interval) return;
-
-      // If the last status update was more than the interval ago, reconnect
-      if (_webSocket != null || _webSocket.State != WebSocketState.Open)
+      if (_lastStatusUpdate.HasValue && DateTime.UtcNow.Subtract(_lastStatusUpdate.Value).TotalSeconds <= interval)
       {
-        _webSocket?.Dispose();
-        _webSocket = null;
+        // if a message has been received in the last interval, don't do anything
+        return;
       }
 
+      if (_webSocket != null && _webSocket.State == WebSocketState.Open && _lastMessage != null)
+      {
+        // if the web socket is open, but hasn't received a message in the last interval
+        // it's likely idle, and just hasn't sent a message send a ping to get a response
+        SendCommand(PING_COMMAND);
+        return;
+      }
+
+      // otherwise, the connection is in a bad state 
+      _webSocket?.Dispose();
+      _webSocket = null;
       Task.Run(Connect);
     };
     _timer.Start();
@@ -167,6 +176,7 @@ public class ElegooMachineProvider : MachineProvider<ElegooMachine>
 
     _webSocket = new ClientWebSocket();
     await _webSocket.ConnectAsync(webSocketUrl.Uri, default);
+    await SendCommand(PING_COMMAND);
     await SendCommand(ENABLE_CAMERA_COMMAND, new { Enabled = 1 });
 
     var receiver = Task.Run(async () =>
