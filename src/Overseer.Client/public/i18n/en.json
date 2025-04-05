@@ -115,7 +115,7 @@
   "appSettings": "Application Settings",
   "clientSettings": "Client Settings",
   "extruder": "Extruder",
-  "heater": "Heater",
+  "heater": "Nozzle",
   "cancelJobTitle": "Cancel Job?",
   "cancelJobMessage": "Are you sure you want to cancel this job?",
   "invalidForm": "Invalid Form",

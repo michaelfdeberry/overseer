@@ -130,13 +130,14 @@ public class ElegooMachineProvider : MachineProvider<ElegooMachine>
 
     _timer.Elapsed += (sender, args) =>
     {
-      if (_lastStatusUpdate.HasValue && DateTime.UtcNow.Subtract(_lastStatusUpdate.Value).TotalSeconds <= interval)
+      if (_lastStatusUpdate.HasValue && DateTime.UtcNow.Subtract(_lastStatusUpdate.Value).Milliseconds <= interval)
       {
-        // if a message has been received in the last interval, don't do anything
+        // there has been no updates, so we can just send the last message again
+        ReceiveMessage(_lastMessage);
         return;
       }
 
-      if (_webSocket != null && _webSocket.State == WebSocketState.Open && _lastMessage != null)
+      if (_webSocket != null && _webSocket.State == WebSocketState.Open)
       {
         // if the web socket is open, but hasn't received a message in the last interval
         // it's likely idle, and just hasn't sent a message send a ping to get a response
