@@ -8,7 +8,7 @@ import { Machine, RepRapFirmwareMachine } from '../../models/machine.model';
 import { MachinesService } from '../../services/machines.service';
 
 @Component({
-  selector: 'app-reprap-firmware-machine',
+  selector: 'app-reprapfirmware-machine',
   templateUrl: './reprapfirmware-machine.component.html',
   imports: [ReactiveFormsModule, I18NextPipe, NgbCollapseModule],
 })
@@ -46,6 +46,7 @@ export class RepRapFirmwareMachineComponent {
 
     if (this.machine) {
       this.form.addControl('id', new FormControl(this.machine.id));
+      this.form.controls['url']?.disable();
       this.form.patchValue({
         name: this.machine.name,
         url: this.machine.url,
