@@ -33,6 +33,7 @@ export class ElegooMachineComponent {
     this.form.addControl('ipAddress', new FormControl(null, Validators.required));
 
     if (this.machine) {
+      this.form.controls['ipAddress']?.disable();
       this.form.addControl('id', new FormControl(this.machine.id));
       this.form.patchValue({
         name: this.machine.name,

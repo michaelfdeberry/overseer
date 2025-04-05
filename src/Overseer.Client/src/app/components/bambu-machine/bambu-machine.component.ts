@@ -42,6 +42,7 @@ export class BambuMachineComponent {
 
     if (this.machine) {
       this.form.addControl('id', new FormControl(this.machine.id));
+      this.form.controls['url']?.disable();
       this.form.patchValue({
         name: this.machine.name,
         url: this.machine.url,

@@ -102,9 +102,7 @@ export class ElegooMachineProvider implements MachineProvider {
     return of(machine);
   }
 
-  private receiveMessage(event: MessageEvent): void {
-    const message = JSON.parse(event.data);
-
+  private receiveMessage(message: any): void {
     if (!message.Status) return;
 
     const status: MachineStatus = {
@@ -212,7 +210,7 @@ export class ElegooMachineProvider implements MachineProvider {
       if (this.status$ && !this.status$.observed) {
         this.disconnect();
       } else {
-        this.receiveMessage(event);
+        this.receiveMessage(JSON.parse(event.data));
       }
     });
 
