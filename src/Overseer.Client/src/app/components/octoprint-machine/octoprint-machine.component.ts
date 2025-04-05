@@ -48,6 +48,7 @@ export class OctoprintMachineComponent {
       this.form.addControl('profile', new FormControl(null, Validators.required));
       this.form.addControl('webCamUrl', new FormControl(null, Validators.required));
       this.form.addControl('webCamOrientation', new FormControl(null, Validators.required));
+      this.form.controls['url']?.disable();
 
       this.form.patchValue({
         name: this.machine.name,

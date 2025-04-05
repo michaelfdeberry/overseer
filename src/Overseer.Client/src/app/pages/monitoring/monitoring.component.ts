@@ -102,7 +102,14 @@ export class MonitoringComponent {
       this.column.set('col-12');
       // figure out what to do on mobile. maybe it scrolls horizontally? maybe swipe through the machines.
     } else {
-      let base = document.body.clientWidth > 1920 ? 4 : 2;
+      let base = 4;
+      if (document.body.clientWidth <= 1920) {
+        base = 3;
+      }
+      if (document.body.clientWidth <= 1280) {
+        base = 2;
+      }
+
       const factor = Math.ceil(count / (Math.floor(count / base) + (count % base > 0 ? 1 : 0)));
       this.column.set(`col-${12 / factor}`);
     }
