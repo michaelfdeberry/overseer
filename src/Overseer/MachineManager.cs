@@ -74,15 +74,15 @@ namespace Overseer
       _machines.Update(machines);
     }
 
-    async Task LoadConfiguration(Machine machine)
+    Task LoadConfiguration(Machine machine)
     {
       if (machine.Id == 0)
       {
         // if it's a new machine use a temporary provider instance to load the configuration
-        await _machineProviderManager.CreateProvider(machine).LoadConfiguration(machine);
+        return _machineProviderManager.CreateProvider(machine).LoadConfiguration(machine);
       }
 
-      await _machineProviderManager.GetProvider(machine).LoadConfiguration(machine);
+      return _machineProviderManager.GetProvider(machine).LoadConfiguration(machine);
     }
 
     public IEnumerable<string> GetMachineTypes()
