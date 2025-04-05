@@ -1,16 +1,16 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextPipe } from 'angular-i18next';
 import { webCamOrientations } from '../../models/constants';
 import { RepRapMachineForm } from '../../models/form.types';
 import { Machine, RepRapFirmwareMachine } from '../../models/machine.model';
 import { MachinesService } from '../../services/machines.service';
 
 @Component({
-    selector: 'app-reprap-firmware-machine',
-    templateUrl: './reprapfirmware-machine.component.html',
-    imports: [ReactiveFormsModule, I18NextModule, NgbCollapseModule]
+  selector: 'app-reprap-firmware-machine',
+  templateUrl: './reprapfirmware-machine.component.html',
+  imports: [ReactiveFormsModule, I18NextPipe, NgbCollapseModule],
 })
 export class RepRapFirmwareMachineComponent {
   private destroy = inject(DestroyRef);

@@ -1,16 +1,16 @@
 import { Component, inject, input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextPipe } from 'angular-i18next';
 import { DisplayOption } from '../../models/constants';
 import { MachineForm } from '../../models/form.types';
 import { MachineType } from '../../models/machine.model';
-import { MachineHostComponent } from '../machine-host/machine-host.component';
 import { MachinesService } from '../../services/machines.service';
+import { MachineHostComponent } from '../machine-host/machine-host.component';
 
 @Component({
-    selector: 'app-create-machine',
-    templateUrl: './create-machine.component.html',
-    imports: [MachineHostComponent, I18NextModule, ReactiveFormsModule]
+  selector: 'app-create-machine',
+  templateUrl: './create-machine.component.html',
+  imports: [MachineHostComponent, I18NextPipe, ReactiveFormsModule],
 })
 export class CreateMachineComponent implements OnInit {
   private machinesService = inject(MachinesService);

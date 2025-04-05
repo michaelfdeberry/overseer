@@ -1,14 +1,14 @@
-import { Component, input, Input, OnInit, output, Output } from '@angular/core';
+import { Component, input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextPipe } from 'angular-i18next';
 import { accessLevels, SessionLifetime, sessionLifetimes } from '../../models/constants';
 import { CreateUserForm } from '../../models/form.types';
 import { AccessLevel } from '../../models/user.model';
 
 @Component({
-    selector: 'app-create-user',
-    templateUrl: './create-user.component.html',
-    imports: [ReactiveFormsModule, I18NextModule]
+  selector: 'app-create-user',
+  templateUrl: './create-user.component.html',
+  imports: [ReactiveFormsModule, I18NextPipe],
 })
 export class CreateUserComponent implements OnInit {
   accessLevel = input<AccessLevel | undefined>();

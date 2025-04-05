@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextPipe } from 'angular-i18next';
 import { defaultPollInterval, pollIntervals } from '../../models/constants';
 import { ApplicationSettings } from '../../models/settings.model';
 import { SettingsService } from '../../services/settings.service';
@@ -8,9 +8,9 @@ import { ThemeService } from '../../services/theme.service';
 import { ToastsService } from '../../services/toast.service';
 
 @Component({
-    selector: 'app-settings',
-    templateUrl: './settings.component.html',
-    imports: [ReactiveFormsModule, I18NextModule, FormsModule]
+  selector: 'app-settings',
+  templateUrl: './settings.component.html',
+  imports: [ReactiveFormsModule, I18NextPipe, FormsModule],
 })
 export class SettingsComponent {
   intervals = pollIntervals;

@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextPipe } from 'angular-i18next';
 import { webCamOrientations } from '../../models/constants';
 import { BambuMachineForm } from '../../models/form.types';
 import { BambuMachine, Machine } from '../../models/machine.model';
@@ -8,7 +8,7 @@ import { BambuMachine, Machine } from '../../models/machine.model';
 @Component({
   selector: 'app-bambu-machine',
   templateUrl: './bambu-machine.component.html',
-  imports: [ReactiveFormsModule, I18NextModule],
+  imports: [ReactiveFormsModule, I18NextPipe],
 })
 export class BambuMachineComponent {
   private destroy = inject(DestroyRef);

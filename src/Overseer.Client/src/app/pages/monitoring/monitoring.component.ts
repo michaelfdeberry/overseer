@@ -1,7 +1,7 @@
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextPipe } from 'angular-i18next';
 import { forkJoin } from 'rxjs';
 import { MachineMonitorComponent } from '../../components/machine-monitor/machine-monitor.component';
 import { isIdle, MachineStatus } from '../../models/machine-status.model';
@@ -15,7 +15,7 @@ import { SettingsService } from '../../services/settings.service';
   selector: 'app-monitoring',
   templateUrl: './monitoring.component.html',
   styleUrls: ['./monitoring.component.scss'],
-  imports: [MachineMonitorComponent, I18NextModule, RouterLink],
+  imports: [MachineMonitorComponent, I18NextPipe, RouterLink],
 })
 export class MonitoringComponent {
   private destroyRef = inject(DestroyRef);

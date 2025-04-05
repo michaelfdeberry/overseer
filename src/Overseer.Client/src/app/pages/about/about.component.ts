@@ -1,13 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { I18NextModule } from 'angular-i18next';
-import { SettingsService } from '../../services/settings.service';
+import { I18NextPipe } from 'angular-i18next';
 import { ApplicationInfo } from '../../models/application-info.model';
 import { LoggingService } from '../../services/logging.service';
+import { SettingsService } from '../../services/settings.service';
 
 @Component({
-    selector: 'app-about',
-    templateUrl: './about.component.html',
-    imports: [I18NextModule]
+  selector: 'app-about',
+  templateUrl: './about.component.html',
+  imports: [I18NextPipe],
 })
 export class AboutComponent implements OnInit {
   private settingsService = inject(SettingsService);

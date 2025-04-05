@@ -1,16 +1,16 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextPipe } from 'angular-i18next';
 import { webCamOrientations } from '../../models/constants';
 import { OctoprintMachineForm } from '../../models/form.types';
 import { Machine, OctoprintMachine } from '../../models/machine.model';
 import { MachinesService } from '../../services/machines.service';
 
 @Component({
-    selector: 'app-octoprint',
-    templateUrl: './octoprint-machine.component.html',
-    imports: [ReactiveFormsModule, NgbCollapseModule, I18NextModule]
+  selector: 'app-octoprint',
+  templateUrl: './octoprint-machine.component.html',
+  imports: [ReactiveFormsModule, NgbCollapseModule, I18NextPipe],
 })
 export class OctoprintMachineComponent {
   private destroy = inject(DestroyRef);

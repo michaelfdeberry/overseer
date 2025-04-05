@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, DestroyRef, effect, ElementRef, inject, input, signal, untracked } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
-import { I18NextModule } from 'angular-i18next';
+import { I18NextPipe } from 'angular-i18next';
 import { filter, Observable } from 'rxjs';
 import { isIdle, MachineStatus } from '../../models/machine-status.model';
 import { Machine } from '../../models/machine.model';
@@ -11,14 +12,13 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { ControlService } from '../../services/control.service';
 import { DialogService } from '../../services/dialog.service';
 import { MonitoringService } from '../../services/monitoring.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-    selector: 'app-machine-monitor',
-    templateUrl: './machine-monitor.component.html',
-    styleUrls: ['./machine-monitor.component.scss'],
-    imports: [CommonModule, I18NextModule, DurationPipe, NgbProgressbarModule, RouterLink],
-    providers: [DialogService]
+  selector: 'app-machine-monitor',
+  templateUrl: './machine-monitor.component.html',
+  styleUrls: ['./machine-monitor.component.scss'],
+  imports: [CommonModule, I18NextPipe, DurationPipe, NgbProgressbarModule, RouterLink],
+  providers: [DialogService],
 })
 export class MachineMonitorComponent {
   private host = inject(ElementRef);
