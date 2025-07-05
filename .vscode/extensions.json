@@ -9,6 +9,7 @@
     "johnpapa.angular2",
     "ms-dotnettools.vscode-dotnet-runtime",
     "github.vscode-github-actions",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "csharpier.csharpier-vscode"
   ]
 }

@@ -1,14 +1,17 @@
 using System.CommandLine;
-
 using log4net.Config;
-
 using Microsoft.Extensions.FileProviders;
-
-using Overseer.Data;
-using Overseer.Models;
 using Overseer.Server;
 using Overseer.Server.Api;
+using Overseer.Server.Data;
 using Overseer.Server.Hubs;
+using Overseer.Server.Models;
+using Overseer.Server.Updates;
+
+if (!UpdateManager.Update())
+{
+  throw new Exception("The Overseer database update process failed. Please check the logs for more details.");
+}
 
 using (var context = new LiteDataContext())
 {
@@ -26,13 +29,12 @@ using (var context = new LiteDataContext())
   builder.Services.AddSwaggerGen();
   builder.Services.AddSignalR();
   builder.Services.AddOverseerDependencies(context);
-  builder.Services
-      .AddAuthentication(OverseerAuthenticationOptions.Setup)
-      .UseOverseerAuthentication();
+  builder.Services.AddAuthentication(OverseerAuthenticationOptions.Setup).UseOverseerAuthentication();
 
-  builder.Services.AddAuthorizationBuilder()
-      .AddPolicy("Readonly", policy => policy.RequireRole(AccessLevel.Readonly.ToString()))
-      .AddPolicy("Administrator", policy => policy.RequireRole(AccessLevel.Administrator.ToString()));
+  builder
+    .Services.AddAuthorizationBuilder()
+    .AddPolicy("Readonly", policy => policy.RequireRole(AccessLevel.Readonly.ToString()))
+    .AddPolicy("Administrator", policy => policy.RequireRole(AccessLevel.Administrator.ToString()));
 
   var app = builder.Build();
 
@@ -49,15 +51,11 @@ using (var context = new LiteDataContext())
   app.HandleOverseerExceptions();
   app.MapOverseerApi();
   app.MapHub<StatusHub>("/push/status");
-  app.ConfigurePushUpdates();
 
   var url = $"http://*:{settings.LocalPort}";
   if (!isDev)
   {
-    app.UseStaticFiles(new StaticFileOptions
-    {
-      FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "browser"))
-    });
+    app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "browser")) });
 
     app.UseSpa(spa =>
     {

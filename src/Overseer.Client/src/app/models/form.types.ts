@@ -38,4 +38,9 @@ export type ElegooMachineForm = Exclude<MachineFormBase, 'url'> & {
   ipAddress?: FormControl<string | undefined | null>;
 };
 
+export type MoonrakerMachineForm = Exclude<MachineFormBase, 'url'> & {
+  ipAddress?: FormControl<string | undefined | null>;
+  availableWebCams?: FormControl<Record<string, string> | undefined | null>;
+};
+
 export type MachineForm = RepRapMachineForm | OctoprintMachineForm | BambuMachineForm;

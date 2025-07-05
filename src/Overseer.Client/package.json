@@ -4,12 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start:remote": "ng serve --configuration development-remote",
     "build": "ng build",
-    "build:remote": "ng build --configuration production-remote",
-    "build:all": "ng build && ng build --configuration production-remote",
     "watch": "ng build --watch --configuration development",
-    "watch:remote": "ng build --watch --configuration development-remote",
     "test": "ng test"
   },
   "private": true,

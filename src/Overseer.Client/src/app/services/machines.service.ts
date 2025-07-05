@@ -1,22 +1,39 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { mergeMap, NEVER, Observable } from 'rxjs';
 import { Machine, MachineType } from '../models/machine.model';
+import { endpointFactory } from './endpoint-factory';
 
 @Injectable({ providedIn: 'root' })
-export abstract class MachinesService {
-  abstract readonly supportsAdvanceSettings: boolean;
+export class MachinesService {
+  private getEndpoint = endpointFactory('/api/machines');
+  private http = inject(HttpClient);
 
-  abstract getMachines(): Observable<Machine[]>;
+  getMachines(): Observable<Machine[]> {
+    return this.http.get<Machine[]>(this.getEndpoint());
+  }
 
-  abstract getMachine(machineId: number): Observable<Machine>;
+  getMachine(machineId: number): Observable<Machine> {
+    return this.http.get<Machine>(this.getEndpoint(machineId));
+  }
 
-  abstract createMachine(machine: Machine): Observable<Machine>;
+  createMachine(machine: Machine): Observable<Machine> {
+    return this.http.post<Machine>(this.getEndpoint(), machine);
+  }
 
-  abstract updateMachine(machine: Machine): Observable<Machine>;
+  updateMachine(machine: Machine): Observable<Machine> {
+    return this.http.put<Machine>(this.getEndpoint(), machine);
+  }
 
-  abstract deleteMachine(machine: Machine): Observable<Machine>;
+  deleteMachine(machine: Machine): Observable<Machine> {
+    return this.http.delete<Machine>(this.getEndpoint(machine.id));
+  }
 
-  abstract sortMachines(sortOrder: number[]): Observable<never>;
+  sortMachines(sortOrder: number[]): Observable<never> {
+    return this.http.post(this.getEndpoint('sort'), sortOrder).pipe(mergeMap(() => NEVER));
+  }
 
-  abstract getMachineTypes(): Observable<MachineType[]>;
+  getMachineTypes(): Observable<MachineType[]> {
+    return this.http.get<MachineType[]>(this.getEndpoint('types'));
+  }
 }

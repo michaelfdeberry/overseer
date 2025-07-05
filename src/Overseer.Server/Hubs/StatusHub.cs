@@ -1,42 +1,24 @@
 ﻿using log4net;
-
 using Microsoft.AspNetCore.SignalR;
 
-namespace Overseer.Server.Hubs
+namespace Overseer.Server.Hubs;
+
+public class StatusHub() : Hub
 {
-    public class StatusHub(IMonitoringService monitoringService) : Hub
-    {
-        static readonly ILog Log = LogManager.GetLogger(typeof(StatusHub));
+  static readonly ILog Log = LogManager.GetLogger(typeof(StatusHub));
 
-        public const string MonitoringGroupName = "MonitoringGroup";
-        readonly IMonitoringService _monitoringService = monitoringService;
-        readonly HashSet<string> _monitoringGroup = [];
+  public const string MonitoringGroupName = "MonitoringGroup";
 
-        public async Task StartMonitoring()
-        {
-            await Groups.AddToGroupAsync(Context.ConnectionId, MonitoringGroupName);
-            _monitoringGroup.Add(Context.ConnectionId);
+  public async Task StartMonitoring()
+  {
+    Log.Info($"Client {Context.ConnectionId} started monitoring.");
+    await Groups.AddToGroupAsync(Context.ConnectionId, MonitoringGroupName);
+  }
 
-            // if this is the first connection the monitoring isn't running, start it...
-            if (_monitoringGroup.Count == 1)
-            {
-                Log.Info("A client connected, initiating monitoring...");
-                _monitoringService.StartMonitoring();
-            }
-        }
-
-        public async override Task OnDisconnectedAsync(Exception? exception)
-        {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, MonitoringGroupName);
-            _monitoringGroup.Remove(Context.ConnectionId);
-
-            // all clients disconnected, stop monitoring
-            if (_monitoringGroup.Count == 0)
-            {
-                _monitoringService.StopMonitoring();
-            }
-
-            await base.OnDisconnectedAsync(exception);
-        }
-    }
+  public override async Task OnDisconnectedAsync(Exception? exception)
+  {
+    Log.Info($"Client {Context.ConnectionId} disconnected.");
+    await Groups.RemoveFromGroupAsync(Context.ConnectionId, MonitoringGroupName);
+    await base.OnDisconnectedAsync(exception);
+  }
 }

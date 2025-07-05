@@ -3,8 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MachineForm } from '../../models/form.types';
 import { Machine, MachineType } from '../../models/machine.model';
-import { BambuMachineComponent } from '../bambu-machine/bambu-machine.component';
+import { BambuLabMachineComponent } from '../bambu-lab-machine/bambu-lab-machine.component';
 import { ElegooMachineComponent } from '../elegoo-machine/elegoo-machine.component';
+import { MoonrakerMachineComponent } from '../moonraker-machine/moonraker-machine.component';
 import { OctoprintMachineComponent } from '../octoprint-machine/octoprint-machine.component';
 import { RepRapFirmwareMachineComponent } from '../reprapfirmware-machine/reprapfirmware-machine.component';
 
@@ -20,8 +21,9 @@ export class MachineHostComponent implements OnInit {
   private machineComponentMap = {
     Octoprint: OctoprintMachineComponent,
     RepRapFirmware: RepRapFirmwareMachineComponent,
-    Bambu: BambuMachineComponent,
+    Bambu: BambuLabMachineComponent,
     Elegoo: ElegooMachineComponent,
+    Moonraker: MoonrakerMachineComponent,
   };
 
   form = input<FormGroup<MachineForm>>();

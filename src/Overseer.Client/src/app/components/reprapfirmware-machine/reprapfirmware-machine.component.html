@@ -30,12 +30,10 @@
         }
       </select>
     </div>
-    @if (machinesService.supportsAdvanceSettings) {
-      <div class="card p-3 mb-3">
-        <p>{{ 'advancedOptions' | i18next }}</p>
-        <label for="clientCertificate" class="form-label">{{ 'clientPem' | i18next }}</label>
-        <textarea rows="4" class="form-control" id="clientCertificate" formControlName="clientCertificate"></textarea>
-      </div>
-    }
+    <div class="card p-3 mb-3">
+      <p>{{ 'advancedOptions' | i18next }}</p>
+      <label for="clientCertificate" class="form-label">{{ 'clientPem' | i18next }}</label>
+      <textarea rows="4" class="form-control" id="clientCertificate" formControlName="clientCertificate"></textarea>
+    </div>
   </div>
 }
