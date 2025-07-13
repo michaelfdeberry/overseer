@@ -11,6 +11,7 @@ namespace Overseer.Server.Services;
 public class MachineStatusUpdateService(IHubContext<StatusHub> hubContext, IMachineStatusChannel machineStatusChannel) : BackgroundService
 {
   static readonly ILog Log = LogManager.GetLogger(nameof(MachineStatusUpdateService));
+  readonly Guid _subscriberId = Guid.NewGuid();
 
   protected override async Task ExecuteAsync(CancellationToken stoppingToken)
   {
@@ -18,7 +19,7 @@ public class MachineStatusUpdateService(IHubContext<StatusHub> hubContext, IMach
     {
       try
       {
-        var statusUpdate = await machineStatusChannel.ReadAsync();
+        var statusUpdate = await machineStatusChannel.ReadAsync(_subscriberId, stoppingToken);
         if (statusUpdate != null)
         {
           await hubContext.Clients.Group(StatusHub.MonitoringGroupName).SendAsync("StatusUpdate", statusUpdate, cancellationToken: stoppingToken);

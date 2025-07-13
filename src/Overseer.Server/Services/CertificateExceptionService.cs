@@ -13,6 +13,7 @@ public class CertificateExceptionService : BackgroundService
 {
   static readonly ILog Log = LogManager.GetLogger(typeof(CertificateExceptionService));
 
+  readonly Guid _subscriberId = Guid.NewGuid();
   readonly HashSet<string> _exclusions = [];
   readonly ICertificateExceptionChannel _certificateExceptionChannel;
 
@@ -46,7 +47,7 @@ public class CertificateExceptionService : BackgroundService
     {
       try
       {
-        var certificateException = await _certificateExceptionChannel.ReadAsync();
+        var certificateException = await _certificateExceptionChannel.ReadAsync(_subscriberId, stoppingToken);
         if (certificateException?.Thumbprint != null)
         {
           Log.Info($"Certificate exclusion add for {certificateException.Thumbprint}");

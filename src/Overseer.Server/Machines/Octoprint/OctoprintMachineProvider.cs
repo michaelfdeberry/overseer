@@ -197,13 +197,6 @@ public class OctoprintMachineProvider(OctoprintMachine machine, IMachineStatusCh
       status.ElapsedJobTime = jobStatus.Progress?.PrintTime ?? 0;
       status.EstimatedTimeRemaining = jobStatus.Progress?.PrintTimeLeft ?? 0;
       status.Progress = Math.Round(jobStatus.Progress?.Completion ?? 0, 1);
-
-      // these values can't be retrieved through the octoprint api, or from marlin by gcode, so it's not going
-      // to be supported by the Octoprint provider, however the values are being defaulted here to replicate the
-      // Octoprint UI behavior upon refresh.
-      status.FanSpeed = 100;
-      status.FeedRate = 100;
-      status.FlowRates = Machine.Tools.Where(tool => tool.ToolType == MachineToolType.Extruder).ToDictionary(tool => tool.Index, tool => 100d);
     }
 
     return status;

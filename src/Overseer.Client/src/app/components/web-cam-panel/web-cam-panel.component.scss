@@ -1,0 +1,9 @@
+:host {
+  &.FlippedHorizontally {
+    transform: scaleX(-1);
+  }
+
+  &.FlippedVertically {
+    transform: scaleY(-1);
+  }
+}

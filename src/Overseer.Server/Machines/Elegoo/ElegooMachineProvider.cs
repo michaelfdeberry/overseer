@@ -168,7 +168,7 @@ public class ElegooMachineProvider(ElegooMachine machine, IMachineStatusChannel 
         _lastStatus = status;
       }
 
-      await MachineStatusChannel.WriteAsync(status);
+      await MachineStatusChannel.WriteAsync(status, _cancellationTokenSource?.Token ?? default);
     }
   }
 

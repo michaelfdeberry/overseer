@@ -19,7 +19,7 @@ public class LiteDataContext : IDataContext
 
   public LiteDataContext(string connectionString)
   {
-    Database = new LiteDatabase(GetDefaultPath(connectionString));
+    Database = new LiteDatabase($"Filename={GetDefaultPath(connectionString)}; Connection=Shared");
   }
 
   public string GetDefaultPath(string connectionString = DatabasePath)

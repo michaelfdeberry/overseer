@@ -2,13 +2,13 @@ namespace Overseer.Server.Channels;
 
 public interface IRestartMonitoringChannel : IChannelBase<bool>
 {
-  Task Dispatch();
+  Task Dispatch(CancellationToken cancellationToken = default);
 }
 
-public class RestartMonitoringChannel : UnboundedChannelBase<bool>, IRestartMonitoringChannel
+public class RestartMonitoringChannel : ChannelBase<bool>, IRestartMonitoringChannel
 {
-  public async Task Dispatch()
+  public async Task Dispatch(CancellationToken cancellationToken = default)
   {
-    await WriteAsync(true);
+    await WriteAsync(true, cancellationToken);
   }
 }

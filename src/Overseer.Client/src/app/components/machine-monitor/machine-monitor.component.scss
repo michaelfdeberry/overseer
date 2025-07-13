@@ -1,6 +1,4 @@
 :host {
-  height: 100%;
-  max-height: 100%;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -15,29 +13,23 @@
   overflow: hidden;
   border-radius: 0.5rem;
 
-  @media (min-width: 576px) {
-    border-radius: 0;
+  .display {
+    aspect-ratio: 4/3;
   }
 
-  .display {
-    min-height: 450px;
+  @media (min-width: 768px) {
+    flex-direction: row;
+
+    .display {
+      max-width: 381px;
+      min-height: 286px;
+    }
   }
 
   .video {
     position: absolute;
     inset: 0;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
     background-color: #000;
-
-    &.FlippedHorizontally {
-      transform: scaleX(-1);
-    }
-
-    &.FlippedVertically {
-      transform: scaleY(-1);
-    }
   }
 
   .status-icon {
@@ -59,132 +51,150 @@
     width: 50px;
     opacity: 0.2;
   }
-}
 
-.info {
-  container-type: inline-size;
-  position: relative;
-  margin: 0 auto;
-  width: 100%;
-  max-width: 800px;
-  max-height: 100%;
-  overflow-y: auto;
-  transition: all 0.5s ease;
+  .info {
+    container-type: inline-size;
+    position: relative;
 
-  .progress-info {
-    display: flex;
-    flex-direction: column;
-
-    &__actions {
+    .progress-info {
       display: flex;
-      justify-content: end;
-      margin-bottom: 0.5rem;
+      flex-direction: column;
 
-      .btn {
-        margin-inline-start: 0.5rem;
+      &__actions {
+        display: flex;
+        justify-content: end;
+        margin-bottom: 0.5rem;
 
-        &:first-child {
-          margin-inline-start: 1rem;
+        .btn {
+          margin-inline-start: 0.5rem;
+
+          &:first-child {
+            margin-inline-start: 1rem;
+          }
         }
       }
     }
   }
 
-  @container (min-width: 576px) {
-    .progress-info {
-      flex-direction: row;
-
-      &__actions {
-        display: block;
-        margin-bottom: 0;
-      }
-    }
-  }
-}
-
-.temperatures {
-  overflow: auto;
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-  overflow-x: auto;
-
-  .expanded & {
-    overflow: unset;
-    flex-direction: column;
-    justify-content: unset;
-  }
-}
-
-.temperature {
-  width: 120px;
-  display: flex;
-  flex-direction: column;
-
-  &:not(:last-of-type) {
-    margin-inline-end: 0.5rem;
-  }
-
-  &__title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-  }
-
-  &__display {
+  .temperatures {
+    overflow: auto;
     display: flex;
     flex-direction: row;
-  }
+    justify-content: end;
+    overflow-x: auto;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 
-  &__label,
-  &__value {
-    flex: 1;
-    font-size: 0.75rem;
-  }
-
-  &__value {
-    font-weight: 500;
-    text-align: end;
-  }
-
-  .expanded & {
-    width: 100%;
-    flex-direction: row;
-
-    &:not(:last-of-type) {
-      margin-bottom: 0.5rem;
+    .expanded & {
+      overflow: unset;
+      flex-direction: column;
+      justify-content: unset;
     }
+  }
+
+  .temperature {
+    width: 120px;
+    min-width: 120px;
+    display: flex;
+    flex-direction: column;
 
     &__title {
-      flex: 1;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
     }
 
     &__display {
-      flex-direction: column;
-      margin: 0;
-      flex: 2;
-
-      &:last-of-type {
-        flex: 4;
-      }
+      display: flex;
+      flex-direction: row;
     }
 
-    &__title {
-      width: 25%;
-    }
-
-    &__label {
-      flex: 0;
-      margin-top: 0.25rem;
-      margin-bottom: 0.5rem;
+    &__label,
+    &__value {
+      flex: 1;
+      font-size: 0.75rem;
     }
 
     &__value {
-      text-align: start;
+      font-weight: 500;
+      text-align: end;
+    }
 
-      input {
-        text-align: center;
+    .expanded & {
+      width: 100%;
+      flex-direction: row;
+
+      &:not(:last-of-type) {
+        margin-bottom: 0.5rem;
       }
+
+      &__title {
+        flex: 1;
+      }
+
+      &__display {
+        flex-direction: column;
+        margin: 0;
+        flex: 2;
+
+        &:last-of-type {
+          flex: 4;
+        }
+      }
+
+      &__title {
+        width: 25%;
+      }
+
+      &__label {
+        flex: 0;
+        margin-top: 0.25rem;
+        margin-bottom: 0.5rem;
+      }
+
+      &__value {
+        text-align: start;
+
+        input {
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  &--fullScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1050;
+    background-color: var(--bs-body-bg);
+    border-radius: 0;
+    border: none;
+    display: block;
+
+    .display {
+      min-height: 100vh;
+      max-width: none;
+      width: 100vw;
+    }
+
+    .video {
+      inset: 0;
+      background-size: contain;
+      background-position: center center;
+    }
+
+    .info {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 40%;
+      border-radius: 0.5rem;
+      overflow-y: auto;
+      border: 1px solid var(--bs-border-color);
+      background-color: color-mix(in srgb, var(--bs-body-bg) 50%, transparent);
     }
   }
 }

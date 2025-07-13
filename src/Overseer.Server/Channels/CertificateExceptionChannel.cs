@@ -4,4 +4,4 @@ namespace Overseer.Server.Channels;
 
 public interface ICertificateExceptionChannel : IChannelBase<CertificateDetails>;
 
-public class CertificateExceptionChannel : UnboundedChannelBase<CertificateDetails>, ICertificateExceptionChannel { }
+public class CertificateExceptionChannel : ChannelBase<CertificateDetails>, ICertificateExceptionChannel { }

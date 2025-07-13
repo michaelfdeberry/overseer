@@ -32,7 +32,11 @@ namespace Overseer.Server.Api
       group
         .MapPut(
           "/",
-          (ApplicationSettings settings, IConfigurationManager configuration) => Results.Ok(configuration.UpdateApplicationSettings(settings))
+          async (ApplicationSettings settings, IConfigurationManager configuration) =>
+          {
+            var updatedSettings = await configuration.UpdateApplicationSettings(settings);
+            return Results.Ok(updatedSettings);
+          }
         )
         .RequireAuthorization(AccessLevel.Administrator.ToString());
 

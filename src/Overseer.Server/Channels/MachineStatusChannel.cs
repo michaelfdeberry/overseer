@@ -4,4 +4,4 @@ namespace Overseer.Server.Channels;
 
 public interface IMachineStatusChannel : IChannelBase<MachineStatus>;
 
-public class MachineStatusChannel : UnboundedChannelBase<MachineStatus>, IMachineStatusChannel { }
+public class MachineStatusChannel : ChannelBase<MachineStatus>, IMachineStatusChannel { }

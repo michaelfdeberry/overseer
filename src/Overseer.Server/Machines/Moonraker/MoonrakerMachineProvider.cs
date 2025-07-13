@@ -82,7 +82,7 @@ public class MoonrakerMachineProvider(MoonrakerMachine machine, IMachineStatusCh
     if (cameras?.Result?.Webcams?.Count > 0)
     {
       // if this is an update, and a webcam in the list is already selected, keep it
-      if (!cameras.Result.Webcams.Any(x => x.StreamUrl == Machine.WebCamUrl))
+      if (!cameras.Result.Webcams.Any(x => Machine.WebCamUrl?.EndsWith(x.StreamUrl ?? string.Empty) == true))
       {
         var firstCamera = cameras.Result.Webcams.First();
         machine.WebCamUrl = new Uri(new Uri(Machine.Url), firstCamera.StreamUrl).ToString();
@@ -265,6 +265,6 @@ public class MoonrakerMachineProvider(MoonrakerMachine machine, IMachineStatusCh
       _lastStatusUpdate = DateTime.UtcNow;
     }
 
-    await MachineStatusChannel.WriteAsync(nextStatus);
+    await MachineStatusChannel.WriteAsync(nextStatus, _cancellationTokenSource?.Token ?? default);
   }
 }

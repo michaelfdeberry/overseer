@@ -1,224 +1,127 @@
 @let machineRef = machine();
 @let statusRef = status();
 
-<div #machineMonitor class="machine-monitor border" [ngClass]="{ expanded: expanded() }">
-  <div class="display flex-1 position-relative">
-    <div
-      class="video position-absolute"
-      class="{{ machineRef?.webCamOrientation }}"
-      [ngStyle]="{ 'background-image': 'url(' + machineRef?.webCamUrl + ')' }"
-    ></div>
-    @if (!statusRef || statusRef.state === 'Offline' || statusRef.state === 'Disabled') {
-      <div class="status-icon">
-        @if (machineRef?.disabled) {
-          <i class="bi bi-lightbulb-off"></i>
-        } @else {
-          <i class="bi bi-wifi-off"></i>
-        }
-      </div>
-    }
-    @if (machineRef) {
-      <img class="logo" src="{{ '/images/' + machineRef.machineType + '.png' }}" alt="logo" />
-    }
-  </div>
-  <div class="info p-3">
-    <div class="d-flex pb-2">
-      <div class="flex-1">
-        <div class="fs-5 fw-bold">{{ machineRef?.name }}</div>
-        <div class="fs-7">
-          {{ 'status' | i18next }}:
-          <span [ngClass]="{ 'text-warning': paused(), 'text-success': operational() }">
-            @if (machineRef?.disabled) {
-              <b>{{ 'Disabled' | i18next }}</b>
-            } @else {
-              <b>{{ statusRef?.state ?? 'Connecting' | i18next }}</b>
-            }
-          </span>
-        </div>
-      </div>
-      <div class="d-flex flex-1 align-items-center justify-content-end">
-        @if (!idle() && isAdmin()) {
-          <button class="btn btn-outline-secondary ms-2" title="{{ 'tuning' | i18next }}" (click)="expanded.set(!expanded())">
-            @if (expanded()) {
-              <i class="bi bi-chevron-down"></i>
-            } @else {
-              <i class="bi bi-tools"></i>
-            }
-          </button>
-        }
-
-        @if (machineRef?.url?.startsWith('http')) {
-          <a class="btn btn-outline-secondary ms-2" href="{{ machineRef?.url }}" target="_blank" rel="noopener" title="{{ 'openWebsite' | i18next }}">
-            <i class="bi bi-box-arrow-up-right"></i>
-          </a>
-        }
-
-        @if (!idle()) {
-          <button class="btn btn-outline-secondary ms-2" title="{{ 'fullScreen' | i18next }}" (click)="fullScreen.set(!fullScreen())">
-            <i class="bi bi-arrows-fullscreen"></i>
-          </button>
-        }
-      </div>
-    </div>
-    <div class="progress-info py-2">
-      <div class="flex-1">
-        <div class="d-flex flex-row py-1 fs-7">
-          <div class="flex-1">
-            {{ 'elapsed' | i18next }}: <b>{{ statusRef?.elapsedJobTime | duration }}</b>
-          </div>
-          <div>
-            {{ 'remaining' | i18next }}: <b>{{ statusRef?.estimatedTimeRemaining | duration }}</b>
-          </div>
-        </div>
-        <div>
-          <ngb-progressbar class="mb-3" type="primary" [value]="statusRef?.progress ?? 0" height="0.4rem" />
-        </div>
-      </div>
-      @if (isAdmin()) {
-        <div class="progress-info__actions">
+@if (machineRef) {
+  <div #machineMonitor class="machine-monitor border" [ngClass]="{ 'machine-monitor--fullScreen': fullScreen() }">
+    <div class="display flex-1 position-relative">
+      <app-web-cam-panel class="video position-absolute" [url]="machineRef.webCamUrl" [orientation]="machineRef.webCamOrientation" />
+      @if (!statusRef || statusRef.state === 'Offline' || statusRef.state === 'Disabled') {
+        <div class="status-icon">
           @if (machineRef?.disabled) {
-            <a class="btn btn-outline-secondary" [routerLink]="['/settings/machines', machineRef?.id, 'edit']">{{ 'enable' | i18next }}</a>
+            <i class="bi bi-lightbulb-off"></i>
           } @else {
-            @if (operational()) {
-              <button class="btn btn-warning" (click)="pause()">{{ 'pause' | i18next }}</button>
-            }
-            @if (paused()) {
-              <button class="btn btn-success" (click)="resume()">{{ 'continue' | i18next }}</button>
-            }
-            @if (!idle()) {
-              <button class="btn btn-outline-danger" [disabled]="idle()" (click)="cancel()">{{ 'stop' | i18next }}</button>
-            }
+            <i class="bi bi-wifi-off"></i>
           }
         </div>
       }
-    </div>
-    <div class="temperatures">
-      @for (heater of heaters(); track heater.index) {
-        @let temperature = statusRef?.temperatures?.[heater.index];
-
-        <div class="temperature border rounded p-2">
-          <div class="temperature__title">
-            @if (heater.name.toLowerCase() === 'bed') {
-              <span>{{ 'bed' | i18next }}</span>
-            } @else {
-              <span>{{ 'heater' | i18next }} {{ heater.index | number }}</span>
-            }
-          </div>
-
-          <div class="temperature__display">
-            <div class="temperature__label">{{ 'current' | i18next }}</div>
-            <div class="temperature__value">
-              @if (temperature) {
-                {{ temperature.actual | number: '1.0-0' }} &deg;C
-              } @else {
-                {{ 'nonApplicable' | i18next }}
-              }
-            </div>
-          </div>
-          <div class="temperature__display">
-            <div class="temperature__label">{{ 'target' | i18next }}</div>
-            <div class="temperature__value">
-              @if (temperature) {
-                @if (expanded()) {
-                  <div class="input-group">
-                    <button class="btn btn-outline-secondary" [disabled]="busy()" (click)="decreaseTemp(heater.index)">
-                      <i class="bi bi-dash"></i>
-                    </button>
-                    <input
-                      #tempInput
-                      type="number"
-                      class="form-control"
-                      [value]="temperature.target"
-                      (change)="setTemp(heater.index, tempInput.valueAsNumber)"
-                    />
-                    <button class="btn btn-outline-secondary" [disabled]="busy()" (click)="increaseTemp(heater.index)">
-                      <i class="bi bi-plus"></i>
-                    </button>
-                  </div>
-                } @else {
-                  {{ temperature.target | number: '1.0-0' }} &deg;C
-                }
-              } @else {
-                <span>{{'nonApplicable' | i18next}}</span>
-              }
-            </div>
-          </div>
-        </div>
+      @if (machineRef) {
+        <img class="logo" src="{{ '/images/' + machineRef.machineType + '.png' }}" alt="logo" />
       }
     </div>
-    @if (expanded()) {
-      <div class="fs-7">
-        <div class="row py-3">
-          <div class="col-3">
-            {{ 'fanSpeed' | i18next }}
-          </div>
-          <div class="col-8">
-            <input
-              #fanSpeed
-              type="range"
-              class="form-range"
-              min="0"
-              max="100"
-              step="1"
-              value="{{ statusRef?.fanSpeed }}"
-              [disabled]="busy()"
-              (input)="fanSpeedDisplay.innerText = fanSpeed.value"
-              (change)="setFanSpeed(fanSpeed.valueAsNumber)"
-            />
-          </div>
-          <div class="col-1 text-end">
-            <span #fanSpeedDisplay>{{ statusRef?.fanSpeed | number }}</span
-            >%
+    <div class="info flex-1 p-3 d-flex flex-column">
+      <div class="d-flex pb-2">
+        <div class="flex-1">
+          <div class="fs-5 fw-bold">{{ machineRef?.name }}</div>
+          <div class="fs-7">
+            {{ 'status' | i18next }}:
+            <span [ngClass]="{ 'text-warning': paused(), 'text-success': operational() }">
+              @if (machineRef?.disabled) {
+                <b>{{ 'Disabled' | i18next }}</b>
+              } @else {
+                <b>{{ statusRef?.state ?? 'Connecting' | i18next }}</b>
+              }
+            </span>
           </div>
         </div>
-        <div class="row py-3">
-          <div class="col-3">
-            {{ 'feedRate' | i18next }}
-          </div>
-          <div class="col-8">
-            <input
-              #feedRate
-              type="range"
-              class="form-range"
-              min="0"
-              max="150"
-              step="1"
-              value="{{ statusRef?.feedRate }}"
-              [disabled]="busy()"
-              (input)="feedRateDisplay.innerText = feedRate.value"
-              (change)="setFeedRate(feedRate.valueAsNumber)"
-            />
-          </div>
-          <div class="col-1 text-end">
-            <span #feedRateDisplay>{{ feedRate.valueAsNumber | number }}</span
-            >%
-          </div>
+        <div class="d-flex flex-1 align-items-center justify-content-end">
+          @if (machineRef?.url?.startsWith('http')) {
+            <a
+              class="btn btn-outline-secondary ms-2"
+              href="{{ machineRef?.url }}"
+              target="_blank"
+              rel="noopener"
+              title="{{ 'openWebsite' | i18next }}"
+            >
+              <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+          }
+
+          @if (!idle() && supportsFullscreen) {
+            <button class="btn btn-outline-secondary ms-2" title="{{ 'fullScreen' | i18next }}" (click)="fullScreen.set(!fullScreen())">
+              <i class="bi bi-arrows-fullscreen"></i>
+            </button>
+          }
         </div>
-        @for (extruder of extruders(); track $index) {
-          @let value = statusRef?.flowRates?.[extruder.index];
-          <div class="row py-3">
-            <div class="col-3">{{ 'extruder' | i18next }} {{ extruder.index | number }}</div>
-            <div class="col-8">
-              <input
-                #flowRate
-                type="range"
-                class="form-range"
-                min="75"
-                max="150"
-                step="1"
-                value="{{ value }}"
-                [disabled]="busy()"
-                (input)="flowRateDisplay.innerText = flowRate.value"
-                (change)="setFlowRate(extruder.index, flowRate.valueAsNumber)"
-              />
+      </div>
+      <div class="progress-info flex-1 py-2">
+        @if (!idle()) {
+          <div class="d-flex flex-row py-1 fs-7">
+            <div class="flex-1">
+              {{ 'elapsed' | i18next }}: <b>{{ statusRef?.elapsedJobTime | duration }}</b>
             </div>
-            <div class="col-1 text-end">
-              <span #flowRateDisplay>{{ flowRate.valueAsNumber | number }}</span
-              >%
+            <div>
+              {{ 'remaining' | i18next }}: <b>{{ statusRef?.estimatedTimeRemaining | duration }}</b>
+            </div>
+          </div>
+          <div>
+            <ngb-progressbar class="mb-3" type="primary" [value]="statusRef?.progress ?? 0" height="0.4rem" />
+          </div>
+        }
+
+        @if (isAdmin()) {
+          <div class="progress-info__actions">
+            @if (machineRef?.disabled) {
+              <a class="btn btn-outline-secondary" [routerLink]="['/settings/machines', machineRef?.id, 'edit']">{{ 'enable' | i18next }}</a>
+            } @else {
+              @if (operational()) {
+                <button class="btn btn-warning" (click)="pause()">{{ 'pause' | i18next }}</button>
+              }
+              @if (paused()) {
+                <button class="btn btn-success" (click)="resume()">{{ 'continue' | i18next }}</button>
+              }
+              @if (!idle()) {
+                <button class="btn btn-outline-danger" [disabled]="idle()" (click)="cancel()">{{ 'stop' | i18next }}</button>
+              }
+            }
+          </div>
+        }
+      </div>
+      <div class="temperatures">
+        @for (heater of heaters(); track heater.index) {
+          @let temperature = statusRef?.temperatures?.[heater.index];
+
+          <div class="temperature border rounded p-2">
+            <div class="temperature__title">
+              @if (heater.name.toLowerCase() === 'bed') {
+                <span>{{ 'bed' | i18next }}</span>
+              } @else {
+                <span>{{ 'heater' | i18next }} {{ heater.index | number }}</span>
+              }
+            </div>
+
+            <div class="temperature__display">
+              <div class="temperature__label">{{ 'current' | i18next }}</div>
+              <div class="temperature__value">
+                @if (temperature) {
+                  {{ temperature.actual | number: '1.0-0' }} &deg;C
+                } @else {
+                  {{ 'nonApplicable' | i18next }}
+                }
+              </div>
+            </div>
+            <div class="temperature__display">
+              <div class="temperature__label">{{ 'target' | i18next }}</div>
+              <div class="temperature__value">
+                @if (temperature) {
+                  {{ temperature.target | number: '1.0-0' }} &deg;C
+                } @else {
+                  <span>{{ 'nonApplicable' | i18next }}</span>
+                }
+              </div>
             </div>
           </div>
         }
       </div>
-    }
+    </div>
   </div>
-</div>
+}

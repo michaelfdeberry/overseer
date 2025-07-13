@@ -10,6 +10,7 @@ namespace Overseer.Server.Services;
 public class RestartMonitoringService(IRestartMonitoringChannel restartMonitoringChannel, IMonitoringService monitoringService) : BackgroundService
 {
   static readonly ILog Log = LogManager.GetLogger(nameof(RestartMonitoringService));
+  readonly Guid _subscriberId = Guid.NewGuid();
 
   protected override async Task ExecuteAsync(CancellationToken stoppingToken)
   {
@@ -17,7 +18,7 @@ public class RestartMonitoringService(IRestartMonitoringChannel restartMonitorin
     {
       try
       {
-        if (await restartMonitoringChannel.ReadAsync())
+        if (await restartMonitoringChannel.ReadAsync(_subscriberId, stoppingToken))
         {
           monitoringService.RestartMonitoring();
         }

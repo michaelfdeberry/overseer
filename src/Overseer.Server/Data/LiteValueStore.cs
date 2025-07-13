@@ -15,12 +15,12 @@ namespace Overseer.Server.Data
 
     public T? Get<T>()
     {
-      return Get<T>(nameof(T));
+      return Get<T>(typeof(T).Name);
     }
 
     public void Put<T>(T value)
     {
-      Put(nameof(T), value);
+      Put(typeof(T).Name, value);
     }
 
     public T GetOrPut<T>(Func<T> putFunc)

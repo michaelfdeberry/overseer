@@ -11,9 +11,24 @@ namespace Overseer.Server.Machines.BambuLabs;
 
 public class BambuMachineProvider(BambuMachine machine, IMachineStatusChannel machineStatusChannel) : MachineProvider<BambuMachine>
 {
+  private const string MqttUsername = "bblp";
+  private const int MqttPort = 8883;
+  private const string DefaultSequenceId = "0";
+  private const string CertificateIssuerName = "BBL Technologies Co., Ltd";
+  private const int MinutesToSeconds = 60;
+  private const int BedHeaterIndex = 0;
+  private const int NozzleHeaterIndex = 1;
+  private const int ExtruderIndex = 0;
+  private const string BedToolName = "bed";
+
   private IMqttClient? _mqttClient;
   Timer? _timer;
   DateTime? _lastStatusUpdate;
+
+  private readonly object _lockObject = new();
+  private volatile bool _isConnecting = false;
+  private int _connectionAttempts = 0;
+  private readonly int _maxConnectionAttempts = 5;
 
   public override BambuMachine Machine
   {
@@ -23,15 +38,28 @@ public class BambuMachineProvider(BambuMachine machine, IMachineStatusChannel ma
 
   private async Task SendPrintCommand(object command)
   {
-    if (_mqttClient == null)
+    IMqttClient? client = null;
+    lock (_lockObject)
+    {
+      client = _mqttClient;
+    }
+
+    if (client == null || !client.IsConnected)
       return;
 
-    await _mqttClient.PublishAsync(
-      new MqttApplicationMessageBuilder()
-        .WithTopic($"device/{Machine.Serial}/request")
-        .WithPayload(JsonSerializer.SerializeToUtf8Bytes(new { print = command }))
-        .Build()
-    );
+    try
+    {
+      await client.PublishAsync(
+        new MqttApplicationMessageBuilder()
+          .WithTopic($"device/{Machine.Serial}/request")
+          .WithPayload(JsonSerializer.SerializeToUtf8Bytes(new { print = command }))
+          .Build()
+      );
+    }
+    catch (Exception ex)
+    {
+      Log.Warn("Failed to send print command", ex);
+    }
   }
 
   public override async Task ExecuteGcode(string command)
@@ -39,7 +67,7 @@ public class BambuMachineProvider(BambuMachine machine, IMachineStatusChannel ma
     await SendPrintCommand(
       new
       {
-        sequence_id = "0",
+        sequence_id = DefaultSequenceId,
         command = "gcode_line",
         param = command,
       }
@@ -48,17 +76,17 @@ public class BambuMachineProvider(BambuMachine machine, IMachineStatusChannel ma
 
   public override async Task ResumeJob()
   {
-    await SendPrintCommand(new { sequence_id = "0", command = "resume" });
+    await SendPrintCommand(new { sequence_id = DefaultSequenceId, command = "resume" });
   }
 
   public override async Task PauseJob()
   {
-    await SendPrintCommand(new { sequence_id = "0", command = "pause" });
+    await SendPrintCommand(new { sequence_id = DefaultSequenceId, command = "pause" });
   }
 
   public override async Task CancelJob()
   {
-    await SendPrintCommand(new { sequence_id = "0", command = "stop" });
+    await SendPrintCommand(new { sequence_id = DefaultSequenceId, command = "stop" });
   }
 
   public override Task LoadConfiguration(Machine machine)
@@ -71,41 +99,75 @@ public class BambuMachineProvider(BambuMachine machine, IMachineStatusChannel ma
 
     // not supporting ams in overseer
     // all bambu printers have a single bed, hot end, and extruder
-    Machine.Tools = [new(MachineToolType.Heater, 0, "bed"), new(MachineToolType.Heater, 1), new(MachineToolType.Extruder, 0)];
+    Machine.Tools =
+    [
+      new(MachineToolType.Heater, BedHeaterIndex, BedToolName),
+      new(MachineToolType.Heater, NozzleHeaterIndex),
+      new(MachineToolType.Extruder, ExtruderIndex),
+    ];
 
     return Task.CompletedTask;
   }
 
   public override void Start(int interval)
   {
+    // Reset connection attempts when starting
+    _connectionAttempts = 0;
+
     Task.Run(Connect);
 
     _timer?.Dispose();
     _timer = new(interval);
     _timer.Elapsed += async (sender, args) =>
     {
-      if (_mqttClient == null || !_mqttClient.IsConnected)
+      bool shouldReconnect = false;
+      lock (_lockObject)
       {
-        if (_mqttClient != null)
+        shouldReconnect = _mqttClient == null || !_mqttClient.IsConnected;
+      }
+
+      if (shouldReconnect && !_isConnecting)
+      {
+        lock (_lockObject)
         {
-          await _mqttClient.DisconnectAsync();
-          _mqttClient?.Dispose();
+          if (_mqttClient != null)
+          {
+            Task.Run(async () =>
+            {
+              await _mqttClient.DisconnectAsync();
+              _mqttClient?.Dispose();
+            });
+          }
         }
-        await Connect();
+        await ConnectWithBackoff();
+        return;
       }
 
       // since it's mqtt updates are pushed, but if we haven't received an update in the last interval, request one
       if (_lastStatusUpdate.HasValue && DateTime.UtcNow.Subtract(_lastStatusUpdate.Value).TotalSeconds < interval)
         return;
 
-      if (_mqttClient != null)
+      lock (_lockObject)
       {
-        await _mqttClient.PublishAsync(
-          new MqttApplicationMessageBuilder()
-            .WithTopic($"device/{Machine.Serial}/request")
-            .WithPayload(JsonSerializer.SerializeToUtf8Bytes(new { pushing = new { command = "pushall" } }))
-            .Build()
-        );
+        if (_mqttClient != null && _mqttClient.IsConnected)
+        {
+          Task.Run(async () =>
+          {
+            try
+            {
+              await _mqttClient.PublishAsync(
+                new MqttApplicationMessageBuilder()
+                  .WithTopic($"device/{Machine.Serial}/request")
+                  .WithPayload(JsonSerializer.SerializeToUtf8Bytes(new { pushing = new { command = "pushall" } }))
+                  .Build()
+              );
+            }
+            catch (Exception ex)
+            {
+              Log.Warn("Failed to send pushall command", ex);
+            }
+          });
+        }
       }
     };
     _timer.Start();
@@ -113,94 +175,146 @@ public class BambuMachineProvider(BambuMachine machine, IMachineStatusChannel ma
 
   async Task Connect()
   {
-    if (_mqttClient == null)
-      return;
-
-    var mqttFactory = new MqttClientFactory();
-    _mqttClient = mqttFactory.CreateMqttClient();
-    var mqttClientOptions = new MqttClientOptionsBuilder()
-      .WithProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion.V311)
-      .WithCredentials("bblp", Machine.AccessCode)
-      .WithTlsOptions(
-        (options) => options.UseTls().WithCertificateValidationHandler((args) => args.Certificate.Issuer.Contains("BBL Technologies Co., Ltd"))
-      )
-      .WithTcpServer(Machine.Url, 8883)
-      .Build();
-
-    _mqttClient.ApplicationMessageReceivedAsync += OnMessage;
-
-    var result = await _mqttClient.ConnectAsync(mqttClientOptions);
-    if (result.ResultCode != MqttClientConnectResultCode.Success)
+    lock (_lockObject)
     {
-      Log.Error($"Failed to connect to MQTT server: {result.ResultCode}");
-      return;
+      if (_mqttClient != null || _isConnecting)
+        return;
+      _isConnecting = true;
     }
 
-    await _mqttClient.SubscribeAsync($"device/{Machine.Serial}/report");
+    try
+    {
+      var mqttFactory = new MqttClientFactory();
+      var newClient = mqttFactory.CreateMqttClient();
+      var mqttClientOptions = new MqttClientOptionsBuilder()
+        .WithProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion.V311)
+        .WithCredentials(MqttUsername, Machine.AccessCode)
+        .WithTlsOptions(
+          (options) => options.UseTls().WithCertificateValidationHandler((args) => args.Certificate.Issuer.Contains("BBL Technologies Co., Ltd"))
+        )
+        .WithTcpServer(Machine.Url, MqttPort)
+        .Build();
+
+      newClient.ApplicationMessageReceivedAsync += OnMessage;
+
+      var result = await newClient.ConnectAsync(mqttClientOptions);
+      if (result.ResultCode != MqttClientConnectResultCode.Success)
+      {
+        Log.Error($"Failed to connect to MQTT server: {result.ResultCode}");
+        newClient?.Dispose();
+        return;
+      }
+
+      await newClient.SubscribeAsync($"device/{Machine.Serial}/report");
+
+      lock (_lockObject)
+      {
+        _mqttClient = newClient;
+        _connectionAttempts = 0; // Reset on successful connection
+      }
+    }
+    catch (Exception ex)
+    {
+      Log.Error("Error connecting to Bambu Labs printer", ex);
+    }
+    finally
+    {
+      lock (_lockObject)
+      {
+        _isConnecting = false;
+      }
+    }
+  }
+
+  async Task ConnectWithBackoff()
+  {
+    if (_connectionAttempts >= _maxConnectionAttempts)
+    {
+      Log.Warn($"Max connection attempts ({_maxConnectionAttempts}) reached. Waiting before retry.");
+      await Task.Delay(TimeSpan.FromMinutes(2)); // Wait 2 minutes before resetting
+      _connectionAttempts = 0;
+    }
+
+    var delay = Math.Min(1000 * Math.Pow(2, _connectionAttempts), 30000); // Exponential backoff, max 30 seconds
+    if (_connectionAttempts > 0)
+    {
+      Log.Info($"Waiting {delay}ms before connection attempt {_connectionAttempts + 1}");
+      await Task.Delay(TimeSpan.FromMilliseconds(delay));
+    }
+
+    _connectionAttempts++;
+    await Connect();
   }
 
   async Task OnMessage(MqttApplicationMessageReceivedEventArgs args)
   {
-    var payload = args.ApplicationMessage.Payload;
-    var json = Encoding.UTF8.GetString([.. payload.ToArray().Where(b => b != 0)]);
-    var message = JsonSerializer.Deserialize<Message>(json);
-
-    // if the gcode_state is not present, ignore the message
-    if (message?.Print?.GCodeState == null)
+    try
     {
-      return;
-    }
+      var payload = args.ApplicationMessage.Payload;
+      var json = Encoding.UTF8.GetString(payload.ToArray()).TrimEnd('\0');
 
-    var status = new MachineStatus
-    {
-      MachineId = Machine.Id,
-      State = message.Print.GCodeState switch
+      var message = JsonSerializer.Deserialize<Message>(json);
+      if (message?.Print?.GCodeState == null)
       {
-        "RUNNING" => MachineState.Operational,
-        "PREPARING" => MachineState.Operational,
-        "PAUSE" => MachineState.Paused,
-        _ => MachineState.Idle,
-      },
-    };
+        return;
+      }
 
-    if (status.State != MachineState.Idle)
-    {
-      // if it's not idle, we can get the progress and estimated time remaining
-      status.FanSpeed = Convert.ToInt32(message.Print.FanSpeed) / 15 * 100;
-      status.Progress = message.Print.Progress;
-      status.EstimatedTimeRemaining = message.Print.RemainingTime * 60;
-      // only the remaining time is available, so we calculate the elapsed time
-      var total = (int)(status.EstimatedTimeRemaining / (1 - status.Progress / 100));
-      status.ElapsedJobTime = total - status.EstimatedTimeRemaining;
-      status.FeedRate = message.Print.Speed;
-      // the flow rate is not available from the printer, just default to 100%
-      status.FlowRates = new() { { 0, 100f } };
-    }
-
-    status.Temperatures = new()
-    {
+      var status = new MachineStatus
       {
-        0,
-        new TemperatureStatus
+        MachineId = Machine.Id,
+        State = message.Print.GCodeState switch
         {
-          HeaterIndex = 0,
-          Actual = message.Print.BedTemperature,
-          Target = message.Print.BedTargetTemperature,
-        }
-      },
-      {
-        1,
-        new TemperatureStatus
-        {
-          HeaterIndex = 1,
-          Actual = message.Print.NozzleTemperature,
-          Target = message.Print.NozzleTargetTemperature,
-        }
-      },
-    };
+          "RUNNING" => MachineState.Operational,
+          "PREPARING" => MachineState.Operational,
+          "PAUSE" => MachineState.Paused,
+          "FINISH" => MachineState.Idle,
+          "FAILED" => MachineState.Idle, // Consider adding error state if available
+          _ => MachineState.Idle,
+        },
+      };
 
-    await machineStatusChannel.WriteAsync(status);
-    _lastStatusUpdate = DateTime.UtcNow;
+      if (status.State != MachineState.Idle)
+      {
+        status.Progress = message.Print.Progress;
+        status.EstimatedTimeRemaining = message.Print.RemainingTime * MinutesToSeconds;
+        // only the remaining time is available, so we calculate the elapsed time
+        var total = (int)(status.EstimatedTimeRemaining / (1 - status.Progress / 100));
+        status.ElapsedJobTime = total - status.EstimatedTimeRemaining;
+      }
+
+      status.Temperatures = new()
+      {
+        {
+          BedHeaterIndex,
+          new TemperatureStatus
+          {
+            HeaterIndex = BedHeaterIndex,
+            Actual = message.Print.BedTemperature,
+            Target = message.Print.BedTargetTemperature,
+          }
+        },
+        {
+          NozzleHeaterIndex,
+          new TemperatureStatus
+          {
+            HeaterIndex = NozzleHeaterIndex,
+            Actual = message.Print.NozzleTemperature,
+            Target = message.Print.NozzleTargetTemperature,
+          }
+        },
+      };
+
+      await machineStatusChannel.WriteAsync(status);
+      _lastStatusUpdate = DateTime.UtcNow;
+    }
+    catch (JsonException ex)
+    {
+      Log.Warn("Failed to deserialize MQTT message", ex);
+    }
+    catch (Exception ex)
+    {
+      Log.Error("Error processing MQTT message", ex);
+    }
   }
 
   public override void Stop()
@@ -209,9 +323,25 @@ public class BambuMachineProvider(BambuMachine machine, IMachineStatusChannel ma
     _timer?.Dispose();
     _timer = null;
 
-    _mqttClient?.DisconnectAsync().Wait();
-    _mqttClient?.Dispose();
-    _mqttClient = null;
+    Task.Run(() =>
+    {
+      lock (_lockObject)
+      {
+        if (_mqttClient != null && _mqttClient.IsConnected)
+        {
+          try
+          {
+            _mqttClient.DisconnectAsync().Wait(TimeSpan.FromSeconds(5));
+          }
+          catch (Exception ex)
+          {
+            Log.Warn("Error during MQTT disconnect", ex);
+          }
+        }
+        _mqttClient?.Dispose();
+        _mqttClient = null;
+      }
+    });
   }
 
   protected override void OnDisposing()

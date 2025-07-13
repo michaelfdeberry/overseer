@@ -20,7 +20,7 @@ namespace Overseer.Server.Machines
 
     public override void Start(int interval)
     {
-      Connect().DoNotAwait();
+      Task.Run(Connect, _cancellationTokenSource?.Token ?? default);
 
       _timer?.Dispose();
       _timer = new(interval);
@@ -39,14 +39,14 @@ namespace Overseer.Server.Machines
 
         if (shouldSend && statusToSend != null)
         {
-          await machineStatusChannel.WriteAsync(statusToSend);
+          await machineStatusChannel.WriteAsync(statusToSend, _cancellationTokenSource?.Token ?? default);
         }
 
         if (_webSocket == null || _webSocket.State != WebSocketState.Open)
         {
           _webSocket?.Dispose();
           _webSocket = null;
-          Connect().DoNotAwait();
+          await Connect();
         }
       };
       _timer.Start();

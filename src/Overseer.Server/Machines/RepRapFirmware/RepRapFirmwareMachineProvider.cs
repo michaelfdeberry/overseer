@@ -127,13 +127,6 @@ public class RepRapFirmwareMachineProvider(RepRapFirmwareMachine machine, IMachi
       var tools = await FetchModel<IEnumerable<Tool>>("tools", string.Empty, cancellation);
       var activeTool = tools?.First(t => t.State == ToolState.Active);
       var fanIndex = activeTool?.Fans.ElementAt(0) ?? 0;
-      status.FanSpeed = model.Fans.ElementAt(fanIndex).RequestedValue * 100;
-      status.FeedRate = speedFactor * 100;
-      status.FlowRates = [];
-      Machine
-        .Tools.Where(t => t.ToolType == MachineToolType.Extruder)
-        .ToList()
-        .ForEach(e => status.FlowRates.Add(e.Index, (double)extruders!.ElementAt(e.Index).Factor * 100));
 
       status.ElapsedJobTime = model.Job?.Duration ?? 0;
       var (timeRemaining, progress) = await CalculateCompletion(model, extruders!, cancellation);

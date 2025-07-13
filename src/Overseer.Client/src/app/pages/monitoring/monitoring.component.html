@@ -4,14 +4,10 @@
   </div>
 } @else {
   @if (displayedMachines()?.length) {
-    <div class="container-fluid">
-      <div class="row">
-        @for (item of displayedMachines(); track item.id) {
-          <div class="col" [class]="column()">
-            <app-machine-monitor [machine]="item"></app-machine-monitor>
-          </div>
-        }
-      </div>
+    <div class="machines d-flex flex-1 flex-column">
+      @for (item of displayedMachines(); track item.id) {
+        <app-machine-monitor [machine]="item"></app-machine-monitor>
+      }
     </div>
   } @else {
     <div class="d-flex flex-1 justify-content-center align-items-center p-3">

@@ -60,7 +60,7 @@ public abstract class PollingMachineProvider<TMachine> : MachineProvider<TMachin
     //if the stopwatch is running and it's in the timeout period just return an offline status
     if (_stopwatch.IsRunning && _stopwatch.Elapsed.TotalMinutes < ExceptionTimeout)
     {
-      await StatusChannel.WriteAsync(new() { MachineId = MachineId });
+      await StatusChannel.WriteAsync(new() { MachineId = MachineId }, _cancellation?.Token ?? default);
     }
 
     try
@@ -82,7 +82,7 @@ public abstract class PollingMachineProvider<TMachine> : MachineProvider<TMachin
       _cancellation.Dispose();
       _cancellation = null;
 
-      await StatusChannel.WriteAsync(status);
+      await StatusChannel.WriteAsync(status, _cancellation?.Token ?? default);
     }
     catch (Exception ex)
     {
@@ -94,7 +94,7 @@ public abstract class PollingMachineProvider<TMachine> : MachineProvider<TMachin
         Log.Error("Max consecutive failure count reached, throttling updates", ex);
       }
 
-      await StatusChannel.WriteAsync(new() { MachineId = MachineId });
+      await StatusChannel.WriteAsync(new() { MachineId = MachineId }, _cancellation?.Token ?? default);
     }
   }
 
