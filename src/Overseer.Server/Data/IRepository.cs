@@ -12,6 +12,8 @@ public interface IRepository<T>
 {
   IReadOnlyList<T> GetAll();
 
+  IReadOnlyList<T> Filter(Expression<Func<T, bool>> predicate);
+
   T GetById(int id);
 
   T Get(Expression<Func<T, bool>> predicate);
@@ -23,6 +25,10 @@ public interface IRepository<T>
   void Update(IEnumerable<T> entities);
 
   void Delete(int id);
+
+  void Delete(Expression<Func<T, bool>> predicate);
+
+  void DeleteAll();
 
   bool Exist(Expression<Func<T, bool>> predicate);
 

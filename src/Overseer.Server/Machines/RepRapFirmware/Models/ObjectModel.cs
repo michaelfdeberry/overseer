@@ -13,4 +13,6 @@ public class ObjectModel
   public Job? Job { get; set; }
 
   public Move? Move { get; set; }
+
+  public IEnumerable<Tool> Tools { get; set; } = [];
 }

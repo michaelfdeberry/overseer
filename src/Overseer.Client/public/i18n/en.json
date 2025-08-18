@@ -1,5 +1,7 @@
 {
   "default": "Default",
+  "close": "Close",
+  "clear": "Clear",
   "add": "Add",
   "edit": "Edit",
   "editing": "Editing",
@@ -73,7 +75,8 @@
   "Operational": "Operational",
   "Paused": "Paused",
   "Octoprint": "Octoprint",
-  "RepRapFirmware": "RepRapFirmware (Duet Web Control)",
+  "RepRapFirmware": "RepRapFirmware (Standalone)",
+  "DuetSoftwareFramework": "RepRapFirmware (SBC)",
   "Bambu": "Bambu Lab (Lan Only)",
   "Moonraker": "Moonraker (Klipper)",
   "repRapFirmwarePasswordPlaceholder": "Leave empty if password is not enabled.",
@@ -198,5 +201,27 @@
       "skip": "Skip",
       "setupComplete": "Setup Complete, Happy Making!"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "error": "Unable to retrieve notifications",
+    "empty": "No notifications available",
+    "unread": "Unread Notifications",
+    "maxCount": "9+"
+  },
+  "job": {
+    "machineOffline": "Lost Connection to Machine"
+  },
+  "jobNotifications": {
+    "JobStarted": "Job Started",
+    "JobCompleted": "Job Ended",
+    "JobPaused": "Job Paused",
+    "JobResumed": "Job Resumed",
+    "JobError": "Job Error",
+    "JobStartedMessage": "Job #{{jobNumber}} has started on {{machineName}}.",
+    "JobCompletedMessage": "Job #{{jobNumber}} on {{machineName}} has ended.",
+    "JobPausedMessage": "Job #{{jobNumber}} on {{machineName}} has been paused.",
+    "JobResumedMessage": "Job #{{jobNumber}} on {{machineName}} has resumed.",
+    "JobErrorMessage": "An error occurred during job #{{jobNumber}} on {{machineName}}."
   }
 }

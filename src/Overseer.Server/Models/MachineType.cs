@@ -8,5 +8,6 @@ namespace Overseer.Server.Models
     Bambu,
     Elegoo,
     Moonraker,
+    DuetSoftwareFramework,
   }
 }

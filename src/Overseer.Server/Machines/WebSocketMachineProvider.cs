@@ -60,6 +60,14 @@ namespace Overseer.Server.Machines
       _cancellationTokenSource?.Cancel();
     }
 
+    protected virtual Task<Uri> GetWebSocketUri()
+    {
+      if (Machine.WebSocketUri is null)
+        throw new InvalidOperationException("WebSocket URI is not set for the machine.");
+
+      return Task.FromResult(Machine.WebSocketUri);
+    }
+
     protected virtual async Task Connect()
     {
       if (_webSocket != null && _webSocket.State == WebSocketState.Open)
@@ -71,10 +79,8 @@ namespace Overseer.Server.Machines
       _webSocket = new ClientWebSocket();
       try
       {
-        if (Machine.WebSocketUri is null)
-          throw new InvalidOperationException("WebSocket URI is not set for the machine.");
-
-        await _webSocket.ConnectAsync(Machine.WebSocketUri, _cancellationTokenSource.Token);
+        var webSocketUri = await GetWebSocketUri();
+        await _webSocket.ConnectAsync(webSocketUri, _cancellationTokenSource.Token);
         await OnConnected();
         await ReceiveLoop();
       }
@@ -86,7 +92,11 @@ namespace Overseer.Server.Machines
       }
     }
 
-    protected abstract Task OnConnected();
+    protected virtual Task OnConnected()
+    {
+      // Override this method to handle actions after the WebSocket connection is established.
+      return Task.CompletedTask;
+    }
 
     protected abstract Task HandleIncomingMessage(string messageText);
 

@@ -18,5 +18,8 @@ public class MachineJob : IEntity
   [JsonConverter(typeof(JsonStringEnumConverter))]
   public MachineState State { get; set; }
 
+  [JsonConverter(typeof(JsonStringEnumConverter))]
+  public JobNotificationType LastNotificationType { get; set; }
+
   public MachineStatus? LastStatus { get; set; }
 }

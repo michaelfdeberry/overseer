@@ -7,7 +7,7 @@ namespace Overseer.Server.Users;
 public class AuthorizationManager(IDataContext context, IAuthenticationManager authenticationManager) : IAuthorizationManager
 {
   readonly IAuthenticationManager _authenticationManager = authenticationManager;
-  readonly IRepository<User> _users = context.GetRepository<User>();
+  readonly IRepository<User> _users = context.Repository<User>();
 
   public bool RequiresAuthorization()
   {

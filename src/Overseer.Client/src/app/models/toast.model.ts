@@ -1,6 +1,8 @@
+export type ToastType = 'success' | 'error' | 'info' | 'warning';
+
 export type Toast = {
   id: string;
-  type?: 'success' | 'error' | 'info' | 'warning';
+  type?: ToastType;
   header?: string;
   message: string;
   delay?: number;

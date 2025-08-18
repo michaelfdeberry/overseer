@@ -5,7 +5,7 @@ namespace Overseer.Server.Users;
 
 public class UserManager(IDataContext context) : IUserManager
 {
-  readonly IRepository<User> _users = context.GetRepository<User>();
+  readonly IRepository<User> _users = context.Repository<User>();
 
   public UserDisplay CreateUser(UserDisplay userModel)
   {

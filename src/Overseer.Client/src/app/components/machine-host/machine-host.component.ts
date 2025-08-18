@@ -24,6 +24,7 @@ export class MachineHostComponent implements OnInit {
     Bambu: BambuLabMachineComponent,
     Elegoo: ElegooMachineComponent,
     Moonraker: MoonrakerMachineComponent,
+    DuetSoftwareFramework: RepRapFirmwareMachineComponent, // Reusing RepRapFirmwareMachineComponent for DuetSoftwareFramework
   };
 
   form = input<FormGroup<MachineForm>>();

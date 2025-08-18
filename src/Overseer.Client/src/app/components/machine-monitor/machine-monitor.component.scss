@@ -1,17 +1,39 @@
 :host {
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  background-color: var(--bs-body-bg);
 }
+
+// Status: Idle or Active (Positive/OK)
+
+//     Green: #4EE44E
+
+//     This is a vibrant but not overwhelming green that signifies a healthy and operational state.
+
+// Status: Connecting or Paused (In Progress/Warning)
+
+//     Blue: #4A90E2
+
+//     A clear, medium-vibrancy blue that is commonly used to indicate a process is underway.
+
+//     Yellow: #FFC107
+
+//     A warm, amber yellow that serves as a soft warning or indicates a temporary hold status.
+
+// Status: Error or Disconnected (Negative/Critical)
+
+//     Red: #F44336
+
+//     A strong, unambiguous red that immediately draws attention to a critical issue.
 
 .machine-monitor {
   flex: 1;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
   border-radius: 0.5rem;
+  overflow: hidden;
+  --bs-bg-opacity: 1;
+  background-color: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) !important;
 
   .display {
     aspect-ratio: 4/3;

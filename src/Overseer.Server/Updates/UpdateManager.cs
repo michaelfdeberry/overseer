@@ -18,7 +18,7 @@ namespace Overseer.Server.Updates
       using var context = new LiteDataContext();
       var dbFilePath = context.GetDefaultPath();
       var dbBackupFilePath = context.GetBackupPath();
-      var valueStore = context.GetValueStore();
+      var valueStore = context.ValueStore();
 
       //this will be the version of the last time the app was run.
       var lastRunVersion = Version.Parse(valueStore.Get<string>("lastRunVersion") ?? "0.0.0.0");

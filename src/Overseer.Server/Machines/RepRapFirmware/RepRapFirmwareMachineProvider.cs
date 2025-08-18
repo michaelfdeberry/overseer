@@ -18,7 +18,7 @@ public class RepRapFirmwareMachineProvider(RepRapFirmwareMachine machine, IMachi
 
   protected async Task<FetchRequest> PrepareRequest(FetchRequest? request, CancellationToken cancellation = default)
   {
-    var password = string.IsNullOrWhiteSpace(Machine.Password) ? "reprap" : Machine.Password;
+    var password = string.IsNullOrWhiteSpace(Machine.Password) ? RepRapFirmwareMachine.DefaultPassword : Machine.Password;
     var response = await base.Fetch<ConnectResponse>(
       "rr_connect",
       new()
@@ -129,7 +129,8 @@ public class RepRapFirmwareMachineProvider(RepRapFirmwareMachine machine, IMachi
       var fanIndex = activeTool?.Fans.ElementAt(0) ?? 0;
 
       status.ElapsedJobTime = model.Job?.Duration ?? 0;
-      var (timeRemaining, progress) = await CalculateCompletion(model, extruders!, cancellation);
+      var file = await FetchModel<GCodeFileInfo>("job.file", string.Empty, cancellation);
+      var (timeRemaining, progress) = CalculateCompletion(model, extruders!, file!);
       status.Progress = progress;
       status.EstimatedTimeRemaining = timeRemaining;
     }
@@ -137,7 +138,7 @@ public class RepRapFirmwareMachineProvider(RepRapFirmwareMachine machine, IMachi
     return status;
   }
 
-  protected Dictionary<int, TemperatureStatus> ReadTemperatures(Heat heat)
+  public Dictionary<int, TemperatureStatus> ReadTemperatures(Heat heat)
   {
     return Machine
       .Tools.Where(m => m.ToolType == MachineToolType.Heater)
@@ -154,13 +155,8 @@ public class RepRapFirmwareMachineProvider(RepRapFirmwareMachine machine, IMachi
       .ToDictionary(x => x.HeaterIndex);
   }
 
-  async Task<(int timeRemaining, double progress)> CalculateCompletion(
-    ObjectModel model,
-    IEnumerable<Extruder> extruders,
-    CancellationToken cancellation
-  )
+  public static (int timeRemaining, double progress) CalculateCompletion(ObjectModel model, IEnumerable<Extruder> extruders, GCodeFileInfo file)
   {
-    var file = await FetchModel<GCodeFileInfo>("job.file", string.Empty, cancellation);
     if (file?.Filament?.Count > 0)
     {
       var totalFilament = file.Filament.Aggregate((product, next) => product + next);

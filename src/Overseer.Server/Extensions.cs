@@ -73,12 +73,13 @@ namespace Overseer.Server
       services.AddSingleton<IMachineStatusChannel, MachineStatusChannel>();
       services.AddSingleton<IRestartMonitoringChannel, RestartMonitoringChannel>();
       services.AddSingleton<ICertificateExceptionChannel, CertificateExceptionChannel>();
-      services.AddSingleton<IAlertChannel, AlertChannel>();
+      services.AddSingleton<INotificationChannel, NotificationChannel>();
 
       services.AddHostedService<MachineStatusUpdateService>();
       services.AddHostedService<CertificateExceptionService>();
       services.AddHostedService<RestartMonitoringService>();
       services.AddHostedService<MachineJobService>();
+      services.AddHostedService<NotificationService>();
 
       services.AddCors();
 

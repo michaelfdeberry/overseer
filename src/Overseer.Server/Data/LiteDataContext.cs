@@ -52,7 +52,7 @@ public class LiteDataContext : IDataContext
     return $"{GetDefaultPath()}.bak";
   }
 
-  public IRepository<T> GetRepository<T>()
+  public IRepository<T> Repository<T>()
     where T : IEntity
   {
     return (IRepository<T>)
@@ -65,7 +65,7 @@ public class LiteDataContext : IDataContext
       );
   }
 
-  public IValueStore GetValueStore()
+  public IValueStore ValueStore()
   {
     return new LiteValueStore(Database);
   }

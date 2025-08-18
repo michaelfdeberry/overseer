@@ -7,8 +7,9 @@ namespace Overseer.Server.Models
   [JsonDerivedType(typeof(BambuMachine))]
   [JsonDerivedType(typeof(ElegooMachine))]
   [JsonDerivedType(typeof(OctoprintMachine))]
-  [JsonDerivedType(typeof(RepRapFirmwareMachine))]
   [JsonDerivedType(typeof(MoonrakerMachine))]
+  [JsonDerivedType(typeof(RepRapFirmwareMachine))]
+  [JsonDerivedType(typeof(DuetSoftwareFrameworkMachine))]
   public abstract class Machine : IEntity
   {
     static readonly Lazy<ConcurrentDictionary<MachineType, Type>> _machineTypeMap = new(() =>

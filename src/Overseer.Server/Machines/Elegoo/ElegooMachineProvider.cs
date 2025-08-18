@@ -185,7 +185,7 @@ public class ElegooMachineProvider(ElegooMachine machine, IMachineStatusChannel 
       Data = new { },
       RequestID = Guid.NewGuid().ToString("N"),
       MainboardID = "",
-      Timestamp = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeMilliseconds(),
+      Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
       From = "1",
     };
     return SendMessage(message);
@@ -201,7 +201,7 @@ public class ElegooMachineProvider(ElegooMachine machine, IMachineStatusChannel 
         Cmd = command,
         Data = data,
         RequestID = Guid.NewGuid().ToString("N"),
-        Timestamp = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeMilliseconds(),
+        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
         MainboardID = "",
         From = "1",
       },

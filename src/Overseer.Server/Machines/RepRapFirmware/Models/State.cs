@@ -37,7 +37,7 @@ public class State
   public int PreviousTool { get; set; }
 
   [JsonConverter(typeof(JsonStringEnumConverter))]
-  public RRFMachineStatus Status { get; set; }
+  public RRFMachineStatus? Status { get; set; }
   public int? ThisInput { get; set; }
   public string? Time { get; set; }
   public long UpTime { get; set; }

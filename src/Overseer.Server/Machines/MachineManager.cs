@@ -7,7 +7,7 @@ namespace Overseer.Server.Machines
   public class MachineManager(IDataContext context, MachineProviderManager machineProviderManager, IRestartMonitoringChannel restartMonitoringChannel)
     : IMachineManager
   {
-    readonly IRepository<Machine> _machines = context.GetRepository<Machine>();
+    readonly IRepository<Machine> _machines = context.Repository<Machine>();
     readonly MachineProviderManager _machineProviderManager = machineProviderManager;
 
     public Machine GetMachine(int id)

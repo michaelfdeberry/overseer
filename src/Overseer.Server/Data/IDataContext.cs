@@ -2,8 +2,8 @@
 
 public interface IDataContext : IDisposable
 {
-  IRepository<T> GetRepository<T>()
+  IRepository<T> Repository<T>()
     where T : IEntity;
 
-  IValueStore GetValueStore();
+  IValueStore ValueStore();
 }

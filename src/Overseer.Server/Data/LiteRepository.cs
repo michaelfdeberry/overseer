@@ -10,7 +10,12 @@ public class LiteRepository<T>(LiteDatabase database) : IRepository<T>
 
   public IReadOnlyList<T> GetAll()
   {
-    return _collection.FindAll().ToList();
+    return [.. _collection.FindAll()];
+  }
+
+  public IReadOnlyList<T> Filter(Expression<Func<T, bool>> predicate)
+  {
+    return [.. _collection.Find(predicate)];
   }
 
   public T GetById(int id)
@@ -56,5 +61,15 @@ public class LiteRepository<T>(LiteDatabase database) : IRepository<T>
   public int Count(Expression<Func<T, bool>> predicate)
   {
     return _collection.Count(predicate);
+  }
+
+  public void Delete(Expression<Func<T, bool>> predicate)
+  {
+    _collection.DeleteMany(predicate);
+  }
+
+  public void DeleteAll()
+  {
+    _collection.DeleteAll();
   }
 }

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { mergeMap, NEVER, Observable } from 'rxjs';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { mergeMap, NEVER, Observable, tap } from 'rxjs';
 import { Machine, MachineType } from '../models/machine.model';
 import { endpointFactory } from './endpoint-factory';
 
@@ -8,6 +9,10 @@ import { endpointFactory } from './endpoint-factory';
 export class MachinesService {
   private getEndpoint = endpointFactory('/api/machines');
   private http = inject(HttpClient);
+
+  machines = rxResource({
+    stream: () => this.getMachines(),
+  });
 
   getMachines(): Observable<Machine[]> {
     return this.http.get<Machine[]>(this.getEndpoint());
@@ -18,19 +23,22 @@ export class MachinesService {
   }
 
   createMachine(machine: Machine): Observable<Machine> {
-    return this.http.post<Machine>(this.getEndpoint(), machine);
+    return this.http.post<Machine>(this.getEndpoint(), machine).pipe(tap(() => this.machines.reload()));
   }
 
   updateMachine(machine: Machine): Observable<Machine> {
-    return this.http.put<Machine>(this.getEndpoint(), machine);
+    return this.http.put<Machine>(this.getEndpoint(), machine).pipe(tap(() => this.machines.reload()));
   }
 
   deleteMachine(machine: Machine): Observable<Machine> {
-    return this.http.delete<Machine>(this.getEndpoint(machine.id));
+    return this.http.delete<Machine>(this.getEndpoint(machine.id)).pipe(tap(() => this.machines.reload()));
   }
 
   sortMachines(sortOrder: number[]): Observable<never> {
-    return this.http.post(this.getEndpoint('sort'), sortOrder).pipe(mergeMap(() => NEVER));
+    return this.http.post(this.getEndpoint('sort'), sortOrder).pipe(
+      tap(() => this.machines.reload()),
+      mergeMap(() => NEVER)
+    );
   }
 
   getMachineTypes(): Observable<MachineType[]> {

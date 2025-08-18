@@ -8,7 +8,7 @@ namespace Overseer.Server.Users
   {
     const string Bearer = "Bearer";
 
-    readonly IRepository<User> _users = context.GetRepository<User>();
+    readonly IRepository<User> _users = context.Repository<User>();
 
     public UserDisplay? AuthenticateUser(UserDisplay user)
     {

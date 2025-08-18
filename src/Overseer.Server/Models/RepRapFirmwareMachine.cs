@@ -4,6 +4,8 @@ namespace Overseer.Server.Models
 {
   public class RepRapFirmwareMachine : Machine, IPollingMachine
   {
+    public const string DefaultPassword = "reprap";
+
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public override MachineType MachineType => MachineType.RepRapFirmware;
 

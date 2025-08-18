@@ -7,3 +7,8 @@ public class ConnectResponse
   public string? BoardType { get; set; }
   public long SessionKey { get; set; }
 }
+
+public class MachineConnectResponse
+{
+  public string SessionKey { get; set; } = string.Empty;
+}

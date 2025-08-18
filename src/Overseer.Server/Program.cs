@@ -15,7 +15,7 @@ if (!UpdateManager.Update())
 
 using (var context = new LiteDataContext())
 {
-  var values = context.GetValueStore();
+  var values = context.ValueStore();
   var settings = values.GetOrPut(() => new ApplicationSettings());
   var portOption = new Option<int?>(name: "--port", description: "The Overseer Server Port");
   var intervalOption = new Option<int?>(name: "--interval", description: "How often Overseer will poll for updates.");
@@ -51,6 +51,7 @@ using (var context = new LiteDataContext())
   app.HandleOverseerExceptions();
   app.MapOverseerApi();
   app.MapHub<StatusHub>("/push/status");
+  app.MapHub<NotificationHub>("/push/notifications");
 
   var url = $"http://*:{settings.LocalPort}";
   if (!isDev)

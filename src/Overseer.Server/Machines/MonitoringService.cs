@@ -1,5 +1,4 @@
 ﻿using log4net;
-using Overseer.Server.Machines;
 using IConfigurationManager = Overseer.Server.Settings.IConfigurationManager;
 
 namespace Overseer.Server.Machines;
@@ -25,7 +24,8 @@ public sealed class MonitoringService : IDisposable, IMonitoringService
   {
     Log.Info("Starting monitoring service");
     var interval = _configurationManager.GetApplicationSettings().Interval;
-    var providers = _providerManager.GetProviders(_machineManager.GetMachines());
+    var enabledMachines = _machineManager.GetMachines().Where(m => !m.Disabled);
+    var providers = _providerManager.GetProviders(enabledMachines);
     foreach (var provider in providers)
     {
       provider.Start(interval);

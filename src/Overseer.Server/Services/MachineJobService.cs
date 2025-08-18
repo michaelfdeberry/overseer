@@ -5,14 +5,16 @@ using Overseer.Server.Models;
 
 namespace Overseer.Server.Services;
 
-public class MachineJobService(IDataContext dataContext, IMachineStatusChannel machineStatusChannel, IAlertChannel alertChannel) : BackgroundService
+public class MachineJobService(IDataContext dataContext, IMachineStatusChannel machineStatusChannel, INotificationChannel notificationChannel)
+  : BackgroundService
 {
-  const int JobUpdateIntervalSeconds = 30;
+  const int JobUpdateIntervalMilliseconds = 30 * 1000;
 
   static readonly ILog Log = LogManager.GetLogger(typeof(MachineJobService));
 
   readonly Guid _subscriberId = Guid.NewGuid();
-  readonly IRepository<MachineJob> _repository = dataContext.GetRepository<MachineJob>();
+
+  readonly IRepository<MachineJob> _repository = dataContext.Repository<MachineJob>();
 
   protected override async Task ExecuteAsync(CancellationToken stoppingToken)
   {
@@ -27,10 +29,10 @@ public class MachineJobService(IDataContext dataContext, IMachineStatusChannel m
 
         var job = _repository.Get(x => x.MachineId == status.MachineId && !x.EndTime.HasValue);
 
-        async Task SendJobAlert(JobAlertType type, string? message = null)
+        async Task NotifyJobEvent(JobNotificationType type, string? message = null)
         {
-          await alertChannel.WriteAsync(
-            new JobAlert
+          await notificationChannel.WriteAsync(
+            new JobNotification
             {
               Type = type,
               MachineId = status.MachineId,
@@ -54,15 +56,15 @@ public class MachineJobService(IDataContext dataContext, IMachineStatusChannel m
           // the machine is operational and there is no job in progress, create a new job
           job = new MachineJob
           {
-            State = status.State,
             MachineId = status.MachineId,
-            StartTime = DateTimeOffset.UtcNow.AddSeconds(-status.ElapsedJobTime).ToUnixTimeSeconds(),
-            LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            StartTime = DateTimeOffset.UtcNow.AddMilliseconds(-status.ElapsedJobTime).ToUnixTimeMilliseconds(),
+            LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
             LastStatus = status,
+            LastNotificationType = JobNotificationType.JobStarted,
           };
           _repository.Create(job);
 
-          await SendJobAlert(JobAlertType.JobStarted);
+          await NotifyJobEvent(JobNotificationType.JobStarted);
           continue;
         }
 
@@ -70,9 +72,9 @@ public class MachineJobService(IDataContext dataContext, IMachineStatusChannel m
         if (job.State == status.State)
         {
           // Adding every update to the database can lead to performance issues,
-          // so we only update the job if the last update was more than JobUpdateIntervalSeconds
-          var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-          if (!job.LastUpdate.HasValue || now - job.LastUpdate.Value < JobUpdateIntervalSeconds)
+          // so we only update the job if the last update was more than JobUpdateIntervalMilliseconds
+          var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+          if (!job.LastUpdate.HasValue || now - job.LastUpdate.Value < JobUpdateIntervalMilliseconds)
           {
             job.LastUpdate = now;
             job.LastStatus = status;
@@ -85,33 +87,40 @@ public class MachineJobService(IDataContext dataContext, IMachineStatusChannel m
         switch (status.State)
         {
           case MachineState.Offline:
-            job.EndTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            // not ending the job here, just marking it as offline
+            // job.EndTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             job.State = MachineState.Offline;
-            await SendJobAlert(JobAlertType.JobError, "job.machineOffline");
+            await NotifyJobEvent(JobNotificationType.JobError, "job.machineOffline");
             break;
 
           case MachineState.Idle:
             if (job.LastUpdate.HasValue && job.LastStatus is not null)
             {
               // this should be more accurate than using the current time
-              job.EndTime = job.LastUpdate.Value + job.LastStatus.ElapsedJobTime;
+              job.EndTime = DateTimeOffset
+                .FromUnixTimeMilliseconds(job.LastUpdate.Value)
+                .AddMilliseconds(job.LastStatus.ElapsedJobTime)
+                .ToUnixTimeMilliseconds();
             }
             else
             {
-              job.EndTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+              job.EndTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             }
             job.State = MachineState.Idle;
-            await SendJobAlert(JobAlertType.JobCompleted);
+            job.LastNotificationType = JobNotificationType.JobCompleted;
+            await NotifyJobEvent(JobNotificationType.JobCompleted);
             break;
 
           case MachineState.Operational:
             job.State = MachineState.Operational;
-            await SendJobAlert(JobAlertType.JobResumed);
+            job.LastNotificationType = JobNotificationType.JobResumed;
+            await NotifyJobEvent(JobNotificationType.JobResumed);
             break;
 
           case MachineState.Paused:
             job.State = MachineState.Paused;
-            await SendJobAlert(JobAlertType.JobPaused);
+            job.LastNotificationType = JobNotificationType.JobPaused;
+            await NotifyJobEvent(JobNotificationType.JobPaused);
             break;
           default:
             Log.Warn($"Unhandled machine state transition: {job.State} -> {status.State} for machine {status.MachineId}");
@@ -120,7 +129,7 @@ public class MachineJobService(IDataContext dataContext, IMachineStatusChannel m
         }
 
         job.LastStatus = status;
-        job.LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        job.LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         _repository.Update(job);
       }
       catch (Exception ex)

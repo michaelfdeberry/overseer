@@ -10,8 +10,8 @@ namespace Overseer.Server.Settings
     ICertificateExceptionChannel certificateExceptionChannel
   ) : IConfigurationManager
   {
-    readonly IValueStore _valueStore = context.GetValueStore();
-    readonly IRepository<CertificateDetails> _certificateExclusions = context.GetRepository<CertificateDetails>();
+    readonly IValueStore _valueStore = context.ValueStore();
+    readonly IRepository<CertificateDetails> _certificateExclusions = context.Repository<CertificateDetails>();
 
     public ApplicationSettings GetApplicationSettings()
     {
