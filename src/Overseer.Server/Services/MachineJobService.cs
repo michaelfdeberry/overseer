@@ -8,7 +8,7 @@ namespace Overseer.Server.Services;
 public class MachineJobService(IDataContext dataContext, IMachineStatusChannel machineStatusChannel, INotificationChannel notificationChannel)
   : BackgroundService
 {
-  const int JobUpdateIntervalMilliseconds = 30 * 1000;
+  const int JobUpdateIntervalMilliseconds = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
 
   static readonly ILog Log = LogManager.GetLogger(typeof(MachineJobService));
 
