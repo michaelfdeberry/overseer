@@ -20,7 +20,7 @@ export class MoonrakerMachineComponent {
 
   constructor() {
     this.destroy.onDestroy(() => {
-      if (this.form?.controls['url']) this.form?.removeControl('url');
+      if (this.form?.controls['ipAddress']) this.form?.removeControl('ipAddress');
       if (this.form?.controls['webCamUrl']) this.form?.removeControl('webCamUrl');
       if (this.form?.controls['webCamOrientation']) this.form?.removeControl('webCamOrientation');
       if (this.form?.controls['clientCertificate']) this.form?.removeControl('clientCertificate');

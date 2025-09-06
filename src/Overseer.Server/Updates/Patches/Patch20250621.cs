@@ -26,13 +26,15 @@ class Patch20250621 : IPatch
       };
 
       machine["_type"] = $"{updateTypeName}, {assemblyName}";
-
       machineCollection.Update(machine);
     }
 
     var valueStoreCollection = db.GetCollection(nameof(LiteValueStore.ValueRecord));
     var settingsValueRecord = valueStoreCollection.FindById(nameof(ApplicationSettings));
-    settingsValueRecord["Value"]["_type"] = $"{typeof(ApplicationSettings).FullName}, {assemblyName}";
-    valueStoreCollection.Update(settingsValueRecord);
+    if (settingsValueRecord != null)
+    {
+      settingsValueRecord["Value"]["_type"] = $"{typeof(ApplicationSettings).FullName}, {assemblyName}";
+      valueStoreCollection.Update(settingsValueRecord);
+    }
   }
 }

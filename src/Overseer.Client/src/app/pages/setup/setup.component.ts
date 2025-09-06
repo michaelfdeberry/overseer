@@ -82,7 +82,7 @@ export class SetupComponent {
   handleMachineSubmit(createAnother: boolean): void {
     // The form is invalid, but the user has already added machines
     // so allow them to progress.
-    if (this.machinesForm.invalid && this.machines?.length) {
+    if (!createAnother && this.machinesForm.invalid && this.machines?.length) {
       // if there is any data on the form prompt the user saying it will be lost
       if (this.machinesForm.touched) {
         this.dialogService.prompt({ titleKey: 'invalidForm', messageKey: 'dataLoss' }).closed.subscribe((result) => {
@@ -94,15 +94,13 @@ export class SetupComponent {
         this.step.set('complete');
       }
     } else {
+      if (this.machinesForm.invalid) return;
+
       this.machinesForm.disable();
       const machine = this.machinesForm.getRawValue() as Machine;
       this.machinesService.createMachine(machine).subscribe({
         next: (result) => {
-          if (!this.machines) {
-            this.machines = [result];
-          } else {
-            this.machines.push(result);
-          }
+          this.machines.push(result);
 
           if (createAnother) {
             this.machinesForm.reset();

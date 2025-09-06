@@ -57,7 +57,6 @@ namespace Overseer.Server.Updates
         catch (Exception ex)
         {
           Log.Error("The update process failed to complete. Please create an issue with the following error details", ex);
-
           //dispose of the context to release the database file
           context.Dispose();
           //restore the backup

@@ -3,7 +3,7 @@
 
 @if (notification && machine) {
   <div
-    class="bg-body-tertiary p-3 mb-2 d-flex align-items-start p-3 border-start border-3 rounded-2 shadow-sm position-relative"
+    class="p-3 mb-2 d-flex align-items-start p-3 border-start border-3 rounded-2 shadow-sm position-relative"
     [ngClass]="{
       'border-secondary': notification.isRead,
       'border-success': !notification.isRead && (notification.type === 'JobCompleted' || notification.type === 'JobStarted'),
