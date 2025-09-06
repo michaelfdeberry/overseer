@@ -1,0 +1,10 @@
+@let classNames = 'd-block card mb-2 bg-body-tertiary p-3 w-100';
+@if (route()) {
+  <a [class]="classNames" [routerLink]="route()" [queryParams]="queryParams">
+    <ng-content></ng-content>
+  </a>
+} @else {
+  <button type="button" [class]="classNames">
+    <ng-content></ng-content>
+  </button>
+}

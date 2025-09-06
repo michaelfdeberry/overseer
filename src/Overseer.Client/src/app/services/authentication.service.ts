@@ -1,13 +1,16 @@
-import { effect, inject, Injectable, signal, Signal } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { effect, inject, Injectable, signal } from '@angular/core';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { User } from '../models/user.model';
+import { endpointFactory } from './endpoint-factory';
 import { LocalStorageService } from './local-storage.service';
 
 @Injectable({ providedIn: 'root' })
-export abstract class AuthenticationService {
+export class AuthenticationService {
+  private getEndpoint = endpointFactory('/api/auth');
   private localStorageService = inject(LocalStorageService);
+  private http = inject(HttpClient);
 
-  abstract readonly supportsPreauthentication: boolean;
   activeUser = signal(this.localStorageService.get<User>('activeUser'));
 
   constructor() {
@@ -24,17 +27,45 @@ export abstract class AuthenticationService {
     }
   }
 
-  abstract checkLogin(): Observable<boolean>;
+  checkLogin(): Observable<boolean> {
+    return this.http
+      .get(this.getEndpoint())
+      .pipe(map(() => true))
+      .pipe(catchError(() => of(false)));
+  }
 
-  abstract login(user: User): Observable<User>;
+  login(user: User): Observable<User> {
+    return this.http.post<User>(this.getEndpoint('login'), user).pipe(
+      tap((activeUser) => {
+        this.activeUser.set(activeUser);
+        this.updateActiveUser(activeUser);
+      })
+    );
+  }
 
-  abstract logout(): Observable<Object>;
+  logout(): Observable<Object> {
+    return this.http.delete(this.getEndpoint('logout')).pipe(
+      tap(() => {
+        this.activeUser.set(undefined);
+      })
+    );
+  }
 
-  abstract logoutUser(userId: number): Observable<User>;
+  logoutUser(userId: number): Observable<User> {
+    return this.http.post<User>(this.getEndpoint('logout', userId), {});
+  }
 
-  abstract createInitialUser(user: User): Observable<User>;
+  createInitialUser(user: User): Observable<User> {
+    return this.http.post<User>(this.getEndpoint('setup'), user);
+  }
 
-  abstract getPreauthenticatedToken(userId: number): Observable<string>;
+  getPreauthenticatedToken(userId: number): Observable<string> {
+    return this.http.get(this.getEndpoint('sso', userId), {
+      responseType: 'text',
+    });
+  }
 
-  abstract validatePreauthenticatedToken(token: string): Observable<User>;
+  validatePreauthenticatedToken(token: string): Observable<User> {
+    return this.http.post<User>(this.getEndpoint('sso'), token).pipe(tap((activeUser) => this.activeUser.set(activeUser)));
+  }
 }

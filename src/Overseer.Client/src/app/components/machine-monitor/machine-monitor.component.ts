@@ -12,12 +12,13 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { ControlService } from '../../services/control.service';
 import { DialogService } from '../../services/dialog.service';
 import { MonitoringService } from '../../services/monitoring.service';
+import { WebCamPanelComponent } from '../web-cam-panel/web-cam-panel.component';
 
 @Component({
   selector: 'app-machine-monitor',
   templateUrl: './machine-monitor.component.html',
   styleUrls: ['./machine-monitor.component.scss'],
-  imports: [CommonModule, I18NextPipe, DurationPipe, NgbProgressbarModule, RouterLink],
+  imports: [CommonModule, I18NextPipe, DurationPipe, NgbProgressbarModule, RouterLink, WebCamPanelComponent],
   providers: [DialogService],
 })
 export class MachineMonitorComponent {
@@ -28,10 +29,10 @@ export class MachineMonitorComponent {
   private monitoringService = inject(MonitoringService);
   private authenticationService = inject(AuthenticationService);
 
+  supportsFullscreen = document.fullscreenEnabled;
   machine = input<Machine>();
   busy = signal(false);
   fullScreen = signal(false);
-  expanded = signal<boolean>(false);
   status = signal<MachineStatus | undefined>(undefined);
   idle = computed(() => isIdle(this.status()?.state));
   paused = computed(() => this.status()?.state === 'Paused');

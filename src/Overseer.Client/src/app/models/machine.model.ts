@@ -1,6 +1,6 @@
 export type MachineToolType = 'Undetermined' | 'Heater' | 'Extruder';
 
-export type MachineType = 'Unknown' | 'Octoprint' | 'RepRapFirmware' | 'Bambu' | 'Elegoo';
+export type MachineType = 'Unknown' | 'Octoprint' | 'RepRapFirmware' | 'Bambu' | 'Elegoo' | 'Moonraker' | 'DuetSoftwareFramework';
 
 export type WebCamOrientation = 'Default' | 'FlippedVertically' | 'FlippedHorizontally';
 
@@ -34,7 +34,7 @@ export type RepRapFirmwareMachine = MachineBase & {
   password: string;
 };
 
-export type BambuMachine = MachineBase & {
+export type BambuLabMachine = MachineBase & {
   machineType: 'Bambu';
   serial: string;
   accessCode: string;
@@ -45,5 +45,13 @@ export type ElegooMachine = MachineBase & {
   ipAddress: string;
 };
 
+export type MoonrakerMachine = MachineBase & {
+  machineType: 'Moonraker';
+  ipAddress: string;
+  availableWebCams: Record<string, string>;
+};
+
+export type DuetSoftwareFrameworkMachine = RepRapFirmwareMachine;
+
 // all the needed properties will just go on the machine
-export type Machine = OctoprintMachine | RepRapFirmwareMachine | BambuMachine | ElegooMachine;
+export type Machine = OctoprintMachine | RepRapFirmwareMachine | BambuLabMachine | ElegooMachine | MoonrakerMachine | DuetSoftwareFrameworkMachine;

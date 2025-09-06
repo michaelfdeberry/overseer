@@ -1,9 +1,14 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
 import { LogEntry, LogLevel } from '../models/log-entry.model';
-import { Observable } from 'rxjs';
+import { endpointFactory } from './endpoint-factory';
 
 @Injectable({ providedIn: 'root' })
 export abstract class LoggingService {
+  private getEndpoint = endpointFactory('/api/logging');
+  private http = inject(HttpClient);
+
   public trace(message: string | Error, ...additional: (string | Record<string, unknown>)[]): void {
     this.writeToLog('TRACE', message, additional);
   }
@@ -32,10 +37,6 @@ export abstract class LoggingService {
     this.writeToLog('FATAL', message, additional);
   }
 
-  abstract download(): Observable<string>;
-
-  protected abstract saveLogEntry(entry: LogEntry): void;
-
   private writeToLog(level: LogLevel, message: string | Error, additional?: (string | Record<string, unknown>)[]): void {
     const entry: LogEntry = {
       level,
@@ -44,5 +45,13 @@ export abstract class LoggingService {
       additional,
     };
     this.saveLogEntry(entry);
+  }
+
+  private saveLogEntry(entry: LogEntry): void {
+    this.http.post(this.getEndpoint(), entry).subscribe();
+  }
+
+  download(): Observable<string> {
+    return this.http.get<{ content: string }>(this.getEndpoint()).pipe(map((response) => response.content));
   }
 }

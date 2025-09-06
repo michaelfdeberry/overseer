@@ -1,0 +1,50 @@
+<ng-template #content let-offcanvas>
+  <div class="offcanvas-header">
+    <h4>{{ 'notifications.title' | i18next }}</h4>
+    <button type="button" class="btn-close" [attr.aria-label]="'close' | i18next" (click)="offcanvas.close()"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <div class="flex-grow-1">
+      @if (notifications.error()) {
+        <div class="alert alert-danger" role="alert">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          {{ 'notifications.error' | i18next }}
+        </div>
+      } @else if (!notifications.hasValue() || !notifications.value().length) {
+        <div class="alert alert-info" role="alert">
+          <i class="bi bi-info-circle"></i>
+          {{ 'notifications.empty' | i18next }}
+        </div>
+      } @else {
+        @for (notification of notifications.value(); track $index) {
+          <app-notification [notification]="notification" (close)="handleClose(offcanvas)" />
+        }
+      }
+    </div>
+  </div>
+  <div class="text-end mt-auto sticky-bottom px-3 py-2">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      [disabled]="!notifications.hasValue() || !notifications.value().length"
+      (click)="this.clearNotifications(offcanvas)"
+    >
+      {{ 'clear' | i18next }}
+    </button>
+  </div>
+</ng-template>
+
+<button type="button" class="btn btn-sm position-relative" (click)="open(content)">
+  <i class="bi bi-bell"></i>
+  @let unreadCount = this.unreadCount();
+  @if (unreadCount) {
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+      @if (unreadCount >= 10) {
+        {{ 'notifications.maxCount' | i18next }}
+      } @else {
+        {{ unreadCount }}
+      }
+      <span class="visually-hidden">{{ 'notifications.unread' | i18next }}</span>
+    </span>
+  }
+</button>

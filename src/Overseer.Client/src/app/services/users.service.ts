@@ -1,18 +1,34 @@
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { User } from '../models/user.model';
-import { Injectable } from '@angular/core';
+import { endpointFactory } from './endpoint-factory';
 
 @Injectable({ providedIn: 'root' })
-export abstract class UsersService {
-  abstract getUsers(): Observable<User[]>;
+export class UsersService {
+  private getEndpoint = endpointFactory('/api/users');
+  private http = inject(HttpClient);
 
-  abstract getUser(userId: number): Observable<User>;
+  getUsers() {
+    return this.http.get<User[]>(this.getEndpoint());
+  }
 
-  abstract createUser(user: User): Observable<User>;
+  getUser(userId: number) {
+    return this.http.get<User>(this.getEndpoint(userId));
+  }
 
-  abstract updateUser(user: User): Observable<User>;
+  createUser(user: User) {
+    return this.http.post<User>(this.getEndpoint(), user);
+  }
 
-  abstract deleteUser(user: User): Observable<any>;
+  updateUser(user: User) {
+    return this.http.put<User>(this.getEndpoint(), user);
+  }
 
-  abstract changePassword(user: User): Observable<User>;
+  deleteUser(user: User) {
+    return this.http.delete(this.getEndpoint(user.id));
+  }
+
+  changePassword(user: User) {
+    return this.http.post<User>(this.getEndpoint('password'), user);
+  }
 }

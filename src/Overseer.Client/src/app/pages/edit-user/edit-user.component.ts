@@ -34,11 +34,7 @@ export class EditUserComponent {
   generatedUrl = signal<string | undefined>(undefined);
   activeUser = computed(() => this.authenticationService.activeUser());
   displayPreauthentication = computed(() => {
-    return (
-      this.activeUser()?.accessLevel === 'Administrator' &&
-      this.user()?.accessLevel === 'Readonly' &&
-      this.authenticationService.supportsPreauthentication
-    );
+    return this.activeUser()?.accessLevel === 'Administrator' && this.user()?.accessLevel === 'Readonly';
   });
   isOwnProfile = computed(() => this.user()?.id === this.activeUser()?.id);
   isOnlyAdmin = computed(() => {

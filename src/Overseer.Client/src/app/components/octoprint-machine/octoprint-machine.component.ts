@@ -5,19 +5,16 @@ import { I18NextPipe } from 'angular-i18next';
 import { webCamOrientations } from '../../models/constants';
 import { OctoprintMachineForm } from '../../models/form.types';
 import { Machine, OctoprintMachine } from '../../models/machine.model';
-import { MachinesService } from '../../services/machines.service';
 
 @Component({
-  selector: 'app-octoprint',
+  selector: 'app-octoprint-machine',
   templateUrl: './octoprint-machine.component.html',
   imports: [ReactiveFormsModule, NgbCollapseModule, I18NextPipe],
 })
 export class OctoprintMachineComponent {
   private destroy = inject(DestroyRef);
 
-  advancedOptionsVisible = false;
   webCamOrientations = webCamOrientations;
-  machinesService = inject(MachinesService);
   machine?: OctoprintMachine;
   form?: FormGroup<OctoprintMachineForm>;
 

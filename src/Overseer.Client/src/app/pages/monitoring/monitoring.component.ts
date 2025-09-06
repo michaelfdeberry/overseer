@@ -27,7 +27,6 @@ export class MonitoringComponent {
   machines = signal<Machine[] | undefined>(undefined);
   settings = signal<ApplicationSettings | undefined>(undefined);
   statuses = signal<Record<number, MachineStatus | undefined>>({});
-  column = signal('');
 
   displayedMachines = computed(() => {
     const machines = this.machines();
@@ -64,13 +63,9 @@ export class MonitoringComponent {
   });
 
   constructor() {
-    const resizeObserver = new ResizeObserver(() => this.computeGridSize());
-    resizeObserver.observe(document.body);
-
     forkJoin([this.machineService.getMachines(), this.settingsService.getSettings()]).subscribe(([machines, settings]) => {
       this.machines.set(machines);
       this.settings.set(settings);
-      this.computeGridSize();
       // if the machines load too fast there is just an unpleasant flicker of the loading spinner
       setTimeout(() => this.loading.set(false), 250);
     });
@@ -81,37 +76,11 @@ export class MonitoringComponent {
       .subscribe((status) => {
         this.statuses.update((statuses) => ({ ...statuses, [status.machineId]: status }));
       });
-
-    this.destroyRef.onDestroy(() => {
-      resizeObserver.disconnect();
-    });
   }
 
   private isMachineVisible(machine: Machine, settings: ApplicationSettings): boolean {
     if (settings.hideIdleMachines && isIdle(this.statuses()[machine.id]?.state)) return false;
     if (settings.hideDisabledMachines && machine.disabled) return false;
     return true;
-  }
-
-  private computeGridSize(): void {
-    const machines = this.displayedMachines();
-    const count = machines?.length ?? 0;
-    if (!count) return;
-
-    if (document.body.clientWidth < 768) {
-      this.column.set('col-12');
-      // figure out what to do on mobile. maybe it scrolls horizontally? maybe swipe through the machines.
-    } else {
-      let base = 4;
-      if (document.body.clientWidth <= 1920) {
-        base = 3;
-      }
-      if (document.body.clientWidth <= 1280) {
-        base = 2;
-      }
-
-      const factor = Math.ceil(count / (Math.floor(count / base) + (count % base > 0 ? 1 : 0)));
-      this.column.set(`col-${12 / factor}`);
-    }
   }
 }

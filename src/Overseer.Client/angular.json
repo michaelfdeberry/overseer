@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/overseer.client.local",
+            "outputPath": "dist/overseer.client",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js", "@angular/localize/init"],
@@ -48,32 +48,6 @@
               ],
               "outputHashing": "all"
             },
-            "production-remote": {
-              "outputPath": "dist/overseer.client.remote",
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
-                }
-              ],
-              "outputHashing": "all",
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.remote.ts"
-                },
-                {
-                  "replace": "src/app/app.config.local.ts",
-                  "with": "src/app/app.config.remote.ts"
-                }
-              ]
-            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -82,21 +56,6 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.development.ts"
-                }
-              ]
-            },
-            "development-remote": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.remote.development.ts"
-                },
-                {
-                  "replace": "src/app/app.config.local.ts",
-                  "with": "src/app/app.config.remote.ts"
                 }
               ]
             }
@@ -111,12 +70,6 @@
             },
             "development": {
               "buildTarget": "Overseer.Client:build:development"
-            },
-            "production-remote": {
-              "buildTarget": "Overseer.Client:build:production-remote"
-            },
-            "development-remote": {
-              "buildTarget": "Overseer.Client:build:development-remote"
             }
           },
           "defaultConfiguration": "development"
@@ -145,5 +98,31 @@
   },
   "cli": {
     "analytics": false
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
   }
 }

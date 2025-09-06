@@ -43,6 +43,7 @@ export function overseerInterceptor(request: HttpRequest<unknown>, next: HttpHan
             break;
           case 401:
           case 403:
+            localStorageService.clear();
             if (errorResponse.error === 'requiresInitialization=True') {
               errorMessage = 'setup_required';
             } else {

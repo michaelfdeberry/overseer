@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { I18NextPipe } from 'angular-i18next';
 import { NgProgressbar } from 'ngx-progressbar';
 import { NgProgressHttp } from 'ngx-progressbar/http';
+import { NotificationsComponent } from './components/notifications/notifications.component';
 import { SvgComponent } from './components/svg/svg.component';
 import { ToastsComponent } from './components/toasts/toasts.component';
 import { AuthenticationService } from './services/authentication.service';
@@ -10,7 +11,17 @@ import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NgProgressbar, NgProgressHttp, SvgComponent, I18NextPipe, RouterLink, RouterLinkActive, ToastsComponent],
+  imports: [
+    RouterOutlet,
+    NgProgressbar,
+    NgProgressHttp,
+    SvgComponent,
+    I18NextPipe,
+    RouterLink,
+    RouterLinkActive,
+    ToastsComponent,
+    NotificationsComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -37,18 +48,6 @@ export class AppComponent {
         this.renderer.removeClass(window.document.body, theme);
       }
     });
-  }
-
-  setLight(): void {
-    this.themeService.scheme.set('light');
-  }
-
-  setDark(): void {
-    this.themeService.scheme.set('dark');
-  }
-
-  setAuto(): void {
-    this.themeService.scheme.set('auto');
   }
 
   goHome(isSettingsRoute: boolean): void {
