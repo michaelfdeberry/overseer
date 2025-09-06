@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using log4net;
 using Overseer.Server.Data;
 
 namespace Overseer.Server.Updates
@@ -11,8 +10,6 @@ namespace Overseer.Server.Updates
   /// </summary>
   public class UpdateManager
   {
-    static readonly ILog Log = LogManager.GetLogger(typeof(UpdateManager));
-
     public static bool Update()
     {
       using var context = new LiteDataContext();
@@ -40,14 +37,14 @@ namespace Overseer.Server.Updates
 
           if (patches.Count != 0)
           {
-            Log.Info($"{patches.Count} patches found...");
+            Console.WriteLine($"{patches.Count} patches found...");
 
             //create a copy of the database before attempting the patching
             File.Copy(dbFilePath, dbBackupFilePath, true);
 
             patches.ForEach(patch =>
             {
-              Log.Info($"Applying Patch {patch!.Version}...");
+              Console.WriteLine($"Applying Patch {patch!.Version}...");
               patch.Execute(context);
             });
 
@@ -56,7 +53,7 @@ namespace Overseer.Server.Updates
         }
         catch (Exception ex)
         {
-          Log.Error("The update process failed to complete. Please create an issue with the following error details", ex);
+          Console.WriteLine($"The update process failed to complete. Please create an issue with the following error details: {ex}");
           //dispose of the context to release the database file
           context.Dispose();
           //restore the backup
@@ -67,7 +64,7 @@ namespace Overseer.Server.Updates
 
         valueStore.Put("lastRunVersion", currentVersion.ToString());
         context.Dispose();
-        Log.Info("Update Successful!");
+        Console.WriteLine("Update Successful!");
       }
 
       return true;

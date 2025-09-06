@@ -74,7 +74,7 @@ public class MachineJobService(IDataContext dataContext, IMachineStatusChannel m
           // Adding every update to the database can lead to performance issues,
           // so we only update the job if the last update was more than JobUpdateIntervalMilliseconds
           var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-          if (!job.LastUpdate.HasValue || now - job.LastUpdate.Value < JobUpdateIntervalMilliseconds)
+          if (!job.LastUpdate.HasValue || (now - job.LastUpdate.Value) >= JobUpdateIntervalMilliseconds)
           {
             job.LastUpdate = now;
             job.LastStatus = status;
