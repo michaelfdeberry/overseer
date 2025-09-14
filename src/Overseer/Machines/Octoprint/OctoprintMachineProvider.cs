@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using Overseer.Machines.Octoprint.Models;
 using Overseer.Models;
 
@@ -180,9 +179,9 @@ public class OctoprintMachineProvider : PollingMachineProvider<OctoprintMachine>
     if (status.State == MachineState.Operational || status.State == MachineState.Paused)
     {
       var jobStatus = await Fetch<Job>("api/job", cancellation: cancellationToken);
-      status.ElapsedJobTime = jobStatus.Progress.PrintTime;
-      status.EstimatedTimeRemaining = jobStatus.Progress.PrintTimeLeft;
-      status.Progress = Math.Round(jobStatus.Progress.Completion, 1);
+      status.ElapsedJobTime = jobStatus.Progress?.PrintTime ?? 0;
+      status.EstimatedTimeRemaining = jobStatus.Progress?.PrintTimeLeft ?? 0;
+      status.Progress = Math.Round(jobStatus.Progress?.Completion ?? 0, 1);
 
       // these values can't be retrieved through the octoprint api, or from marlin by gcode, so it's not going
       // to be supported by the Octoprint provider, however the values are being defaulted here to replicate the 
