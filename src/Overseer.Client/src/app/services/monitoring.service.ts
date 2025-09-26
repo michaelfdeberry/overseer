@@ -15,7 +15,10 @@ export class MonitoringService {
 
   constructor() {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.apiHost}/push/status`, { withCredentials: environment.production })
+      .withUrl(`${environment.apiHost}/push/status`, {
+        withCredentials: environment.production,
+        accessTokenFactory: () => localStorage.getItem('access_token') ?? '',
+      })
       .build();
 
     this.hubConnection.on('statusUpdate', (statusUpdate: MachineStatus) => this.statusEvent$.next(statusUpdate));

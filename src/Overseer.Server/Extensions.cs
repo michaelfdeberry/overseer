@@ -2,6 +2,7 @@
 using System.Reflection;
 using log4net;
 using Microsoft.AspNetCore.Diagnostics;
+using Overseer.Server.Automation;
 using Overseer.Server.Channels;
 using Overseer.Server.Data;
 using Overseer.Server.Machines;
@@ -66,6 +67,7 @@ namespace Overseer.Server
       services.AddTransient<IUserManager, UserManager>();
       services.AddTransient<IMachineManager, MachineManager>();
       services.AddTransient<IControlManager, ControlManager>();
+      services.AddTransient<IJobFailureDetectionService, OllamaJobFailureDetectionService>();
 
       services.AddSingleton<IMonitoringService, MonitoringService>();
       services.AddSingleton<MachineProviderManager>();
@@ -80,6 +82,8 @@ namespace Overseer.Server
       services.AddHostedService<RestartMonitoringService>();
       services.AddHostedService<MachineJobService>();
       services.AddHostedService<NotificationService>();
+      services.AddHostedService<JobSentinelService>();
+      services.AddHostedService<JobFailureService>();
 
       services.AddCors();
 

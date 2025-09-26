@@ -31,7 +31,14 @@ namespace Overseer.Server
     {
       var authHeader = Context.Request.Headers.Authorization;
       if (string.IsNullOrEmpty(authHeader))
+      {
+        authHeader = Context.Request.Query["api_key"];
+      }
+
+      if (string.IsNullOrEmpty(authHeader))
+      {
         return Task.FromResult(AuthenticateResult.NoResult());
+      }
 
       var identity = _authorizationManager.Authorize(authHeader!);
       if (identity == null)

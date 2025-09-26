@@ -12,7 +12,7 @@ class Patch20250621 : IPatch
     var assemblyName = typeof(Patch20250621).Assembly.GetName().Name;
     var db = context.Database;
     var machineCollection = db.GetCollection(nameof(Machine));
-    var machines = machineCollection.FindAll();
+    var machines = machineCollection.FindAll().ToList();
     foreach (var machine in machines)
     {
       var typeString = machine["_type"].AsString;

@@ -50,8 +50,8 @@ using (var context = new LiteDataContext())
 
   app.HandleOverseerExceptions();
   app.MapOverseerApi();
-  app.MapHub<StatusHub>("/push/status");
-  app.MapHub<NotificationHub>("/push/notifications");
+  app.MapHub<StatusHub>("/push/status").RequireAuthorization();
+  app.MapHub<NotificationHub>("/push/notifications").RequireAuthorization();
 
   var url = $"http://*:{settings.LocalPort}";
   if (!isDev)

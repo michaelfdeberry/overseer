@@ -1,5 +1,12 @@
 ﻿namespace Overseer.Server.Models
 {
+  public enum AIMonitoringFailureAction
+  {
+    AlertOnly = 0,
+    PauseJob = 1,
+    CancelJob = 2,
+  }
+
   public class ApplicationSettings
   {
     public const int DefaultPort = 9000;
@@ -31,5 +38,20 @@
     /// Gets/Sets the port which the overseer daemon listens on
     /// </summary>
     public int LocalPort { get; set; } = DefaultPort;
+
+    /// <summary>
+    /// If true AI based monitoring is enabled.
+    /// </summary>
+    public bool EnabledAiMonitoring { get; set; } = false;
+
+    /// <summary>
+    /// Interval in minutes between AI monitoring scans.
+    /// </summary>
+    public int AiMonitoringScanInterval { get; set; } = 1;
+
+    /// <summary>
+    /// Action to take when AI monitoring detects a failure.
+    /// </summary>
+    public AIMonitoringFailureAction AiMonitoringFailureAction { get; set; } = AIMonitoringFailureAction.AlertOnly;
   }
 }

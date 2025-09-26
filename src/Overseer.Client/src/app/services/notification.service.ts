@@ -21,7 +21,10 @@ export class NotificationService {
 
   constructor() {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.apiHost}/push/notifications`, { withCredentials: environment.production })
+      .withUrl(`${environment.apiHost}/push/notifications`, {
+        withCredentials: environment.production,
+        accessTokenFactory: () => localStorage.getItem('access_token') ?? '',
+      })
       .build();
 
     this.hubConnection.on('notification', (notification: Notification) => this.notifications$.next(notification));
