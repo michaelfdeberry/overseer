@@ -1,167 +1,210 @@
 @let machineRef = machine();
 @let statusRef = status();
+@let isOffline = !statusRef || statusRef.state === 'Offline' || statusRef.state === 'Disabled';
 
 @if (machineRef) {
   <div
     #machineMonitor
-    class="machine-monitor border"
+    class="card bg-dark text-light border-secondary overflow-hidden shadow-sm position-relative"
     [ngClass]="{ 'machine-monitor--fullScreen': fullScreen() }"
   >
-    <div class="display flex-1 position-relative">
-      <app-web-cam-panel
-        class="video position-absolute"
-        [url]="machineRef.webcamUrl"
-        [orientation]="machineRef.webcamOrientation"
-      />
-      @if (!statusRef || statusRef.state === 'Offline' || statusRef.state === 'Disabled') {
-        <div class="status-icon">
-          @if (machineRef?.disabled) {
-            <i class="bi bi-lightbulb-off"></i>
-          } @else {
-            <i class="bi bi-wifi-off"></i>
-          }
-        </div>
-      }
-      @if (machineRef) {
-        <img
-          class="logo"
-          src="{{ '/images/' + machineRef.machineType + '.png' }}"
-          alt="logo"
+    <div
+      class="position-absolute start-0 top-0 bottom-0 z-1"
+      style="width: 4px"
+      [ngClass]="{
+        'bg-success': operational(),
+        'bg-warning': paused() || statusRef?.state === 'Connecting',
+        'bg-danger': machineRef?.disabled,
+        'bg-secondary': statusRef?.state === 'Idle' || (isOffline && !machineRef?.disabled),
+      }"
+    ></div>
+
+    <div class="g-0 h-100 d-flex flex-column flex-md-row">
+      <div
+        class="display position-relative bg-black d-flex align-items-center justify-content-center z-0"
+        style="min-height: 260px"
+      >
+        <app-web-cam-panel
+          class="w-100 h-100 object-fit-cover"
+          [url]="machineRef.webcamUrl"
+          [orientation]="machineRef.webcamOrientation"
         />
-      }
-    </div>
-    <div class="info flex-1 p-3 d-flex flex-column">
-      <div class="d-flex pb-2">
-        <div class="flex-1">
-          <div class="fs-5 fw-bold">{{ machineRef?.name }}</div>
-          <div class="fs-7">
-            {{ 'status' | i18next }}:
-            <span [ngClass]="{ 'text-warning': paused(), 'text-success': operational() }">
-              @if (machineRef?.disabled) {
-                <b>{{ 'Disabled' | i18next }}</b>
-              } @else {
-                <b>{{ statusRef?.state ?? 'Connecting' | i18next }}</b>
-              }
-            </span>
-          </div>
-        </div>
-        <div class="d-flex flex-1 align-items-center justify-content-end">
-          @if (machineRef.properties['url'] && machineRef.properties['url'].toString().startsWith('http')) {
-            <a
-              class="btn btn-outline-secondary ms-2"
-              href="{{ machineRef.properties['url'] }}"
-              target="_blank"
-              rel="noopener"
-              title="{{ 'openWebsite' | i18next }}"
-            >
-              <i class="bi bi-box-arrow-up-right"></i>
-            </a>
-          }
 
-          @if (!idle() && supportsFullscreen) {
-            <button
-              class="btn btn-outline-secondary ms-2"
-              title="{{ 'fullScreen' | i18next }}"
-              (click)="fullScreen.set(!fullScreen())"
-            >
-              <i class="bi bi-arrows-fullscreen"></i>
-            </button>
-          }
-        </div>
-      </div>
-      <div class="progress-info flex-1 py-2">
-        @if (!idle()) {
-          <div class="d-flex flex-row py-1 fs-7">
-            <div class="flex-1">
-              {{ 'elapsed' | i18next }}: <b>{{ statusRef?.elapsedJobTime | duration }}</b>
-            </div>
-            <div>
-              {{ 'remaining' | i18next }}: <b>{{ statusRef?.estimatedTimeRemaining | duration }}</b>
-            </div>
-          </div>
-          <div>
-            <ngb-progressbar
-              class="mb-3"
-              type="primary"
-              [value]="statusRef?.progress ?? 0"
-              height="0.4rem"
-            />
-          </div>
-        }
-
-        @if (isAdmin()) {
-          <div class="progress-info__actions">
+        @if (isOffline) {
+          <div
+            class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex flex-column align-items-center justify-content-center z-2"
+          >
             @if (machineRef?.disabled) {
-              <a
-                class="btn btn-outline-secondary"
-                [routerLink]="['/settings/machines', machineRef?.id, 'edit']"
-                >{{ 'enable' | i18next }}</a
-              >
+              <i class="bi bi-lightbulb-off fs-1 text-secondary mb-2"></i>
+              <h6 class="text-muted text-uppercase fw-bold ls-1">Disabled</h6>
             } @else {
-              @if (operational()) {
-                <button
-                  class="btn btn-warning"
-                  (click)="pause()"
-                >
-                  {{ 'pause' | i18next }}
-                </button>
-              }
-              @if (paused()) {
-                <button
-                  class="btn btn-success"
-                  (click)="resume()"
-                >
-                  {{ 'continue' | i18next }}
-                </button>
-              }
-              @if (!idle()) {
-                <button
-                  class="btn btn-outline-danger"
-                  [disabled]="idle()"
-                  (click)="cancel()"
-                >
-                  {{ 'stop' | i18next }}
-                </button>
-              }
+              <i class="bi bi-wifi-off fs-1 text-secondary mb-2"></i>
+              <h6 class="text-muted text-uppercase fw-bold ls-1">Offline</h6>
             }
           </div>
         }
       </div>
-      <div class="temperatures">
-        @for (heater of heaters(); track heater.index) {
-          @let temperature = statusRef?.temperatures?.[heater.index];
 
-          <div class="temperature border rounded p-2">
-            <div class="temperature__title">
-              @if (heater.name.toLowerCase() === 'bed') {
-                <span>{{ 'bed' | i18next }}</span>
-              } @else {
-                <span>{{ 'heater' | i18next }} {{ heater.index | number }}</span>
+      <div class="controls d-flex flex-1">
+        <div class="card-body d-flex flex-column h-100 ps-4">
+          <div class="d-flex justify-content-between align-items-start mb-4">
+            <div class="d-flex gap-2 align-items-center">
+              <h5 class="card-title fw-bold mb-0">{{ machineRef?.name }}</h5>
+              <div class="d-flex align-items-center gap-2">
+                <span
+                  class="badge rounded-pill border"
+                  [ngClass]="{
+                    'bg-success bg-opacity-10 text-white border-success': operational(),
+                    'bg-warning bg-opacity-10 text-white border-warning': paused() || statusRef?.state === 'Connecting',
+                    'bg-secondary bg-opacity-10 border-secondary': isOffline,
+                  }"
+                >
+                  <i
+                    class="bi me-1"
+                    [ngClass]="{
+                      'bi-play-circle-fill': operational(),
+                      'bi-pause-circle-fill': paused(),
+                      'bi-activity': !statusRef || statusRef?.state === 'Connecting',
+                      'bi-hourglass': statusRef?.state === 'Idle',
+                      'bi-dash-circle': isOffline,
+                    }"
+                  ></i>
+                  {{ (machineRef?.disabled ? 'Disabled' : (statusRef?.state ?? 'Connecting')) | i18next }}
+                </span>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2">
+              @if (machineRef?.properties?.['Url']?.toString()?.startsWith('http')) {
+                <a
+                  class="btn btn-outline-secondary btn-sm"
+                  href="{{ machineRef?.properties?.['Url'] }}"
+                  target="_blank"
+                  title="{{ 'openWebsite' | i18next }}"
+                >
+                  <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+              }
+              @if (!idle() && supportsFullscreen) {
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  (click)="fullScreen.set(!fullScreen())"
+                  title="{{ 'fullScreen' | i18next }}"
+                >
+                  <i class="bi bi-arrows-fullscreen"></i>
+                </button>
               }
             </div>
-
-            <div class="temperature__display">
-              <div class="temperature__label">{{ 'current' | i18next }}</div>
-              <div class="temperature__value">
-                @if (temperature) {
-                  {{ temperature.actual | number: '1.0-0' }} &deg;C
-                } @else {
-                  {{ 'nonApplicable' | i18next }}
-                }
-              </div>
-            </div>
-            <div class="temperature__display">
-              <div class="temperature__label">{{ 'target' | i18next }}</div>
-              <div class="temperature__value">
-                @if (temperature) {
-                  {{ temperature.target | number: '1.0-0' }} &deg;C
-                } @else {
-                  <span>{{ 'nonApplicable' | i18next }}</span>
-                }
-              </div>
-            </div>
           </div>
-        }
+
+          @if (!idle()) {
+            <div class="mb-4">
+              <div class="d-flex justify-content-between text-secondary small mb-1 fw-bold">
+                <span
+                  >{{ 'elapsed' | i18next }}: <span class="text-light font-monospace">{{ statusRef?.elapsedJobTime | duration }}</span></span
+                >
+                <span
+                  >{{ 'remaining' | i18next }}:
+                  <span class="text-light font-monospace">{{ statusRef?.estimatedTimeRemaining | duration }}</span></span
+                >
+              </div>
+              <ngb-progressbar
+                type="success"
+                [value]="statusRef?.progress ?? 0"
+                height="6px"
+                [striped]="true"
+                [animated]="true"
+                class="bg-secondary bg-opacity-25 rounded-pill"
+              />
+            </div>
+          }
+
+          @if ((isUser() || isAdmin()) && (!idle() || machineRef?.disabled)) {
+            <div class="d-flex gap-2 mb-3">
+              @if (machineRef?.disabled) {
+                <a
+                  class="btn btn-sm btn-outline-success w-100"
+                  [routerLink]="['/settings/machines', machineRef?.id, 'edit']"
+                >
+                  <i class="bi bi-power me-2"></i>{{ 'enable' | i18next }}
+                </a>
+              } @else {
+                @if (operational()) {
+                  <button
+                    class="btn btn-sm btn-warning flex-fill"
+                    (click)="pause()"
+                  >
+                    <i class="bi bi-pause-fill me-1"></i>
+                    {{ 'pause' | i18next }}
+                  </button>
+                }
+                @if (paused()) {
+                  <button
+                    class="btn btn-sm btn-success flex-fill"
+                    (click)="resume()"
+                  >
+                    <i class="bi bi-play-fill me-1"></i>
+                    {{ 'continue' | i18next }}
+                  </button>
+                }
+                @if (!idle()) {
+                  <button
+                    class="btn btn-sm btn-outline-danger flex-fill"
+                    [disabled]="idle()"
+                    (click)="cancel()"
+                  >
+                    <i class="bi bi-stop-fill me-1"></i>
+                    {{ 'stop' | i18next }}
+                  </button>
+                }
+              }
+            </div>
+          }
+
+          <div class="d-flex flex-wrap gap-2 mt-auto justify-content-end border-top border-secondary border-opacity-25 pt-3">
+            @for (heater of heaters(); track heater.index) {
+              @let temperature = statusRef?.temperatures?.[heater.index];
+              <div
+                class="p-2 rounded border border-secondary bg-dark bg-opacity-50 d-flex flex-column flex-fill"
+                style="min-width: 110px; max-width: 160px"
+              >
+                <div class="d-flex align-items-center gap-2 mb-2 text-secondary small text-uppercase fw-bold">
+                  <i
+                    class="bi"
+                    [ngClass]="heater.name.toLowerCase() === 'bed' ? 'bi-layers-half' : 'bi-thermometer-high'"
+                  ></i>
+                  {{ (heater.name.toLowerCase() === 'bed' ? 'bed' : 'heater') | i18next }}
+                  {{ heater.name.toLowerCase() !== 'bed' ? (heater.index | number) : '' }}
+                </div>
+                <div class="d-flex justify-content-between align-items-end">
+                  <div>
+                    <span
+                      class="d-block text-muted"
+                      style="font-size: 0.65rem"
+                      >Target</span
+                    >
+                    <span class="font-monospace text-secondary small"> {{ temperature ? (temperature.target | number: '1.0-0') : '--' }}°C </span>
+                  </div>
+                  <div class="text-end">
+                    <span
+                      class="d-block text-muted"
+                      style="font-size: 0.65rem"
+                    >
+                      Current
+                    </span>
+                    <span
+                      class="fw-bold font-monospace"
+                      [class.text-danger]="(temperature?.actual ?? 0) > 60"
+                      [class.text-light]="(temperature?.actual ?? 0) <= 60"
+                    >
+                      {{ temperature ? (temperature.actual | number: '1.0-0') : '--' }}°C
+                    </span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
       </div>
     </div>
   </div>

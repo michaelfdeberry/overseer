@@ -19,7 +19,7 @@ export class MachinesService {
       if (!activeUser) {
         return of([]);
       }
-      return this.getMachines();
+      return this.getMachines().pipe(map((machines) => machines.map((m) => this.normalizeProperties(m))));
     },
   });
 
@@ -28,7 +28,24 @@ export class MachinesService {
   }
 
   getMachine(machineId: number): Observable<Machine> {
-    return this.http.get<Machine>(this.getEndpoint(machineId));
+    const cachedMachines = this.machines.value();
+
+    if (cachedMachines !== undefined) {
+      return of(cachedMachines.find((m) => m.id === machineId) as Machine);
+    }
+
+    return new Observable<Machine>((subscriber) => {
+      const intervalId = setInterval(() => {
+        const machines = this.machines.value();
+        if (machines !== undefined) {
+          clearInterval(intervalId);
+          subscriber.next(machines.find((m) => m.id === machineId) as Machine);
+          subscriber.complete();
+        }
+      }, 50);
+
+      return () => clearInterval(intervalId);
+    });
   }
 
   createMachine(machine: Machine): Observable<Machine> {
@@ -50,6 +67,14 @@ export class MachinesService {
     );
   }
 
+  enableMonitoring(machineId: number): Observable<Machine> {
+    return this.http.post<Machine>(this.getEndpoint(machineId, 'monitoring'), {}).pipe(tap(() => this.machines.reload()));
+  }
+
+  disableMonitoring(machineId: number): Observable<Machine> {
+    return this.http.delete<Machine>(this.getEndpoint(machineId, 'monitoring'), {}).pipe(tap(() => this.machines.reload()));
+  }
+
   getMachineMetadata(): Observable<Record<string, MachineMetadata[]>> {
     const getPropertyName = (metadata: MachineMetadata): string => {
       return metadata.propertyName.charAt(0).toLowerCase() + metadata.propertyName.slice(1);
@@ -66,6 +91,21 @@ export class MachinesService {
         );
       })
     );
+  }
+
+  private normalizeProperties(machine: Machine): Machine {
+    if (!machine.properties) return machine;
+
+    const normalized = Object.entries(machine.properties).reduce(
+      (acc, [key, value]) => {
+        const normalizedKey = key.charAt(0).toLowerCase() + key.slice(1);
+        acc[normalizedKey] = value;
+        return acc;
+      },
+      {} as Record<string, unknown>
+    );
+
+    return { ...machine, properties: normalized };
   }
 
   private denormalizeProperties(machine: Machine): Machine {

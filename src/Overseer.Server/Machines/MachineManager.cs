@@ -16,10 +16,38 @@ public class MachineManager(IDataContext context, MachineProviderManager machine
     return _machines.GetById(id);
   }
 
-  public IReadOnlyList<Machine> GetMachines()
+  public IReadOnlyList<Machine> GetMachines(bool maskSensitiveData = false)
   {
-    var machines = _machines.GetAll();
-    return machines;
+    var machines = _machines.GetAll().ToList();
+    if (!maskSensitiveData)
+      return machines;
+
+    var allMetadata = _machineProviderManager.GetMachineMetadata();
+    return
+    [
+      .. machines.Select(m =>
+      {
+        if (string.IsNullOrWhiteSpace(m.MachineType))
+          return m;
+
+        var machineMetadata = allMetadata[m.MachineType].ToDictionary(md => md.PropertyName, md => md);
+        m.Properties = m.Properties.ToDictionary(
+          p => p.Key,
+          p =>
+          {
+            if (machineMetadata.TryGetValue(p.Key, out var metadata) && metadata.IsSensitive)
+            {
+              var value = p.Value?.ToString() ?? string.Empty;
+              return new string('*', value.Length);
+            }
+
+            return p.Value;
+          }
+        );
+
+        return m;
+      }),
+    ];
   }
 
   public async Task<Machine> CreateMachine(Machine machine)
@@ -39,18 +67,30 @@ public class MachineManager(IDataContext context, MachineProviderManager machine
 
   public async Task<Machine> UpdateMachine(Machine machine)
   {
-    if (!machine.Disabled)
-    {
-      //update the configuration from the machine if the machine isn't disabled
-      var configuredMachine = await _machineProviderManager.ConfigureMachine(machine);
-      _machines.Update(configuredMachine);
+    var existingMachine = GetMachine(machine.Id) ?? throw new OverflowException($"Machine with id {machine.Id} not found.");
 
-      await restartMonitoringChannel.Dispatch();
-      return configuredMachine;
-    }
+    var allMetadata = _machineProviderManager.GetMachineMetadata();
+    var machineMetadata = allMetadata[existingMachine.MachineType!].ToDictionary(md => md.PropertyName, md => md);
 
-    _machines.Update(machine);
-    return machine;
+    // if any of the sensitive properties contains *s then we should keep the existing value instead of updating it with the masked value
+    machine.Properties = machine.Properties.ToDictionary(
+      p => p.Key,
+      p =>
+      {
+        if (machineMetadata.TryGetValue(p.Key, out var metadata) && metadata.IsSensitive && p.Value is string strValue && strValue.All(c => c == '*'))
+        {
+          return existingMachine.Properties[p.Key];
+        }
+
+        return p.Value;
+      }
+    );
+
+    var configuredMachine = await _machineProviderManager.ConfigureMachine(machine);
+    _machines.Update(configuredMachine);
+
+    await restartMonitoringChannel.Dispatch();
+    return configuredMachine;
   }
 
   public Machine? DeleteMachine(int machineId)
@@ -74,5 +114,27 @@ public class MachineManager(IDataContext context, MachineProviderManager machine
   public IDictionary<string, IEnumerable<MachineMetadata>> GetMachineMetadata()
   {
     return _machineProviderManager.GetMachineMetadata();
+  }
+
+  public async Task EnableMonitoring(int machineId)
+  {
+    var machine = GetMachine(machineId);
+    if (machine == null)
+      return;
+
+    machine.Disabled = false;
+    _machines.Update(machine);
+    await restartMonitoringChannel.Dispatch();
+  }
+
+  public async Task DisableMonitoring(int machineId)
+  {
+    var machine = GetMachine(machineId);
+    if (machine == null)
+      return;
+
+    machine.Disabled = true;
+    _machines.Update(machine);
+    await restartMonitoringChannel.Dispatch();
   }
 }

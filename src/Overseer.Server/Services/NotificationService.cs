@@ -1,21 +1,19 @@
 using log4net;
 using Microsoft.AspNetCore.SignalR;
 using Overseer.Server.Channels;
-using Overseer.Server.Data;
 using Overseer.Server.Hubs;
-using Overseer.Server.Models;
+using Overseer.Server.Notifications;
 
 namespace Overseer.Server.Services;
 
-public class NotificationService(IDataContext dataContext, IHubContext<NotificationHub> notificationHub, INotificationChannel notificationChannel)
-  : BackgroundService
+public class NotificationService(
+  INotificationsManager notificationsManager,
+  IHubContext<NotificationHub> notificationHub,
+  INotificationChannel notificationChannel
+) : BackgroundService
 {
-  private static readonly int MaxNotificationAge = (int)TimeSpan.FromDays(7).TotalMilliseconds;
-
   private static readonly ILog log = LogManager.GetLogger(typeof(NotificationService));
   private readonly Guid _subscriptionId = Guid.NewGuid();
-
-  private readonly IRepository<Notification> _notifications = dataContext.Repository<Notification>();
 
   protected override async Task ExecuteAsync(CancellationToken stoppingToken)
   {
@@ -30,8 +28,7 @@ public class NotificationService(IDataContext dataContext, IHubContext<Notificat
     {
       while (!stoppingToken.IsCancellationRequested)
       {
-        var cutoff = DateTimeOffset.UtcNow.AddMilliseconds(-MaxNotificationAge).ToUnixTimeMilliseconds();
-        _notifications.Delete(n => n.Timestamp < cutoff);
+        notificationsManager.PruneNotifications();
         await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
       }
     }
@@ -52,7 +49,7 @@ public class NotificationService(IDataContext dataContext, IHubContext<Notificat
         if (notification == null)
           continue;
 
-        _notifications.Create(notification);
+        notificationsManager.CreateNotification(notification);
         await notificationHub
           .Clients.Group(NotificationHub.NotificationGroupName)
           .SendAsync("Notification", notification, cancellationToken: stoppingToken);

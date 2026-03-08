@@ -38,6 +38,7 @@ public class MachineJobService(IDataContext dataContext, IMachineStatusChannel m
               MachineId = status.MachineId,
               MachineJobId = job!.Id,
               Message = message,
+              MachineJobState = status.State,
             },
             stoppingToken
           );
@@ -112,6 +113,7 @@ public class MachineJobService(IDataContext dataContext, IMachineStatusChannel m
             break;
 
           case MachineState.Operational:
+            Log.Info($"Machine {status.MachineId} resumed operation from {job.LastStatus?.State} state.");
             job.State = MachineState.Operational;
             job.LastNotificationType = JobNotificationType.JobResumed;
             await NotifyJobEvent(JobNotificationType.JobResumed);

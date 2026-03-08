@@ -3,219 +3,81 @@
   flex-direction: column;
 }
 
-// Status: Idle or Active (Positive/OK)
-
-//     Green: #4EE44E
-
-//     This is a vibrant but not overwhelming green that signifies a healthy and operational state.
-
-// Status: Connecting or Paused (In Progress/Warning)
-
-//     Blue: #4A90E2
-
-//     A clear, medium-vibrancy blue that is commonly used to indicate a process is underway.
-
-//     Yellow: #FFC107
-
-//     A warm, amber yellow that serves as a soft warning or indicates a temporary hold status.
-
-// Status: Error or Disconnected (Negative/Critical)
-
-//     Red: #F44336
-
-//     A strong, unambiguous red that immediately draws attention to a critical issue.
-
-.machine-monitor {
+.card {
   flex: 1;
   display: flex;
   flex-direction: column;
   position: relative;
   border-radius: 0.5rem;
   overflow: hidden;
-  --bs-bg-opacity: 1;
 
   .display {
-    aspect-ratio: 4/3;
-  }
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-
-    .display {
-      max-width: 381px;
-      min-height: 286px;
-    }
-  }
-
-  .video {
-    position: absolute;
-    inset: 0;
-    background-color: #000;
-  }
-
-  .status-icon {
-    z-index: 0;
-    position: absolute;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    inset: 0;
-    font-size: 6rem;
-    background-color: rgba($color: #000000, $alpha: 0.5);
-  }
-
-  .logo {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    width: 50px;
-    opacity: 0.2;
-  }
-
-  .info {
-    container-type: inline-size;
-    position: relative;
-
-    .progress-info {
-      display: flex;
-      flex-direction: column;
-
-      &__actions {
-        display: flex;
-        justify-content: end;
-        margin-bottom: 0.5rem;
-
-        .btn {
-          margin-inline-start: 0.5rem;
-
-          &:first-child {
-            margin-inline-start: 1rem;
-          }
-        }
-      }
-    }
-  }
-
-  .temperatures {
-    overflow: auto;
-    display: flex;
-    flex-direction: row;
-    justify-content: end;
-    overflow-x: auto;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-
-    .expanded & {
-      overflow: unset;
-      flex-direction: column;
-      justify-content: unset;
-    }
-  }
-
-  .temperature {
-    width: 120px;
-    min-width: 120px;
-    display: flex;
-    flex-direction: column;
-
-    &__title {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    &__display {
-      display: flex;
-      flex-direction: row;
-    }
-
-    &__label,
-    &__value {
-      flex: 1;
-      font-size: 0.75rem;
-    }
-
-    &__value {
-      font-weight: 500;
-      text-align: end;
-    }
-
-    .expanded & {
-      width: 100%;
-      flex-direction: row;
-
-      &:not(:last-of-type) {
-        margin-bottom: 0.5rem;
-      }
-
-      &__title {
-        flex: 1;
-      }
-
-      &__display {
-        flex-direction: column;
-        margin: 0;
-        flex: 2;
-
-        &:last-of-type {
-          flex: 4;
-        }
-      }
-
-      &__title {
-        width: 25%;
-      }
-
-      &__label {
-        flex: 0;
-        margin-top: 0.25rem;
-        margin-bottom: 0.5rem;
-      }
-
-      &__value {
-        text-align: start;
-
-        input {
-          text-align: center;
-        }
-      }
-    }
-  }
-
-  &--fullScreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1050;
-    background-color: var(--bs-body-bg);
-    border-radius: 0;
-    border: none;
     display: block;
+    aspect-ratio: 4/3;
+    max-height: 297px;
+    max-width: 396px; /* 297px * 4/3 for 4:3 aspect ratio */
+    width: 100%;
+    height: auto;
 
-    .display {
-      min-height: 100vh;
-      max-width: none;
-      width: 100vw;
+    @media screen and (max-width: 768px) {
+      max-width: 100%;
+      max-height: unset;
+      height: auto;
     }
+  }
+}
 
-    .video {
-      inset: 0;
-      background-size: contain;
-      background-position: center center;
-    }
+.machine-monitor--fullScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1050; /* Above Bootstrap modals/navbars */
+  border: none !important;
+  border-radius: 0 !important;
+  background: #000;
 
-    .info {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      width: 40%;
-      border-radius: 0.5rem;
-      overflow-y: auto;
-      border: 1px solid var(--bs-border-color);
-      background-color: color-mix(in srgb, var(--bs-body-bg) 50%, transparent);
+  .display {
+    position: absolute !important;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+
+    /* Ensure the webcam component stretches */
+    app-web-cam-panel {
+      aspect-ratio: unset;
+      max-height: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
+  }
+
+  .controls {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    max-height: 700px;
+    min-width: 350px;
+    height: auto !important;
+    opacity: 0.8;
+
+    .card-body {
+      background: rgba(33, 37, 41, 0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      gap: 0.5rem;
+    }
+  }
+
+  /* Hide the Accent Bar in fullscreen to be cleaner */
+  .position-absolute.start-0.top-0.bottom-0 {
+    display: none;
   }
 }

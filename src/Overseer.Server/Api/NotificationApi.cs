@@ -1,5 +1,4 @@
-using Overseer.Server.Data;
-using Overseer.Server.Models;
+using Overseer.Server.Notifications;
 
 namespace Overseer.Server.Api;
 
@@ -10,44 +9,31 @@ public static class NotificationApi
     var group = builder.MapGroup("/notifications").WithTags("Notifications");
     group.RequireAuthorization();
 
-    group.MapGet(
-      "/",
-      (IDataContext dataContext) =>
-      {
-        var notifications = dataContext.Repository<Notification>().GetAll().OrderByDescending(n => n.Timestamp).ToList();
-        return Results.Ok(notifications);
-      }
-    );
+    group.MapGet("/", (INotificationsManager notificationsManager) => Results.Ok(notificationsManager.GetNotifications()));
 
     group.MapPost(
       "/read",
-      (IDataContext dataContext, List<int> ids) =>
+      (INotificationsManager notificationsManager, List<int> ids) =>
       {
-        var notifications = dataContext.Repository<Notification>().Filter(n => ids.Contains(n.Id) && !n.IsRead).ToList();
-        foreach (var notification in notifications)
-        {
-          notification.IsRead = true;
-        }
-
-        dataContext.Repository<Notification>().Update(notifications);
+        notificationsManager.MarkAsRead(ids);
         return Results.Ok();
       }
     );
 
     group.MapDelete(
       "/",
-      (IDataContext dataContext) =>
+      (INotificationsManager notificationsManager) =>
       {
-        dataContext.Repository<Notification>().DeleteAll();
+        notificationsManager.DeleteAll();
         return Results.Ok();
       }
     );
 
     group.MapDelete(
       "/{id:int}",
-      (IDataContext dataContext, int id) =>
+      (INotificationsManager notificationsManager, int id) =>
       {
-        dataContext.Repository<Notification>().Delete(id);
+        notificationsManager.Delete(id);
         return Results.Ok();
       }
     );

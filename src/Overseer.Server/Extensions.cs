@@ -11,6 +11,7 @@ using Overseer.Server.Integration.Common;
 using Overseer.Server.Integration.Machines;
 using Overseer.Server.Machines;
 using Overseer.Server.Models;
+using Overseer.Server.Notifications;
 using Overseer.Server.Plugins;
 using Overseer.Server.Services;
 using Overseer.Server.System;
@@ -78,6 +79,7 @@ public static class Extensions
     services.AddTransient<ISystemManager, SystemManager>();
     services.AddTransient<IGitHubClient>((_) => new GitHubClient(new ProductHeaderValue("OverseerApp")));
     services.AddTransient<IPluginManager, PluginManager>();
+    services.AddTransient<INotificationsManager, NotificationsManager>();
 
     services.AddSingleton<IMonitoringService, MonitoringService>();
     services.AddSingleton<IMachineStatusChannel, MachineStatusChannel>();

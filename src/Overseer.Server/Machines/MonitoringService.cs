@@ -18,12 +18,26 @@ public sealed class MonitoringService(
   {
     Log.Info("Starting monitoring service");
     var interval = configurationManager.GetApplicationSettings().Interval;
-    var enabledMachines = machineManager.GetMachines().Where(m => !m.Disabled);
+    var enabledMachines = machineManager.GetMachines();
     foreach (var machine in enabledMachines)
     {
-      var provider = providerManager.GetProvider(machine);
-      provider.Start(interval, machine);
-      provider.StatusUpdated += WriteStatusAsync;
+      try
+      {
+        if (machine.Disabled)
+        {
+          Log.Info($"Skipping disabled machine {machine.Name}");
+          providerManager.RemoveProvider(machine.Id);
+          continue;
+        }
+
+        var provider = providerManager.GetProvider(machine);
+        provider?.Start(interval, machine);
+        provider?.StatusUpdated += WriteStatusAsync;
+      }
+      catch (Exception ex)
+      {
+        Log.Error($"Failed to start monitoring for machine {machine.Name}: {ex.Message}");
+      }
     }
   }
 

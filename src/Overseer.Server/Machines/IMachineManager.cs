@@ -9,8 +9,10 @@ namespace Overseer.Server.Machines
     Task<Machine> CreateMachine(Machine machine);
     Machine? DeleteMachine(int machineId);
     Machine GetMachine(int id);
-    IReadOnlyList<Machine> GetMachines();
+    IReadOnlyList<Machine> GetMachines(bool maskSensitiveData = false);
     Task<Machine> UpdateMachine(Machine machine);
     void SortMachines(List<int> sortOrder);
+    Task EnableMonitoring(int machineId);
+    Task DisableMonitoring(int machineId);
   }
 }

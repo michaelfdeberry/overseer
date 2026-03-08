@@ -63,7 +63,11 @@ export class MonitoringComponent {
       });
     }
 
-    return machines.filter((machine) => this.isMachineVisible(machine, settings));
+    return machines.filter((machine) => {
+      if (settings.hideIdleMachines && isIdle(statuses[machine.id]?.state)) return false;
+      if (settings.hideDisabledMachines && machine.disabled) return false;
+      return true;
+    });
   });
 
   constructor() {
@@ -80,11 +84,5 @@ export class MonitoringComponent {
       .subscribe((status) => {
         this.statuses.update((statuses) => ({ ...statuses, [status.machineId]: status }));
       });
-  }
-
-  private isMachineVisible(machine: Machine, settings: ApplicationSettings): boolean {
-    if (settings.hideIdleMachines && isIdle(this.statuses()[machine.id]?.state)) return false;
-    if (settings.hideDisabledMachines && machine.disabled) return false;
-    return true;
   }
 }

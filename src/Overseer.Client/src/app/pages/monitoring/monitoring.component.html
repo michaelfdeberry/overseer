@@ -6,6 +6,16 @@
   } @else {
     @if (displayedMachines()?.length) {
       <div class="machines d-flex flex-1 flex-column py-4 fade-in-content">
+        <!-- <div class="row">
+          @for (item of displayedMachines(); track item.id) {
+            <div class="col-xl-6 col-12 d-flex">
+              <app-machine-monitor
+                class="w-100"
+                [machine]="item"
+              ></app-machine-monitor>
+            </div>
+          }
+        </div> -->
         @for (item of displayedMachines(); track item.id) {
           <app-machine-monitor [machine]="item"></app-machine-monitor>
         }

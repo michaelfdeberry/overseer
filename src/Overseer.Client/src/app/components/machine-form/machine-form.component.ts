@@ -10,6 +10,7 @@ export type FormFieldDescriptor = {
   description?: string;
   isSensitive: boolean;
   isInPropertiesGroup: boolean;
+  disabled?: boolean;
   options?: string[];
 };
 
@@ -40,6 +41,7 @@ export class MachineFormComponent {
           displayName: key,
           isSensitive: false,
           isInPropertiesGroup: false,
+          disabled: false,
           options: machineInputOptions[key as MachineInputProperty] ?? undefined,
         });
       }
@@ -47,15 +49,18 @@ export class MachineFormComponent {
 
     // Add visible, non-ignored metadata properties
     metadata.forEach((m) => {
-      const isVisible =
-        m.displayType === 'Both' || (m.displayType === 'SetupOnly' && mode === 'create') || (m.displayType === 'UpdateOnly' && mode === 'edit');
+      var supportsSetup = m.displayType === 'Both' || m.displayType === 'SetupOnly';
+      var supportsUpdate = m.displayType === 'Both' || m.displayType === 'UpdateOnly';
 
-      if (isVisible && !m.isIgnored) {
+      if (!m.isIgnored) {
+        if (mode === 'create' && !supportsSetup) return;
+
         fields.push({
           propertyName: m.propertyName,
           displayName: m.displayName ?? m.propertyName,
           description: m.description,
           isSensitive: m.isSensitive,
+          disabled: mode === 'edit' && !supportsUpdate,
           isInPropertiesGroup: !machineInputProperties.includes(m.propertyName as MachineInputProperty),
           options: machineInputProperties.includes(m.propertyName as MachineInputProperty)
             ? (machineInputOptions[m.propertyName as MachineInputProperty] ?? undefined)
@@ -71,12 +76,13 @@ export class MachineFormComponent {
     effect(() => {
       const form = this.form();
       const metadata = this.machineMetadata();
+      const mode = this.mode();
       const machine = this.machine();
 
       if (!form) return;
       if (!metadata) return;
+      if (mode === 'edit' && !machine) return;
 
-      const mode = this.mode();
       const metadataPropertyNames = new Set(metadata.map((m) => m.propertyName));
 
       // Add controls for dynamic properties not in metadata
@@ -91,20 +97,22 @@ export class MachineFormComponent {
       form.addControl('properties', propertiesGroup);
 
       metadata.forEach((metadata) => {
-        const isVisible =
-          metadata.displayType === 'Both' ||
-          (metadata.displayType === 'SetupOnly' && mode === 'create') ||
-          (metadata.displayType === 'UpdateOnly' && mode === 'edit');
+        var supportsSetup = metadata.displayType === 'Both' || metadata.displayType === 'SetupOnly';
+        var supportsUpdate = metadata.displayType === 'Both' || metadata.displayType === 'UpdateOnly';
 
-        if (isVisible && !metadata.isIgnored) {
+        if (!metadata.isIgnored) {
+          if (mode === 'create' && !supportsSetup) return;
+
           const propertyName = metadata.propertyName;
+          var control = new UntypedFormControl(this.getValue(propertyName), metadata.isRequired ? Validators.required : null);
+          if (mode === 'edit' && !supportsUpdate) {
+            control.disable();
+          }
+
           if (machineInputProperties.includes(metadata.propertyName as MachineInputProperty)) {
-            form.addControl(propertyName, new UntypedFormControl(this.getValue(propertyName), metadata.isRequired ? Validators.required : null));
+            form.addControl(propertyName, control);
           } else {
-            propertiesGroup.addControl(
-              propertyName,
-              new UntypedFormControl(this.getValue(propertyName), metadata.isRequired ? Validators.required : null)
-            );
+            propertiesGroup.addControl(propertyName, control);
           }
         }
       });

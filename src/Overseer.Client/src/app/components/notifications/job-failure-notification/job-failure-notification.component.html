@@ -4,6 +4,7 @@
 @if (notification && machine) {
   <div
     class="p-3 mb-2 d-flex align-items-start p-3 border-start border-3 rounded-2 shadow-sm position-relative"
+    style="outline: 1px solid #444"
     [ngClass]="{
       'border-secondary': notification.isRead,
       'border-danger': !notification.isRead,
@@ -31,7 +32,12 @@
         >
           {{ 'jobNotifications.JobFailure' | i18next }}
         </div>
-        <button type="button" class="btn-close btn btn-sm" [attr.aria-label]="'clear' | i18next" (click)="handleDismiss()"></button>
+        <button
+          type="button"
+          class="btn-close btn btn-sm"
+          [attr.aria-label]="'clear' | i18next"
+          (click)="handleDismiss()"
+        ></button>
       </h5>
       <p class="text-secondary small mb-0">
         {{ 'jobNotifications.JobFailureMessage' | i18next: { jobNumber: notification.machineJobId, machineName: machine.name } }}
@@ -81,12 +87,36 @@
       }
 
       @if (!notification.isRead) {
-        @if (!notification.jobCancelled && !notification.jobPaused) {
-          <button class="btn btn-sm btn-warning my-2 me-2" (click)="pause()">{{ 'pause' | i18next }}</button>
-          <button class="btn btn-sm btn-outline-danger my-2 me-2" (click)="cancel()">{{ 'stop' | i18next }}</button>
-        } @else if (notification.jobPaused && !notification.jobCancelled) {
-          <button class="btn btn-sm btn-success my-2 me-2" (click)="resume()">{{ 'continue' | i18next }}</button>
-          <button class="btn btn-sm btn-outline-danger my-2 me-2" (click)="cancel()">{{ 'stop' | i18next }}</button>
+        @if (!notification.jobCancelled && !notification.jobPaused && isOperational()) {
+          <button
+            class="btn btn-sm btn-warning my-2 me-2"
+            (click)="pause()"
+          >
+            <i class="bi bi-pause-fill me-1"></i>
+            {{ 'pause' | i18next }}
+          </button>
+          <button
+            class="btn btn-sm btn-outline-danger my-2 me-2"
+            (click)="cancel()"
+          >
+            <i class="bi bi-stop-fill me-1"></i>
+            {{ 'stop' | i18next }}
+          </button>
+        } @else if (notification.jobPaused && !notification.jobCancelled && isPaused()) {
+          <button
+            class="btn btn-sm btn-success my-2 me-2"
+            (click)="resume()"
+          >
+            <i class="bi bi-play-fill me-1"></i>
+            {{ 'continue' | i18next }}
+          </button>
+          <button
+            class="btn btn-sm btn-outline-danger my-2 me-2"
+            (click)="cancel()"
+          >
+            <i class="bi bi-stop-fill me-1"></i>
+            {{ 'stop' | i18next }}
+          </button>
         }
       }
 

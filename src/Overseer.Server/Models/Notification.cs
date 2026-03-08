@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Overseer.Server.Data;
+using Overseer.Server.Integration.Machines;
 
 namespace Overseer.Server.Models;
 
@@ -11,6 +11,7 @@ public enum NotificationType
 }
 
 [JsonDerivedType(typeof(JobNotification))]
+[JsonDerivedType(typeof(JobFailureNotification))]
 public abstract class Notification
 {
   public int Id { get; set; }
@@ -23,8 +24,6 @@ public abstract class Notification
   public string? Message { get; set; }
 
   public bool IsRead { get; set; } = false;
-
-  // TODO: add common properties for notifications
 }
 
 public enum JobNotificationType
@@ -47,6 +46,8 @@ public class JobNotification : Notification
   public int MachineId { get; set; }
 
   public int MachineJobId { get; set; }
+
+  public MachineState? MachineJobState { get; set; }
 }
 
 public class JobFailureNotification : JobNotification

@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -59,6 +59,16 @@ export class EditMachineComponent {
         this.form.addControl('machineType', new FormControl(machine.machineType));
         this.form.addControl('disabled', new FormControl(machine['disabled'] ?? false));
       });
+
+    effect(() => {
+      var machines = this.machinesService.machines.value();
+      if (!machines) return;
+
+      var machine = machines.find((m) => m.id === this.machine()?.id);
+      if (machine) {
+        this.machine.set(machine);
+      }
+    });
   }
 
   deleteMachine() {
@@ -83,13 +93,14 @@ export class EditMachineComponent {
   }
 
   updateMonitoring(disabled: boolean): void {
-    var update = { ...this.machine(), disabled } as Machine;
-    this.machinesService.updateMachine(update).subscribe({
-      complete: () => {
-        this.form?.patchValue({ disabled: false });
-        this.machine.set(update);
-      },
-    });
+    const machine = this.machine();
+    if (!machine) return;
+
+    if (disabled) {
+      this.machinesService.disableMonitoring(machine.id).subscribe();
+    } else {
+      this.machinesService.enableMonitoring(machine.id).subscribe();
+    }
   }
 
   private handleNetworkAction(observable: Observable<any>) {

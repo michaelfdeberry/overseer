@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
+using log4net;
 using Overseer.Server.Integration.Machines;
 using Overseer.Server.Models;
 using Overseer.Server.Plugins;
@@ -8,6 +9,8 @@ namespace Overseer.Server.Machines;
 
 public class MachineProviderManager(IServiceProvider serviceProvider, IDictionary<Type, Type> providerTypeMap, IList<Type> configurationProviderTypes)
 {
+  static readonly ILog Log = LogManager.GetLogger(typeof(MachineProviderManager));
+
   static readonly Lazy<IDictionary<string, IEnumerable<MachineMetadata>>> _machineMetadataCache = new(DiscoverMachineMetadata);
 
   static readonly ConcurrentDictionary<int, IMachineProvider> _providerCache = new();
@@ -16,7 +19,7 @@ public class MachineProviderManager(IServiceProvider serviceProvider, IDictionar
 
   public IDictionary<string, IEnumerable<MachineMetadata>> GetMachineMetadata()
   {
-    return _machineMetadataCache.Value;
+    return _machineMetadataCache.Value.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
   }
 
   public async Task<Machine> ConfigureMachine(Machine machine)
@@ -66,9 +69,30 @@ public class MachineProviderManager(IServiceProvider serviceProvider, IDictionar
     return _providerCache.Values;
   }
 
-  public IMachineProvider GetProvider(Machine machine)
+  public IMachineProvider? GetProvider(Machine machine)
   {
-    return _providerCache.GetOrAdd(machine.Id, id => CreateProvider(machine));
+    if (_providerCache.TryGetValue(machine.Id, out var provider))
+      return provider;
+
+    try
+    {
+      provider = CreateProvider(machine);
+      _providerCache[machine.Id] = provider;
+      return provider;
+    }
+    catch (Exception ex)
+    {
+      Log.Error($"Error creating provider for machine {machine.Id} of type {machine.MachineType}", ex);
+      return null;
+    }
+  }
+
+  public void RemoveProvider(int machineId)
+  {
+    if (_providerCache.TryRemove(machineId, out var provider))
+    {
+      provider.Stop();
+    }
   }
 
   private static Type DiscoverMachineType(string machineTypeName)
@@ -103,7 +127,7 @@ public class MachineProviderManager(IServiceProvider serviceProvider, IDictionar
       var machineTypeAttr = type.GetCustomAttribute<MachineTypeAttribute>()!;
       var metadata = type.GetProperties()
         .Select(p => new { Property = p, Attribute = p.GetCustomAttribute<MachinePropertyAttribute>() })
-        .Where(x => x.Attribute != null && !x.Attribute.IsIgnored)
+        .Where(x => x.Attribute != null)
         .Select(x => new MachineMetadata
         {
           PropertyName = x.Property.Name,
