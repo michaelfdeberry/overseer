@@ -1,7 +1,7 @@
 <app-unauthenticated [message]="'pages.setup.message' | i18next">
   <div>
     @switch (step()) {
-      @case ('user') {
+      @case ('Admin') {
         <p class="fw-2">{{ 'pages.setup.createUserMessage' | i18next }}</p>
         <app-create-user
           [form]="adminForm"
@@ -20,13 +20,21 @@
           </div>
         </app-create-user>
       }
-      @case ('machines') {
+      @case ('Plugins') {
+        <p class="fw-2">{{ 'pages.setup.installPluginsMessage' | i18next }}</p>
+        <app-plugins
+          [showInstalledPlugins]="false"
+          (pluginsInstalled)="step.set('Machines')"
+        />
+      }
+      @case ('Machines') {
         <p class="fw-2">{{ 'pages.setup.createMachineMessage' | i18next }}</p>
         <app-create-machine [form]="machinesForm"></app-create-machine>
         <div class="d-flex justify-content-end">
           <button
             type="submit"
-            class="btn btn-primary me-2"
+            class="btn btn-outline-primary me-2"
+            [disabled]="machinesForm.invalid"
             (click)="handleMachineSubmit(true)"
           >
             {{ 'pages.setup.createMultipleMachines' | i18next }}
@@ -34,6 +42,7 @@
           <button
             type="submit"
             class="btn btn-primary"
+            [disabled]="machinesForm.invalid"
             (click)="handleMachineSubmit(false)"
           >
             {{ 'pages.setup.next' | i18next }}

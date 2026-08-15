@@ -1,7 +1,7 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { I18NextPipe } from 'angular-i18next';
-import { forkJoin, tap } from 'rxjs';
+import { forkJoin, take, tap } from 'rxjs';
 import { CardSectionComponent } from '../../components/card-section/card-section.component';
 import { PluginCardComponent } from '../../components/plugin-card/plugin-card.component';
 import { RestartDialogComponent } from '../../components/restart-dialog/restart-dialog.component';
@@ -15,6 +15,10 @@ import { PluginsService } from '../../services/plugins.service';
   providers: [DialogService],
 })
 export class PluginsComponent {
+  showInstalledPlugins = input<boolean>(true);
+  pluginsInstalled = output<void>();
+  pluginsUninstalled = output<void>();
+
   private pluginsService = inject(PluginsService);
   private dialogService = inject(DialogService);
   private refresh = signal(false);
@@ -82,7 +86,7 @@ export class PluginsComponent {
 
     this.busy.set(true);
     forkJoin(selected.map((plugin) => this.pluginsService.installPlugin(plugin))).subscribe({
-      next: () => this.restart(),
+      next: () => this.restart(() => this.pluginsInstalled.emit()),
     });
   }
 
@@ -92,14 +96,20 @@ export class PluginsComponent {
 
     this.busy.set(true);
     forkJoin(selected.map((plugin) => this.pluginsService.uninstallPlugin(plugin))).subscribe({
-      next: () => this.restart(),
+      next: () => this.restart(() => this.pluginsUninstalled.emit()),
     });
   }
 
-  private restart(): void {
+  private restart(restartComplete?: () => void): void {
     this.busy.set(false);
-    this.plugins.reload();
     this.selectedAvailable.set(new Set());
-    this.dialogService.show(RestartDialogComponent, { backdrop: 'static', keyboard: false });
+    this.dialogService
+      .show(RestartDialogComponent, { backdrop: 'static', keyboard: false })
+      .dismissed.pipe(take(1))
+      .subscribe(() => {
+        this.refresh.set(true);
+        this.plugins.reload();
+        restartComplete?.();
+      });
   }
 }

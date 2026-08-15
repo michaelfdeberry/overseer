@@ -1,7 +1,9 @@
-﻿namespace Overseer.Server.Users
+﻿using Overseer.Server.Models;
+
+namespace Overseer.Server.Users
 {
   public interface IAuthorizationManager
   {
-    bool RequiresAuthorization();
+    InitializationStatus GetInitializationStatus();
   }
 }

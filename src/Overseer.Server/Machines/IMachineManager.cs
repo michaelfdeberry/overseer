@@ -1,15 +1,18 @@
-﻿using Overseer.Server.Models;
+﻿using Overseer.Server.Integration.Machines;
+using Overseer.Server.Models;
 
 namespace Overseer.Server.Machines
 {
   public interface IMachineManager
   {
-    IEnumerable<string> GetMachineTypes();
+    IDictionary<string, IEnumerable<MachineMetadata>> GetMachineMetadata();
     Task<Machine> CreateMachine(Machine machine);
     Machine? DeleteMachine(int machineId);
     Machine GetMachine(int id);
-    IReadOnlyList<Machine> GetMachines();
+    IReadOnlyList<Machine> GetMachines(bool maskSensitiveData = false);
     Task<Machine> UpdateMachine(Machine machine);
     void SortMachines(List<int> sortOrder);
+    Task EnableMonitoring(int machineId);
+    Task DisableMonitoring(int machineId);
   }
 }

@@ -38,6 +38,7 @@ public class JobFailureService(
           MachineJobId = analysisResult.JobId,
           Message = "job.aiDetectedFailure",
           AnalysisResult = analysisResult,
+          MachineJobState = job.State,
         };
 
         var settings = configurationManager.GetApplicationSettings();

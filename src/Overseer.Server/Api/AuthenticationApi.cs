@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Overseer.Server.Integration.Common;
 using Overseer.Server.Models;
 using Overseer.Server.Services;
 using Overseer.Server.Users;
@@ -19,6 +20,7 @@ namespace Overseer.Server.Api
         "/",
         (ClaimsPrincipal? currentUser, IAuthorizationManager authorizationManager, IUserManager userManager) =>
         {
+          var initializationStatus = authorizationManager.GetInitializationStatus();
           var isAuthenticated = currentUser?.Identity?.IsAuthenticated ?? false;
           var userIdClaim = currentUser?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
           if (isAuthenticated && int.TryParse(userIdClaim, out var userId))
@@ -26,11 +28,17 @@ namespace Overseer.Server.Api
             var user = userManager.GetUser(userId);
             if (user is not null)
             {
+              if (initializationStatus.State != InitializationState.Initialized)
+              {
+                initializationStatus.User = user;
+                return Results.Json(initializationStatus, statusCode: (int)HttpStatusCode.PreconditionFailed);
+              }
+
               return Results.Ok(user);
             }
           }
 
-          return Results.Text($"requiresInitialization={authorizationManager.RequiresAuthorization()}", statusCode: (int)HttpStatusCode.Unauthorized);
+          return Results.Json(initializationStatus, statusCode: (int)HttpStatusCode.Unauthorized);
         }
       );
 
@@ -38,8 +46,9 @@ namespace Overseer.Server.Api
         "/setup",
         (UserDisplay user, IAuthorizationManager authorizationManager, IUserManager userManager) =>
         {
-          if (!authorizationManager.RequiresAuthorization())
+          if (authorizationManager.GetInitializationStatus().State == InitializationState.Initialized)
             return Results.StatusCode((int)HttpStatusCode.PreconditionFailed);
+
           return Results.Ok(userManager.CreateUser(user));
         }
       );

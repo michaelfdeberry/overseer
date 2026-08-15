@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using log4net;
 using Overseer.Server.Channels;
 using Overseer.Server.Data;
+using Overseer.Server.Integration.Machines;
 using Overseer.Server.Machines;
 using Overseer.Server.Models;
 
@@ -10,18 +11,50 @@ namespace Overseer.Server.Services;
 public sealed class JobSentinelService(
   IDataContext dataContext,
   INotificationChannel notificationChannel,
+  IRestartMonitoringChannel restartMonitoringChannel,
   Settings.IConfigurationManager configurationManager,
   Func<Machine, MachineJob, JobSentinel> createSentinel
 ) : BackgroundService, IAsyncDisposable
 {
   private static readonly ILog log = LogManager.GetLogger(typeof(JobSentinelService));
-  private readonly Guid _subscriberId = Guid.NewGuid();
+  private readonly Guid _notificationsSubscriberId = Guid.NewGuid();
+  private readonly Guid _restartSubscriberId = Guid.NewGuid();
   private readonly ConcurrentDictionary<int, JobSentinel> _activeSentinels = new();
   private readonly IRepository<MachineJob> _jobRepository = dataContext.Repository<MachineJob>();
 
   protected override async Task ExecuteAsync(CancellationToken stoppingToken)
   {
-    // come back to this, the concern is that if monitoring is disabled/enabled while service is running
+    await TrackMonitoringRestarts(stoppingToken);
+    await TrackJobNotifications(stoppingToken);
+    await Task.Delay(Timeout.Infinite, stoppingToken);
+  }
+
+  private async Task TrackMonitoringRestarts(CancellationToken stoppingToken)
+  {
+    while (!stoppingToken.IsCancellationRequested)
+    {
+      try
+      {
+        if (await restartMonitoringChannel.ReadAsync(_restartSubscriberId, stoppingToken))
+        {
+          await StopAllSentinels();
+
+          var settings = configurationManager.GetApplicationSettings();
+          if (settings.EnableAiMonitoring)
+          {
+            StartJobSentinels(stoppingToken);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        log.Error("Error monitoring settings changes in JobSentinelService", ex);
+      }
+    }
+  }
+
+  private async Task TrackJobNotifications(CancellationToken stoppingToken)
+  {
     var settings = configurationManager.GetApplicationSettings();
     if (settings.EnableAiMonitoring)
     {
@@ -32,7 +65,7 @@ public sealed class JobSentinelService(
     {
       try
       {
-        var notification = await notificationChannel.ReadAsync(_subscriberId, stoppingToken);
+        var notification = await notificationChannel.ReadAsync(_notificationsSubscriberId, stoppingToken);
         var latestSettings = configurationManager.GetApplicationSettings();
         if (settings.EnableAiMonitoring != latestSettings.EnableAiMonitoring)
         {
@@ -45,7 +78,6 @@ public sealed class JobSentinelService(
             await StopAllSentinels();
           }
           settings = latestSettings;
-          // should be able to just continue here because the sentinel start/stop logic above handles the state change
           continue;
         }
 
@@ -99,7 +131,13 @@ public sealed class JobSentinelService(
   {
     var machineRepository = dataContext.Repository<Machine>();
     var machine = machineRepository.GetById(job.MachineId);
-    if (string.IsNullOrEmpty(machine?.WebCamUrl))
+    if (machine.Disabled)
+    {
+      log.Info($"Machine {machine.Name} is disabled. Sentinel not created for job {job.Id}");
+      return;
+    }
+
+    if (string.IsNullOrEmpty(machine?.WebcamUrl))
     {
       log.Warn($"Machine {machine?.Name} does not have a valid Webcam URL. Sentinel not created for job {job.Id}");
       return;
@@ -121,8 +159,19 @@ public sealed class JobSentinelService(
   {
     if (_activeSentinels.TryRemove(jobId, out var sentinel))
     {
-      await sentinel.StopMonitoring();
-      sentinel.Dispose();
+      try
+      {
+        await sentinel.StopMonitoring();
+      }
+      catch (Exception ex)
+      {
+        log.Error($"Error stopping sentinel for job {jobId}", ex);
+      }
+      finally
+      {
+        sentinel.Dispose();
+      }
+
       log.Info($"Stopped job sentinel for job {jobId}");
     }
   }

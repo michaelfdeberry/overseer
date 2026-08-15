@@ -6,6 +6,7 @@ import { PluginInfo } from '../../models/plugin-info.model';
   selector: 'app-plugin-card',
   templateUrl: './plugin-card.component.html',
   imports: [I18NextPipe],
+  host: { class: 'mb-3' },
 })
 export class PluginCardComponent {
   plugin = input.required<PluginInfo>();

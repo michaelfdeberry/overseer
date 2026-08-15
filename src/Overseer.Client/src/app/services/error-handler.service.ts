@@ -22,11 +22,6 @@ export class ErrorHandlerService {
         this.loggingService.error(translation);
       }
 
-      if (this.router.url !== '/setup' && error === 'setup_required') {
-        this.router.navigate(['/setup']);
-        return of();
-      }
-
       if (error === 'unauthorized_access') {
         if (this.router.url.startsWith('/sso')) {
           return of();
@@ -37,11 +32,11 @@ export class ErrorHandlerService {
           return of();
         }
       }
+
       this.toastsService.show({
         message: translation,
         type: 'error',
       });
-      console.error(translation);
     } else {
       this.loggingService.error(error);
       this.handle('unknown_exception');

@@ -1,6 +1,7 @@
 using log4net;
 using Overseer.Server.Channels;
 using Overseer.Server.Integration.Automation;
+using Overseer.Server.Integration.Machines;
 using Overseer.Server.Models;
 
 namespace Overseer.Server.Machines;
@@ -25,7 +26,7 @@ public class JobSentinel(
     if (_monitoringTask != null)
       return;
 
-    failureDetectionAnalyzer.Start(machine.WebCamUrl!);
+    failureDetectionAnalyzer.Start(machine.WebcamUrl!);
     _monitoringTask = MonitorJob(externalCancellationToken);
   }
 
@@ -95,10 +96,16 @@ public class JobSentinel(
           // monitoring but leaving the job running.
           failureDetectionAnalyzer.Stop();
           await Task.Delay(TimeSpan.FromMinutes(1), combinedToken);
-          failureDetectionAnalyzer.Start(machine.WebCamUrl!);
+          failureDetectionAnalyzer.Start(machine.WebcamUrl!);
           continue;
         }
 
+        break;
+      }
+      catch (OperationCanceledException)
+      {
+        // Expected when cancellation is requested, just exit the loop
+        log.Error($"Job monitoring for job {job.Id} was cancelled");
         break;
       }
       catch (Exception ex)
@@ -114,6 +121,7 @@ public class JobSentinel(
         // Backoff before retrying
         var backoffDelay = TimeSpan.FromSeconds(initialBackoffSeconds * consecutiveFailures);
         log.Info($"Backing off for {backoffDelay.TotalSeconds} seconds before retrying");
+
         await Task.Delay(backoffDelay, combinedToken);
       }
     }

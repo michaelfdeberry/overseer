@@ -50,12 +50,12 @@
   "monitoringEnabled": "Monitoring Enabled?",
   "disableMonitoring": "Disable Monitoring",
   "enableMonitoring": "Enable Monitoring",
-  "url": "Url",
-  "webCamUrl": "Webcam Url",
-  "webCamOrientation": "Webcam Orientation",
+  "url": "URL",
+  "webcamUrl": "Webcam URL",
+  "webcamOrientation": "Webcam Orientation",
   "flipVertically": "Flip Vertically",
   "flipHorizontally": "Flip Horizontally",
-  "snapshotUrl": "Snapshot Url",
+  "snapshotUrl": "Snapshot URL",
   "username": "Username",
   "password": "Password",
   "passwordEdit": "Password (At least 8 characters)",
@@ -143,7 +143,7 @@
   "copy": "Copy",
   "copiedToClipboard": "Copied To Clipboard",
   "preauthenticationSettings": "Magic Link",
-  "preauthenticationTitle": "Preauthenticated Url",
+  "preauthenticationTitle": "Preauthenticated URL",
   "preauthenticationDescriptionReadonly": "Use this magic link to grant read-only access to Overseer in scenarios where typical user input is unavailable, such as from a kiosk or during live-streaming, or to provide temporary access without providing a password.",
   "preauthenticationDescriptionUser": "Share this magic link with a user to allow them to gain access to their account. They'll be prompted to set a new password after signing in.",
   "preauthenticationLinkExpires": "The generated link is single-use and remains active for 2 minutes. Once used, the session will remain active according to this user's configured session duration.",
@@ -229,7 +229,8 @@
     "unauthorized_access": "Unauthorized Access Attempted!",
     "setup_required": "Setup Required",
     "delete_user_unavailable": "This user can't be deleted because at least one user must exist",
-    "unauthorized": "You are not authorized to perform this action"
+    "unauthorized": "You are not authorized to perform this action",
+    "admin_required": "Administrator Access Required"
   },
   "pages": {
     "login": {
@@ -254,7 +255,8 @@
       "existingMachinesTitle": "Machines Found",
       "existingMachinesMessage": "Existing machine found! Would you like to skip this step?",
       "skip": "Skip",
-      "setupComplete": "Setup Complete, Happy Making!"
+      "setupComplete": "Setup Complete, Happy Making!",
+      "installPluginsMessage": "Install plugins, at least one machine plugin is required for monitoring..."
     }
   },
   "notifications": {

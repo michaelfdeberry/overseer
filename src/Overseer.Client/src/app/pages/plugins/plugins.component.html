@@ -35,7 +35,7 @@
     }
   </div>
 
-  <div class="px-3">
+  <div class="px-3 overflow-auto">
     @if (plugins.isLoading()) {
       <div class="d-flex align-items-center my-3">
         <span class="spinner-border spinner-border-sm me-2"></span>
@@ -47,7 +47,7 @@
         {{ 'noAvailablePlugins' | i18next }}
       </div>
     } @else {
-      <div class="list-group">
+      <div class="list-group pt-3">
         @for (plugin of availablePlugins(); track plugin.name) {
           <app-plugin-card
             [plugin]="plugin"
@@ -62,66 +62,68 @@
   </div>
 </app-card-section>
 
-<app-card-section
-  icon="bi-check-circle"
-  [heading]="('installed' | i18next) + ' ' + ('plugins' | i18next) + ' (' + installedPlugins().length + ')'"
-  class="mt-4"
->
-  <div
-    card-actions
-    class="d-flex gap-2"
+@if (showInstalledPlugins()) {
+  <app-card-section
+    class="mt-4"
+    icon="bi-check-circle"
+    [heading]="('installed' | i18next) + ' ' + ('plugins' | i18next) + ' (' + installedPlugins().length + ')'"
   >
-    @if (installedPlugins().length > 0) {
-      <button
-        class="btn btn-outline-secondary btn-sm"
-        (click)="selectAllInstalled()"
-        [disabled]="selectedInstalled().size === installedPlugins().length"
-      >
-        {{ 'selectAll' | i18next }}
-      </button>
-      <button
-        class="btn btn-outline-secondary btn-sm"
-        (click)="deselectAllInstalled()"
-        [disabled]="selectedInstalled().size === 0"
-      >
-        {{ 'deselectAll' | i18next }}
-      </button>
-      <button
-        class="btn btn-danger btn-sm"
-        (click)="uninstallSelectedPlugins()"
-        [disabled]="selectedInstalled().size === 0 || busy()"
-      >
-        <i class="bi bi-trash"></i>
-        {{ 'uninstall' | i18next }}
-        (
-        <span class="font-monospace">{{ selectedInstalled().size }}</span>
-        )
-      </button>
-    }
-  </div>
-  <div class="px-3">
-    @if (plugins.isLoading()) {
-      <div class="d-flex align-items-center my-3">
-        <span class="spinner-border spinner-border-sm me-2"></span>
-        <span>{{ 'loading' | i18next }}</span>
-      </div>
-    } @else if (installedPlugins().length === 0) {
-      <div class="alert alert-info my-3">
-        <i class="bi bi-info-circle"></i>
-        {{ 'noInstalledPlugins' | i18next }}
-      </div>
-    } @else {
-      <div class="list-group">
-        @for (plugin of installedPlugins(); track plugin.name) {
-          <app-plugin-card
-            [plugin]="plugin"
-            [selected]="selectedInstalled().has(plugin.name)"
-            [selectable]="true"
-            (selectionChange)="toggleInstalledSelection(plugin.name)"
-          >
-          </app-plugin-card>
-        }
-      </div>
-    }
-  </div>
-</app-card-section>
+    <div
+      card-actions
+      class="d-flex gap-2"
+    >
+      @if (installedPlugins().length > 0) {
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          (click)="selectAllInstalled()"
+          [disabled]="selectedInstalled().size === installedPlugins().length"
+        >
+          {{ 'selectAll' | i18next }}
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          (click)="deselectAllInstalled()"
+          [disabled]="selectedInstalled().size === 0"
+        >
+          {{ 'deselectAll' | i18next }}
+        </button>
+        <button
+          class="btn btn-danger btn-sm"
+          (click)="uninstallSelectedPlugins()"
+          [disabled]="selectedInstalled().size === 0 || busy()"
+        >
+          <i class="bi bi-trash"></i>
+          {{ 'uninstall' | i18next }}
+          (
+          <span class="font-monospace">{{ selectedInstalled().size }}</span>
+          )
+        </button>
+      }
+    </div>
+    <div class="px-3 pt-3">
+      @if (plugins.isLoading()) {
+        <div class="d-flex align-items-center my-3">
+          <span class="spinner-border spinner-border-sm me-2"></span>
+          <span>{{ 'loading' | i18next }}</span>
+        </div>
+      } @else if (installedPlugins().length === 0) {
+        <div class="alert alert-info my-3">
+          <i class="bi bi-info-circle"></i>
+          {{ 'noInstalledPlugins' | i18next }}
+        </div>
+      } @else {
+        <div class="list-group">
+          @for (plugin of installedPlugins(); track plugin.name) {
+            <app-plugin-card
+              [plugin]="plugin"
+              [selected]="selectedInstalled().has(plugin.name)"
+              [selectable]="true"
+              (selectionChange)="toggleInstalledSelection(plugin.name)"
+            >
+            </app-plugin-card>
+          }
+        </div>
+      }
+    </div>
+  </app-card-section>
+}

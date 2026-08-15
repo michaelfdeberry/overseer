@@ -14,4 +14,6 @@ import { JobNotificationComponent } from '../job-notification/job-notification.c
 })
 export class JobFailureNotificationComponent extends JobNotificationComponent {
   protected jobFailureNotification = computed(() => this.notification() as JobFailureNotification);
+
+  protected isOperational = computed(() => this.machineStatus()?.state === 'Operational');
 }

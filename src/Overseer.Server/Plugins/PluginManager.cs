@@ -97,35 +97,14 @@ public class PluginManager(IHttpClientFactory httpClientFactory, IGitHubClient g
       response.EnsureSuccessStatusCode();
 
       var installPath = Path.Combine(PluginUtilities.GetPluginsPath(), item.Name);
-      if (!Directory.Exists(installPath))
-      {
-        Directory.CreateDirectory(installPath);
-      }
-      else
-      {
-        // Clean existing files
-        DirectoryInfo di = new(installPath);
-        foreach (FileInfo file in di.GetFiles())
-        {
-          file.Delete();
-        }
-        foreach (DirectoryInfo dir in di.GetDirectories())
-        {
-          dir.Delete(true);
-        }
-      }
-
-      var pluginZipPath = Path.Combine(installPath, $"{item.Name}-{item.Version}.zip");
+      var pluginZipPath = Path.Combine(Path.GetTempPath(), $"{item.Name}-{item.Version}-{Guid.NewGuid()}.zip");
       await using (var fs = new FileStream(pluginZipPath, FileMode.Create, FileAccess.Write, FileShare.None))
       {
         await response.Content.CopyToAsync(fs);
       }
 
-      // Extract the zip file
-      ZipFile.ExtractToDirectory(pluginZipPath, installPath, true);
-
-      // Optionally delete the zip file after extraction
-      File.Delete(pluginZipPath);
+      // Extract the zip file into a safe temporary location, then move into place.
+      SafeExtract(pluginZipPath, item.Name, PluginUtilities.GetPluginsPath());
 
       // write the item metadata to a file
       var metadataPath = Path.Combine(installPath, "plugin.json");
@@ -177,6 +156,63 @@ public class PluginManager(IHttpClientFactory httpClientFactory, IGitHubClient g
     {
       Log.Error($"Failed to uninstall plugin {pluginName}: {ex.Message}", ex);
       return false;
+    }
+  }
+
+  private static void SafeExtract(string zipPath, string directory, string pluginPath)
+  {
+    var extractPath = Path.Combine(pluginPath, directory);
+    var tempExtractPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), directory);
+    Directory.CreateDirectory(tempExtractPath);
+    var destinationRoot =
+      Path.GetFullPath(extractPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+
+    try
+    {
+      using var archive = ZipFile.OpenRead(zipPath);
+      foreach (var entry in archive.Entries)
+      {
+        var entryPath = entry.FullName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+        var fullPath = Path.GetFullPath(Path.Combine(tempExtractPath, entryPath));
+
+        if (!fullPath.StartsWith(destinationRoot, StringComparison.OrdinalIgnoreCase))
+        {
+          throw new UnauthorizedAccessException($"Attempted to extract outside of directory: {entry.FullName}");
+        }
+
+        if (string.IsNullOrEmpty(entry.Name))
+        {
+          Directory.CreateDirectory(fullPath);
+          continue;
+        }
+
+        Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+        entry.ExtractToFile(fullPath, overwrite: true);
+      }
+
+      if (Directory.Exists(extractPath))
+      {
+        Directory.Delete(extractPath, true);
+      }
+
+      Directory.Move(tempExtractPath, extractPath);
+    }
+    catch (Exception ex)
+    {
+      Log.Error($"Failed to extract plugin zip file {zipPath}: {ex.Message}", ex);
+      throw;
+    }
+    finally
+    {
+      if (File.Exists(zipPath))
+      {
+        File.Delete(zipPath);
+      }
+
+      if (Directory.Exists(tempExtractPath))
+      {
+        Directory.Delete(tempExtractPath, true);
+      }
     }
   }
 }

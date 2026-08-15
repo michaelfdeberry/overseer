@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, DestroyRef, effect, ElementRef, inject, input, signal, untracked } from '@angular/core';
+import { Component, computed, DestroyRef, effect, ElementRef, HostListener, inject, input, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
@@ -29,6 +29,13 @@ export class MachineMonitorComponent {
   private monitoringService = inject(MonitoringService);
   private authenticationService = inject(AuthenticationService);
 
+  @HostListener('document:fullscreenchange')
+  onFullscreenChange(): void {
+    if (!document.fullscreenElement) {
+      this.fullScreen.set(false);
+    }
+  }
+
   supportsFullscreen = document.fullscreenEnabled;
   machine = input<Machine>();
   busy = signal(false);
@@ -40,6 +47,7 @@ export class MachineMonitorComponent {
   heaters = computed(() => this.machine()?.tools.filter((tool) => tool.toolType === 'Heater'));
   extruders = computed(() => this.machine()?.tools.filter((tool) => tool.toolType === 'Extruder'));
   isAdmin = computed(() => this.authenticationService.activeUser()?.accessLevel === 'Administrator');
+  isUser = computed(() => this.authenticationService.activeUser()?.accessLevel === 'User');
 
   constructor() {
     effect(() => {
@@ -48,12 +56,9 @@ export class MachineMonitorComponent {
 
       untracked(() => {
         this.monitoringService
-          .enableMonitoring()
+          .monitorMachine(machine.id)
           .pipe(takeUntilDestroyed(this.destroy))
-          .subscribe((status: MachineStatus) => {
-            if (status.machineId !== machine.id) return;
-            this.status.set(status);
-          });
+          .subscribe((status: MachineStatus) => this.status.set(status));
       });
     });
 
@@ -61,7 +66,7 @@ export class MachineMonitorComponent {
       const isFullscreen = this.fullScreen();
       if (isFullscreen && !document.fullscreenElement) {
         this.host.nativeElement.requestFullscreen();
-      } else if (!!document.fullscreenElement) {
+      } else if (!isFullscreen && document.fullscreenElement) {
         document.exitFullscreen();
       }
     });

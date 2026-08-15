@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { defaultPollInterval } from '../models/constants';
 import { MachineStatus } from '../models/machine-status.model';
@@ -9,6 +9,7 @@ import { MachineStatus } from '../models/machine-status.model';
   providedIn: 'root',
 })
 export class MonitoringService {
+  private statusCache = new Map<number, MachineStatus>();
   private statusEvent$ = new ReplaySubject<MachineStatus>(10, defaultPollInterval, { now: () => Date.now() });
   private hubConnection: HubConnection;
   private isConnected = false;
@@ -20,6 +21,8 @@ export class MonitoringService {
       if (!this.isConnected) return;
       this.start();
     });
+
+    this.statusEvent$.pipe(tap((status) => this.statusCache.set(status.machineId, status))).subscribe();
   }
 
   private async start(): Promise<void> {
@@ -49,6 +52,22 @@ export class MonitoringService {
     }
 
     return this.statusEvent$;
+  }
+
+  monitorMachine(machineId: number): Observable<MachineStatus> {
+    return new Observable<MachineStatus>((subscriber) => {
+      const cached = this.statusCache.get(machineId);
+      if (cached) {
+        subscriber.next(cached);
+      }
+
+      const subscription = this.enableMonitoring().subscribe((status) => {
+        if (status.machineId === machineId) {
+          subscriber.next(status);
+        }
+      });
+      return () => subscription.unsubscribe();
+    });
   }
 
   disableMonitoring(): void {

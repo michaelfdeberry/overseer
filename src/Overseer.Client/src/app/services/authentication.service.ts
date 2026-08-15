@@ -1,8 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { effect, inject, Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { catchError, filter, map, Observable, of, tap } from 'rxjs';
+import { InitializationStatus } from '../models/initialization-status.type';
 import { User } from '../models/user.model';
 import { endpointFactory } from './endpoint-factory';
+import { ErrorHandlerService } from './error-handler.service';
 import { LocalStorageService } from './local-storage.service';
 
 @Injectable({ providedIn: 'root' })
@@ -10,6 +13,8 @@ export class AuthenticationService {
   private getEndpoint = endpointFactory('/api/auth');
   private localStorageService = inject(LocalStorageService);
   private http = inject(HttpClient);
+  private router = inject(Router);
+  private errorHandler = inject(ErrorHandlerService);
 
   activeUser = signal(this.localStorageService.get<User>('activeUser'));
 
@@ -38,15 +43,61 @@ export class AuthenticationService {
   }
 
   checkLogin(): Observable<boolean> {
-    return this.http.get<User>(this.getEndpoint()).pipe(
-      tap((user) => {
-        if (user && user.id) {
+    const setUser = (user: User | undefined) => {
+      if (user && user.id) {
+        const currentUser = this.activeUser();
+        if (!currentUser || JSON.stringify(currentUser) !== JSON.stringify(user)) {
           this.activeUser.set(user);
         }
+      }
+    };
+
+    return this.http.get<User>(this.getEndpoint()).pipe(
+      tap((user) => setUser(user)),
+      map((result) => {
+        console.log('User is authenticated', result);
+        return result?.id ? true : false;
       }),
-      map(() => true),
-      catchError(() => {
+      catchError((errorResponse) => {
+        var initializationStatus = errorResponse.error as InitializationStatus;
+
+        const navigateAdminLogin = () => {
+          this.errorHandler.handle('admin_required');
+          this.router.navigate(['/login'], { state: { requiresAdmin: true } });
+        };
+
+        const navigateLogin = () => {
+          this.errorHandler.handle('unauthorized');
+          this.router.navigate(['/login']);
+        };
+
+        const navigateSetup = () => {
+          this.errorHandler.handle('setup_required');
+          this.router.navigate(['/setup'], { state: initializationStatus });
+        };
+
+        // 412, the user exist, but setup isn't complete
+        if (errorResponse.status === 412) {
+          if (initializationStatus?.user?.accessLevel === 'Administrator') {
+            setUser(initializationStatus.user);
+            navigateSetup();
+          } else {
+            navigateAdminLogin();
+          }
+          return of(false);
+        }
+
+        if (initializationStatus?.state === 'Initialized') {
+          navigateLogin();
+        }
+        if (initializationStatus?.state !== 'Admin') {
+          navigateAdminLogin();
+        } else {
+          navigateSetup();
+        }
+
         this.activeUser.set(undefined);
+        this.localStorageService.remove('activeUser');
         return of(false);
       })
     );
