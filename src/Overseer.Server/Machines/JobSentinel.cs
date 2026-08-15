@@ -102,6 +102,12 @@ public class JobSentinel(
 
         break;
       }
+      catch (OperationCanceledException)
+      {
+        // Expected when cancellation is requested, just exit the loop
+        log.Error($"Job monitoring for job {job.Id} was cancelled");
+        break;
+      }
       catch (Exception ex)
       {
         consecutiveFailures++;
@@ -115,6 +121,7 @@ public class JobSentinel(
         // Backoff before retrying
         var backoffDelay = TimeSpan.FromSeconds(initialBackoffSeconds * consecutiveFailures);
         log.Info($"Backing off for {backoffDelay.TotalSeconds} seconds before retrying");
+
         await Task.Delay(backoffDelay, combinedToken);
       }
     }

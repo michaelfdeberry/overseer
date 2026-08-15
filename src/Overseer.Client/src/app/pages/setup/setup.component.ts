@@ -7,6 +7,7 @@ import { CreateMachineComponent } from '../../components/create-machine/create-m
 import { CreateUserComponent } from '../../components/create-user/create-user.component';
 import { UnauthenticatedComponent } from '../../components/unauthenticated/unauthenticated.component';
 import { CreateUserForm } from '../../models/form.types';
+import { InitializationState, InitializationStatus } from '../../models/initialization-status.type';
 import { Machine } from '../../models/machine.model';
 import { User } from '../../models/user.model';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -14,11 +15,12 @@ import { CertificateErrorService } from '../../services/certificate-error.servic
 import { DialogService } from '../../services/dialog.service';
 import { MachinesService } from '../../services/machines.service';
 import { ToastsService } from '../../services/toast.service';
+import { PluginsComponent } from '../plugins/plugins.component';
 
 @Component({
   selector: 'app-setup',
   templateUrl: './setup.component.html',
-  imports: [UnauthenticatedComponent, I18NextPipe, ReactiveFormsModule, CreateUserComponent, CreateMachineComponent],
+  imports: [UnauthenticatedComponent, I18NextPipe, ReactiveFormsModule, CreateUserComponent, CreateMachineComponent, PluginsComponent],
   providers: [DialogService, CertificateErrorService],
 })
 export class SetupComponent {
@@ -31,13 +33,13 @@ export class SetupComponent {
   private toastsService = inject(ToastsService);
 
   machines: Machine[] = [];
-  step = signal<'user' | 'machines' | 'complete'>('user');
+  step = signal<InitializationState>('Admin');
   adminForm: FormGroup<CreateUserForm> = this.formBuilder.nonNullable.group({});
   machinesForm: UntypedFormGroup = this.formBuilder.nonNullable.group({});
 
   constructor() {
     effect(() => {
-      if (this.step() === 'complete') {
+      if (this.step() === 'Initialized') {
         this.router.navigate(['/']);
         untracked(() => {
           this.toastsService.show({
@@ -46,6 +48,15 @@ export class SetupComponent {
           });
         });
       }
+    });
+
+    effect(() => {
+      const lastNav = this.router.lastSuccessfulNavigation();
+      if (!lastNav) return;
+
+      console.log('Last navigation state:', lastNav.extras.state);
+      const initializationStatus = lastNav.extras.state as InitializationStatus | undefined;
+      this.step.set(initializationStatus?.state ?? 'Admin');
     });
   }
 
@@ -58,7 +69,7 @@ export class SetupComponent {
       .createInitialUser(user)
       .pipe(
         switchMap(() => this.authenticationService.login(user)),
-        tap(() => this.step.set('machines')),
+        tap(() => this.step.set('Plugins')),
         switchMap(() => this.machinesService.getMachines()),
         switchMap((machines) => {
           if (machines.length > 0) {
@@ -72,7 +83,7 @@ export class SetupComponent {
           return of(false);
         }),
         filter((result) => result),
-        tap(() => this.step.set('complete'))
+        tap(() => this.step.set('Initialized'))
       )
       .subscribe({
         error: () => this.adminForm.enable(),
@@ -87,11 +98,11 @@ export class SetupComponent {
       if (this.machinesForm.touched) {
         this.dialogService.prompt({ titleKey: 'invalidForm', messageKey: 'dataLoss' }).closed.subscribe((result) => {
           if (result) {
-            this.step.set('complete');
+            this.step.set('Initialized');
           }
         });
       } else {
-        this.step.set('complete');
+        this.step.set('Initialized');
       }
     } else {
       if (this.machinesForm.invalid) return;
@@ -106,7 +117,7 @@ export class SetupComponent {
             this.machinesForm.reset();
             this.machinesForm.enable();
           } else {
-            this.step.set('complete');
+            this.step.set('Initialized');
           }
         },
         error: (ex) => {

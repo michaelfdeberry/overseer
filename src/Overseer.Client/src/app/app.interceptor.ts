@@ -28,6 +28,11 @@ export function overseerInterceptor(request: HttpRequest<unknown>, next: HttpHan
         return throwError(() => errorResponse);
       }
 
+      // if it's the auth endpoint let the service handle what happens
+      if (request.url.endsWith('/api/auth')) {
+        return throwError(() => errorResponse);
+      }
+
       let errorMessage = 'unknown_exception';
       if (!(errorResponse.error instanceof Error)) {
         switch (errorResponse.status) {
@@ -42,16 +47,13 @@ export function overseerInterceptor(request: HttpRequest<unknown>, next: HttpHan
           case 401:
           case 403:
             localStorageService.clear();
-            if (errorResponse.error === 'requiresInitialization=True') {
-              errorMessage = 'setup_required';
-            } else {
-              errorMessage = 'unauthorized_access';
-            }
+            errorMessage = 'unauthorized_access';
             break;
           default:
             errorMessage = 'unknown_exception';
         }
       }
+
       errorHandler.handle(errorMessage);
       return throwError(() => new Error(errorMessage));
     })

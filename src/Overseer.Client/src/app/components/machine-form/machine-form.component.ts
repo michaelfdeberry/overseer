@@ -83,6 +83,27 @@ export class MachineFormComponent {
       if (!metadata) return;
       if (mode === 'edit' && !machine) return;
 
+      form.statusChanges.subscribe(() => {
+        const invalidControls: string[] = [];
+        Object.keys(form.controls).forEach((key) => {
+          const control = form.get(key);
+          if (control?.invalid) {
+            if (control instanceof UntypedFormGroup) {
+              Object.keys(control.controls).forEach((subKey) => {
+                if (control.get(subKey)?.invalid) {
+                  invalidControls.push(`${key}.${subKey}`);
+                }
+              });
+            } else {
+              invalidControls.push(key);
+            }
+          }
+        });
+        if (invalidControls.length > 0) {
+          console.log('Invalid form controls:', invalidControls);
+        }
+      });
+
       const metadataPropertyNames = new Set(metadata.map((m) => m.propertyName));
 
       // Add controls for dynamic properties not in metadata

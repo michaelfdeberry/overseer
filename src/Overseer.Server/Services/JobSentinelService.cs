@@ -131,6 +131,12 @@ public sealed class JobSentinelService(
   {
     var machineRepository = dataContext.Repository<Machine>();
     var machine = machineRepository.GetById(job.MachineId);
+    if (machine.Disabled)
+    {
+      log.Info($"Machine {machine.Name} is disabled. Sentinel not created for job {job.Id}");
+      return;
+    }
+
     if (string.IsNullOrEmpty(machine?.WebcamUrl))
     {
       log.Warn($"Machine {machine?.Name} does not have a valid Webcam URL. Sentinel not created for job {job.Id}");
@@ -153,8 +159,19 @@ public sealed class JobSentinelService(
   {
     if (_activeSentinels.TryRemove(jobId, out var sentinel))
     {
-      await sentinel.StopMonitoring();
-      sentinel.Dispose();
+      try
+      {
+        await sentinel.StopMonitoring();
+      }
+      catch (Exception ex)
+      {
+        log.Error($"Error stopping sentinel for job {jobId}", ex);
+      }
+      finally
+      {
+        sentinel.Dispose();
+      }
+
       log.Info($"Stopped job sentinel for job {jobId}");
     }
   }

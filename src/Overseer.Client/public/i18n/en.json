@@ -229,7 +229,8 @@
     "unauthorized_access": "Unauthorized Access Attempted!",
     "setup_required": "Setup Required",
     "delete_user_unavailable": "This user can't be deleted because at least one user must exist",
-    "unauthorized": "You are not authorized to perform this action"
+    "unauthorized": "You are not authorized to perform this action",
+    "admin_required": "Administrator Access Required"
   },
   "pages": {
     "login": {
@@ -254,7 +255,8 @@
       "existingMachinesTitle": "Machines Found",
       "existingMachinesMessage": "Existing machine found! Would you like to skip this step?",
       "skip": "Skip",
-      "setupComplete": "Setup Complete, Happy Making!"
+      "setupComplete": "Setup Complete, Happy Making!",
+      "installPluginsMessage": "Install plugins, at least one machine plugin is required for monitoring..."
     }
   },
   "notifications": {
